@@ -268,7 +268,22 @@ public abstract class SOM_ProjConfigData {
 		if((preBuiltMapDirAra == null) || (preBuiltMapDirAra.length==0)) {	_preBuiltMapInfoAra = new String[0][];			return;}
 		//build information describing desired pre-built maps noted in array
 		ArrayList<String[]> resList = new ArrayList<String[]>();
-		for(String s : preBuiltMapDirAra) {		resList.add(getPreBuiltMapInfoStr_Indiv(s));}		
+		for(String dirs : preBuiltMapDirAra) {		
+			ArrayList<String> res = new ArrayList<String>();
+			res.add(dirs);
+			String fullQualPreBuiltMapDir = getDirNameAndBuild(subDirLocs.get("SOM_MapProc") + dirs, true);
+			String SOMExecConfigFileName = fullQualPreBuiltMapDir + expProjConfigFileName;
+			TreeMap<String,String> somExecConfigMap = getSOMExpConfigData(SOMExecConfigFileName,"project config data for SOM Execution");
+			//for(String s : somExecConfigMap.keySet()) {	System.out.println("key : " + s +" | value :  " + somExecConfigMap.get(s));}
+			res.add("# Training Examples : "+ String.format("%02d", Integer.parseInt(somExecConfigMap.get("expNumTrain"))));
+			res.add("Feature Type used to train : " + mapMgr.getDataDescFromInt_Short(mapMgr.getDataFrmtTypeFromName(somExecConfigMap.get("dataType"))));
+			
+			String SOMMapConfigFileName = fullQualPreBuiltMapDir + somExecConfigMap.get("SOMFileNamesAra[7]");
+			TreeMap<String,String> somMapConfigMap = getSOMExpConfigData(SOMMapConfigFileName,"project config data for SOM Execution");
+			//for(String s : somMapConfigMap.keySet()) {	System.out.println("key : " + s +" | value :  " + somMapConfigMap.get(s));}
+			res.add("Rows : " +String.format("%02d", Integer.parseInt(somMapConfigMap.get("mapRows"))) + " | Cols : "+ String.format("%02d", Integer.parseInt(somMapConfigMap.get("mapCols"))));
+			
+			resList.add(getPreBuiltMapInfoStr_Indiv(res, dirs));}		
 		_preBuiltMapInfoAra = resList.toArray(new String[0][]);
 	}//_preBuiltMapFinalSetup
 	
@@ -277,7 +292,7 @@ public abstract class SOM_ProjConfigData {
 	 * @param _mapDir
 	 * @return
 	 */
-	protected abstract String[] getPreBuiltMapInfoStr_Indiv(String _mapDir);
+	protected abstract String[] getPreBuiltMapInfoStr_Indiv(ArrayList<String> res, String _mapDir);
 	
 	/**
 	 * build file names of raw data csv files - search each specified directory and return all csv files listed

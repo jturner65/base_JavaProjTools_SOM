@@ -565,8 +565,6 @@ public abstract class SOM_MapManager {
 	 * 4) save all mappings 
 	 */
 	public abstract void loadAllDataAndBuildMappings();
-
-	protected abstract void loadMapProcAllData_Indiv(Double prodZoneDistThresh);
 		
 	//this will load the default map training configuration
 	public void loadSOMConfig() {	projConfigData.loadDefaultSOMExp_Config();	}//loadSOMConfig
@@ -927,7 +925,9 @@ public abstract class SOM_MapManager {
 	 */
 	protected abstract void buildValidationDataAra();
 	
-	//products are zone/segment descriptors corresponding to certain feature configurations
+	/**
+	 * products are zone/segment descriptors corresponding to certain feature configurations
+	 */
 	protected abstract void setProductBMUs();
 	
 	//once map is built, find bmus on map for each test data example
@@ -1712,11 +1712,16 @@ public abstract class SOM_MapManager {
 					pa.showOffsetText(0,clrIDX,"Detail : ");
 					yOff += sideBarYDisp;
 					pa.translate(10.0f, sideBarYDisp, 0.0f);
-					for(int j=2;j<loadedPreBuiltMapData[i].length;++j) {
-						pa.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][j]);		
-						yOff += sideBarYDisp;
-						pa.translate(0.0f, sideBarYDisp, 0.0f);			
-					}
+					pa.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][1]);		
+					yOff += sideBarYDisp;
+					pa.translate(0.0f, sideBarYDisp, 0.0f);			
+					pa.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][2]);		
+					yOff += sideBarYDisp;
+					pa.translate(0.0f, sideBarYDisp, 0.0f);			
+					pa.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][3]);		
+					yOff += sideBarYDisp;
+					pa.translate(0.0f, sideBarYDisp, 0.0f);			
+					
 					pa.translate(-10.0f, 0.0f, 0.0f);				
 					yOff = getPreBuiltMapInfoDetail(pa,loadedPreBuiltMapData[i], i, yOff, isLoaded);
 				}
