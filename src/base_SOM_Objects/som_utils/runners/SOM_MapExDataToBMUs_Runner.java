@@ -52,18 +52,7 @@ public class SOM_MapExDataToBMUs_Runner extends SOM_MapRunner{
 	@Override
 	protected int getNumPerPartition() {return rawNumPerPartition;	}
 	
-//	
-//	protected void incrTTLProgress(int len, int idx) {
-//		ttlProgress = idx/(1.0 * len);
-//		if((ttlProgress * 100) % 10 == 0) {
-//			msgObj.dispInfoMessage("MapTestDataToBMUs_Runner","incrTTLProgress", "Total Progress at : " + String.format("%.4f",ttlProgress));
-//		}
-//		if(ttlProgress > 1.0) {ttlProgress = 1.0;}	
-//	}
-//	
-//	public double getTtlProgress() {return ttlProgress;}
-	
-	protected void runner(int dataSt, int dataEnd, int pIdx, int ttlParts) {
+	protected void _runner(int dataSt, int dataEnd, int pIdx, int ttlParts) {
 		int numEx = dataEnd-dataSt;
 		int numForEachThrd = calcNumPerThd(numEx, numUsableThreads);
 		//use this many for every thread but last one
@@ -92,11 +81,11 @@ public class SOM_MapExDataToBMUs_Runner extends SOM_MapRunner{
 		int dataSt = 0;
 		int dataEnd = numPerPartition;
 		for(int pIdx = 0; pIdx < numPartitions-1;++pIdx) {
-			runner(dataSt, dataEnd, pIdx,numPartitions);
+			_runner(dataSt, dataEnd, pIdx,numPartitions);
 			dataSt = dataEnd;
 			dataEnd +=numPerPartition;			
 		}
-		runner(dataSt, exData.length, numPartitions-1,numPartitions);			
+		_runner(dataSt, exData.length, numPartitions-1,numPartitions);			
 		
 		ExMapperFtrs = new ArrayList<Future<Boolean>>();
 		try {ExMapperFtrs = th_exec.invokeAll(ExMappers);for(Future<Boolean> f: ExMapperFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }		

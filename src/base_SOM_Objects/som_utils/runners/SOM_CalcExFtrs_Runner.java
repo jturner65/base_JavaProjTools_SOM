@@ -10,7 +10,7 @@ import base_Utils_Objects.io.MsgCodes;
 
 
 /**
- * manage ftr calculation processes 
+ * manage ftr calculation processes - NOTE performing these calculations in a multi-threaded environment may not be threadsafe
  * @author john
  */
 public class SOM_CalcExFtrs_Runner extends SOM_MapRunner{
