@@ -6,7 +6,7 @@ import java.util.concurrent.*;
 
 import base_SOM_Objects.*;
 import base_SOM_Objects.som_examples.*;
-import base_SOM_Objects.som_utils.SOMProjConfigData;
+import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_Utils_Objects.*;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
@@ -25,7 +25,7 @@ public class SOM_DataLoader{
 	//manage IO in this object
 	private FileIOManager fileIO;
 
-	public SOMProjConfigData projConfigData;			//struct maintaining configuration information for entire project
+	public SOM_ProjConfigData projConfigData;			//struct maintaining configuration information for entire project
 	
 	public final static float nodeDistThresh = 100000.0f;
 	
@@ -33,7 +33,7 @@ public class SOM_DataLoader{
 	public int ftrTypeUsedToTrain;
 	public boolean useChiSqDist;
 		
-	public SOM_DataLoader(SOM_MapManager _mapMgr, SOMProjConfigData _configData) {
+	public SOM_DataLoader(SOM_MapManager _mapMgr, SOM_ProjConfigData _configData) {
 		mapMgr = _mapMgr; 
 		msgObj = mapMgr.buildMsgObj();
 		fileIO = new FileIOManager(msgObj,"SOMDataLoader");

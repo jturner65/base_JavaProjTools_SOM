@@ -87,4 +87,4 @@ public interface ISOM_UIWinMapDat {
 	void updateUIDataVal_String(String key, String val);
 	
 
-}
+}//ISOM_UIWinMapDat

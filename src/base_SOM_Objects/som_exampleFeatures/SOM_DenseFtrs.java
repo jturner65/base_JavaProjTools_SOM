@@ -23,9 +23,7 @@ public class SOM_DenseFtrs extends SOM_Features {
 	//combination with an alternate set of features or other calculations
 	private Float[][] compFtrMaps;
 
-	public SOM_DenseFtrs(SOM_Example _ex, int _numFtrs) {
-		super(_ex, _numFtrs);
-	}
+	public SOM_DenseFtrs(SOM_Example _ex, int _numFtrs) {	super(_ex, _numFtrs);	}
 	
 	public SOM_DenseFtrs(SOM_DenseFtrs _otr) {
 		super(_otr);
@@ -89,9 +87,7 @@ public class SOM_DenseFtrs extends SOM_Features {
 	@Override
 	public void buildAllNonZeroFtrIDXs() {
 		allNonZeroFtrIDXs = new ArrayList<Integer>();
-		for(int idx=0;idx<ftrMaps[ftrMapTypeKey].length;++idx) {
-			if((ftrMaps[ftrMapTypeKey][idx] > MyMathUtils.eps_f) || (ftrMaps[ftrMapTypeKey][idx] < -MyMathUtils.eps_f)) {	allNonZeroFtrIDXs.add(idx);}
-		}
+		for(int idx=0;idx<ftrMaps[ftrMapTypeKey].length;++idx) {	allNonZeroFtrIDXs.add(idx);}
 	}//buildAllNonZeroFtrIDXs
 	
 	@Override

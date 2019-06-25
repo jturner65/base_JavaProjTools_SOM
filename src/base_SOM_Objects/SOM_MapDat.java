@@ -11,14 +11,14 @@ package base_SOM_Objects;
 import java.io.File;
 import java.util.*;
 
-import base_SOM_Objects.som_utils.SOMProjConfigData;
+import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_Utils_Objects.*;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
 
 public class SOM_MapDat{
 	//project config object
-	private SOMProjConfigData config;
+	private SOM_ProjConfigData config;
 	//object to faciliate printing to screen or log file
 	private MessageObject msgObj = null;
 	//os currently running - use to modify exec string for mac/linux
@@ -48,7 +48,7 @@ public class SOM_MapDat{
 	private static final String[] kernelTypes = new String[] {"Dense CPU","Dense GPU","Sparse CPU"};
 
 	//not ready to be used until given data
-	public SOM_MapDat(SOMProjConfigData _config, String _curOS) {
+	public SOM_MapDat(SOM_ProjConfigData _config, String _curOS) {
 		curOS = _curOS;
 		config = _config;
 		mapInts = new HashMap<String, Integer>();			// mapCols (x), mapRows (y), mapEpochs, mapKType, mapStRad, mapEndRad;
@@ -156,14 +156,14 @@ public class SOM_MapDat{
 		boolean foundDataPartition = false;
 		int numLines = _descrAra.length;
 		while ((!foundDataPartition) && (idx < numLines)) {
-			if(_descrAra[idx].contains(SOMProjConfigData.fileComment + " Base Vars")) {foundDataPartition=true;}
+			if(_descrAra[idx].contains(SOM_ProjConfigData.fileComment + " Base Vars")) {foundDataPartition=true;}
 			++idx;		
 		}
 		if(idx == numLines) {msgObj.dispMessage("SOM_MapDat","buildFromStringArray","Array of description information not correct format to build SOM_MapDat object.  Aborting.",  MsgCodes.error2);	return;	}
 		//use ara to pass index via ptr
 		int[] idxAra = new int[] {idx};
 		//read in method vars
-		tmpVars = _readArrayIntoStringMap(idxAra, numLines, SOMProjConfigData.fileComment, _descrAra);// mapInts descriptors", _descrAra);
+		tmpVars = _readArrayIntoStringMap(idxAra, numLines, SOM_ProjConfigData.fileComment, _descrAra);// mapInts descriptors", _descrAra);
 		if (tmpVars == null) {return;}
 		//need to set these from application call/config?
 		//execDir = tmpVars.get("execDir").trim();	//should always be retrieved from current execution environment
@@ -177,15 +177,15 @@ public class SOM_MapDat{
 		
 		isSparse = (tmpVars.get("isSparse").trim().toLowerCase().contains("true") ? true : false);
 		//integer SOM cmnd line args
-		tmpVars = _readArrayIntoStringMap(idxAra, numLines, SOMProjConfigData.fileComment, _descrAra);// mapFloats descriptors", _descrAra);
+		tmpVars = _readArrayIntoStringMap(idxAra, numLines, SOM_ProjConfigData.fileComment, _descrAra);// mapFloats descriptors", _descrAra);
 		if (tmpVars == null) {return;}
 		for(String key : tmpVars.keySet()) {mapInts.put(key, Integer.parseInt(tmpVars.get(key).trim()));}
 		//float SOM Cmnd Line Args
-		tmpVars = _readArrayIntoStringMap(idxAra, numLines, SOMProjConfigData.fileComment, _descrAra);// mapStrings descriptors", _descrAra);
+		tmpVars = _readArrayIntoStringMap(idxAra, numLines, SOM_ProjConfigData.fileComment, _descrAra);// mapStrings descriptors", _descrAra);
 		if (tmpVars == null) {return;}
 		for(String key : tmpVars.keySet()) {mapFloats.put(key, Float.parseFloat(tmpVars.get(key).trim()));}		
 		//String SOM Cmnd Line Args
-		tmpVars = _readArrayIntoStringMap(idxAra, numLines, SOMProjConfigData.fileComment, _descrAra);// End Descriptor Data", _descrAra);
+		tmpVars = _readArrayIntoStringMap(idxAra, numLines, SOM_ProjConfigData.fileComment, _descrAra);// End Descriptor Data", _descrAra);
 		if (tmpVars == null) {return;}
 		for(String key : tmpVars.keySet()) {mapStrings.put(key, tmpVars.get(key).trim());}
 		init();
@@ -211,9 +211,9 @@ public class SOM_MapDat{
 	//return string array describing this SOM map execution in csv format so can be saved to a file - group each construct by string title
 	public ArrayList<String> buildStringDescAra() {
 		ArrayList<String> res = new ArrayList<String>();
-		res.add(SOMProjConfigData.fileComment + " This file holds description of SOM map experiment execution settings");
-		res.add(SOMProjConfigData.fileComment + " It should be used to build a SOM_MapDat object which then is consumed to control the execution of the SOM.");
-		res.add(SOMProjConfigData.fileComment + " Base Vars");
+		res.add(SOM_ProjConfigData.fileComment + " This file holds description of SOM map experiment execution settings");
+		res.add(SOM_ProjConfigData.fileComment + " It should be used to build a SOM_MapDat object which then is consumed to control the execution of the SOM.");
+		res.add(SOM_ProjConfigData.fileComment + " Base Vars");
 		//res.add("execDir,"+execDir); //should always be retrieved from current execution environment
 		//res.add("execSOMStr,"+execSOMStr); //should always be retrieved from current execution environment
 		res.add("isSparse,"+isSparse);
@@ -221,13 +221,13 @@ public class SOM_MapDat{
 		res.add("trainDataDenseFN,"+trainDataDenseFN);
 		res.add("trainDataSparseFN,"+trainDataSparseFN);
 		res.add("outFilesPrefix,"+outFilesPrefix);
-		res.add(SOMProjConfigData.fileComment + " mapInts descriptors");
+		res.add(SOM_ProjConfigData.fileComment + " mapInts descriptors");
 		for (String key : mapInts.keySet()) {res.add(""+key+","+mapInts.get(key));}
-		res.add(SOMProjConfigData.fileComment + " mapFloats descriptors");
+		res.add(SOM_ProjConfigData.fileComment + " mapFloats descriptors");
 		for (String key : mapFloats.keySet()) {res.add(""+key+","+String.format("%.6f", mapFloats.get(key)));}
-		res.add(SOMProjConfigData.fileComment + " mapStrings descriptors");
+		res.add(SOM_ProjConfigData.fileComment + " mapStrings descriptors");
 		for (String key : mapStrings.keySet()) {res.add(""+key+","+mapStrings.get(key));}
-		res.add(SOMProjConfigData.fileComment + " End Descriptor Data");		
+		res.add(SOM_ProjConfigData.fileComment + " End Descriptor Data");		
 		return res;		
 	}//buildStringDescAra	
 	

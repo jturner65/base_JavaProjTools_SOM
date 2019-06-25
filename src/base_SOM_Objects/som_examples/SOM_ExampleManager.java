@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_utils.SOMProjConfigData;
+import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_Utils_Objects.*;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
@@ -23,7 +23,7 @@ public abstract class SOM_ExampleManager {
 		//fileIO manager
 	protected FileIOManager fileIO;
 		//struct maintaining complete project configuration and information from config files - all file name data and building needs to be done by this object
-	public static SOMProjConfigData projConfigData;	
+	public static SOM_ProjConfigData projConfigData;	
 		//short name of example type - this is application-specified, and may not coincide with ExDataType 
 	public final String exampleName;
 		//descriptive name of example type

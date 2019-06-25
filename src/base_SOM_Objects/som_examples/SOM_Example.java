@@ -37,11 +37,11 @@ public abstract class SOM_Example extends baseDataPtVis{
 	//this will stay the same across all examples and map nodes
 	protected int numFtrs;
 	//use a map to hold only sparse data of each frmt for feature vector
-	public TreeMap<Integer, Float>[] ftrMaps;	
+	protected TreeMap<Integer, Float>[] ftrMaps;	
 	//this map is what is used by examples to compare for mappings - this may include combinations of other features or values
 	//when all ftrs are calculated (unmodded, normalized and stdizd) they need to be mapped to this structure, possibly in
 	//combination with an alternate set of features or other calculations
-	public TreeMap<Integer, Float>[] compFtrMaps;
+	protected TreeMap<Integer, Float>[] compFtrMaps;
 	//magnitude of this feature vector
 	public float ftrVecMag;	
 	//idx's in feature vector that have non-zero values
@@ -54,9 +54,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 //	//use a map per feature type : unmodified, normalized, standardized,to hold the features sorted by weight as key, value is array of ftrs at a particular weight -submap needs to be instanced in descending key order
 //	private TreeMap<Float, ArrayList<Integer>>[] mapOfWtsToFtrIDXs;	
 //	//a map per feature type : unmodified, normalized, standardized, of ftr IDXs and their relative "rank" in this particular example, as determined by the weight calc
-//	private TreeMap<Integer,Integer>[] mapOfFtrIDXVsWtRank;	
-	
-	
+//	private TreeMap<Integer,Integer>[] mapOfFtrIDXVsWtRank;		
 
 	private int[] stFlags;						//state flags - bits in array holding relevant process info
 	public static final int
@@ -542,12 +540,12 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 *  in distance measurements - for most cases this will just be a copy of the ftr vector array
 	 *  but in some instances, there might be an alternate vector to be used to handle when, for 
 	 *  example, an example has ftrs that do not appear on the map
-	 * @param _ratio
+	 * @param _ratio ratio of features to secondary features calculated to use to build comparison vector
 	 */
 	public abstract void buildCompFtrVector(float _ratio);
 	
 	//this value corresponds to training data type - we want to check training data type counts at each node
-	private final int _trainDataTypeIDX = SOM_ExDataType.Training.getVal();
+	private static final int _trainDataTypeIDX = SOM_ExDataType.Training.getVal();
 	//given a sqdistance-keyed map of lists of mapnodes, this will find the best matching unit (min distance), with favor given to equi-distant units that have more examples
 	private final void _setBMUFromMapNodeDistMap(TreeMap<Double, ArrayList<SOM_MapNode>> mapNodes) {
 		ArrayList<Tuple<Integer,Integer>> bmuKeys = new ArrayList<Tuple<Integer,Integer>>();

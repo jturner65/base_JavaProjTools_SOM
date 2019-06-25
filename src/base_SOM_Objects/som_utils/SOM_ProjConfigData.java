@@ -15,7 +15,7 @@ import base_Utils_Objects.io.MsgCodes;
 
 //structure to hold all the file names, file configurations and general program configurations required to run the SOM project
 //will manage that all file names need to be reset when any are changed
-public abstract class SOMProjConfigData {
+public abstract class SOM_ProjConfigData {
 	//owning map manager
 	protected SOM_MapManager mapMgr;
 	//object to manage screen and log output
@@ -103,7 +103,7 @@ public abstract class SOMProjConfigData {
 	//separately from calls to setSOM_ExpFileNames because experimental parameters can change between the saving of training data and the running of the experiment
 	private String SOMOutExpSffx = "x-1_y-1_k-1";//illegal values set on purpose, needs to be set/overridden by config
 	
-	public SOMProjConfigData(SOM_MapManager _mapMgr, TreeMap<String, Object> _argsMap) {
+	public SOM_ProjConfigData(SOM_MapManager _mapMgr, TreeMap<String, Object> _argsMap) {
 		mapMgr = _mapMgr;
 		msgObj = _mapMgr.buildMsgObj();
 		//_argsMap is map of command line/control params.  useful here for config and data dir
@@ -379,6 +379,7 @@ public abstract class SOMProjConfigData {
 	 * @param mapID
 	 */
 	public void setSOM_DefaultPreBuiltMap(int mapID) {	dfltPreBuiltMapIDX = mapID;}
+	public int getSOM_DefaultPreBuiltMap() {	return dfltPreBuiltMapIDX;}
 	/**
 	 * this loads prebuilt map configurations
 	 */
@@ -424,8 +425,8 @@ public abstract class SOMProjConfigData {
 	//save configuration data describing
 	private ArrayList<String> getExpConfigData(){
 		ArrayList<String> res = new ArrayList<String>();
-		res.add(SOMProjConfigData.fileComment + " Below is config data for a particular experimental setup");
-		res.add(SOMProjConfigData.fileComment + " Base Configuration Data");
+		res.add(SOM_ProjConfigData.fileComment + " Below is config data for a particular experimental setup");
+		res.add(SOM_ProjConfigData.fileComment + " Base Configuration Data");
 		res.add("useSparseTrainingData,"+useSparseTrainingData);
 		res.add("useSparseTestingData,"+useSparseTestingData);
 		res.add("trainTestPartition,"+String.format("%.6f", trainTestPartition));
@@ -436,7 +437,7 @@ public abstract class SOMProjConfigData {
 		res.add("dateTimeStrAra[0],"+dateTimeStrAra[0]);
 		res.add("dateTimeStrAra[1],"+dateTimeStrAra[1]);
 		for(int i =0; i<SOMFileNamesAra.length;++i) {res.add("SOMFileNamesAra["+i+"],"+SOMFileNamesAra[i]);		}
-		res.add(SOMProjConfigData.fileComment + " End Configuration Data");
+		res.add(SOM_ProjConfigData.fileComment + " End Configuration Data");
 		return res;
 	}//getExpConfigData()	
 	

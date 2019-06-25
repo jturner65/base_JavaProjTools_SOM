@@ -470,38 +470,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		setPrivFlags(mapDrawAllMapNodesIDX, false);
 	}//setFlagsDoneMapBuild
 	
-	
-	protected HashMap<String, Integer> getIntUIValMap(){
-		HashMap<String, Integer> mapInts = new HashMap<String, Integer>(); 
-		mapInts.put("mapCols", (int)this.guiObjs[uiMapColsIDX].getVal());
-		mapInts.put("mapRows", (int)this.guiObjs[uiMapRowsIDX].getVal());
-		mapInts.put("mapEpochs", (int)this.guiObjs[uiMapEpochsIDX].getVal());
-		mapInts.put("mapKType", (int)this.guiObjs[uiMapKTypIDX].getVal());
-		mapInts.put("mapStRad", (int)this.guiObjs[uiMapRadStIDX].getVal());
-		mapInts.put("mapEndRad", (int)this.guiObjs[uiMapRadEndIDX].getVal());
-		for (String key : mapInts.keySet()) {msgObj.dispMessage("SOMMapUIWin","buildNewSOMMap->getIntUIValMap","mapInts["+key+"] = "+mapInts.get(key), MsgCodes.info1);}		
-		return mapInts;
-	}
-	
-	protected HashMap<String, Float> getFloatUIValMap(){
-		HashMap<String, Float> mapFloats = new HashMap<String, Float>(); 
-		mapFloats.put("mapStLrnRate",(float)this.guiObjs[uiMapLrnStIDX].getVal());
-		mapFloats.put("mapEndLrnRate",(float)this.guiObjs[uiMapLrnEndIDX].getVal());
-		for (String key : mapFloats.keySet()) {msgObj.dispMessage("SOMMapUIWin","buildNewSOMMap->getFloatUIValMap","mapFloats["+key+"] = "+ String.format("%.4f",mapFloats.get(key)), MsgCodes.info1);}		
-		return mapFloats;
-	}
-	
-	protected HashMap<String, String> getStringUIValMap(){
-		HashMap<String, String> mapStrings = new HashMap<String, String> ();
-		mapStrings.put("mapGridShape", getUIListValStr(uiMapShapeIDX, (int)this.guiObjs[uiMapShapeIDX].getVal()));	
-		mapStrings.put("mapBounds", getUIListValStr(uiMapBndsIDX, (int)this.guiObjs[uiMapBndsIDX].getVal()));	
-		mapStrings.put("mapRadCool", getUIListValStr(uiMapRadCoolIDX, (int)this.guiObjs[uiMapRadCoolIDX].getVal()));	
-		mapStrings.put("mapNHood", getUIListValStr(uiMapNHdFuncIDX, (int)this.guiObjs[uiMapNHdFuncIDX].getVal()));	
-		mapStrings.put("mapLearnCool", getUIListValStr(uiMapLrnCoolIDX, (int)this.guiObjs[uiMapLrnCoolIDX].getVal()));	
-		for (String key : mapStrings.keySet()) {msgObj.dispMessage("SOMMapUIWin","buildNewSOMMap->getStringUIValMap","mapStrings["+key+"] = "+mapStrings.get(key), MsgCodes.info1);}
-		return mapStrings;
-	}
-	
 
 	//first verify that new .lrn file exists, then
 	//build new SOM_MAP map using UI-entered values, then load resultant data - map nodes, bmus to training data
@@ -509,8 +477,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		msgObj.dispMessage("SOMMapUIWin","buildNewSOMMap","Starting Map Build", MsgCodes.info5);
 		setPrivFlags(buildSOMExe, false);
 		//send current UI values to map manager, load appropriate data, build directory structure and execute map
-		boolean returnCode = mapMgr.loadTrainDataMapConfigAndBuildMap_UI(true, getIntUIValMap(), getFloatUIValMap(), getStringUIValMap());
-
+		boolean returnCode = mapMgr.loadTrainDataMapConfigAndBuildMap(true);
 		//returnCode is whether map was built and trained successfully
 		setFlagsDoneMapBuild();
 		msgObj.dispMessage("SOMMapUIWin","buildNewSOMMap","Map Build " + (returnCode ? "Completed Successfully." : "Failed due to error."), MsgCodes.info5);
@@ -634,6 +601,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	///////////////////////////////
 	// end map <--> ui sync functions
 	//
+	
 	//this sets the window's uiVals array to match the ui object's internal state - if object is set but this is not called, subordinate code for object (in switch below) will not get run
 	@Override
 	protected final void setUIWinVals(int UIidx) {
@@ -642,7 +610,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		//int intVal = (int)val;
 		switch(UIidx){
 			//integer values
-			case uiMapRowsIDX 	    : {setMapDataVal_Integer(UIidx,val);guiObjs[uiMapRadStIDX].setVal(.5*Math.min(val, guiObjs[uiMapColsIDX].getVal()));	break;}
+			case uiMapRowsIDX 	    : {setMapDataVal_Integer(UIidx,val);guiObjs[uiMapRadStIDX].setVal(.5*Math.min(val, guiObjs[uiMapColsIDX].getVal()));	break;}	//also set rad start to have a value == to 1/2 the max of rows or columns
 			case uiMapColsIDX	    : {setMapDataVal_Integer(UIidx,val);guiObjs[uiMapRadStIDX].setVal(.5*Math.min(guiObjs[uiMapRowsIDX].getVal(), val));break;}
 			case uiMapEpochsIDX	    : {setMapDataVal_Integer(UIidx,val);break;}
 			case uiMapKTypIDX	    : {setMapDataVal_Integer(UIidx,val);break;}

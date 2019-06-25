@@ -94,7 +94,11 @@ public abstract class SOM_Features {
 	protected abstract void buildFtrRprtStructs_Indiv();
 	
 	
-	//return mapping of ftr IDXs to rank for this example
+	/**
+	 * return mapping of ftr IDXs to rank for this example
+	 * @param mapToGet type of map to get
+	 * @return
+	 */
 	public final TreeMap<Integer,Integer> getMapOfFtrIDXBsWtRank(int mapToGet){
 		if(!ex.getFlag(ex.ftrWtRptBuiltIDX)) {
 			ex.mapMgr.getMsgObj().dispMessage("SOMExample" + ex.OID,"getMapOfFtrIDXBsWtRank","Feature-based report structures not yet built. Aborting.", MsgCodes.warning2);
@@ -143,11 +147,6 @@ public abstract class SOM_Features {
 	 * @return array holding all n features, including 0 values
 	 */
 	public abstract TreeMap<Integer, Float> _getFtrMap(int _type);	
-	
-	
-	
-	
-	
 	
 	
 	/**
