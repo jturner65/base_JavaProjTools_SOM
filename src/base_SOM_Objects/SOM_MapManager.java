@@ -25,6 +25,7 @@ import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.Tuple;
 import base_Utils_Objects.vectorObjs.myPoint;
 import base_Utils_Objects.vectorObjs.myPointf;
+import base_Utils_Objects.vectorObjs.myVector;
 
 public abstract class SOM_MapManager {
 	/**
@@ -538,7 +539,7 @@ public abstract class SOM_MapManager {
 		//load preproc data used to train map - it is assumed this data is in default directory
 		msgObj.dispMessage("SOM_MapManager","loadPretrainedExistingMap","First load pretrained map # " + mapID + " using directory specified in project config file.", MsgCodes.info1);
 		//set default map id
-		projConfigData.setSOM_DefaultPreBuiltMap(mapID);
+		setDefaultPretrainedMapIDX(mapID);
 		//for prebuilt map - load config used in prebuilt map
 		boolean dfltmapLoaded = projConfigData.setSOM_UsePreBuilt();	
 		if(!dfltmapLoaded) {
@@ -556,6 +557,11 @@ public abstract class SOM_MapManager {
 		pretrainedMapIDX = projConfigData.getSOM_DefaultPreBuiltMap();
 		msgObj.dispMessage("SOM_MapManager","loadPretrainedExistingMap","Data loader finished loading map nodes and matching training data and products to BMUs." , MsgCodes.info3);
 	}//loadPretrainedExistingMap
+	/**
+	 * set default map id - does not perform value checking
+	 * @param _idx
+	 */
+	public void setDefaultPretrainedMapIDX(int _idx) {projConfigData.setSOM_DefaultPreBuiltMap(_idx);}
 	
 	/**
 	 * Use this method to map all prospects(cust and true) and products to existing map, and save mappings
@@ -821,12 +827,14 @@ public abstract class SOM_MapManager {
 			return;
 		}
 		msgObj.dispMessage("SOM_MapManager","saveAllSegment_BMUReports","Start saving all segment-to-bmu mapping data.", MsgCodes.info5);
+		projConfigData.saveSOMUsedForSegmentReport();
 		saveClassSegment_BMUReport();
 		saveCategorySegment_BMUReport();
 		saveFtrWtSegment_BMUReport();
 		saveAllSegment_BMUReports_Indiv();
 		msgObj.dispMessage("SOM_MapManager","saveAllSegment_BMUReports","Finished saving all segment-to-bmu mapping data.", MsgCodes.info5);
 	}
+	
 	/**
 	 * save all segment reports based on instancing-app-specific segments
 	 */
@@ -1654,12 +1662,12 @@ public abstract class SOM_MapManager {
 	protected float sideBarYDisp = 10.0f;
 
 	//draw right sidebar data
-	public void drawResultBar(my_procApplet pa, float yOff) {
+	public void drawResultBar(my_procApplet pa, float yOff, int curDefaultMap) {
 		yOff-=4;
 		float sbrMult = 1.2f, lbrMult = 1.5f;//offsets multiplier for barriers between contextual ui elements
 		pa.pushMatrix();pa.pushStyle();
 		//display preloaded maps
-		yOff=drawLoadedPreBuiltMaps(yOff);
+		yOff=drawLoadedPreBuiltMaps(yOff,curDefaultMap);
 		//display mouse-over results in side bar
 		yOff= drawMseRes(yOff);
 		pa.sphere(3.0f);
@@ -1691,25 +1699,34 @@ public abstract class SOM_MapManager {
 		return yOff;
 	}//drawMseRes
 	
-	protected final float drawLoadedPreBuiltMaps(float yOff) {
+	protected final float drawLoadedPreBuiltMaps(float yOff, int curDefaultMap) {
 		if(getFlag(dispLdPreBuitMapsIDX)) {	
 			String[][] loadedPreBuiltMapData = projConfigData.getPreBuiltMapInfoAra();		
 			pa.translate(0.0f, 0.0f, 0.0f);
 			float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;	
 			if(loadedPreBuiltMapData.length==0) {				
 				pa.showOffsetText(0,pa.gui_White,"No Pre-build Map Directories specified.");
-			} else {				
+			} else {	
 				pa.showOffsetText(0,pa.gui_White,"Pre-build Map Directories specified in config : ");
 				yOff += sideBarYDisp;
 				pa.translate(10.0f, sideBarYDisp, 0.0f);
 				
 				for(int i=0;i<loadedPreBuiltMapData.length;++i) {
+					boolean isDefault = i==curDefaultMap;
 					boolean isLoaded = i==pretrainedMapIDX;
 					int clrIDX = (isLoaded ? pa.gui_Yellow : pa.gui_White);
 					pa.showOffsetText(0,clrIDX,""+String.format("%02d", i+1)+" | "+loadedPreBuiltMapData[i][0]);
 					yOff += sideBarYDisp;
 					pa.translate(10.0f,sideBarYDisp,0.0f);
 					pa.showOffsetText(0,clrIDX,"Detail : ");
+					if(isDefault) {
+						pa.pushMatrix();pa.pushStyle();
+						pa.translate(-10.0f,20.0f,0.0f);
+						pa.setFill(new int[] {255, 200,200,255}, 255);
+						pa.setStroke(new int[] {255, 200,200,255}, 255);
+						pa.star(myPointf.ZEROPT, 5.0f);
+						pa.popStyle();pa.popMatrix();
+					}
 					yOff += sideBarYDisp;
 					pa.translate(10.0f, sideBarYDisp, 0.0f);
 					pa.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][1]);		
@@ -1763,7 +1780,13 @@ public abstract class SOM_MapManager {
 	public abstract void setAllBMUsFromMap();
 	
 	public void setMapImgClrs(){if (win != null) {win.setMapImgClrs();} else {msgObj.dispMessage("SOM_MapManager","setMapImgClrs","Display window doesn't exist, can't build visualization images; ignoring.", MsgCodes.warning2);}}
-
+	/**
+	 * set the prebuilt map dir display to use based on prebuilt map dirs specified in config
+	 * this is called by config
+	 * @param _pbltMapArray  : list of strings represent pre built map directories specified in config
+	 */
+	public void setPreBuiltMapDirList(String[] _pbltMapArray) {if(win!=null) { win.setPreBuiltMapArray(_pbltMapArray);}}
+	
 	public boolean getUseChiSqDist() {return useChiSqDist;}
 	public void setUseChiSqDist(boolean _useChiSq) {useChiSqDist=_useChiSq;}
 	

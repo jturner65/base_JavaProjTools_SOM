@@ -1,6 +1,7 @@
 package base_SOM_Objects.som_utils;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -67,9 +68,9 @@ public abstract class SOM_ProjConfigData {
 	protected HashMap<String,String> configFileNames, subDirLocs;
 	
 	//directory under SOM where prebuilt map resides that is desired to be loaded into UI - replaces dbg files - set in project config file
-	protected String[] preBuiltMapDirAra;
+	protected String[] preBuiltMapDirAra = new String[0];
 	//index of default prebuilt map to use - defaults to 0
-	protected int dfltPreBuiltMapIDX = 0;
+	private int dfltPreBuiltMapIDX = 0;
 	//array of information string arrays for each specified prebuilt map - for display
 	protected String[][] _preBuiltMapInfoAra;
 	
@@ -285,8 +286,9 @@ public abstract class SOM_ProjConfigData {
 			
 			resList.add(getPreBuiltMapInfoStr_Indiv(res, dirs));}		
 		_preBuiltMapInfoAra = resList.toArray(new String[0][]);
+		mapMgr.setPreBuiltMapDirList(preBuiltMapDirAra);
 	}//_preBuiltMapFinalSetup
-	
+
 	/**
 	 * build relevant info for each specified pre-built map subdir in config file, building an array of relevant information about how the map was built
 	 * @param _mapDir
@@ -393,7 +395,13 @@ public abstract class SOM_ProjConfigData {
 	 * Set the default pre-built map to use in situations where prebuilt maps are to be consumed
 	 * @param mapID
 	 */
-	public void setSOM_DefaultPreBuiltMap(int mapID) {	dfltPreBuiltMapIDX = mapID;}
+	public void setSOM_DefaultPreBuiltMap(int mapID) {	
+		dfltPreBuiltMapIDX = mapID;		
+		if((null==preBuiltMapDirAra) || (dfltPreBuiltMapIDX >= preBuiltMapDirAra.length) || (dfltPreBuiltMapIDX<0)) {
+			msgObj.dispMessage("SOMProjConfigData","setSOM_DefaultPreBuiltMap","Invalid default pre-built map dir array index specified : " + dfltPreBuiltMapIDX +" so being forced to 0.", MsgCodes.warning1);
+			dfltPreBuiltMapIDX = 0;
+		}
+	}
 	public int getSOM_DefaultPreBuiltMap() {	return dfltPreBuiltMapIDX;}
 	/**
 	 * this loads prebuilt map configurations
@@ -475,7 +483,14 @@ public abstract class SOM_ProjConfigData {
 		msgObj.dispMessage("SOMProjConfigData","loadSOMMap_Config","Finished loading SOM Exe config data from " + expFileName, MsgCodes.info5);
 	}//loadSOM_Exp
 	//send current map data to map mgr to set ui values
-	public void setUIValsFromLoad(){mapMgr.setUIValsFromLoad(SOMExeDat);}
+	public void setUIValsFromLoad(){
+		mapMgr.setUIValsFromLoad(SOMExeDat);
+		if((preBuiltMapDirAra == null) || (preBuiltMapDirAra.length == 0)){
+			msgObj.dispWarningMessage("SOMProjConfigData","setUIValsFromLoad","Attempting to pass a null or empty prebuiltmap dir ara. Aborting");
+		} else {
+			mapMgr.setPreBuiltMapDirList(preBuiltMapDirAra);
+		}
+	}
 	
 	//load a specific configuration based on a previously run experiment
 	public void loadProjConfigForSOMExe() {	loadProjConfigForSOMExe( getProjConfigForSOMExeFileName());}
@@ -732,6 +747,21 @@ public abstract class SOM_ProjConfigData {
 	public String getCategorySegmentFileNamePrefix() {	return getSegmentFileNamePrefix("category","");	}
 	public String getFtrWtSegmentFileNamePrefix() {	return getSegmentFileNamePrefix("ftrwt","");	}
 	public String getExampleToBMUFileNamePrefix(String _exTypeString) {	return getSegmentFileNamePrefix("example",_exTypeString);	}
+	/**
+	 * save information regarding the SOM used to generate the current segment report (currently loaded map)
+	 */
+	public void saveSOMUsedForSegmentReport() {		
+		String SOMExecRpt_fileName = getCurrSOMFullSubDir() + "SOM Execution Report.txt";
+		String ProposalNowDir = getProposalNowDir();
+	    Path source = Paths.get(SOMExecRpt_fileName);
+	    Path destination = Paths.get(ProposalNowDir + "SOM Execution Report.txt");
+	    try {
+	    Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+	    } catch (Exception e) {
+	    	msgObj.dispErrorMessage("SOMProjConfigData","saveSOMUsedForSegmentReport","Attempting to copy SOM Descriptor failed :  ");
+	    	e.printStackTrace();	    	
+	    }
+	}
 	
 	/**
 	 * segment report file name prefix - calling code needs to add segement identifier and extension
@@ -754,10 +784,15 @@ public abstract class SOM_ProjConfigData {
 		}	
 	}//getSegmentFileNamePrefix
 	
-	protected String _getSegmentDirNameFromDirKey(String dirKey, String fNamePrefix) {
+	private String getProposalNowDir() {
 		String ProposalBaseDir = getDirNameAndBuild(subDirLocs.get("SOM_ProposalDir"), true);
 		String [] tmpNow = getDateTimeString(false, "_");
 		String ProposalNowDir = getDirNameAndBuild(ProposalBaseDir, "mappings_"+tmpNow[1] +File.separator,true);
+		return ProposalNowDir;
+	}
+	
+	protected String _getSegmentDirNameFromDirKey(String dirKey, String fNamePrefix) {
+		String ProposalNowDir = getProposalNowDir();
 		String dirName = subDirLocs.get(dirKey);
 		String fileName = dirName.substring(0, dirName.length()-2);
 		if(fNamePrefix.trim().length() == 0) {

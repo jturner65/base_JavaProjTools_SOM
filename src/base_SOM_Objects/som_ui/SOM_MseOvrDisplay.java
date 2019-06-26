@@ -18,12 +18,17 @@ public abstract class SOM_MseOvrDisplay {
 	protected boolean display = false;
 	protected myPointf mapLoc;
 	protected int[] nodeClrs;	
+	//fill and stroke color for mouse over data
+	public int[] dpFillClr, dpStkClr;
 	
+
 	public SOM_MseOvrDisplay(SOM_MapManager _mapMgr, float _dispThesh) {
 		mapMgr=_mapMgr;
 		initAllCtor(_dispThesh);
 		mapLoc = new myPointf(0,0,0);
 		nodeClrs = setNodeColors(); 
+		dpFillClr =  new int[] {255,255,255,255}; 
+		dpStkClr = new int[] {255,255,255,255}; 
 	}//ctor
 	
 	protected abstract int[] setNodeColors(); 
@@ -210,6 +215,7 @@ public abstract class SOM_MseOvrDisplay {
 	public void drawMseLbl_Info(my_procApplet p, myPointf drawLoc) {
 		if(!display) {return;}
 		p.pushMatrix();p.pushStyle();
+		p.setFill(dpFillClr, dpFillClr[3]);p.setStroke(dpStkClr,dpStkClr[3]);
 		//draw point of radius rad at maploc with label	
 		//p.showBox(mapLoc, rad, 5, clrVal,clrVal, my_procApplet.gui_LightGreen, mseLabelDat);
 		//(myPointf P, float rad, int det, int[] clrs, String[] txtAra, float[] rectDims)
