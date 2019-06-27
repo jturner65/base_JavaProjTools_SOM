@@ -804,7 +804,10 @@ public abstract class SOM_MapManager {
 	 * @return
 	 */
 	protected abstract Integer[] getAllClassLabels();
-	//display message relating to class segments
+	/**
+	 * display message relating to class segments
+	 * @return
+	 */
 	protected abstract String getClassSegMappingDescrStr();
 	/**
 	 * return the category labels used for the classification of training examples to 
@@ -812,7 +815,10 @@ public abstract class SOM_MapManager {
 	 * @return
 	 */
 	protected abstract Integer[] getAllCategoryLabels();
-	//display message relating to category segments
+	/**
+	 * display message relating to category segments
+	 * @return
+	 */
 	protected abstract String getCategorySegMappingDescrStr();
 	
 	////////////////////////////////
@@ -1596,24 +1602,37 @@ public abstract class SOM_MapManager {
 	
 	/**
 	 * draw boxes around each node representing class-based segments that node 
-	 * belongs to, with color strength proportional to probablity and 
+	 * belongs to, with color strength proportional to probablity of class within that node and 
 	 * different colors for each segment
 	 * pass class -label- not class index
 	 * @param pa
 	 * @param classLabel - label corresponding to class to be displayed
 	 */
-	public abstract void drawClassSegments(my_procApplet pa, int classLabel);	
+	public final void drawClassSegments(my_procApplet pa, int classLabel) {
+		Collection<SOM_MapNode> mapNodesWithClasses = MapNodesWithMappedClasses.get(classLabel);
+		if(null==mapNodesWithClasses) {		return;}
+		pa.pushMatrix();pa.pushStyle();
+		for (SOM_MapNode node : mapNodesWithClasses) {		node.drawMeClassClr(pa, classLabel);}		
+		pa.popStyle();pa.popMatrix();
+	}//drawClassSegments	
+	
 	public final void drawAllClassSegments(my_procApplet pa) {	for(Integer key : Class_Segments.keySet()) {	drawClassSegments(pa,key);}	}
 
 	/**
 	 * draw filled boxes around each node representing category-based segments 
 	 * that node belongs to, with color strength proportional to probablity 
 	 * and different colors for each segment
-	 * pass class -label- not class index
+	 * pass category -label- not category index
 	 * @param pa
-	 * @param classLabel - label corresponding to class to be displayed
+	 * @param categoryLabel - label corresponding to category to be displayed
 	 */
-	public abstract void drawCategorySegments(my_procApplet pa, int categoryLabel);
+	public final void drawCategorySegments(my_procApplet pa, int categoryLabel) {
+		Collection<SOM_MapNode> mapNodes = MapNodesWithMappedCategories.get(categoryLabel);
+		if(null==mapNodes) {return;}
+		pa.pushMatrix();pa.pushStyle();
+		for (SOM_MapNode node : mapNodes) {		node.drawMeCategorySegClr(pa, categoryLabel);}				
+		pa.popStyle();pa.popMatrix();
+	}//drawCategorySegments
 	public final void drawAllCategorySegments(my_procApplet pa) {	for(Integer key : Category_Segments.keySet()) {	drawCategorySegments(pa,key);}	}
 		
 	public void drawAllNodes(my_procApplet pa) {//, int[] dpFillClr, int[] dpStkClr) {

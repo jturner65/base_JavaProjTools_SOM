@@ -12,7 +12,6 @@ import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
 import base_UI_Objects.windowUI.myDispWindow;
 import base_UI_Objects.windowUI.myGUIObj;
 import base_Utils_Objects.*;
-import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.Tuple;
 import base_Utils_Objects.vectorObjs.myPoint;
@@ -53,17 +52,20 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		mapDrawDistImageIDX			= 14,			//draw umatrix-like rendering based on sq dist between adjacent node vectors
 		mapDrawFtrWtSegMembersIDX	= 15,			//draw ftr-wt-based segments around regions of map - display only segment built from currently display ftr on ftr map
 		//class and category-based segments
-		mapDrawClassSegmentsIDX		= 16,			//show class (order-based jp) segments
-		mapDrawCategorySegmentsIDX	= 17,			//show category (order-driven jpgroup) segments
+		mapDrawClassSegmentsIDX		= 16,			//show class segments
+		mapDrawCategorySegmentsIDX	= 17,			//show category (collection of classes) segments
+		_categoryCanBeShownIDX		= 18,			//whether category values are used and can be shown on UI/interracted with
+		_classCanBeShownIDX			= 19,			//whether class values are used and can be shown on UI/interracted with
+		mapLockClassCatSegmentsIDX  = 20,			//lock category to cycle through classes
 		
-		showSelRegionIDX			= 18,			//highlight a specific region of the map, either all nodes above a certain threshold for a chosen ftr
+		showSelRegionIDX			= 21,			//highlight a specific region of the map, either all nodes above a certain threshold for a chosen ftr
 		//train/test data managemen
-		somTrainDataLoadedIDX		= 19,			//whether data used to build map has been loaded yet
-		saveLocClrImgIDX			= 20,			//
+		somTrainDataLoadedIDX		= 22,			//whether data used to build map has been loaded yet
+		saveLocClrImgIDX			= 23,			//
 		//save segment mappings
-		saveAllSegmentMapsIDX		= 21;			//this will save all the segment mappings that have been defined
+		saveAllSegmentMapsIDX		= 24;			//this will save all the segment mappings that have been defined
 	
-	public static final int numSOMBasePrivFlags = 22;
+	public static final int numSOMBasePrivFlags = 25;
 	//instancing class will determine numPrivFlags based on how many more flags are added
 	
 	//	//GUI Objects	
@@ -89,9 +91,12 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		uiMapNodeBMUTypeToDispIDX 	= 17,			//type of examples mapping to a particular node to display in visualization
 		uiNodeWtDispThreshIDX 		= 18,			//threshold for display of map nodes on individual weight maps
 		uiNodeInSegThreshIDX		= 19,			//threshold of u-matrix weight for nodes to belong to same segment
-		uiMseRegionSensIDX			= 20;			//senstivity threshold for mouse-over, to determine membership to a particular jp (amount a query on the map per feature needs to be to be considered part of the JP that feature represents)	
+		uiMseRegionSensIDX			= 20,			//senstivity threshold for mouse-over
+		uiFtrSelectIDX				= 21,			//pick the feature to display, if ftr-idx wt graphs are being displayed
+		uiCategorySelectIDX			= 22,			//pick the category to display, if category mapping is available/enabled
+		uiClassSelectIDX			= 23;			//pick the class to display, if class mapping is available/enabled
 	
-	public static final int numSOMBaseGUIObjs = 21;
+	public static final int numSOMBaseGUIObjs = 24;
 	//instancing class will specify numGUIObjs	
 	protected double[] uiVals;				//raw values from ui components
 	//
@@ -126,6 +131,10 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	
 	//which ftr map is currently being shown
 	protected int curMapImgIDX;
+	//which category idx and _label_ is currently selected
+	private int curCategoryIDX, curCategoryLabel;
+	//which class idx and _label_ is currently selected
+	private int curClassIDX, curClassLabel;
 
 	//scaling value - use this to decrease the image size and increase the scaling so it is rendered the same size
 	protected static final float mapScaleVal = 10.0f;
@@ -180,14 +189,17 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		setVisScreenWidth(rectDim[2]);
 		//only set for visualization - needs to reset static refs in msgObj
 		mapMgr.setPADispWinData(this, pa);
-		//used to display results within this window
-		msgObj = mapMgr.buildMsgObj();
 		
 		//this window uses right side info window
 		setFlags(drawRightSideMenu, true);		//may need some re-scaling to keep things in the middle and visible
 		
 		//init specific sim flags
 		initAllPrivFlags();		//call in instancing class when # of flags is known		
+		/**
+		 * set these values from when UI was created
+		 */
+		setPrivFlags(_categoryCanBeShownIDX, _catExistsAndIsShown);
+		setPrivFlags(_classCanBeShownIDX, _classExistsAndIsShown);		
 		setPrivFlags(mapDrawTrainDatIDX,false);
 		setPrivFlags(mapDrawWtMapNodesIDX,false);
 		setPrivFlags(mapUseChiSqDistIDX,false);
@@ -223,17 +235,17 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		tmpBtnNamesArray.add(new Object[]{"Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)", mapDrawWtMapNodesIDX});     
 		tmpBtnNamesArray.add(new Object[]{"Hide Ftr Wt Segments", "Show Ftr Wt Segments", mapDrawFtrWtSegMembersIDX});
 		tmpBtnNamesArray.add(new Object[]{"Hide Clstr (U-Dist)", "Show Clstr (U-Dist)", mapDrawUMatSegMembersIDX}); 
-		tmpBtnNamesArray.add(new Object[]{"Hide Clstr Image", "Show Clstr Image", mapDrawUMatSegImgIDX});     
-
+		tmpBtnNamesArray.add(new Object[]{"Hide Clstr Image", "Show Clstr Image", mapDrawUMatSegImgIDX});  
+		
+		//these are only enabled if they have been defined to return values from instancing class
 		String[] classBtnTFLabels = getClassBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{classBtnTFLabels[0],classBtnTFLabels[1],mapDrawClassSegmentsIDX});}
-		
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{classBtnTFLabels[0],classBtnTFLabels[1],mapDrawClassSegmentsIDX});}		
 		String[] catBtnTFLabels = getCategoryBtnTFLabels();
-		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{catBtnTFLabels[0],catBtnTFLabels[1],mapDrawCategorySegmentsIDX});}		
-		
+		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{catBtnTFLabels[0],catBtnTFLabels[1],mapDrawCategorySegmentsIDX});}				
 		String[] saveSegmentTFLabels = getSegmentSaveBtnTFLabels();
 		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{saveSegmentTFLabels[0],saveSegmentTFLabels[1],saveAllSegmentMapsIDX});}		
-		
+		String[] catClassLockBtnTFLabels = getClassCatLockBtnTFLabels();
+		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1],mapLockClassCatSegmentsIDX});}	
 		//add instancing-class specific buttons
 		initAllSOMPrivBtns_Indiv(tmpBtnNamesArray);
 		//finalize setup for UI toggle buttons - convert to arrays
@@ -272,6 +284,13 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * @return array holding true(idx0) and false(idx1) labels for buttons to control display of category-based segment
 	 */
 	protected abstract String[] getCategoryBtnTFLabels();
+	
+	/**
+	 * Instance class determines the true and false labels the class-category locking should use
+	 * @return array holding true(idx0) and false(idx1) labels for buttons to control display of whether 
+	 * category should be locked to allow selection through within-category classes
+	 */
+	protected abstract String[] getClassCatLockBtnTFLabels();
 
 	/**
 	 * This will return instance class-based true and false labels for save segment data.  if empty then no segment saving possible
@@ -279,6 +298,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 */
 	protected abstract String[] getSegmentSaveBtnTFLabels();
 	
+	private boolean _catExistsAndIsShown = false;
+	private boolean _classExistsAndIsShown = false;
 	//initialize structure to hold modifiable menu regions
 	@Override
 	protected final void setupGUIObjsAras(){		
@@ -287,18 +308,14 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		tmpListObjVals.put(uiMapShapeIDX, new String[] {"rectangular","hexagonal"});
 		tmpListObjVals.put(uiMapBndsIDX, new String[] {"planar","toroid"});
 		tmpListObjVals.put(uiMapKTypIDX, new String[] {"Dense CPU", "Dense GPU", "Sparse CPU"});		
-		tmpListObjVals.put(uiMapNHdFuncIDX, new String[]{"gaussian","bubble"});
-		
+		tmpListObjVals.put(uiMapNHdFuncIDX, new String[]{"gaussian","bubble"});		
 		tmpListObjVals.put(uiMapRadCoolIDX, new String[]{"linear","exponential"});
-		tmpListObjVals.put(uiMapLrnCoolIDX, new String[]{"linear","exponential"});
-		
-		
+		tmpListObjVals.put(uiMapLrnCoolIDX, new String[]{"linear","exponential"});		
 		tmpListObjVals.put(uiTrainDataFrmtIDX, SOM_MapManager.uiMapTrainFtrTypeList);
-		tmpListObjVals.put(uiTestDataFrmtIDX, SOM_MapManager.uiMapTrainFtrTypeList);
-		
+		tmpListObjVals.put(uiTestDataFrmtIDX, SOM_MapManager.uiMapTrainFtrTypeList);		
 		tmpListObjVals.put(uiMapPreBuiltDirIDX, new String[] {"None"});
 		tmpListObjVals.put(uiMapNodeBMUTypeToDispIDX, SOM_MapManager.getNodeBMUMapTypes());
-		
+		tmpListObjVals.put(uiFtrSelectIDX, new String[] {"None"});		
 		
 		ArrayList<Object[]> tmpUIObjArray = new ArrayList<Object[]>();
 		//tmpBtnNamesArray.add(new Object[]{"Building SOM","Build SOM ",buildSOMExe});
@@ -308,27 +325,42 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		//	the 3rd elem is label for object
 		//	the 4th element is boolean array of {treat as int, has list values, value is sent to owning window}
 		
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiTrainDataFrmtIDX).length-1, 1.0}, 1.0, "Train Data Frmt", new boolean[]{true, true, true}});   //uiTrainDataFrmtIDX                                                                        
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiTestDataFrmtIDX).length-1, 1.0}, 2.0, "Data Mapping Frmt", new boolean[]{true, true, true}});   //uiTestDataFrmtIDX                                                                         
-		tmpUIObjArray.add(new Object[] {new double[]{1.0, 100.0, 1.0}, 100.0,	"Data % To Train", new boolean[]{true, false, true}});   //uiTrainDatPartIDX                                                                         
-		tmpUIObjArray.add(new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Rows", new boolean[]{true, false, true}});   //uiMapRowsIDX 	 		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Columns", new boolean[]{true, false, true}});   //uiMapColsIDX	 		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{1.0, 200.0, 10}, 10.0, "# Training Epochs", new boolean[]{true, false, true}});   //uiMapEpochsIDX		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapShapeIDX).length-1, 1},0.0, "Map Node Shape", new boolean[]{true, true, true}});   //uiMapShapeIDX	 		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapBndsIDX).length-1, 1},1.0, "Map Boundaries",	new boolean[]{true, true, true}});   //uiMapBndsIDX	 		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapKTypIDX).length-1, 1.01},2.0, "Dense/Sparse (C/G)PU",new boolean[]{true, true, true}});   //uiMapKTypIDX	 		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapNHdFuncIDX).length-1, 1},0.0, "Neighborhood Func", new boolean[]{true, true, true}});   //uiMapNHdFuncIDX		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapRadCoolIDX).length-1, 1},0.0, "Radius Cooling", new boolean[]{true, true, true}});   //uiMapRadCoolIDX		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapLrnCoolIDX).length-1, 1},0.0, "Learn rate Cooling", new boolean[]{true, true, true}});   //uiMapLrnCoolIDX		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{0.001, 10.0, 0.001}, 1.0, "Start Learn Rate", new boolean[]{false, false, true}});   //uiMapLrnStIDX	 		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{0.001, 1.0, 0.001}, 0.1, "End Learn Rate", new boolean[]{false, false, true}});   //uiMapLrnEndIDX		                                                                    
-		tmpUIObjArray.add(new Object[] {new double[]{2.0, 300.0, 1.0},	 20.0, "Start Cool Radius", new boolean[]{true, false, true}});   //uiMapRadStIDX	 	# nodes	                                                                
-		tmpUIObjArray.add(new Object[] {new double[]{1.0, 10.0, 1.0},	 1.0, "End Cool Radius", new boolean[]{true, false, true}});   //uiMapRadEndIDX		# nodes	  
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapPreBuiltDirIDX).length-1,1.0}, 0.0, "Pretrained Map Dirs", new boolean[] {true, true, true}});//uiMapPreBuiltDirIDX
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapNodeBMUTypeToDispIDX).length-1, 1.0}, 0.0, "Ex Type For Node BMU", new boolean[]{true, true, true}});   //uiMapNodeBMUTypeToDispIDX                                                                 
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, 1.0, .01}, (double)SOM_MapManager.getNodeInFtrWtSegThresh(), "Map Node Disp Wt Thresh", new boolean[]{false, false, true}});   //uiNodeWtDispThreshIDX                                                                     
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, 1.0, .001}, (double)SOM_MapManager.getNodeInUMatrixSegThresh(), "Segment UDist Thresh", new boolean[]{false, false, true}});   //uiNodeInSegThreshIDX//threshold of u-matrix weight for nodes to belong to same segment    
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, 1.0, .1},	 0.0, "Mouse Over JP Sens",	new boolean[]{false, false, true}});   //uiMseRegionSensIDX                                                                        
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiTrainDataFrmtIDX).length-1, 1.0}, 1.0, "Train Data Frmt", new boolean[]{true, true, true}});   				//uiTrainDataFrmtIDX                                                                        
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiTestDataFrmtIDX).length-1, 1.0}, 2.0, "Data Mapping Frmt", new boolean[]{true, true, true}});  				//uiTestDataFrmtIDX                                                                         
+		tmpUIObjArray.add(new Object[] {new double[]{1.0, 100.0, 1.0}, 100.0,	"Data % To Train", new boolean[]{true, false, true}});   													//uiTrainDatPartIDX                                                                         
+		tmpUIObjArray.add(new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Rows", new boolean[]{true, false, true}});   															//uiMapRowsIDX 	 		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Columns", new boolean[]{true, false, true}});   															//uiMapColsIDX	 		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{1.0, 200.0, 10}, 10.0, "# Training Epochs", new boolean[]{true, false, true}});  														//uiMapEpochsIDX		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapShapeIDX).length-1, 1},0.0, "Map Node Shape", new boolean[]{true, true, true}});   						//uiMapShapeIDX	 		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapBndsIDX).length-1, 1},1.0, "Map Boundaries",	new boolean[]{true, true, true}});  						//uiMapBndsIDX	 		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapKTypIDX).length-1, 1.01},2.0, "Dense/Sparse (C/G)PU",new boolean[]{true, true, true}});   				//uiMapKTypIDX	 		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapNHdFuncIDX).length-1, 1},0.0, "Neighborhood Func", new boolean[]{true, true, true}});   					//uiMapNHdFuncIDX		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapRadCoolIDX).length-1, 1},0.0, "Radius Cooling", new boolean[]{true, true, true}});   						//uiMapRadCoolIDX		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapLrnCoolIDX).length-1, 1},0.0, "Learn rate Cooling", new boolean[]{true, true, true}});   					//uiMapLrnCoolIDX		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{0.001, 10.0, 0.001}, 1.0, "Start Learn Rate", new boolean[]{false, false, true}});   													//uiMapLrnStIDX	 		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{0.001, 1.0, 0.001}, 0.1, "End Learn Rate", new boolean[]{false, false, true}});   														//uiMapLrnEndIDX		                                                                    
+		tmpUIObjArray.add(new Object[] {new double[]{2.0, 300.0, 1.0},	 20.0, "Start Cool Radius", new boolean[]{true, false, true}});   													//uiMapRadStIDX	 	# nodes	                                                                
+		tmpUIObjArray.add(new Object[] {new double[]{1.0, 10.0, 1.0},	 1.0, "End Cool Radius", new boolean[]{true, false, true}});   														//uiMapRadEndIDX		# nodes	  
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapPreBuiltDirIDX).length-1,1.0}, 0.0, "Pretrained Map Dirs", new boolean[] {true, true, true}});			//uiMapPreBuiltDirIDX
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapNodeBMUTypeToDispIDX).length-1, 1.0}, 0.0, "Ex Type For Node BMU", new boolean[]{true, true, true}}); 	//uiMapNodeBMUTypeToDispIDX                                                                 
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, 1.0, .01}, (double)SOM_MapManager.getNodeInFtrWtSegThresh(), "Map Node Disp Wt Thresh", new boolean[]{false, false, true}});   	//uiNodeWtDispThreshIDX                                                                     
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, 1.0, .001}, (double)SOM_MapManager.getNodeInUMatrixSegThresh(), "Segment UDist Thresh", new boolean[]{false, false, true}});   	//uiNodeInSegThreshIDX//threshold of u-matrix weight for nodes to belong to same segment    
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, 1.0, .1},	 0.0, "Mouse Over Sens",	new boolean[]{false, false, true}});   														//uiMseRegionSensIDX                                                                        
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiFtrSelectIDX).length-1,1.0}, 0.0, "Feature IDX To Show", new boolean[] {true, true, true}});					//uiFtrSelectIDX
+		
+		String catUIDesc = getCategoryUIObjLabel();
+		if((null!=catUIDesc) && (catUIDesc.length()>0)) {
+			_catExistsAndIsShown = true;
+			tmpListObjVals.put(uiCategorySelectIDX, new String[] {"None"});	
+			tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiCategorySelectIDX).length-1,1.0}, 0.0, catUIDesc, new boolean[] {true, true, true}});			//uiMapPreBuiltDirIDX
+		} else {			_catExistsAndIsShown = false;		}
+		
+		String classUIDesc = getClassUIObjLabel();
+		if((null!=classUIDesc) && (classUIDesc.length()>0)) {
+			_classExistsAndIsShown = true;
+			tmpListObjVals.put(uiClassSelectIDX, new String[] {"None"});	
+			tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiClassSelectIDX).length-1,1.0}, 0.0, classUIDesc, new boolean[] {true, true, true}});			//uiMapPreBuiltDirIDX
+		} else {			_classExistsAndIsShown = false;		}
 		
 		//populate instancing application objects
 		setupGUIObjsArasIndiv(tmpUIObjArray,tmpListObjVals);
@@ -353,7 +385,30 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		buildGUIObjs(guiObjNames,guiStVals,guiMinMaxModVals,guiBoolVals,new double[]{xOff,yOff},tmpListObjVals);			//builds a horizontal list of UI comps	
 		
 	}//setupGUIObjsAras
-
+	/**
+	 * instancing class description for category display UI object - if null or length==0 then not shown/used
+	 */
+	protected abstract String getCategoryUIObjLabel();
+	/**
+	 * instancing class description for class display UI object - if null or length==0 then not shown/used
+	 */
+	protected abstract String getClassUIObjLabel();
+	/**
+	 * pass the list of values for the feature map select display list box, in idx order
+	 * @param ftrStrVals : list of values to display for each feature
+	 */
+	public final void setUI_FeatureListVals(String[] ftrStrVals) {	guiObjs[uiFtrSelectIDX].setListVals(ftrStrVals);	}
+	/**
+	 * pass the list of values for the category list box, in idx order
+	 * @param categoryVals : list of values to display for category select list
+	 */
+	public final void setUI_CategoryListVals(String[] categoryVals) {	if(getPrivFlags(_categoryCanBeShownIDX)) {	guiObjs[uiCategorySelectIDX].setListVals(categoryVals);	}}
+	/**
+	 * pass the list of values for the class list box, in idx order
+	 * @param classVals : list of values to display for class select list
+	 */
+	public final void setUI_ClassListVals(String[] classVals) {		if(getPrivFlags(_classCanBeShownIDX)) {		guiObjs[uiClassSelectIDX].setListVals(classVals);	}}
+	
 	/**
 	 * Instancing class-specific (application driven) UI objects should be defined
 	 * in this function.  Add an entry to tmpBtnNamesArray for each button, in the order 
@@ -461,15 +516,22 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 			case mapDrawUMatSegImgIDX : {
 				if(val) {mapMgr.buildUMatrixSegmentsOnMap();}
 				break;}
-			case showSelRegionIDX		 : {//highlight a specific region of the map, either all nodes above a certain threshold for a chosen jp or jpgroup
+			case showSelRegionIDX		 : {//highlight a specific region of the map, either all nodes above a certain threshold for a chosen class or category
 				break;}
 			case saveLocClrImgIDX : {break;}		//save image
+			case mapLockClassCatSegmentsIDX : {
+				setPrivFlags_LockCatForClassSegs(val);
+				break;}
 
 			default			: {setPrivFlagsIndiv(idx,val);}
 		}
 	}//setFlag		
 	protected abstract void setPrivFlagsIndiv(int idx, boolean val);
-	
+	/**
+	 * Instance-specific code for managing locking of category segment selection to enable cycling through class within category
+	 * @param val whether the lock button is being turned on or off
+	 */
+	protected abstract void setPrivFlags_LockCatForClassSegs(boolean val);
 	//set flag values when finished building map, to speed up initial display
 	public final void setFlagsDoneMapBuild(){
 		setPrivFlags(mapDrawTrainDatIDX, false);
@@ -522,14 +584,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		msgObj.dispInfoMessage("SOM_MapUIWin","setPreBuiltMapArray","Attempting to set prebuilt map values list of size : " +_pbltMapArray.length);
 		int curIDX = guiObjs[uiMapPreBuiltDirIDX].setListVals(_pbltMapArray);
 		uiVals[uiMapPreBuiltDirIDX] = guiObjs[uiMapPreBuiltDirIDX].getVal();
-//		if(_pbltMapArray.length > 0) {
-//			uiMapPreBuiltDirList = new String[_pbltMapArray.length];
-//			System.arraycopy(_pbltMapArray, 0, uiMapPreBuiltDirList, 0, uiMapPreBuiltDirList.length);			
-//		} else {						uiMapPreBuiltDirList = new String[] {"None"};			}
-//		//save current value
-//		double curVal = guiObjs[uiMapPreBuiltDirIDX].getVal();
-//		guiObjs[uiMapPreBuiltDirIDX].setNewMax(uiMapPreBuiltDirList.length-1);
-//		uiVals[uiMapPreBuiltDirIDX] = guiObjs[uiMapPreBuiltDirIDX].setVal(curVal);
 		curPreBuiltMapIDX = curIDX;
 	}//
 
@@ -537,16 +591,16 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	// map <--> ui sync functions
 	//
 	@Override
-	public void setMapDataVal_Integer(int UIidx, double val) {	mapMgr.updateMapDatFromUI_Integer(getMapKeyStringFromUIidx(UIidx), (int) val);}	
+	public final void setMapDataVal_Integer(int UIidx, double val) {	mapMgr.updateMapDatFromUI_Integer(getMapKeyStringFromUIidx(UIidx), (int) val);}	
 	@Override
-	public void setMapDataVal_Float(int UIidx, double val) {	mapMgr.updateMapDatFromUI_Float(getMapKeyStringFromUIidx(UIidx), (float) val);}
+	public final void setMapDataVal_Float(int UIidx, double val) {	mapMgr.updateMapDatFromUI_Float(getMapKeyStringFromUIidx(UIidx), (float) val);}
 	@Override
 	//public void setMapDataVal_String(int UIidx, double val) {	mapMgr.updateMapDatFromUI_String(getMapKeyStringFromUIidx(UIidx), getUIListValStr(UIidx, (int)val));}
-	public void setMapDataVal_String(int UIidx, double val) {	mapMgr.updateMapDatFromUI_String(getMapKeyStringFromUIidx(UIidx), guiObjs[UIidx].getListValStr((int)val));}
+	public final void setMapDataVal_String(int UIidx, double val) {	mapMgr.updateMapDatFromUI_String(getMapKeyStringFromUIidx(UIidx), guiObjs[UIidx].getListValStr((int)val));}
 	
 	// set UI vals from map mgr - these are changes resulting from non-UI made changes to map
 	@Override
-	public void updateUIDataVal_Integer(String key, Integer val) {
+	public final void updateUIDataVal_Integer(String key, Integer val) {
 		if(!isMapNameOfType(mapDatNames_Ints, key)) {
 			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_Integer","Attempting to set UI object with unknown Key : " +key + " using integer value " + val +". Aborting.",MsgCodes.warning1);	
 			return;}
@@ -564,7 +618,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	}//setUIDataVal_Integer	
 
 	@Override
-	public void updateUIDataVal_Float(String key, Float val) {
+	public final void updateUIDataVal_Float(String key, Float val) {
 		if(!isMapNameOfType(mapDatNames_Floats, key)) {
 			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_Float","Attempting to set UI object with unknown Key : " +key + " using integer value " + val +". Aborting.",MsgCodes.warning1);	
 			return;}
@@ -577,12 +631,11 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	}//setUIDataVal_Float
 	
 	@Override
-	public void updateUIDataVal_String(String key, String val) {
+	public final void updateUIDataVal_String(String key, String val) {
 		if(!isMapNameOfType(mapDatNames_Strings, key)) {
 			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_String","Attempting to set UI object with unknown Key : " +key + " using String value " + val +". Aborting.",MsgCodes.warning1);
 			return;}
 		Integer uiObjIDX = getUIidxFromMapKeyString(key);
-		//uiVals[uiObjIDX] = guiObjs[uiObjIDX].setVal(getIdxFromListString(uiObjIDX,val));
 		int[] retVals = guiObjs[uiObjIDX].setValInList(val);
 		//if retVals[1] != 0 then not ok
 		if(retVals[1] != 0) {
@@ -630,39 +683,123 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 			case uiMapBndsIDX	    : {setMapDataVal_String(UIidx,val); break;}
 			//end map arg-related string/list values
 			
-			case uiTrainDataFrmtIDX : {//format of training data
+			case uiTrainDataFrmtIDX 		: {//format of training data
 				mapMgr.setCurrentTrainDataFormat((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()));
 				break;}
-			case uiTestDataFrmtIDX : {
+			case uiTestDataFrmtIDX 			: {
 				mapMgr.setCurrentTestDataFormat((int)(this.guiObjs[uiTestDataFrmtIDX].getVal()));
 				break;}
-			case uiTrainDatPartIDX : {break;}
+			case uiTrainDatPartIDX 			: {break;}
 			case uiNodeWtDispThreshIDX : {
 				mapNodeWtDispThresh = (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal());
 				SOM_MapManager.setNodeInFtrWtSegThresh(mapNodeWtDispThresh);				
 				break;}
-			case uiNodeInSegThreshIDX :{		//used to determine threshold of value for setting membership in a segment/cluster
+			case uiNodeInSegThreshIDX 		:{		//used to determine threshold of value for setting membership in a segment/cluster
 				SOM_MapManager.setNodeInUMatrixSegThresh((float)(this.guiObjs[uiNodeInSegThreshIDX].getVal()));
 				mapMgr.buildUMatrixSegmentsOnMap();
-				break;}
-			
-			case uiMapPreBuiltDirIDX : {//what prebuilt map of list of maps shown to right of screen to use, if any are defined in project config
+				break;}			
+			case uiMapPreBuiltDirIDX 		: {//what prebuilt map of list of maps shown to right of screen to use, if any are defined in project config
 				curPreBuiltMapIDX = (int) (this.guiObjs[uiMapPreBuiltDirIDX].getVal());
-				break;}
-			
-			case uiMapNodeBMUTypeToDispIDX : {//type of examples being mapped to each map node to display
+				break;}			
+			case uiMapNodeBMUTypeToDispIDX 	: {//type of examples being mapped to each map node to display
 				mapNodeDispType = SOM_ExDataType.getVal((int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
 				break;}			
-			case uiMseRegionSensIDX : {
+			case uiMseRegionSensIDX 		: {			break;}
+			case uiFtrSelectIDX				: {		//feature idx map to display
+				curMapImgIDX = (int)guiObjs[uiFtrSelectIDX].getVal();	
+				break;}
+			case uiCategorySelectIDX : {	//category select changed - managed by instancing app
+				curCategoryIDX = (int)(this.guiObjs[uiCategorySelectIDX].getVal());
+				curCategoryLabel = getCategoryLabelFromIDX(curCategoryIDX);				
+				setUIWinVals_HandleCategory(settingCategoryFromClass); 
+				break;}
+			case uiClassSelectIDX : {
+				curClassIDX = (int)(this.guiObjs[uiClassSelectIDX].getVal());
+				curClassLabel = getClassLabelFromIDX(curClassIDX);				
+				setUIWinVals_HandleClass(settingClassFromCategory);  
 				break;}
 			default : {setUIWinValsIndiv(UIidx);}
 		}
 	}//setUIWinVals
+
 	
+	private boolean settingCategoryFromClass = false, settingClassFromCategory = false;
+	
+	/**
+	 * Called when class display select value is changed in ui
+	 */
+	protected void setUIWinVals_HandleClass(boolean settingClassFromCategory) {
+		if(!settingClassFromCategory) {		//don't want to change category again if setting from category ui obj change - loop potential
+			int curJPGIdxVal = (int)guiObjs[uiCategorySelectIDX].getVal();
+			int jpgIdxToSet = getCategoryFromClass(curJPGIdxVal,(int)guiObjs[uiClassSelectIDX].getVal());
+			if(curJPGIdxVal != jpgIdxToSet) {
+				settingCategoryFromClass = true;
+				guiObjs[uiCategorySelectIDX].setVal(jpgIdxToSet);
+				setUIWinVals(uiCategorySelectIDX);
+				uiVals[uiCategorySelectIDX] = guiObjs[uiCategorySelectIDX].getVal();
+				settingCategoryFromClass = false;
+			}
+		}		
+	}//setJPGroupIDXFromJp
+	/**
+	 * Called when category display select value is changed in ui
+	 */
+	protected void setUIWinVals_HandleCategory(boolean settingCategoryFromClass) {
+		//msgObj.dispInfoMessage("SOM WIN","setUIWinVals::uiJPGToDispIDX", "Click : settingJPGFromJp : " + settingJPGFromJp);
+		if(!settingCategoryFromClass) {
+			int curClassIdxVal = (int)guiObjs[uiClassSelectIDX].getVal();
+			int classIdxToSet = getClassFromCategory((int)guiObjs[uiCategorySelectIDX].getVal(), curClassIdxVal);
+			if(curClassIdxVal != classIdxToSet) {
+				//msgObj.dispMessage("SOM WIN","setUIWinVals:uiJPGToDispIDX", "Attempt to modify uiJPToDispIDX : curJPIdxVal : "  +curJPIdxVal + " | jpToSet : " + jpIdxToSet, MsgCodes.info1);
+				settingClassFromCategory = true;
+				guiObjs[uiClassSelectIDX].setVal(classIdxToSet);	
+				setUIWinVals(uiClassSelectIDX);
+				uiVals[uiClassSelectIDX] =guiObjs[uiClassSelectIDX].getVal();
+				settingClassFromCategory = false;
+			}
+		}
+	}//setUIWinVals_HandleCategory
+
+	/**
+	 * return instance-specific catgory idx for passed class - should return current cat idx if appropriates
+	 * called when class changes
+	 * @param _curCatIDX
+	 * @param _classIDX new class idx
+	 * @return
+	 */
+	protected abstract int getCategoryFromClass(int _curCatIDX, int _classIDX);
+	/**
+	 * return instance-specific class idx for passed category - should return current class idx if appropriate
+	 * called when category changes
+	 * @param _catIDX new category idx
+	 * @param _curClassIDX
+	 * @return appropriate category idx for current class 
+	 */
+	protected abstract int getClassFromCategory(int _catIDX, int _curClassIDX) ;
+	/**
+	 * For instance-class specific ui values
+	 * @param UIidx
+	 */
 	protected abstract void setUIWinValsIndiv(int UIidx);
 	
-	protected float getTrainTestDatPartition() {	return (float)(.01*this.guiObjs[uiTrainDatPartIDX].getVal());}
+	/**
+	 * return class label from index - will be instance specific
+	 * @param _idx idx from class list box to get class label (used as key in map holding class data in map manager)
+	 * @return
+	 */
+	protected abstract int getClassLabelFromIDX(int _idx);
 	
+	
+	/**
+	 * return category label from index - will be instance specific
+	 * @param _idx idx from category list box to get category label (used as key in map holding category data in map manager)
+	 * @return
+	 */
+	protected abstract int getCategoryLabelFromIDX(int _idx);
+
+	
+	
+	protected final float getTrainTestDatPartition() {	return (float)(.01*this.guiObjs[uiTrainDatPartIDX].getVal());}	
 	
 	/////////////////////////////////////////
 	// draw routines
@@ -702,27 +839,38 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 				tmpImg = mapPerFtrWtImgs[curMapImgIDX];		
 				curImgNum = curMapImgIDX;
 			}
+			//doing this in separate matrix stack frame because map is built small and scaled up
 			pa.image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(getPrivFlags(saveLocClrImgIDX)){tmpImg.save(mapMgr.getSOMLocClrImgForFtrFName(curImgNum));  setPrivFlags(saveLocClrImgIDX,false);}			
-		if(getPrivFlags(mapDrawUMatSegImgIDX)) {pa.image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}//image synthesized (smoother)
+			if(getPrivFlags(mapDrawUMatSegImgIDX)) {pa.image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}//image synthesized (smoother)
+			pa.lights();
 		pa.popStyle();pa.popMatrix(); 
 		pa.pushMatrix();pa.pushStyle();
+			pa.noLights();
 			boolean drawLbl = getPrivFlags(mapDrawNodeLblIDX);
 			pa.translate(SOM_mapLoc[0],SOM_mapLoc[1],0);	
 			if(getPrivFlags(mapDrawTrainDatIDX)){			mapMgr.drawTrainData(pa);}	
 			if(getPrivFlags(mapDrawTestDatIDX)) {			mapMgr.drawTestData(pa);}
 			//draw nodes by population
 			if(getPrivFlags(mapDrawPopMapNodesIDX)) {	if(drawLbl) {mapMgr.drawPopMapNodes(pa, mapNodeDispType);} else {mapMgr.drawPopMapNodesNoLbl(pa, mapNodeDispType);}}
-			
-			if(curImgNum == -1) {			drawSegmentsUMatrixDisp();}
+			if (curImgNum > -1) {
+				if(getPrivFlags(mapDrawWtMapNodesIDX)){		mapMgr.drawNodesWithWt(pa, mapNodeWtDispThresh, curMapImgIDX);} 
+				//display ftr-wt, class and category images, if enabled
+				drawSegmentsFtrWeightDisp(curMapImgIDX);
+				if(getPrivFlags(mapDrawClassSegmentsIDX)) {	 		mapMgr.drawClassSegments(pa,this.curClassLabel);	}		
+				if(getPrivFlags(mapDrawCategorySegmentsIDX)) { 		mapMgr.drawCategorySegments(pa,this.curCategoryLabel);	}				
+				drawPerFtrMap_Indiv();
+			} else {			
+				drawSegmentsUMatrixDisp();
+			}
 			//instance-specific stuff to draw on map, after nodes are drawn
-			drawMapRectangleIndiv(curImgNum);
+			drawMapRectangle_Indiv(curImgNum);
 			//if draw all map nodes
 			if(getPrivFlags(mapDrawAllMapNodesIDX)){	if(drawLbl) {mapMgr.drawAllNodes(pa);} else {mapMgr.drawAllNodesNoLbl(pa);} }
 			pa.lights();
 		pa.popStyle();pa.popMatrix();	
 	}//drawMapRectangle
 	
-	protected abstract void drawMapRectangleIndiv(int curImgNum);
+	protected abstract void drawMapRectangle_Indiv(int curImgNum);
 	//draw various segments in UMatrix Display
 	protected void drawSegmentsUMatrixDisp() {
 		if(getPrivFlags(mapDrawUMatSegMembersIDX)) {		mapMgr.drawUMatrixSegments(pa);}
@@ -732,17 +880,18 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 
 		drawSegmentsUMatrixDispIndiv();
 	}
+	
 	/**
-	 * Instancing class-specific segments to render during UMatrix display
+	 * draw instance-specific per-ftr map data display
+	 */
+	protected abstract void drawPerFtrMap_Indiv();
+	/**
+	 * Instancing class-specific segments and other data to render during UMatrix display
 	 */
 	protected abstract void drawSegmentsUMatrixDispIndiv();
 	
 	protected final void drawSegmentsFtrWeightDisp(int ftrIDX) {if(getPrivFlags(mapDrawFtrWtSegMembersIDX)) {		mapMgr.drawFtrWtSegments(pa, mapNodeWtDispThresh, ftrIDX);}}//drawSegmentsFtrWeightDisp
 	
-	protected final void drawClassCatDisp(int classVal, int categoryVal) {
-		if(getPrivFlags(mapDrawClassSegmentsIDX)) {	 		mapMgr.drawClassSegments(pa,classVal);	}		
-		if(getPrivFlags(mapDrawCategorySegmentsIDX)) { 		mapMgr.drawCategorySegments(pa,categoryVal);	}
-	}//drawSegmentsFtrWeightDisp
 	
 	
 
@@ -757,14 +906,17 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		return clrVal;
 	}//getDataClrFromFloat
 	
-	//make color based on ftr value at particular index
-	//jpIDX is index in feature vector we are querying
-	//call this if map is trained on scaled or normed ftr data
-	private final int getDataClrFromFtrVec(TreeMap<Integer, Float> ftrMap, Integer jpIDX) {
-		Float ftrVal = ftrMap.get(jpIDX);
+	/**
+	 * make color based on ftr value at particular index call this if map is trained on scaled or normed ftr data
+	 * @param ftrMap ftr map
+	 * @param classIDX index in feature vector we are querying
+	 * @return hex clr
+	 */
+	private final int getDataClrFromFtrVec(TreeMap<Integer, Float> ftrMap, Integer classIDX) {
+		Float ftrVal = ftrMap.get(classIDX);
 //		if(ftrVal == null) {	ftrVal=0.0f;		}
-//		if (minFtrValSeen[jpIDX] > ftrVal) {minFtrValSeen[jpIDX]=ftrVal;}
-//		else if (maxFtrValSeen[jpIDX] < ftrVal) {maxFtrValSeen[jpIDX]=ftrVal;}
+//		if (minFtrValSeen[classIDX] > ftrVal) {minFtrValSeen[classIDX]=ftrVal;}
+//		else if (maxFtrValSeen[classIDX] < ftrVal) {maxFtrValSeen[classIDX]=ftrVal;}
 		int ftr = 0;
 		if(ftrVal != null) {	ftr = Math.round(ftrVal);		}
 		int clrVal = ((ftr & 0xff) << 16) + ((ftr & 0xff) << 8) + (ftr & 0xff);
@@ -844,7 +996,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 					int pxlIDX = x+yCol;
 					//c = getMapNodeLocFromPxlLoc(x, y,mapScaleVal);
 					TreeMap<Integer, Float> ftrs = mapMgr.getInterpFtrs(getMapNodeLocFromPxlLoc(x, y,mapScaleVal));
-					for (Integer jp : ftrs.keySet()) {mapPerFtrWtImgs[jp].pixels[pxlIDX] = getDataClrFromFtrVec(ftrs, jp);}
+					for (Integer ftr : ftrs.keySet()) {mapPerFtrWtImgs[ftr].pixels[pxlIDX] = getDataClrFromFtrVec(ftrs, ftr);}
 				}
 			}
 		}

@@ -2,10 +2,11 @@ package base_SOM_Objects.som_examples;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ExecutorService;
 
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
-import base_Utils_Objects.*;
+import base_SOM_Objects.som_utils.runners.SOM_SaveExToBMUs_Runner;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
@@ -18,6 +19,9 @@ import base_Utils_Objects.io.MsgCodes;
 public abstract class SOM_ExampleManager {
 		//owning map manager
 	public static SOM_MapManager mapMgr;
+		//ref to mt executor
+	protected ExecutorService th_exec;
+
 		//message object for logging and to display to screen
 	protected MessageObject msgObj;
 		//fileIO manager
@@ -53,6 +57,7 @@ public abstract class SOM_ExampleManager {
 
 	public SOM_ExampleManager(SOM_MapManager _mapMgr, String _exName, String _longExampleName, boolean _shouldValidate) {
 		mapMgr = _mapMgr;
+		th_exec = mapMgr.getTh_Exec();
 		projConfigData = mapMgr.projConfigData;
 		exampleName = _exName;
 		longExampleName = _longExampleName;
@@ -165,10 +170,22 @@ public abstract class SOM_ExampleManager {
 	public abstract void loadAllPreProccedMapData(String subDir);
 	public abstract boolean saveAllPreProccedMapData();
 	/**
-	 * save mappings from examples to bmus
-	 * @return whether bmus were saved successfully
+	 * Save all example -> BMU mappings
+	 * @param _approxNumPerPartition approximate # of examples per partition for saving
 	 */
-	public abstract boolean saveExampleBMUMappings();
+	public final boolean saveExampleBMUMappings(int _approxNumPerPartition) {
+		//if((!isExampleArrayBuilt()) ||  forceRebuildForSave) {			buildExampleArray();		}			//force rebuilding
+		SOM_Example[] exToSaveBMUs = getExToSave();
+		String _fileNamePrefix = projConfigData.getExampleToBMUFileNamePrefix(exampleName);
+		SOM_SaveExToBMUs_Runner saveRunner = new SOM_SaveExToBMUs_Runner(mapMgr, th_exec, exToSaveBMUs, exampleName, true,  _fileNamePrefix, _approxNumPerPartition);
+		saveRunner.runMe();
+		return true;
+	}//saveExampleBMUMappings
+	/**
+	 * return array of examples to save their bmus
+	 * @return
+	 */
+	protected abstract SOM_Example[] getExToSave();
 	
 	////////////////////////////////////
 	// build SOM arrays
