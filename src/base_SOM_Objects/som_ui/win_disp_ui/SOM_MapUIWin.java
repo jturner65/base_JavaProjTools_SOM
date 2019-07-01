@@ -29,8 +29,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	//map manager that is instanced 
 	public SOM_MapManager mapMgr;
 	//interface to facilitate keeping UI and the SOM MapData object synched w/respect to map data values
-	public SOM_UIToMapCom mapUIAPI;
-	
+	public SOM_UIToMapCom mapUIAPI;	
 	//idxs of boolean values/flags
 	public static final int 
 		buildSOMExe 				= 0,			//command to initiate SOM-building
@@ -69,6 +68,11 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	
 	public static final int numSOMBasePrivFlags = 25;
 	//instancing class will determine numPrivFlags based on how many more flags are added
+	
+	/**
+	 * # of priv flags from base class and instancing class
+	 */
+	private int numPrivFlags;
 	
 	//	//GUI Objects	
 	public final static int 
@@ -144,7 +148,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	protected SOM_MseOvrDisplay mseOvrData;//location and label of mouse-over point in map
 	
 	
-	public SOM_MapUIWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed,	String _winTxt, boolean _canDrawTraj) {
+	public SOM_MapUIWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, boolean _canDrawTraj) {
 		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt, _canDrawTraj);
 		initAndSetSOMDatUIMaps();
 	}//ctor
@@ -196,7 +200,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		setFlags(drawRightSideMenu, true);		//may need some re-scaling to keep things in the middle and visible
 		
 		//init specific sim flags
-		initAllPrivFlags();		//call in instancing class when # of flags is known		
+		initPrivFlags(numPrivFlags);
 		/**
 		 * set these values from when UI was created
 		 */
@@ -220,7 +224,9 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	protected abstract void initMeIndiv();	
 	
 	@Override
-	//initialize all private-flag based UI buttons here - called by base class
+	/**
+	 * initialize all private-flag based UI buttons here - called by base class before initMe
+	 */
 	public final void initAllPrivBtns(){	
 		//add an entry for each button, in the order they are wished to be displayed		
 		ArrayList<Object[]> tmpBtnNamesArray = new ArrayList<Object[]>();
@@ -248,8 +254,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{saveSegmentTFLabels[0],saveSegmentTFLabels[1],saveAllSegmentMapsIDX});}		
 		String[] catClassLockBtnTFLabels = getClassCatLockBtnTFLabels();
 		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1],mapLockClassCatSegmentsIDX});}	
-		//add instancing-class specific buttons
-		initAllSOMPrivBtns_Indiv(tmpBtnNamesArray);
+		//add instancing-class specific buttons - returns total # of private flags in instancing class
+		numPrivFlags = initAllSOMPrivBtns_Indiv(tmpBtnNamesArray);
 		//finalize setup for UI toggle buttons - convert to arrays
 		truePrivFlagNames = new String[tmpBtnNamesArray.size()];
 		falsePrivFlagNames = new String[truePrivFlagNames.length];
@@ -273,8 +279,9 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * 			the first element is the true string label, 
 	 * 			the 2nd elem is false string array, and 
 	 * 			the 3rd element is integer flag idx 
+	 * @return total number of privBtnFlags in instancing class (including those not displayed)
 	 */
-	protected abstract void initAllSOMPrivBtns_Indiv(ArrayList<Object[]> tmpBtnNamesArray);
+	protected abstract int initAllSOMPrivBtns_Indiv(ArrayList<Object[]> tmpBtnNamesArray);
 	//these are used by instancing class to determine the names of the class and category data values used.  if these are empty then that means these features are not used
 	/**
 	 * Instance class determines the true and false labels the class buttons use - if empty then no classes used
@@ -456,9 +463,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	}//calcAndSetMapLoc
 	protected abstract void setVisScreenDimsPriv_Indiv();
 	
-	
-	//this will be called in instancing class when # of priv flags is known - should call initPrivFlags(numPrivFlags);
-	protected abstract void initAllPrivFlags();
 	@Override
 	public final void setPrivFlags(int idx, boolean val){
 		int flIDX = idx/32, mask = 1<<(idx%32);
@@ -730,7 +734,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	/**
 	 * Called when class display select value is changed in ui
 	 */
-	protected void setUIWinVals_HandleClass(boolean settingClassFromCategory) {
+	protected final void setUIWinVals_HandleClass(boolean settingClassFromCategory) {
 		if(!settingClassFromCategory) {		//don't want to change category again if setting from category ui obj change - loop potential
 			int curJPGIdxVal = (int)guiObjs[uiCategorySelectIDX].getVal();
 			int jpgIdxToSet = getCategoryFromClass(curJPGIdxVal,(int)guiObjs[uiClassSelectIDX].getVal());
@@ -746,7 +750,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	/**
 	 * Called when category display select value is changed in ui
 	 */
-	protected void setUIWinVals_HandleCategory(boolean settingCategoryFromClass) {
+	protected final void setUIWinVals_HandleCategory(boolean settingCategoryFromClass) {
 		//msgObj.dispInfoMessage("SOM WIN","setUIWinVals::uiJPGToDispIDX", "Click : settingJPGFromJp : " + settingJPGFromJp);
 		if(!settingCategoryFromClass) {
 			int curClassIdxVal = (int)guiObjs[uiClassSelectIDX].getVal();
@@ -893,9 +897,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	protected abstract void drawSegmentsUMatrixDispIndiv();
 	
 	protected final void drawSegmentsFtrWeightDisp(int ftrIDX) {if(getPrivFlags(mapDrawFtrWtSegMembersIDX)) {		mapMgr.drawFtrWtSegments(pa, mapNodeWtDispThresh, ftrIDX);}}//drawSegmentsFtrWeightDisp
-	
-	
-	
 
 	/////////////////////////////////////////
 	// end draw routines
@@ -1071,18 +1072,16 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	public void hndlFileLoad(File file, String[] vals, int[] stIdx) {
 		//if wanting to load/save UI values, uncomment this call and similar in hndlFileSave 
 		//hndlFileLoad_GUI(vals, stIdx);
-		//loading in grade data from grade file - vals holds array of strings, expected to be comma sep values, for a single class, with student names and grades
 	}
 	@Override
 	public ArrayList<String> hndlFileSave(File file) {
 		ArrayList<String> res = new ArrayList<String>();
 		//if wanting to load/save UI values, uncomment this call and similar in hndlFileLoad 
 		//res = hndlFileSave_GUI();
-		//saving student grades to a file for a single class - vals holds array of strings, expected to be comma sep values, for a single class, with student names and grades		
 		return res;
 	}
 	@Override
-	protected myPoint getMsePtAs3DPt(myPoint mseLoc){return new myPoint(mseLoc.x,mseLoc.y,0);}
+	protected final myPoint getMsePtAs3DPt(myPoint mseLoc){return new myPoint(mseLoc.x,mseLoc.y,0);}
 	@Override
 	protected void snapMouseLocs(int oldMouseX, int oldMouseY, int[] newMouseLoc){}//not a snap-to window
 	@Override
