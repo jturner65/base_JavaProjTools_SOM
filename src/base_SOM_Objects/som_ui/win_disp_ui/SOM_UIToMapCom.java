@@ -1,4 +1,4 @@
-package base_SOM_Objects.som_ui;
+package base_SOM_Objects.som_ui.win_disp_ui;
 
 import java.util.HashMap;
 

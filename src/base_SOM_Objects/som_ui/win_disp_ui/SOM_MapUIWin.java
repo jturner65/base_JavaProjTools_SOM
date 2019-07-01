@@ -1,4 +1,4 @@
-package base_SOM_Objects.som_ui;
+package base_SOM_Objects.som_ui.win_disp_ui;
 
 
 import java.io.File;
@@ -7,6 +7,8 @@ import java.util.concurrent.Future;
 
 import base_SOM_Objects.*;
 import base_SOM_Objects.som_examples.*;
+import base_SOM_Objects.som_ui.SOM_FtrMapVisImgBldr;
+import base_SOM_Objects.som_ui.SOM_MseOvrDisplay;
 import base_UI_Objects.*;
 import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
 import base_UI_Objects.windowUI.myDispWindow;
