@@ -29,11 +29,7 @@ import base_Utils_Objects.vectorObjs.myPointf;
 
 public abstract class SOM_MapManager {
 	/**
-	 * window object/applet, if used in graphical context
-	 */
-	private my_procApplet pa;				
-	/**
-	 * owning window
+	 * owning window - null if console
 	 */
 	public SOM_MapUIWin win;		
 	/**
@@ -201,12 +197,14 @@ public abstract class SOM_MapManager {
 	/**
 	 * threshold of u-dist for nodes to belong to same segment
 	 */
-	protected static float nodeInSegUMatrixDistThresh = .3f;
+	public static final Double initNodeInSegUMatrixDistThresh = .3;
+	protected float nodeInSegUMatrixDistThresh = .3f;
 	protected float mapMadeWithUMatrixSegThresh = 0.0f;
 	/**
 	 * threshold for distance for ftr weight segment construction
 	 */
-	protected static float nodeInSegFtrWtDistThresh = .01f;
+	public static final Double initNodeInSegFtrWtDistThresh = .01;
+	protected float nodeInSegFtrWtDistThresh = .01f;
 	protected float mapMadeWithFtrWtSegThresh = 0.0f;
 	/**
 	 * state flags - bits in array holding relevant process info
@@ -246,13 +244,12 @@ public abstract class SOM_MapManager {
 	 * 					String[] _args : command line arguments other than directory info
 	 */
 	public SOM_MapManager(SOM_MapUIWin _win, float[] _dims, TreeMap<String, Object> _argsMap) {
-		pa=null;//assigned by win if it exists
 		win=_win;			
 		mapDims = _dims;
 		mapUIAPI = buildSOM_UI_Interface();
 		initFlags();		
 		//message object manages displaying to screen and potentially to log files - needs to be built first
-		setMsgObj(MessageObject.buildMe(pa));
+		setMsgObj(MessageObject.buildMe(null));
 		
 		//build project configuration data object - this manages all file locations and other configuration options
 		//needs to have msgObj defined before called
@@ -324,7 +321,6 @@ public abstract class SOM_MapManager {
 	 */
 	public void setPADispWinData(SOM_MapUIWin _win, my_procApplet _pa) {
 		win=_win;
-		pa=_pa;
 		MessageObject.pa = _pa;
 		projConfigData.setUIValsFromLoad();
 	}//setPAWindowData
@@ -1686,9 +1682,9 @@ public abstract class SOM_MapManager {
 		float sbrMult = 1.2f, lbrMult = 1.5f;//offsets multiplier for barriers between contextual ui elements
 		pa.pushMatrix();pa.pushStyle();
 		//display preloaded maps
-		yOff=drawLoadedPreBuiltMaps(yOff,curDefaultMap);
+		yOff=drawLoadedPreBuiltMaps(pa,yOff,curDefaultMap);
 		//display mouse-over results in side bar
-		yOff= drawMseRes(yOff);
+		yOff= drawMseRes(pa,yOff);
 		pa.sphere(3.0f);
 		yOff = drawResultBarPriv1(pa, yOff);
 		
@@ -1704,7 +1700,7 @@ public abstract class SOM_MapManager {
 	 * @param yOff
 	 * @return
 	 */
-	private final float drawMseRes(float yOff) {
+	private final float drawMseRes(my_procApplet pa,float yOff) {
 		if((getFlag(dispMseDataSideBarIDX)) && mseOverExample.canDisplayMseLabel()) {
 			pa.translate(10.0f, 0.0f, 0.0f);
 			pa.showOffsetText(0,pa.gui_White,"Mouse Values : ");
@@ -1718,7 +1714,7 @@ public abstract class SOM_MapManager {
 		return yOff;
 	}//drawMseRes
 	
-	protected final float drawLoadedPreBuiltMaps(float yOff, int curDefaultMap) {
+	protected final float drawLoadedPreBuiltMaps(my_procApplet pa,float yOff, int curDefaultMap) {
 		if(getFlag(dispLdPreBuitMapsIDX)) {	
 			String[][] loadedPreBuiltMapData = projConfigData.getPreBuiltMapInfoAra();		
 			pa.translate(0.0f, 0.0f, 0.0f);
@@ -1857,12 +1853,12 @@ public abstract class SOM_MapManager {
 	// segments and segment-related values
 	
 	//umatrix segment thresholds
-	public static float getNodeInUMatrixSegThresh() {return nodeInSegUMatrixDistThresh;}
-	public static void setNodeInUMatrixSegThresh(float _val) {nodeInSegUMatrixDistThresh=_val;}	
+	public float getNodeInUMatrixSegThresh() {return nodeInSegUMatrixDistThresh;}
+	public void setNodeInUMatrixSegThresh(float _val) {nodeInSegUMatrixDistThresh=_val;}	
 	public String getUMatrixSegmentTitleString() {return "UMatrix Dist calc from SOM Training.";}
 	//ftr-wt segment thresholds
-	public static float getNodeInFtrWtSegThresh() {return nodeInSegFtrWtDistThresh;}
-	public static void setNodeInFtrWtSegThresh(float _val) {nodeInSegFtrWtDistThresh=_val;}		
+	public float getNodeInFtrWtSegThresh() {return nodeInSegFtrWtDistThresh;}
+	public void setNodeInFtrWtSegThresh(float _val) {nodeInSegFtrWtDistThresh=_val;}		
 	public abstract String getFtrWtSegmentTitleString(int ftrCalcType, int ftrIDX);
 	//class and category segments
 	public TreeMap<Integer, SOM_MappedSegment> getClass_Segments(){ return Class_Segments; }
@@ -1990,6 +1986,11 @@ public abstract class SOM_MapManager {
 	//set UI values from loaded map data, if UI is in use
 	public void setUIValsFromLoad(SOM_MapDat mapDat) {if (win != null) {		win.setUIValues(mapDat);	}}//setUIValsFromLoad
 	
+	/**
+	 * set ui values from project config used by this map manager
+	 */
+	public void setUIValsFromProjConfig() {projConfigData.setUIValsFromLoad();}
+	
 	public void resetButtonState() {if (win != null) {	win.resetButtonState();}}
 
 	public void setMapNumCols(int _x){
@@ -2007,7 +2008,7 @@ public abstract class SOM_MapManager {
 
 	public String toString(){
 		String res = "Map Manager : ";
-		res += "PApplet is :"+(pa==null ? "null " : "present and non-null " ) +  " | UI Window class is : "+(win==null ? "null " : "present and non-null " );
+		res += "UI Window class is : "+(win==null ? "null " : "present and non-null " );
 		
 		return res;	
 	}	
