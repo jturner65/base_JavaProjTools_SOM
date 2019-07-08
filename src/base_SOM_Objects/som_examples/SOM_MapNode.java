@@ -1,6 +1,7 @@
 package base_SOM_Objects.som_examples;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import base_SOM_Objects.*;
 import base_SOM_Objects.som_segments.SOM_MapNodeCategorySegMgr;
@@ -257,11 +258,21 @@ public abstract class SOM_MapNode extends SOM_Example{
 	/**
 	 * map nodes don't have bmus and so this functionality would be meaningless for them
 	 */
-	public void setSegmentsAndProbsFromBMU() {};
+	public synchronized final void setSegmentsAndProbsFromBMU() {}
 	
-	//called by SOMDataLoader - these are standardized based on data mins and diffs seen in -map nodes- feature data, not in training data
-	//call this instead of buildStdFtrsMap, passing mins and diffs
-	//called by SOMDataLoader - these are standardized based on data mins and diffs seen in -map nodes- feature data, not in training data
+	/**
+	 * map nodes build segment membership through other means, and so these functions are meaningless for them
+	 */
+	public synchronized final void setSegmentsAndProbsFromAllMapNodes(TreeMap<Integer, SOM_MappedSegment> Class_Segments, TreeMap<Integer, SOM_MappedSegment> Category_Segments){}
+	protected synchronized final HashSet<Integer> getAllClassIDsForClsSegmentCalc(){return null;}
+	public synchronized final HashSet<Integer> getAllCategoryIDsForCatSegmentCalc(){return null;}
+
+	/**
+	 * called by SOMDataLoader - these are standardized based on data mins and diffs seen in -map nodes- 
+	 * feature data, not in training data.  call this instead of buildStdFtrsMap, passing mins and diffs                                                                         
+	 * @param minsAra array of per-ftr mins across all features in training data
+	 * @param diffsAra array of per-ftr diffs across all features in training data
+	 */
 	public final void buildStdFtrsMapFromFtrData_MapNode(float[] minsAra, float[] diffsAra) {
 		clearFtrMap(stdFtrMapTypeKey);
 		if (ftrMaps[ftrMapTypeKey].size() > 0) {

@@ -2,6 +2,7 @@ package base_SOM_Objects.som_examples;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.BiFunction;
 
 import base_SOM_Objects.*;
@@ -36,25 +37,45 @@ public abstract class SOM_Example extends baseDataPtVis{
 	//# of features the dataset this example is from has (including zero features)
 	//this will stay the same across all examples and map nodes
 	protected int numFtrs;
-	//use a map to hold only sparse data of each frmt for feature vector
+	/**
+	 * use a map to hold only sparse data of each frmt for feature vector
+	 */
 	protected TreeMap<Integer, Float>[] ftrMaps;	
-	//this map is what is used by examples to compare for mappings - this may include combinations of other features or values
-	//when all ftrs are calculated (unmodded, normalized and stdizd) they need to be mapped to this structure, possibly in
-	//combination with an alternate set of features or other calculations
+	/**
+	 * this map is what is used by examples to compare for mappings - this may 
+	 * include combinations of other features or values when all ftrs are calculated 
+	 * (unmodded, normalized and stdizd) they need to be mapped to this structure, 
+	 * possibly in combination with an alternate set of features or other calculations
+	 *                                                        
+	 */
 	protected TreeMap<Integer, Float>[] compFtrMaps;
-	//magnitude of this feature vector
+	/**
+	 * magnitude of this feature vector
+	 */
 	public float ftrVecMag;	
-	//idx's in feature vector that have non-zero values
+	/**
+	 * idx's in feature vector that have non-zero values
+	 */
 	public ArrayList<Integer> allNonZeroFtrIDXs;	
-	//keys for ftr map arrays
+	/**
+	 * 	keys for ftr map arrays
+	 */
 	protected static final int ftrMapTypeKey = SOM_MapManager.useUnmoddedDat, normFtrMapTypeKey = SOM_MapManager.useNormedDat, stdFtrMapTypeKey = SOM_MapManager.useScaledDat;	
 	protected static final Integer[] ftrMapTypeKeysAra = new Integer[] {ftrMapTypeKey, normFtrMapTypeKey, stdFtrMapTypeKey};
 	
-//	//these objects are for reporting on individual examples.  
-//	//use a map per feature type : unmodified, normalized, standardized,to hold the features sorted by weight as key, value is array of ftrs at a particular weight -submap needs to be instanced in descending key order
-//	private TreeMap<Float, ArrayList<Integer>>[] mapOfWtsToFtrIDXs;	
-//	//a map per feature type : unmodified, normalized, standardized, of ftr IDXs and their relative "rank" in this particular example, as determined by the weight calc
-//	private TreeMap<Integer,Integer>[] mapOfFtrIDXVsWtRank;		
+	/**
+	 * probability structure for this example - probability of every map node for each 
+	 * class this example covers, keyed by class, value is map keyed by mapnode tuple loc, value is 
+	 * probability of class (ratio of class against all classes mapped to map node)	
+	 */	
+	protected ConcurrentSkipListMap<Integer, ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>> perClassMapNodeProbMap;
+	/**
+	 * probability structure for this example - probability of every map node for each category 
+	 * this example covers keyed by category ID, value is map keyed by mapnode tuple loc, value is 
+	 * probability of category (ratio of category to all categories mapped to map node)
+	 */
+	protected ConcurrentSkipListMap<Integer, ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>> perCategoryMapNodeProbMap;
+
 
 	private int[] stFlags;						//state flags - bits in array holding relevant process info
 	public static final int
@@ -131,6 +152,8 @@ public abstract class SOM_Example extends baseDataPtVis{
 		ftrWtSegData = _otr.ftrWtSegData;	
 		class_SegData  = _otr.class_SegData;		
 		categorys_SegData  = _otr.categorys_SegData;		
+		perClassMapNodeProbMap = _otr.perClassMapNodeProbMap;
+		perCategoryMapNodeProbMap = _otr.perCategoryMapNodeProbMap;
 
 		stFlags = _otr.stFlags;		
 	}//copy ctor
@@ -156,7 +179,9 @@ public abstract class SOM_Example extends baseDataPtVis{
 	private void _initSegStructs() {
 		ftrWtSegData = new TreeMap<Integer, SOM_MappedSegment>();		//keyed by non-zero ftr index	                   
 		class_SegData	= new TreeMap<Integer, SOM_MappedSegment>();	//segment membership manager class mapping         
-		categorys_SegData = new TreeMap<Integer, SOM_MappedSegment>();	//segment membership manager category mapping      
+		categorys_SegData = new TreeMap<Integer, SOM_MappedSegment>();	//segment membership manager category mapping     
+		perClassMapNodeProbMap = new ConcurrentSkipListMap<Integer, ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>>();
+		perCategoryMapNodeProbMap = new ConcurrentSkipListMap<Integer, ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>>();
 	}
 	
 	//mapped segments for this example
@@ -169,15 +194,106 @@ public abstract class SOM_Example extends baseDataPtVis{
 	public synchronized SOM_MappedSegment getCategorySegment(int idx) {		return categorys_SegData.get(idx);}
 
 	/**
-	 * set this example's segment membership and probabilities from the mapped bmu - class/category label-driven examples won't use this function
+	 * set this example's segment membership and probabilities from the mapped bmu 
+	 * class/category label-driven examples won't use this function but will rather 
+	 * poll -all- class/category mappings on map itself, using setSegmentsAndProbsFromAllMapNodes
+	 * to determine segment probs
 	 */
-	public abstract void setSegmentsAndProbsFromBMU();
+	public synchronized void setSegmentsAndProbsFromBMU() {
+		//build this node's segment membership and probabilities based on its BMU
+		//verify not null
+		perClassMapNodeProbMap.clear();		
+		perCategoryMapNodeProbMap.clear();
+		if(isBmuNull()) {	msgObj.dispMessage("SOM_Example","setSegmentsAndProbsFromBMU","Error !!! No BMU defined for this example : " + OID + " | Aborting further segment calculations.",MsgCodes.warning2 ); return;	}
+		Tuple<Integer,Integer> bmuCoords = getBMUMapNodeCoord();
+		//set all class-based map node probabilities
+		ConcurrentSkipListMap<Tuple<Integer,Integer>,Float> classPerMapNodes;
+		Set<Integer> classKeySet = getBMUClassSegIDs();
+		for(Integer cls : classKeySet) {
+			addClassSegment(cls, getBMUClassSegment(cls));
+			classPerMapNodes = new ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>();
+			classPerMapNodes.put(bmuCoords, getBMUProbForClass(cls));
+			perClassMapNodeProbMap.put(cls, classPerMapNodes);			
+		}
+		//set all category-based map node probabilities				
+		ConcurrentSkipListMap<Tuple<Integer,Integer>,Float> catPerMapNodes;		
+		Set<Integer> catKeySet = getBMUCategorySegIDs();
+		for(Integer cat : catKeySet) {
+			addCategorySegment(cat, getBMUCategorySegment(cat));
+			catPerMapNodes = new ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>();
+			catPerMapNodes.put(bmuCoords, getBMUProbForCategory(cat));
+			perCategoryMapNodeProbMap.put(cat, catPerMapNodes);
+		}		
+	}//setAllMapNodeSegmentsAndProbs	
+	/**
+	 * set this example's segment membership and probabilities from all map nodes' 
+	 * class/category membership.  This is for examples who are not BMU driven but rather
+	 * are class/category driven, such as product examples in a product-purchase-based
+	 * data environment
+	 * @param Class_Segments keyed by class ID, value is class segment
+	 * @param Category_Segments keyed by category ID, value is category segment
+	 */
+	public synchronized void setSegmentsAndProbsFromAllMapNodes(TreeMap<Integer, SOM_MappedSegment> Class_Segments, TreeMap<Integer, SOM_MappedSegment> Category_Segments) {
+		//set all jp(class)-based map node probabilities
+		perClassMapNodeProbMap.clear();		
+		ConcurrentSkipListMap<Tuple<Integer,Integer>,Float> clsPerMapNodes, tmpClsMapNodes;
+		HashSet<Integer> allClassIDs = getAllClassIDsForClsSegmentCalc();
+		for(Integer cls : allClassIDs) {
+			clsPerMapNodes = mapMgr.getMapNodeClassProbsForClass(cls);
+			tmpClsMapNodes = new ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>();
+			for(Tuple<Integer,Integer> key : clsPerMapNodes.keySet()) {				tmpClsMapNodes.put(key, clsPerMapNodes.get(key));			}
+			perClassMapNodeProbMap.put(cls, tmpClsMapNodes);
+			addClassSegment(cls, Class_Segments.get(cls));
+		}
+		//set all jpgroup(category)-based map node probabilities
+		perCategoryMapNodeProbMap.clear();
+		ConcurrentSkipListMap<Tuple<Integer,Integer>,Float> catPerMapNodes, tmpCatMapNodes;	
+		HashSet<Integer> allCatIDs = getAllCategoryIDsForCatSegmentCalc();
+		for(Integer cat : allCatIDs) {
+			catPerMapNodes = mapMgr.getMapNodeCategoryProbsForCategory(cat);
+			tmpCatMapNodes = new ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>();
+			for(Tuple<Integer,Integer> key : catPerMapNodes.keySet()) {				tmpCatMapNodes.put(key, catPerMapNodes.get(key));			}
+			perCategoryMapNodeProbMap.put(cat, tmpCatMapNodes);
+			addCategorySegment(cat, Category_Segments.get(cat));
+		}		
+	}//setAllMapNodeSegmentsAndProbs	
+	
+	/**
+	 * Return all the relevant classes found in this example/that this example belongs 
+	 * to, for class segment calculation
+	 * @return class IDs present in this example
+	 */
+	protected abstract HashSet<Integer> getAllClassIDsForClsSegmentCalc();
+	/**
+	 * Return all the relevant categories found in this example or that this example 
+	 * belongs to, for category segment membership calculation
+	 * @return category IDs present in this example
+	 */
+	protected abstract HashSet<Integer> getAllCategoryIDsForCatSegmentCalc();
+	
+	/**
+	 * class probability structure for this example - probability of every node for each class 
+	 * this example covers keyed by class ID, value is map keyed by mapnode tuple loc, 
+	 * value is probablity of class (ratio of class to all classes mapped to map node)
+	 * @return
+	 */
+	public final ConcurrentSkipListMap<Integer, ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>> getPerClassMapNodeProbMap(){return perClassMapNodeProbMap;};
+	/**
+	 * category probability structure for this example - probability of every node for each 
+	 * category this example covers keyed by category ID, value is map keyed by mapnode 
+	 * tuple loc, value is probablity of category (ratio of category to all categories 
+	 * mapped to map node)
+	 * @return
+	 */
+	public final ConcurrentSkipListMap<Integer, ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>> getPerCategoryMapNodeProbMap(){return perCategoryMapNodeProbMap;}
+	
+	
 
 	//clear instead of reinstance - if ftr maps are cleared then compFtrMaps should be cleared as well
-	protected synchronized void clearAllFtrMaps() {for (int i=0;i<ftrMaps.length;++i) {	clearFtrMap(i);}}	
-	protected synchronized void clearFtrMap(int idx) {ftrMaps[idx].clear(); clearCompFtrMap(idx);}
+	protected synchronized void clearAllFtrMaps() {for (int i=0;i<ftrMaps.length;++i) {	clearFtrMap(i); ftrMaps[i].clear();compFtrMaps[i].clear();}}	
+	protected synchronized void clearFtrMap(int idx) {ftrMaps[idx].clear(); compFtrMaps[idx].clear();}
 	//clear instead of reinstance
-	protected synchronized void clearAllCompFtrMaps() {for (int i=0;i<compFtrMaps.length;++i) {	clearCompFtrMap(i);}}
+	protected synchronized void clearAllCompFtrMaps() {for (int i=0;i<compFtrMaps.length;++i) {	compFtrMaps[i].clear();}}
 	protected synchronized void clearCompFtrMap(int idx) {compFtrMaps[idx].clear();}
 
 	//build feature vector

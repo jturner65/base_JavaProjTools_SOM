@@ -794,6 +794,12 @@ public abstract class SOM_MapManager {
 		}
 		getMsgObj().dispMessage("SOM_MapManager","buildCategorySegmentsOnMap","Finished building " + descStr + " : " + MapNodesWithMappedCategories.size() + " categories have map nodes mapped to them.", MsgCodes.info5);			
 	}//buildCategorySegmentsOnMap	
+	
+	public ConcurrentSkipListMap<Tuple<Integer,Integer>, Float> getMapNodeClassProbsForClass(Integer cls){return MapNodeClassProbs.get(cls);}		
+	public ConcurrentSkipListMap<Tuple<Integer,Integer>, Float> getMapNodeCategoryProbsForCategory(Integer cat){return MapNodeCategoryProbs.get(cat);}	
+
+	
+	
 	/**
 	 * return the class labels used for the classification of training examples to 
 	 * their bmus.  bmus then represent a probability distribution of class membership
