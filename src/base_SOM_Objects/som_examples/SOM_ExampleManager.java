@@ -17,28 +17,55 @@ import base_Utils_Objects.io.MsgCodes;
  * @author john
  */
 public abstract class SOM_ExampleManager {
-		//owning map manager
+	/**
+	 * owning map manager
+	 */
 	public static SOM_MapManager mapMgr;
-		//ref to mt executor
+	/**
+	 * ref to mt executor
+	 */
 	protected ExecutorService th_exec;
 
-		//message object for logging and to display to screen
+	/**
+	 * message object for logging and to display to screen
+	 */
 	protected MessageObject msgObj;
-		//fileIO manager
+	/**
+	 * fileIO manager
+	 */
 	protected FileIOManager fileIO;
-		//struct maintaining complete project configuration and information from config files - all file name data and building needs to be done by this object
+	/**
+	 * struct maintaining complete project configuration and information from config files.
+	 * all file name data and building needs to be done by this object
+	 */
 	public static SOM_ProjConfigData projConfigData;	
-		//short name of example type - this is application-specified, and may not coincide with ExDataType 
+	/**
+	 * short name of example type - this is application-specified, and may not coincide 
+	 * with ExDataType 
+	 */
 	public final String exampleName;
-		//descriptive name of example type
+	/**
+	 * descriptive name of example type
+	 */
 	public final String longExampleName;
-		//a map keyed by example ID of this specific type of examples
+	/**
+	 * a map keyed by example ID of this specific type of examples
+	 */
 	protected ConcurrentSkipListMap<String, SOM_Example> exampleMap;
-		//descriptive string of date and time of when the data this mapper manages was created
-		//this should be saved with data and loaded from files
+	/**
+	 * descriptive string of date and time of when the data this mapper manages was created.
+	 * this should be saved with data and loaded from files
+	 */
 	protected String dateAndTimeOfDataCreation;
+	/**
+	 * per file partition size for pre-processed example csv data - no more than this many records will be s
+	 */
+	protected final int preProcDatPartSz;
+
 	
-		//current state of examples
+	/**
+	 * current state of examples
+	 */
 	private int[] stFlags;
 	public static final int
 		shouldValidateIDX		= 0,		//whether or not this data should be validated
@@ -50,9 +77,13 @@ public abstract class SOM_ExampleManager {
 		exampleArrayBuiltIDX	= 6;		//array of examples to be used by SOM(potentially) built
 	public static final int numFlags = 7;
 	
-		//array of examples actually interacted with by SOM - will be a subset of examples, smaller due to some examples being "bad"
+	/**
+	 * array of examples actually interacted with by SOM - will be a subset of examples, smaller due to some examples being "bad"
+	 */
 	protected SOM_Example[] SOMexampleArray;
-		//# of actual examples used by SOM of this type
+	/**
+	 * # of actual examples used by SOM of this type
+	 */
 	protected int numSOMExamples;
 
 	public SOM_ExampleManager(SOM_MapManager _mapMgr, String _exName, String _longExampleName, boolean _shouldValidate) {
@@ -63,8 +94,8 @@ public abstract class SOM_ExampleManager {
 		longExampleName = _longExampleName;
 		msgObj = MessageObject.buildMe();
 		//fileIO is used to load and save info from/to local files except for the raw data loading, which has its own handling
-		fileIO = new FileIOManager(msgObj,"SOMExampleMapper::"+exampleName);
-		
+		fileIO = new FileIOManager(msgObj,"SOM_ExampleManager::"+exampleName);
+		preProcDatPartSz = mapMgr.getPreProcDatPartSz();
 		exampleMap = new ConcurrentSkipListMap<String, SOM_Example>();
 		initFlags();
 		setFlag(shouldValidateIDX, _shouldValidate);
@@ -105,19 +136,19 @@ public abstract class SOM_ExampleManager {
 	 */	
 	public final boolean finalizeAllExamples() {
 		if((!getFlag(dataIsLoadedIDX)) || (exampleMap.size() == 0)) {
-			msgObj.dispMessage("SOMExampleMapper::"+exampleName,"finalizeAllExamples","Unable to finalizeAllExamples " + exampleName+ " examples due to them not having been loaded.  Aborting.", MsgCodes.warning1);
+			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"finalizeAllExamples","Unable to finalizeAllExamples " + exampleName+ " examples due to them not having been loaded.  Aborting.", MsgCodes.warning1);
 			return false;
 		} else if (getFlag(dataFtrsPreparedIDX)) {
-			msgObj.dispMessage("SOMExampleMapper::"+exampleName,"finalizeAllExamples","Data has already been finalized for " + exampleName+ " examples.", MsgCodes.warning1);
+			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"finalizeAllExamples","Data has already been finalized for " + exampleName+ " examples.", MsgCodes.warning1);
 			return false;			
 		} 
-		msgObj.dispMessage("SOMExampleMapper::"+exampleName,"buildFtrVec","Begin finalizing all " +exampleMap.size()+ " " + exampleName+ " examples to prepare them for ftr calc.", MsgCodes.info1);
+		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildFtrVec","Begin finalizing all " +exampleMap.size()+ " " + exampleName+ " examples to prepare them for ftr calc.", MsgCodes.info1);
 		//finalize each example - this will aggregate all the ftrs's that are seen in src data and prepare example for calculating ftr vector
 		for (SOM_Example ex : exampleMap.values()) {			ex.finalizeBuildBeforeFtrCalc();		}	
 		setFlag(dataFtrsPreparedIDX, true);
 		setFlag(dataFtrsCalcedIDX, false);
 		setFlag(dataPostFtrsBuiltIDX, false);
-		msgObj.dispMessage("SOMExampleMapper::"+exampleName,"buildFtrVec","Finished finalizing all " +exampleMap.size()+ " " + exampleName+ " examples to prepare them for ftr calc.", MsgCodes.info1);
+		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildFtrVec","Finished finalizing all " +exampleMap.size()+ " " + exampleName+ " examples to prepare them for ftr calc.", MsgCodes.info1);
 		return true;
 	}//finalizeAllExamples()
 
@@ -126,15 +157,15 @@ public abstract class SOM_ExampleManager {
 	 */
 	public final boolean buildFeatureVectors() {
 		if(!getFlag(dataFtrsPreparedIDX)) {
-			msgObj.dispMessage("SOMExampleMapper::"+exampleName,"buildFtrVec","Unable to build feature vectors for " + exampleName+ " examples due to them not having been finalized.  Aborting.", MsgCodes.warning1);
+			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildFtrVec","Unable to build feature vectors for " + exampleName+ " examples due to them not having been finalized.  Aborting.", MsgCodes.warning1);
 			return false;
 		}
-		msgObj.dispMessage("SOMExampleMapper::"+exampleName,"buildFtrVec","Begin building feature vectors for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
+		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildFtrVec","Begin building feature vectors for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
 		//instance-specific feature vector building
 		buildFtrVec_Priv();		
 		setFlag(dataFtrsCalcedIDX, true);
 		setFlag(dataPostFtrsBuiltIDX, false);
-		msgObj.dispMessage("SOMExampleMapper::"+exampleName,"buildFtrVec","Finished building feature vectors for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
+		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildFtrVec","Finished building feature vectors for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
 		return true;
 	}//buildFtrVec	
 	/**
@@ -147,17 +178,17 @@ public abstract class SOM_ExampleManager {
 	 */
 	public final boolean buildAfterAllFtrVecsBuiltStructs() {
 		if(!getFlag(dataFtrsCalcedIDX)) {
-			msgObj.dispMessage("SOMExampleMapper::"+exampleName,"buildAfterAllFtrVecsBuiltStructs","Unable to execute Post-feature calc process for " + exampleName+ " examples due to them not having had features calculated.  Aborting.", MsgCodes.warning1);
+			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildAfterAllFtrVecsBuiltStructs","Unable to execute Post-feature calc process for " + exampleName+ " examples due to them not having had features calculated.  Aborting.", MsgCodes.warning1);
 			return false;
 		} else if(getFlag(dataPostFtrsBuiltIDX)){
-			msgObj.dispMessage("SOMExampleMapper::"+exampleName,"buildAfterAllFtrVecsBuiltStructs","Post-feature calc process for " + exampleName+ " examples already executed.", MsgCodes.warning1);
+			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildAfterAllFtrVecsBuiltStructs","Post-feature calc process for " + exampleName+ " examples already executed.", MsgCodes.warning1);
 			return false;
 		}
-		msgObj.dispMessage("SOMExampleMapper::"+exampleName,"buildPostFtrVecStructs","Begin building Post-feature vector data for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
+		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildPostFtrVecStructs","Begin building Post-feature vector data for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
 		//instance-specific feature vector building - here primarily are the standardized feature vectors built
 		buildAfterAllFtrVecsBuiltStructs_Priv();
 		setFlag(dataPostFtrsBuiltIDX, true);
-		msgObj.dispMessage("SOMExampleMapper::"+exampleName,"buildPostFtrVecStructs","Finished building Post-feature vector data for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
+		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildPostFtrVecStructs","Finished building Post-feature vector data for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
 		return true;
 	}//buildFtrVec	
 	/**
@@ -167,8 +198,141 @@ public abstract class SOM_ExampleManager {
 		
 	/////////////////////////////////////////////
 	// load and save preprocced data
-	public abstract void loadAllPreProccedMapData(String subDir);
-	public abstract boolean saveAllPreProccedMapData();
+//	public abstract void loadAllPreProccedExampleData(String subDir);
+//	public abstract boolean saveAllPreProccedExampleData();
+	
+	/**
+	 * load prospect mapped training data into StraffSOMExamples from disk - must reset example maps before this is called
+	 */
+	public final void loadAllPreProccedExampleData(String subDir) {
+		//perform in multiple threads if possible
+		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"loadAllPreProccedMapData","Loading all " + exampleName+ " example data from : " +subDir, MsgCodes.info5);
+		//all data managed by this example mapper needs to be reset
+		reset();
+		String[] loadSrcFNamePrefixAra = projConfigData.buildPreProccedDataCSVFNames_Load(subDir, exampleName+ "MapSrcData");
+		//get number of paritions
+		int numPartitions = getNumSrcFilePartitions(loadSrcFNamePrefixAra,subDir);
+		//error loading
+		if(numPartitions == -1) {return;}
+		//load data creation date time, if exists
+		loadDataCreateDateTime(subDir);
+		
+		boolean canMultiThread=mapMgr.isMTCapable();
+		if((canMultiThread) && (numPartitions > 1)) {			buildMTLoader(loadSrcFNamePrefixAra, numPartitions);	} 
+		else {							buildSTLoader(loadSrcFNamePrefixAra, numPartitions);	}
+		setAllDataLoaded();
+		setAllDataPreProcced();
+		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"loadAllProductMapData","Finished loading and processing all " + exampleName+ " example data and calculating features.  Number of entries in example map : " + exampleMap.size(), MsgCodes.info5);
+	}//loadAllPropsectMapData	
+	
+	/**
+	 * load example data format file holding # of csv files of this kind of prospect data and return value
+	 * @param subDir
+	 * @return number of source file partitions of this type of preprocessed data
+	 */
+	protected final int getNumSrcFilePartitions(String[] loadSrcFNamePrefixAra, String subDir) {
+		String fmtFile = loadSrcFNamePrefixAra[0]+"_format.csv";
+		String[] loadRes = fileIO.loadFileIntoStringAra(fmtFile, exampleName+" Format file loaded", exampleName+" Format File Failed to load");
+		
+		int numPartitions = 0;
+		try {
+			numPartitions = Integer.parseInt(loadRes[0].split(" : ")[1].trim());
+		} catch (Exception e) {e.printStackTrace(); msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"loadAllPreProccedMapData","Due to error with not finding format file : " + fmtFile+ " no data will be loaded.", MsgCodes.error1); return -1;} 
+		return numPartitions;
+	}//getNumSrcFilePartitions
+	
+	/**
+	 * multi-threaded and single threaded preproc data loaders
+	 * @param loadSrcFNamePrefixAra
+	 * @param numPartitions
+	 */
+	
+	protected abstract void buildMTLoader(String[] loadSrcFNamePrefixAra, int numPartitions);
+	protected abstract void buildSTLoader(String[] loadSrcFNamePrefixAra, int numPartitions);	
+	
+	//save all pre-processed prospect data
+	public final boolean saveAllPreProccedExampleData() {
+		if ((null != exampleMap) && (exampleMap.size() > 0)) {
+			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","Saving all "+exampleName+" map data : " + exampleMap.size() + " examples to save.", MsgCodes.info5);
+			//save date/time of data creation
+			saveDataCreateDateTime();
+			
+			String[] saveDestFNamePrefixAra = projConfigData.buildPreProccedDataCSVFNames_Save(exampleName+"MapSrcData");
+			ArrayList<String> csvResTmp = new ArrayList<String>();		
+			int counter = 0;
+			SOM_Example ex1 = exampleMap.get(exampleMap.firstKey());
+			String hdrStr = ex1.getRawDescColNamesForCSV();
+			csvResTmp.add( hdrStr);
+			int nameCounter = 0, numFiles = (1+((int)((exampleMap.size()-1)/preProcDatPartSz)));
+			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","Start Building "+exampleName+" String Array : " +nameCounter + " of "+numFiles+".", MsgCodes.info1);
+			for (SOM_Example ex : exampleMap.values()) {			
+				csvResTmp.add(ex.getPreProcDescrForCSV());
+				++counter;
+				if(counter % preProcDatPartSz ==0) {
+					String fileName = saveDestFNamePrefixAra[0]+"_"+nameCounter+".csv";
+					msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","Done Building "+exampleName+" String Array : " +nameCounter + " of "+numFiles+".  Saving to file : "+fileName, MsgCodes.info1);
+					//csvRes.add(csvResTmp); 
+					fileIO.saveStrings(fileName, csvResTmp);
+					csvResTmp = new ArrayList<String>();
+					csvResTmp.add( hdrStr);
+					counter = 0;
+					++nameCounter;
+					msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","Start Building "+exampleName+" String Array : " +nameCounter + " of "+numFiles+".", MsgCodes.info1);
+				}
+			}
+			//last array if has values
+			if(csvResTmp.size() > 1) {	
+				String fileName = saveDestFNamePrefixAra[0]+"_"+nameCounter+".csv";
+				msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","Done Building "+exampleName+" String Array : " +nameCounter + " of "+numFiles+".  Saving to file : "+fileName, MsgCodes.info1);
+				//csvRes.add(csvResTmp);
+				fileIO.saveStrings(fileName, csvResTmp);
+				csvResTmp = new ArrayList<String>();
+				++nameCounter;
+			}			
+			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","Finished partitioning " + exampleMap.size()+ " "+exampleName+" records into " + nameCounter + " "+exampleName+" record files, each holding up to " + preProcDatPartSz + " records and saving to files.", MsgCodes.info1);
+			//save the data in a format file
+			String[] data = new String[] {"Number of file partitions for " + saveDestFNamePrefixAra[1] +" data : "+ nameCounter + "\n"};
+			fileIO.saveStrings(saveDestFNamePrefixAra[0]+"_format.csv", data);		
+			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","Finished saving all "+exampleName+" map data", MsgCodes.info5);
+			return true;
+		} else {msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","No "+exampleName+" example data to save. Aborting", MsgCodes.error2); return false;}
+	}//saveAllPreProccedMapData
+	
+	/**
+	 * load the file where the preprocessed data's time and date of creation is stored - call after reset is called in load
+	 * @param fileName preprocced data's datetime file name
+	 * @param dataDesc type of preprocced data being loaded
+	 */
+	private final void loadDateAndTimeOfDataCreation(String fileName, String dataDesc) {
+		String[] csvLoadRes = fileIO.loadFileIntoStringAra(fileName, dataDesc + " creation date file loaded.", dataDesc + " creation date file Failed to load");
+		//should consist of a single string, comma sep between dataDesc + " creation date/time" and actual creation date time
+		//if doesn't exist then use current date time - will be set during reset()
+		if(csvLoadRes.length < 1) {return;}
+		String[] dateTimeStrAra = csvLoadRes[0].split(",");
+		if(dateTimeStrAra.length < 2) {return;}
+		dateAndTimeOfDataCreation = dateTimeStrAra[1].trim();
+	}
+	
+	/**
+	 * load date and time of data creation, if exists
+	 * @param subDir
+	 */
+	private final void loadDataCreateDateTime(String subDir) {
+		String[] loadDateTimeFNamePrefixAra = projConfigData.buildPreProccedDataCSVFNames_Load(subDir, exampleName+ "CreationDateTime");
+		String dateTimeFileName = loadDateTimeFNamePrefixAra[0]+".csv";
+		loadDateAndTimeOfDataCreation(dateTimeFileName, exampleName);
+	}
+	
+	/**
+	 * save date and time of data creation
+	 */
+	private final void saveDataCreateDateTime() {
+		String[] saveDataFNamePrefixAra = projConfigData.buildPreProccedDataCSVFNames_Save(exampleName+"CreationDateTime");
+		String dateTimeFileName = saveDataFNamePrefixAra[0]+".csv";
+		saveDateAndTimeOfDataCreation(dateTimeFileName, exampleName);
+	}
+		
+	
 	/**
 	 * Save all example -> BMU mappings
 	 * @param _approxNumPerPartition approximate # of examples per partition for saving
@@ -255,21 +419,7 @@ public abstract class SOM_ExampleManager {
 	public final int getNumMapExamples() {return exampleMap.size();}
 	//get date and time of the data this mapper manages' creation
 	public final String dateAndTimeOfDataCreation() {return dateAndTimeOfDataCreation;}
-	
-	/**
-	 * load the file where the preprocessed data's time and date of creation is stored - call after reset is called in load
-	 * @param fileName preprocced data's datetime file name
-	 * @param dataDesc type of preprocced data being loaded
-	 */
-	protected final void loadDateAndTimeOfDataCreation(String fileName, String dataDesc) {
-		String[] csvLoadRes = fileIO.loadFileIntoStringAra(fileName, dataDesc + " creation date file loaded.", dataDesc + " creation date file Failed to load");
-		//should consist of a single string, comma sep between dataDesc + " creation date/time" and actual creation date time
-		//if doesn't exist then use current date time - will be set during reset()
-		if(csvLoadRes.length < 1) {return;}
-		String[] dateTimeStrAra = csvLoadRes[0].split(",");
-		if(dateTimeStrAra.length < 2) {return;}
-		dateAndTimeOfDataCreation = dateTimeStrAra[1].trim();
-	}
+
 	
 	/**
 	 * save the creation date/time for the preprocced data  
@@ -317,4 +467,4 @@ public abstract class SOM_ExampleManager {
 		
 		return res;
 	}
-}//class SOMExampleMapper
+}//class SOM_ExampleManager

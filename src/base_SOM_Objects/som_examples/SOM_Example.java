@@ -286,25 +286,45 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * @return
 	 */
 	public final ConcurrentSkipListMap<Integer, ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>> getPerCategoryMapNodeProbMap(){return perCategoryMapNodeProbMap;}
-	
-	
 
-	//clear instead of reinstance - if ftr maps are cleared then compFtrMaps should be cleared as well
+	/**
+	 * clear instead of reinstance - if ftr maps are cleared then compFtrMaps should be cleared as well
+	 */
 	protected synchronized void clearAllFtrMaps() {for (int i=0;i<ftrMaps.length;++i) {	clearFtrMap(i); ftrMaps[i].clear();compFtrMaps[i].clear();}}	
+	/**
+	 * clear instead of reinstance - if ftr maps are cleared then compFtrMaps should be cleared as well
+	 */
 	protected synchronized void clearFtrMap(int idx) {ftrMaps[idx].clear(); compFtrMaps[idx].clear();}
-	//clear instead of reinstance
+	/**
+	 * clear instead of reinstance
+	 */
 	protected synchronized void clearAllCompFtrMaps() {for (int i=0;i<compFtrMaps.length;++i) {	compFtrMaps[i].clear();}}
+	/**
+	 * clear instead of reinstance
+	 */
 	protected synchronized void clearCompFtrMap(int idx) {compFtrMaps[idx].clear();}
 
-	//build feature vector
+	/**
+	 * build feature vector
+	 */
 	protected abstract void buildFeaturesMap();	
-	//standardize this feature vector stdFtrData
+	/**
+	 * standardize this feature vector stdFtrData - scale each feature value by min and max feature value seen across all data
+	 */
 	protected abstract void buildStdFtrsMap();
-	//required info for this example to build feature data - use this so we don't have to reload data ever time
+	/**
+	 * required info for this example to build feature data - use this so we don't have to reload and rebuilt from data every time
+	 * @return
+	 */
 	public abstract String getPreProcDescrForCSV();	
-	//column names of rawDescrForCSV data
+	/**
+	 * column names of rawDescrForCSV data
+	 * @return
+	 */
 	public abstract String getRawDescColNamesForCSV();
-	//finalization after being loaded from baseRawData or from csv record but before ftrs are calculated
+	/**
+	 * finalization after being loaded from raw/preprocessed record but before ftrs are calculated
+	 */
 	public abstract void finalizeBuildBeforeFtrCalc();
 	
 	public boolean isBadExample() {return getFlag(isBadTrainExIDX);}
@@ -319,8 +339,11 @@ public abstract class SOM_Example extends baseDataPtVis{
 //		return false;
 //	}//checkForErrors
 	
-	//add passed map node, with passed feature distance, to neighborhood nodes
-	//using a map of arrays so that we can precalc distances 1 time
+	/**
+	 * add passed map node, with passed feature distance, to neighborhood nodes using a map of arrays so that we can precalc distances 1 time
+	 * @param _n
+	 * @param _dist
+	 */
 	protected final void addMapNodeToNeighbrhdMap(SOM_MapNode _n, double _dist) {
 		ArrayList<SOM_MapNode> tmpMap = mapNodeNghbrs.get(_dist);
 		if (null==tmpMap) {tmpMap = new ArrayList<SOM_MapNode>();}
@@ -328,7 +351,11 @@ public abstract class SOM_Example extends baseDataPtVis{
 		mapNodeNghbrs.put(_dist, tmpMap);		
 	}//addMapUnitToNeighbrhdMap
 	
-	//assign passed map node to be bmu
+	/**
+	 * assign passed map node to be bmu
+	 * @param _n
+	 * @param _dist
+	 */
 	protected final void _setBMUAddToNeighborhood(SOM_MapNode _n, double _dist) {
 		//if (checkForErrors(_n, mapMgr.map_ftrsVar)) {return;}//if true then this is catastrophic error and should interrupt flow here
 		setBmu(_n);	
@@ -344,7 +371,9 @@ public abstract class SOM_Example extends baseDataPtVis{
 		mapNodeNghbrs.put(_dist, tmpMap);		//to hold 9 neighbor nodes and their ftr distance		
 	}//_setBMUAddToNeighborhood
 	
-	//this example has no values in any feature and so has no bmu
+	/**
+	 * this example has no values in any feature and so has no bmu
+	 */
 	protected final void _setNullBMU() {
 		setBmu(null);
 		set_sqDistToBMU(Double.MAX_VALUE);
@@ -354,55 +383,102 @@ public abstract class SOM_Example extends baseDataPtVis{
 	
 	public boolean isBmuNull() {return (null==bmu);}
 	
-	//get class probability from bmu for passed class
-	//treat this example's probability for a particular class as the probability of its BMU for that class (# examples of that class divided by total # of class seen at that node)
+	/**
+	 * get class probability from bmu for passed class treat this example's 
+	 * probability for a particular class as the probability of its BMU 
+	 * for that class (# examples of that class divided by total # of class seen at that node)
+	 * @param cls
+	 * @return
+	 */
 	public float getBMUProbForClass(Integer cls) {
 		if(null==bmu) {return 0.0f;}
 		return bmu.getClassProb(cls);
 	}
 	
+	/**
+	 * get category probability from bmu for this example for passed category treat this example's 
+	 * probability for a particular category as the probability of its BMU 
+	 * for that category (# examples of that category divided by total # of category seen at that node)
+	 * @param cls
+	 * @return
+	 */	
 	public float getBMUProbForCategory(Integer category) {
 		if(null==bmu) {return 0.0f;}
 		return bmu.getCategoryProb(category);
 	}
-	//assumes bmu exists and is not null
-	public Set<Integer> getBMUClassSegIDs(){				return bmu.getClassSegIDs();}
-	public Set<Integer> getBMUCategorySegIDs(){				return bmu.getCategorySegIDs();}
-	public SOM_MappedSegment getBMUClassSegment(int cls) {	return bmu.getClassSegment(cls);}
-	public SOM_MappedSegment getBMUCategorySegment(int cat) {	return bmu.getCategorySegment(cat);}
 	
+	/**
+	 * assumes bmu exists and is not null
+	 * @return
+	 */
+	public Set<Integer> getBMUClassSegIDs(){				return bmu.getClassSegIDs();}
+	/**
+	 * assumes bmu exists and is not null
+	 * @return
+	 */
+	public Set<Integer> getBMUCategorySegIDs(){				return bmu.getCategorySegIDs();}
+	/**
+	 * assumes bmu exists and is not null
+	 * @return
+	 */
+	public SOM_MappedSegment getBMUClassSegment(int cls) {	return bmu.getClassSegment(cls);}
+	/**
+	 * assumes bmu exists and is not null
+	 * @return
+	 */
+	public SOM_MappedSegment getBMUCategorySegment(int cat) {	return bmu.getCategorySegment(cat);}
+	/**
+	 * assumes bmu exists and is not null
+	 * @return
+	 */
 	public Tuple<Integer,Integer> getBMUMapNodeCoord(){	return bmu.mapNodeCoord;}
 	
 	////////////////////////////////////
 	// these always use ftr weight vectors because map nodes always only use ftrs
-	
-	//this adds the passed node as this _training_ example's best matching unit on the map - this is used for -training- examples having
-	//been set as bmus by the SOM executable, hence why it uses the full distance and does not exclude zero features in this example
-	//also does not use comparison vector but actual ftrMaps/training vector for the above reason
-	//this also adds this data point to the map's node with a key of the distance
-	//dataVar is variance of feature weights of map nodes.  this is for chi-squared distance measurements
+
+	/**
+	 * this adds the passed node as this _training_ example's best matching unit on 
+	 * the map - this is used for -training- examples having been set as bmus by the SOM 
+	 * executable, hence why it uses the full distance and does not exclude zero features 
+	 * in this example; also does not use comparison vector but actual ftrMaps/training 
+	 * vector for the above reason                                        
+	 * 
+	 * this also adds this data point to the map's node with a key of the distance 
+	 * @param _n bmu for this example
+	 * @param _ftrType type of features used for comparison (unmod, norm, std)
+	 */
 	public final void setTrainingExBMU(SOM_MapNode _n, int _ftrType){
 		_setBMUAddToNeighborhood(_n,getSqDistFromFtrType(_n.ftrMaps[_ftrType],  ftrMaps[_ftrType]));
 		//find ftr distance to all 8 surrounding nodes and add them to mapNodeNeighbors
 		buildNghbrhdMapNodes( _ftrType, this::getSqDistFromFtrType);
 	}//setBMU
 	
-	//this adds the passed node as this example's best matching unit on the map - this is used for -training- examples having
-	//been set as bmus by the SOM executable, hence why it uses the full distance and does not exclude zero features in this example
-	//also does not use comparison vector but actual ftrMaps/training vector for the above reason
-	//this also adds this data point to the map's node with a key of the distance
-	//dataVar is variance of feature weights of map nodes.  this is for chi-squared distance measurements
+	/**
+	 * this adds the passed node as this _training_ example's best matching unit on 
+	 * the map - this is used for -training- examples having been set as bmus by the SOM 
+	 * executable, hence why it uses the full distance and does not exclude zero features 
+	 * in this example; also does not use comparison vector but actual ftrMaps/training 
+	 * vector for the above reason                                        
+	 * 
+	 * this also adds this data point to the map's node with a key of the distance 
+	 * @param _n bmu for this example
+	 * @param _ftrType type of features used for comparison (unmod, norm, std)
+	 */
 	public final void setTrainingExBMU_ChiSq(SOM_MapNode _n, int _ftrType){
 		_setBMUAddToNeighborhood(_n,getSqDistFromFtrType_ChiSq(_n.ftrMaps[_ftrType],  ftrMaps[_ftrType]));
 		//find ftr distance to all 8 surrounding nodes and add them to mapNodeNeighbors
 		buildNghbrhdMapNodes( _ftrType, this::getSqDistFromFtrType_ChiSq);
 	}//setBMU
 	
-	//use 9 map node neighborhood around this node, accounting for torroidal map, to find exact location on map
-	//for this node (put in mapLoc) by using weighted average of mapNodeLocs of neighbor nodes,
-	//where the weight is the inverse feature distance 
-	// mapNodeNghbrs (9 node neighborood) must be set before this is called, and has bmu set as closest, with key being distance
-	//distsToNodes is distance of this node to all map nodes in neighborhood
+	/**
+	 * use 9 map node neighborhood around this node, accounting for torroidal map, 
+	 * to find exact location on map for this node (put in mapLoc) by using weighted 
+	 * average of mapNodeLocs of neighbor nodes, where the weight is the inverse feature 
+	 * distance mapNodeNghbrs (9 node neighborood) must be set before this is called, 
+	 * and has bmu set as closest, with key being distance                                                     
+	 * @param _ftrType type of feature used for calculations (unmod, norm, std)
+	 * @param _distFunc function used to calculate distance (euclidean or chi-squared (scaled by variance))
+	 */
 	protected final void buildNghbrhdMapNodes(int _ftrType, BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc){
 		int mapColsSize = mapMgr.getMapNodeCols(), mapRowSize = mapMgr.getMapNodeRows();
 		int mapCtrX = bmu.mapNodeCoord.x, mapCtrY = bmu.mapNodeCoord.y;
@@ -514,11 +590,19 @@ public abstract class SOM_Example extends baseDataPtVis{
 		}	
 		setFlag(normFtrsBuiltIDX,true);
 	}//buildNormFtrData
-	
-	//scale each feature value to be between 0->1 based on min/max values seen for this feature
-	//all examples features will be scaled with respect to seen calc results 0- do not use this for
-	//exemplar objects (those that represent a particular product, for example)
-	//MUST BE SET WITH APPROPRIATE MINS AND DIFFS
+
+	/**
+	 * scale each feature value to be between 0->1 based on min/max values seen for this 
+	 * feature.  all examples features will be scaled with respect to seen calc results 
+	 * do not use this for "exemplar" objects (i.e. objects whose features are set manually
+	 * to be some value explicitly intended to represent the feature itself)                   
+	 * 
+	 * MUST BE SET WITH APPROPRIATE MINS AND DIFFS                                                            
+	 * @param from_ftrs source of unmodified features
+	 * @param to_sclFtrs destination map holding scaled features
+	 * @param mins mins found per feature across all examples, used to scale
+	 * @param diffs diffs found per feature across all examples, used to scale
+	 */
 	protected final void calcStdFtrVector(TreeMap<Integer, Float> from_ftrs, TreeMap<Integer, Float> to_sclFtrs, Float[] mins, Float[] diffs) {
 		to_sclFtrs.clear();
 		for (Integer destIDX : from_ftrs.keySet()) {
@@ -685,16 +769,16 @@ public abstract class SOM_Example extends baseDataPtVis{
 		_setBMUAddToNeighborhood(bestUnit, bmuDist);
 	}//_setBMUFromMapNodeDistMap		
 	
-	/**
-	 * references current map of nodes, finds best matching unit and returns map of all map node tuple addresses and their ftr distances from this node     
-	 * also build neighborhood nodes                                                                                                                        
-	 * two methods to minimize if calls for chisq dist vs regular euclidean dist                                                                            
-	 * Passing map of nodes keyed by non-zero ftr idx. 
-	 * 
-	 * @param _MapNodesByFtr : map of all mapnodes keyed by feature idx with non-zero features
-	 * @param _ftrtype : kind of features (unmod, normed, stdized) to be used for comparison/distance calc
-	 * @return
-	 */
+//	/**
+//	 * references current map of nodes, finds best matching unit and returns map of all map node tuple addresses and their ftr distances from this node     
+//	 * also build neighborhood nodes                                                                                                                        
+//	 * two methods to minimize if calls for chisq dist vs regular euclidean dist                                                                            
+//	 * Passing map of nodes keyed by non-zero ftr idx. 
+//	 * 
+//	 * @param _MapNodesByFtr : map of all mapnodes keyed by feature idx with non-zero features
+//	 * @param _ftrtype : kind of features (unmod, normed, stdized) to be used for comparison/distance calc
+//	 * @return
+//	 */
 //	public final TreeMap<Double, ArrayList<SOMMapNode>> findBMUFromFtrNodes_ftrMaps(TreeMap<Integer, HashSet<SOMMapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, int _ftrType) {
 //		HashSet<SOMMapNode> _RelevantMapNodes = new HashSet<SOMMapNode>();
 //		buildRelevantMapNodes(_RelevantMapNodes, ftrMaps[_ftrType].keySet(), _MapNodesByFtr);

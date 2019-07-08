@@ -263,7 +263,7 @@ public class SOM_DataLoader{
 		msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","Built bmus map, now calc dists for examples", MsgCodes.info1);
 		boolean doMT = mapMgr.isMTCapable();
 		//mapping bmus to training examples
-		mapMgr.setTrainDataBMUsRdyToSave(false);
+		mapMgr.setTrainDataBMUsMapped(false);
 		if (doMT) {
 			List<Future<Boolean>> bmuDataBldFtrs;
 			List<SOM_ExBMULoader> bmuDataLoaders = new ArrayList<SOM_ExBMULoader>();
@@ -288,7 +288,7 @@ public class SOM_DataLoader{
 				}				
 			}
 		}//if mt else single thd
-		mapMgr.setTrainDataBMUsRdyToSave(true);
+		mapMgr.setTrainDataBMUsMapped(true);
 		msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","Start Pruning No-Example list", MsgCodes.info5);
 		
 		mapMgr._finalizeBMUProcessing(SOM_ExDataType.Training);
