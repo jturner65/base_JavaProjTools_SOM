@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
+import base_SOM_Objects.som_utils.runners.SOM_MapExDataToBMUs_Runner;
 import base_SOM_Objects.som_utils.runners.SOM_SaveExToBMUs_Runner;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
@@ -74,8 +75,9 @@ public abstract class SOM_ExampleManager {
 		dataFtrsPreparedIDX 	= 3,		//loaded data features have been pre-procced
 		dataFtrsCalcedIDX 		= 4,		//features have been calced
 		dataPostFtrsBuiltIDX	= 5,		//post feature calc data has been calculated
-		exampleArrayBuiltIDX	= 6;		//array of examples to be used by SOM(potentially) built
-	public static final int numFlags = 7;
+		exampleArrayBuiltIDX	= 6,		//array of examples to be used by SOM(potentially) built
+		saveBMUViaSTIDX 		= 7;		//bmus should be saved in a single thread
+	public static final int numFlags = 8;
 	
 	/**
 	 * array of examples actually interacted with by SOM - will be a subset of examples, smaller due to some examples being "bad"
@@ -85,8 +87,14 @@ public abstract class SOM_ExampleManager {
 	 * # of actual examples used by SOM of this type
 	 */
 	protected int numSOMExamples;
-
-	public SOM_ExampleManager(SOM_MapManager _mapMgr, String _exName, String _longExampleName, boolean _shouldValidate) {
+	/**
+	 * constructor for SOM example manager
+	 * @param _mapMgr owning map manager
+	 * @param _exName descriptive name of data this example manager is handling
+	 * @param _longExampleName longer name
+	 * @param _flagVals array of flag vals : idx 0 : if should validate or not, idx 1 : if bmus should be saved via single thread or multi-thread mechanism
+	 */
+	public SOM_ExampleManager(SOM_MapManager _mapMgr, String _exName, String _longExampleName, boolean[] _flagVals) {
 		mapMgr = _mapMgr;
 		th_exec = mapMgr.getTh_Exec();
 		projConfigData = mapMgr.projConfigData;
@@ -98,7 +106,9 @@ public abstract class SOM_ExampleManager {
 		preProcDatPartSz = mapMgr.getPreProcDatPartSz();
 		exampleMap = new ConcurrentSkipListMap<String, SOM_Example>();
 		initFlags();
-		setFlag(shouldValidateIDX, _shouldValidate);
+		setFlag(shouldValidateIDX, _flagVals[0]);
+		setFlag(saveBMUViaSTIDX, _flagVals[1]);
+		
 	}//ctor
 	
 	//reset the data held by this example manager
@@ -331,7 +341,56 @@ public abstract class SOM_ExampleManager {
 		String dateTimeFileName = saveDataFNamePrefixAra[0]+".csv";
 		saveDateAndTimeOfDataCreation(dateTimeFileName, exampleName);
 	}
-		
+	/**
+	 * This exists for very large data sets, to warrant and enable 
+	 * loading, mapping and saving bmu mappings per perProcData File, 
+	 * as opposed to doing each step across all data
+	 * @param subdir subdir location of preproc example data
+	 * @param dataType type of data being processed
+	 * @param dataMappedIDX index in boolean state flags in map manager denoting whether this data type has been mapped or not
+	 * @return
+	 */
+	public final boolean loadDataMapBMUAndSavePerPreProcFile(String subDir, SOM_ExDataType dataType, int dataMappedIDX) {
+		//first load individual file partition
+		String[] loadSrcFNamePrefixAra = projConfigData.buildPreProccedDataCSVFNames_Load(subDir, exampleName+ "MapSrcData");
+		int numPartitions = getNumSrcFilePartitions(loadSrcFNamePrefixAra,subDir);
+		//load each paritition 1 at a time, calc all features for partition, map to bmus and save mappings
+		for(int i=0;i<numPartitions;++i) {
+			//clear out all data
+			reset();
+			
+			String dataFile = loadSrcFNamePrefixAra[0]+"_"+i+".csv";
+			String[] csvLoadRes = fileIO.loadFileIntoStringAra(dataFile, exampleName+ " Data file " + i +" of " +numPartitions +" loaded",  exampleName+ " Data File " + i +" of " +numPartitions +" Failed to load");
+			//ignore first entry - header
+			for (int j=1;j<csvLoadRes.length; ++j) {
+				String str = csvLoadRes[j];
+				int pos = str.indexOf(',');
+				String oid = str.substring(0, pos);
+				SOM_Example ex = buildSingleExample(oid, str);//new Straff_TrueProspectExample(mapMgr, oid, str);
+				exampleMap.put(oid, ex);			
+			}
+			setAllDataLoaded();
+			setAllDataPreProcced();
+				//data is loaded here, now finalize before ftr calc
+			finalizeAllExamples();
+				//now build feature vectors
+			buildFeatureVectors();	
+				//build post-feature vectors - build STD vectors, build alt calc vec mappings
+			buildAfterAllFtrVecsBuiltStructs();
+				//build array - gets rid of bad examples (have no ftr vector values at all)
+			buildExampleArray();
+				//launch a MapTestDataToBMUs_Runner to manage multi-threaded calc
+			SOM_MapExDataToBMUs_Runner mapRunner = new SOM_MapExDataToBMUs_Runner(mapMgr, th_exec, SOMexampleArray, exampleName, dataType,dataMappedIDX, false);	
+			mapRunner.runMe();
+				//build array again to remove any non-BMU-mapped examples (?)
+			//buildExampleArray();
+			//(SOM_MapManager _mapMgr, ExecutorService _th_exec, SOMExample[] _exData, String _dataTypName, boolean _forceST, String _fileNamePrefix)
+			String _fileNamePrefix = projConfigData.getExampleToBMUFileNamePrefix(exampleName)+"_SrcFileIDX_"+String.format("%02d", i);
+			SOM_SaveExToBMUs_Runner saveRunner = new SOM_SaveExToBMUs_Runner(mapMgr, th_exec, SOMexampleArray, exampleName, true,  _fileNamePrefix, preProcDatPartSz);
+			saveRunner.runMe();	
+		}
+		return true;
+	}//loadDataMapBMUAndSavePerPreProcFile
 	
 	/**
 	 * Save all example -> BMU mappings
@@ -341,7 +400,7 @@ public abstract class SOM_ExampleManager {
 		//if((!isExampleArrayBuilt()) ||  forceRebuildForSave) {			buildExampleArray();		}			//force rebuilding
 		SOM_Example[] exToSaveBMUs = getExToSave();
 		String _fileNamePrefix = projConfigData.getExampleToBMUFileNamePrefix(exampleName);
-		SOM_SaveExToBMUs_Runner saveRunner = new SOM_SaveExToBMUs_Runner(mapMgr, th_exec, exToSaveBMUs, exampleName, true,  _fileNamePrefix, _approxNumPerPartition);
+		SOM_SaveExToBMUs_Runner saveRunner = new SOM_SaveExToBMUs_Runner(mapMgr, th_exec, exToSaveBMUs, exampleName, getFlag(saveBMUViaSTIDX),  _fileNamePrefix, _approxNumPerPartition);
 		saveRunner.runMe();
 		return true;
 	}//saveExampleBMUMappings
@@ -350,6 +409,13 @@ public abstract class SOM_ExampleManager {
 	 * @return
 	 */
 	protected abstract SOM_Example[] getExToSave();
+	/**
+	 * build a single SOM Example instance using passed OID and csv-formatted data string
+	 * @param _oid ID for example
+	 * @param _str CSV string of example data
+	 * @return correctly cast example
+	 */
+	protected abstract SOM_Example buildSingleExample(String _oid, String _str);
 	
 	////////////////////////////////////
 	// build SOM arrays
@@ -447,6 +513,7 @@ public abstract class SOM_ExampleManager {
 			case dataFtrsCalcedIDX 		: {break;}	
 			case dataPostFtrsBuiltIDX 	: {break;}
 			case exampleArrayBuiltIDX	: {break;}
+			case saveBMUViaSTIDX		: {break;}
 		}
 	}//setFlag
 	

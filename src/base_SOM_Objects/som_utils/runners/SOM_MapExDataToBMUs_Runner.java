@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
@@ -34,9 +35,6 @@ public class SOM_MapExDataToBMUs_Runner extends SOM_MapRunner{
 	private static final int rawNumPerPartition = 200000;
 	
 	protected double ttlProgress=-.1;
-	
-	List<Future<Boolean>> ExMapperFtrs = new ArrayList<Future<Boolean>>();
-	List<MapExampleDataToBMUs> ExMappers = new ArrayList<MapExampleDataToBMUs>();
 		
 	public SOM_MapExDataToBMUs_Runner(SOM_MapManager _mapMgr, ExecutorService _th_exec, SOM_Example[] _exData, String _dataTypName, SOM_ExDataType _dataType, int _readyToSaveIDX, boolean _forceST) {
 		super( _mapMgr, _th_exec, _exData, _dataTypName,_forceST);
@@ -52,7 +50,8 @@ public class SOM_MapExDataToBMUs_Runner extends SOM_MapRunner{
 	@Override
 	protected int getNumPerPartition() {return rawNumPerPartition;	}
 	
-	protected void _runner(int dataSt, int dataEnd, int pIdx, int ttlParts) {
+	@Override
+	protected void execPerPartition(List<Callable<Boolean>> ExMappers, int dataSt, int dataEnd, int pIdx, int ttlParts) {
 		int numEx = dataEnd-dataSt;
 		int numForEachThrd = calcNumPerThd(numEx, numUsableThreads);
 		//use this many for every thread but last one
@@ -69,28 +68,29 @@ public class SOM_MapExDataToBMUs_Runner extends SOM_MapRunner{
 		if(stIDX < dataEnd) {ExMappers.add(new MapExampleDataToBMUs(mapMgr,stIDX, dataEnd, exData, numUsableThreads-1 + numExistThds, dataTypName+partStr,useChiSqDist));}
 	}//runner
 	
-	/**
-	 * Multi threaded run
-	 * @param numPartitions : # of partitions/threads to allow
-	 * @param numPerPartition : # of examples per thread to process
-	 */
-	@Override
-	protected final void runMe_Indiv_MT(int numPartitions, int numPerPartition) {
-		ExMappers = new ArrayList<MapExampleDataToBMUs>();			
-		msgObj.dispMessage("SOM_MapExampleDataToBMUs_Runner","runMe_Indiv_MT","Starting finding bmus for all " +exData.length + " "+dataTypName+" data using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
-		int dataSt = 0;
-		int dataEnd = numPerPartition;
-		for(int pIdx = 0; pIdx < numPartitions-1;++pIdx) {
-			_runner(dataSt, dataEnd, pIdx,numPartitions);
-			dataSt = dataEnd;
-			dataEnd +=numPerPartition;			
-		}
-		_runner(dataSt, exData.length, numPartitions-1,numPartitions);			
-		
-		ExMapperFtrs = new ArrayList<Future<Boolean>>();
-		try {ExMapperFtrs = th_exec.invokeAll(ExMappers);for(Future<Boolean> f: ExMapperFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }		
-		msgObj.dispMessage("SOM_MapExampleDataToBMUs_Runner","runMe_Indiv_MT","Finished finding bmus for all " +exData.length + " "+dataTypName+" data using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
-	}//runMe_Indiv_MT
+	
+//	/**
+//	 * Multi threaded run
+//	 * @param numPartitions : # of partitions/threads to allow
+//	 * @param numPerPartition : # of examples per thread to process
+//	 */
+//	@Override
+//	protected final void runMe_Indiv_MT(int numPartitions, int numPerPartition) {
+//		ExMappers = new ArrayList<Callable<Boolean>>();			
+//		msgObj.dispMessage("SOM_MapExampleDataToBMUs_Runner","runMe_Indiv_MT","Starting finding bmus for all " +exData.length + " "+dataTypName+" data using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
+//		int dataSt = 0;
+//		int dataEnd = numPerPartition;
+//		for(int pIdx = 0; pIdx < numPartitions-1;++pIdx) {
+//			_runner(dataSt, dataEnd, pIdx,numPartitions);
+//			dataSt = dataEnd;
+//			dataEnd +=numPerPartition;			
+//		}
+//		_runner(dataSt, exData.length, numPartitions-1,numPartitions);			
+//		
+//		ExMapperFtrs = new ArrayList<Future<Boolean>>();
+//		try {ExMapperFtrs = th_exec.invokeAll(ExMappers);for(Future<Boolean> f: ExMapperFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }		
+//		msgObj.dispMessage("SOM_MapExampleDataToBMUs_Runner","runMe_Indiv_MT","Finished finding bmus for all " +exData.length + " "+dataTypName+" data using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
+//	}//runMe_Indiv_MT
 	
 	/**
 	 * single threaded run

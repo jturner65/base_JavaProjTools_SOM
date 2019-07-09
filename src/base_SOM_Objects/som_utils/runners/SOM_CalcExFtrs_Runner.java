@@ -21,9 +21,6 @@ public class SOM_CalcExFtrs_Runner extends SOM_MapRunner{
 	private final int typeOfProc;
 	private final String calcTypeStr;
 	
-	List<Future<Boolean>> testCalcMapperFtrs = new ArrayList<Future<Boolean>>();
-	List<MapFtrCalc> testCalcMappers = new ArrayList<MapFtrCalc>();
-
 	//type of calc, idxed by _typeOfProc
 	protected static final String[] typeAra = new String[] {"Feature Calc","Post Indiv Feature Calc","Calcs called After All Example Ftrs built"};
 
@@ -36,30 +33,30 @@ public class SOM_CalcExFtrs_Runner extends SOM_MapRunner{
 	@Override
 	protected int getNumPerPartition() {return rawNumPerPartition;	}
 		
-	/**
-	 * Multi threaded run - make sure there's no concurrency-violating functionality in ftr calc
-	 * @param numPartitions : # of partitions/threads to allow
-	 * @param numPerPartition : # of examples per thread to process
-	 */
-	@Override
-	protected final void runMe_Indiv_MT(int numPartitions, int numPerPartition) {
-		msgObj.dispMessage("SOM_MapExFtrCalcs_Runner","runMe_Indiv_MT","Starting performing "+calcTypeStr+" calcs for all " +exData.length + " "+dataTypName+" examples using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
-		testCalcMappers = new ArrayList<MapFtrCalc>();
-		int dataSt = 0;
-		int dataEnd = numPerPartition;
-		for(int pIdx = 0; pIdx < numPartitions-1;++pIdx) {
-			testCalcMappers.add(new MapFtrCalc(mapMgr, dataSt, dataEnd, exData, pIdx, dataTypName, calcTypeStr, typeOfProc));
-			dataSt = dataEnd;
-			dataEnd +=numPerPartition;			
-		}
-		if(dataSt < exData.length) {testCalcMappers.add(new MapFtrCalc(mapMgr, dataSt, exData.length, exData, numPartitions-1, dataTypName, calcTypeStr, typeOfProc));}
-		
-		testCalcMapperFtrs = new ArrayList<Future<Boolean>>();
-		try {testCalcMapperFtrs = th_exec.invokeAll(testCalcMappers);for(Future<Boolean> f: testCalcMapperFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }		
-
-		msgObj.dispMessage("SOM_MapExFtrCalcs_Runner","runMe_Indiv_MT","Finished performing "+calcTypeStr+" calcs for all " +exData.length + " "+dataTypName+" examples using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
-		
-	}//runMe_Indiv_MT
+//	/**
+//	 * Multi threaded run - make sure there's no concurrency-violating functionality in ftr calc
+//	 * @param numPartitions : # of partitions/threads to allow
+//	 * @param numPerPartition : # of examples per thread to process
+//	 */
+//	@Override
+//	protected final void runMe_Indiv_MT(int numPartitions, int numPerPartition) {
+//		msgObj.dispMessage("SOM_MapExFtrCalcs_Runner","runMe_Indiv_MT","Starting performing "+calcTypeStr+" calcs for all " +exData.length + " "+dataTypName+" examples using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
+//		testCalcMappers = new ArrayList<Callable<Boolean>>();
+//		testCalcMapperFtrs = new ArrayList<Future<Boolean>>();
+//		int dataSt = 0;
+//		int dataEnd = numPerPartition;
+//		for(int pIdx = 0; pIdx < numPartitions-1;++pIdx) {
+//			testCalcMappers.add(new MapFtrCalc(mapMgr, dataSt, dataEnd, exData, pIdx, dataTypName, calcTypeStr, typeOfProc));
+//			dataSt = dataEnd;
+//			dataEnd +=numPerPartition;			
+//		}
+//		if(dataSt < exData.length) {testCalcMappers.add(new MapFtrCalc(mapMgr, dataSt, exData.length, exData, numPartitions-1, dataTypName, calcTypeStr, typeOfProc));}
+//		
+//		try {testCalcMapperFtrs = th_exec.invokeAll(testCalcMappers);for(Future<Boolean> f: testCalcMapperFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }		
+//
+//		msgObj.dispMessage("SOM_MapExFtrCalcs_Runner","runMe_Indiv_MT","Finished performing "+calcTypeStr+" calcs for all " +exData.length + " "+dataTypName+" examples using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
+//		
+//	}//runMe_Indiv_MT
 	
 	/**
 	 * single threaded run
@@ -75,6 +72,11 @@ public class SOM_CalcExFtrs_Runner extends SOM_MapRunner{
 	 */
 	@Override
 	protected final void runMe_Indiv_End() {}
+
+	@Override
+	protected void execPerPartition(List<Callable<Boolean>> ExMappers, int dataSt, int dataEnd, int pIdx, int ttlParts) {
+		ExMappers.add(new MapFtrCalc(mapMgr, dataSt, dataEnd, exData, pIdx, dataTypName, calcTypeStr, typeOfProc));		
+	}
 	
 }//MapExFtrCalcs_Runner
 

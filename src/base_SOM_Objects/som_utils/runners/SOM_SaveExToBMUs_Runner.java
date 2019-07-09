@@ -18,9 +18,6 @@ public class SOM_SaveExToBMUs_Runner extends SOM_MapRunner {
 	private final int rawNumPerPartition;
 	protected final String fileNamePrefix;
 	
-	List<Future<Boolean>> ExSaveBMUFutures = new ArrayList<Future<Boolean>>();
-	List<SOM_ExToBMUs_CSVWriter> ExSaveBMUThds = new ArrayList<SOM_ExToBMUs_CSVWriter>();
-
 	public SOM_SaveExToBMUs_Runner(SOM_MapManager _mapMgr, ExecutorService _th_exec, SOM_Example[] _exData, String _dataTypName, boolean _forceST, String _fileNamePrefix, int _rawNumPerPartition) {
 		super(_mapMgr, _th_exec, _exData, _dataTypName, _forceST);
 		fileNamePrefix = _fileNamePrefix;
@@ -30,22 +27,22 @@ public class SOM_SaveExToBMUs_Runner extends SOM_MapRunner {
 	@Override
 	protected int getNumPerPartition() {return rawNumPerPartition;	}
 
-	@Override
-	protected void runMe_Indiv_MT(int numPartitions, int numPerPartition) {
-		msgObj.dispMessage("SOM_SaveExToBMUs_Runner","runMe_Indiv_MT","Starting saving example-to-bmu mappings for " +exData.length + " "+dataTypName+" examples using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
-		ExSaveBMUThds = new ArrayList<SOM_ExToBMUs_CSVWriter>();
-		int dataSt = 0;
-		int dataEnd = numPerPartition;
-		for(int pIdx = 0; pIdx < numPartitions-1;++pIdx) {
-			ExSaveBMUThds.add(new SOM_ExToBMUs_CSVWriter(mapMgr, dataSt, exData.length, exData, numPartitions-1, dataTypName, fileNamePrefix));
-			dataSt = dataEnd;
-			dataEnd +=numPerPartition;			
-		}
-		if(dataSt < exData.length) {ExSaveBMUThds.add(new SOM_ExToBMUs_CSVWriter(mapMgr, dataSt, exData.length, exData, numPartitions-1, dataTypName, fileNamePrefix));}	
-		ExSaveBMUFutures = new ArrayList<Future<Boolean>>();
-		try {ExSaveBMUFutures = th_exec.invokeAll(ExSaveBMUThds);for(Future<Boolean> f: ExSaveBMUFutures) { f.get(); }} catch (Exception e) { e.printStackTrace(); }
-		msgObj.dispMessage("SOM_SaveExToBMUs_Runner","runMe_Indiv_MT","Finished saving example-to-bmu mappings for " +exData.length + " "+dataTypName+" examples using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
-	}
+//	@Override
+//	protected void runMe_Indiv_MT(int numPartitions, int numPerPartition) {
+//		msgObj.dispMessage("SOM_SaveExToBMUs_Runner","runMe_Indiv_MT","Starting saving example-to-bmu mappings for " +exData.length + " "+dataTypName+" examples using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
+//		ExMappers = new ArrayList<Callable<Boolean>>();
+//		int dataSt = 0;
+//		int dataEnd = numPerPartition;
+//		for(int pIdx = 0; pIdx < numPartitions-1;++pIdx) {
+//			ExMappers.add(new SOM_ExToBMUs_CSVWriter(mapMgr, dataSt, dataEnd, exData, pIdx, dataTypName, fileNamePrefix));
+//			dataSt = dataEnd;
+//			dataEnd +=numPerPartition;			
+//		}
+//		if(dataSt < exData.length) {ExMappers.add(new SOM_ExToBMUs_CSVWriter(mapMgr, dataSt, exData.length, exData, numPartitions-1, dataTypName, fileNamePrefix));}	
+//		ExMapperFtrs = new ArrayList<Future<Boolean>>();
+//		try {ExMapperFtrs = th_exec.invokeAll(ExMappers);for(Future<Boolean> f: ExMapperFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }
+//		msgObj.dispMessage("SOM_SaveExToBMUs_Runner","runMe_Indiv_MT","Finished saving example-to-bmu mappings for " +exData.length + " "+dataTypName+" examples using " +numPartitions + " partitions of length " +numPerPartition +".", MsgCodes.info1);
+//	}
 
 	@Override
 	protected void runMe_Indiv_ST() {
@@ -55,6 +52,10 @@ public class SOM_SaveExToBMUs_Runner extends SOM_MapRunner {
 
 	@Override
 	protected void runMe_Indiv_End() {	}
+
+	@Override
+	protected void execPerPartition(List<Callable<Boolean>> ExMappers, int dataSt, int dataEnd, int pIdx, int numPartitions) {ExMappers.add(new SOM_ExToBMUs_CSVWriter(mapMgr, dataSt, dataEnd, exData, pIdx, dataTypName, fileNamePrefix));}
+
 
 }//SOM_SaveExToBMUs_Runner
 
@@ -103,7 +104,8 @@ class SOM_ExToBMUs_CSVWriter implements Callable<Boolean>{
 			return true;}
 		msgObj.dispMessage("SOM_ExToBMUCSVWriter", "Run Thread : " +thdIDX, "Starting saving BMU mappings for "+dataType+" example Data["+stIdx+":"+endIdx+"] | # saved records : " + (endIdx-stIdx), MsgCodes.info5);		
 		//typeOfCalc==0 means build features
-		for(SOM_Example ex : exs) {
+		for(int i=stIdx; i<endIdx;++i) {
+			SOM_Example ex = exs[i];
 			String resStr= ex.getBMU_NHoodMbrship_CSV();
 			outStrs.add(resStr);
 		}	

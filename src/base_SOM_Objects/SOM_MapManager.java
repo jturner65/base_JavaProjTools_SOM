@@ -1810,8 +1810,22 @@ public abstract class SOM_MapManager {
 	 */
 	public abstract int getPreProcDatPartSz();
 	
-	//return a map of descriptive quantities and their values, for the SOM Execution human-readable report
-	public abstract TreeMap<String, String> getSOMExecInfo();
+	public final TreeMap<String,String> getSOMExecInfo(){
+		TreeMap<String, String> res = new TreeMap<String, String>();		
+		for(String key : exampleDataMappers.keySet()) {
+			SOM_ExampleManager mapper = exampleDataMappers.get(key);
+			res.put(mapper.longExampleName + " date and time of creation/pre-processing", mapper.dateAndTimeOfDataCreation());		
+		}	
+		getSOMExecInfo_Indiv(res);
+		return res;
+	}//getSOMExecInfo
+	
+	/**
+	 * return a map of application-specific descriptive quantities and their values, for the SOM Execution human-readable report
+	 * @param res map already created holding exampleDataMappers create time
+	 * @return map with application-specific information added to res
+	 */
+	protected abstract void getSOMExecInfo_Indiv(TreeMap<String, String> res);
 	
 	//return a copy of the message object - making a copy so that multiple threads can consume without concurrency issues
 	public MessageObject buildMsgObj() {return MessageObject.buildMe();}

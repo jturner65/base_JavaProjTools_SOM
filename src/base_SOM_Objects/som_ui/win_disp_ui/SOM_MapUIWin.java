@@ -126,7 +126,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	//////////////////////////////
 	//map drawing 	draw/interaction variables
 	//start location of SOM image - stX, stY, and dimensions of SOM image - width, height; locations to put calc analysis visualizations
-	public float[] SOM_mapLoc, SOM_mapDims;
+	public float[] SOM_mapLoc;
 	
 	//array of per-ftr map wts
 	protected PImage[] mapPerFtrWtImgs;
@@ -191,8 +191,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		//initUIBox();				//set up ui click region to be in sidebar menu below menu's entries	
 		//start x and y and dimensions of full map visualization as function of visible window size;
 		float width = rectDim[3]-(2*xOff);//actually also height, but want it square, and space is wider than high, so we use height as constraint - ends up being 834.8 x 834.8 with default screen dims and without side menu
-		SOM_mapDims = new float[] {width,width};
-		mapMgr = buildMapMgr();
+		float[] SOM_mapDims = new float[] {width,width};
+		mapMgr = buildMapMgr(SOM_mapDims);
 		initAfterMapMgrSet(new boolean[] {true,true});
 	}//initMe()	
 	
@@ -232,9 +232,10 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	
 	/**
 	 * build instancing app's map manager
+	 * @param _mapDims : dimensions of visible rep of map calculated based on visible size of window
 	 * @return
 	 */
-	protected abstract SOM_MapManager buildMapMgr();
+	protected abstract SOM_MapManager buildMapMgr(float[] _mapDims);
 	
 	/**
 	 * set map manager from instancing app and reset all mapMgr-governed values in window
@@ -465,7 +466,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	public final void initMapAras(int numFtrVals, int num2ndryMaps) {
 		curMapImgIDX = 0;
 		int format = pa.RGB; 
-		int w = (int) (SOM_mapDims[0]/mapScaleVal), h = (int) (SOM_mapDims[1]/mapScaleVal);
+		//int w = (int) (SOM_mapDims[0]/mapScaleVal), h = (int) (SOM_mapDims[1]/mapScaleVal);
+		int w = (int) (mapMgr.getMapWidth()/mapScaleVal), h = (int) (mapMgr.getMapHeight()/mapScaleVal);
 		mapPerFtrWtImgs = new PImage[numFtrVals];
 		for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = pa.createImage(w, h, format);	}		
 		mapCubicUMatrixImg = pa.createImage(w, h, format);			
@@ -1052,7 +1054,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	//check whether the mouse is over a legitimate map location
 	protected final boolean chkMouseOvr(int mouseX, int mouseY){		
 		float mapMseX = getSOMRelX(mouseX), mapMseY = getSOMRelY(mouseY);//, mapLocX = mapX * mapMseX/mapDims[2],mapLocY = mapY * mapMseY/mapDims[3] ;
-		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < SOM_mapDims[0]) && (mapMseY < SOM_mapDims[1])){
+		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapMgr.getMapWidth()) && (mapMseY < mapMgr.getMapHeight())){
 			float[] mapNLoc=getMapNodeLocFromPxlLoc(mapMseX,mapMseY, 1.0f);
 			//msgObj.dispInfoMessage("SOM_MapUIWin","chkMouseOvr","In Map : Mouse loc : " + mouseX + ","+mouseY+ "\tRel to upper corner ("+  mapMseX + ","+mapMseY +") | mapNLoc : ("+mapNLoc[0]+","+ mapNLoc[1]+")" );
 			mseOvrData = getDataPointAtLoc(mapNLoc[0], mapNLoc[1], new myPointf(mapMseX, mapMseY,0));			

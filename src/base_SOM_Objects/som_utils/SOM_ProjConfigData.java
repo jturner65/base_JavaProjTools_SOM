@@ -80,10 +80,7 @@ public abstract class SOM_ProjConfigData {
 		wtsIDX = 0,
 		bmuIDX = 1,
 		umtxIDX = 2;	
-	//all flags corresponding to file names required to run SOM
-	//private int[] reqFileNameFlags = new int[]{trainDatFNameIDX, somResFPrfxIDX, diffsFNameIDX, minsFNameIDX, csvSavFNameIDX};
-	//private String[] reqFileNames = new String[]{"trainDatFNameIDX", "somResFPrfxIDX", "diffsFNameIDX", "minsFNameIDX", "csvSavFNameIDX"};
-	//
+	
 	private String[] SOMFileNamesAra;
 	//indexes in fname array of individual file names/file name prefixes
 	public final static int 
@@ -115,7 +112,7 @@ public abstract class SOM_ProjConfigData {
 		SOM_QualifiedConfigDir = buildQualifiedBaseDir(_configDir,"Specified Config");
 		SOM_QualifiedDataDir = buildQualifiedBaseDir(_dataDir,"Specified Data");
 
-		fileIO = new FileIOManager(msgObj,"SOMProjConfigData");		
+		fileIO = new FileIOManager(msgObj,"SOM_ProjConfigData");		
 		//load project configuration
 		loadProjectConfig();
 
@@ -126,7 +123,7 @@ public abstract class SOM_ProjConfigData {
 		String execStr = SOMExeName_base;
 		if (OSUsed.toLowerCase().contains("windows")) {			execStr += ".exe";			} 
 		supportsANSITerm = (System.console() != null && System.getenv().get("TERM") != null);		
-		msgObj.dispMessage("SOMProjConfigData","Constructor","OS this application is running on : "  + OSUsed + " | SOM Exec String : " +  execStr +" | Supports ANSI Terminal colors : " + supportsANSITerm, MsgCodes.info5);		
+		msgObj.dispMessage("SOM_ProjConfigData","Constructor","OS this application is running on : "  + OSUsed + " | SOM Exec String : " +  execStr +" | Supports ANSI Terminal colors : " + supportsANSITerm, MsgCodes.info5);		
 		SOM_Map_EXECSTR = execStr;				
 		//----end accumulate and manage OS info ----//		
 		
@@ -152,7 +149,7 @@ public abstract class SOM_ProjConfigData {
 	private void dispSpecifiedSubDirs() {
 		String res = "Variables specified in Project config for subdirectory Locations.";
 		for(String key : subDirLocs.keySet()) {	res+=" Variable Name : " +key+" | Value : " + subDirLocs.get(key) + "\n";	}	
-		msgObj.dispMultiLineInfoMessage("SOMProjConfigData", "ctor->dispSpecifiedSubDirs", res);
+		msgObj.dispMultiLineInfoMessage("SOM_ProjConfigData", "ctor->dispSpecifiedSubDirs", res);
 	}//dispSpecifiedSubDirs
 	
 	/**
@@ -161,7 +158,7 @@ public abstract class SOM_ProjConfigData {
 	private void dispSpecifiedConfigFNames() {
 		String res = "Variables specified in Project config for config file names.";
 		for(String key : configFileNames.keySet()) {	res+=" Variable Name : " +key+" | Value : " + configFileNames.get(key) + "\n";	}		
-		msgObj.dispMultiLineInfoMessage("SOMProjConfigData", "ctor->dispSpecifiedConfigFNames", res);
+		msgObj.dispMultiLineInfoMessage("SOM_ProjConfigData", "ctor->dispSpecifiedConfigFNames", res);
 	}//dispSpecifiedSubDirsAndFNames
 	
 
@@ -172,19 +169,19 @@ public abstract class SOM_ProjConfigData {
 			qualifiedDir = new File(_dir).getCanonicalPath() + File.separator ;
 		} catch (Exception e) {
 			qualifiedDir = _dir;
-			msgObj.dispMessage("SOMProjConfigData","Constructor->buildQualifiedBaseDir","Failed to find " + _type + " directory "+ qualifiedDir + " due to : " + e + ". Exiting program.", MsgCodes.error1);
+			msgObj.dispMessage("SOM_ProjConfigData","Constructor->buildQualifiedBaseDir","Failed to find " + _type + " directory "+ qualifiedDir + " due to : " + e + ". Exiting program.", MsgCodes.error1);
 			System.exit(1);
 		}
-		msgObj.dispMessage("SOMProjConfigData","Constructor->buildQualifiedBaseDir","Canonical Path to " + _type + " directory : " + qualifiedDir, MsgCodes.info1);
+		msgObj.dispMessage("SOM_ProjConfigData","Constructor->buildQualifiedBaseDir","Canonical Path to " + _type + " directory : " + qualifiedDir, MsgCodes.info1);
 		return qualifiedDir;
 	}//buildQualifiedBaseDir
 	
 	//this will load the project config file and set initial project-wide settings
 	private void loadProjectConfig() {
-		msgObj.dispMessage("SOMProjConfigData","loadProjectConfig","Start loading project configuration.", MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","loadProjectConfig","Start loading project configuration.", MsgCodes.info5);
 		//build config file name and load config data
 		String configFileName = SOM_QualifiedConfigDir + projectConfigFile;
-		String[] fileStrings = fileIO.loadFileIntoStringAra(configFileName, "SOMProjConfigData Main Project Config File loaded", "SOMProjConfigData Main Project Config File Failed to load");
+		String[] fileStrings = fileIO.loadFileIntoStringAra(configFileName, "SOM_ProjConfigData Main Project Config File loaded", "SOM_ProjConfigData Main Project Config File Failed to load");
 		//init maps holding config data
 		configFileNames = new HashMap<String,String>();
 		subDirLocs = new HashMap<String,String>(); 
@@ -192,24 +189,24 @@ public abstract class SOM_ProjConfigData {
 		//find start of first block of data - 
 		while (!found && (idx < fileStrings.length)){if(fileStrings[idx].contains("#BEGIN CONFIG")){found=true;} else {++idx; } }
 		
-		if (idx == fileStrings.length) {msgObj.dispMessage("SOMProjConfigData","loadProjectConfig","Error in the "+projectConfigFile+" file - no begin tag found for config file names.", MsgCodes.error2); return;}
+		if (idx == fileStrings.length) {msgObj.dispMessage("SOM_ProjConfigData","loadProjectConfig","Error in the "+projectConfigFile+" file - no begin tag found for config file names.", MsgCodes.error2); return;}
 		// CONFIG FILE NAMES
 		idx = _loadProjConfigData(fileStrings, configFileNames, idx, false);//returns next idx, fills config variables
-		if(idx == -1) {msgObj.dispMessage("SOMProjConfigData","loadProjectConfig","Error after _loadProjConfigData with configFileNames : idx == -1.  This means an 'END' tag is probably missing in the "+projectConfigFile+" file.", MsgCodes.error2); return;}
+		if(idx == -1) {msgObj.dispMessage("SOM_ProjConfigData","loadProjectConfig","Error after _loadProjConfigData with configFileNames : idx == -1.  This means an 'END' tag is probably missing in the "+projectConfigFile+" file.", MsgCodes.error2); return;}
 		
 		// SUBDIR DEFS - location under data dir where data subdirs are located
 		idx = _loadProjConfigData(fileStrings, subDirLocs, idx, true);//returns next idx, fills subdir variables
-		if(idx == -1) {msgObj.dispMessage("SOMProjConfigData","loadProjectConfig","Error after _loadProjConfigData with subDirLocs : idx == -1.   This means an 'END' tag is probably missing in the "+projectConfigFile+" file.", MsgCodes.error2); return;}
+		if(idx == -1) {msgObj.dispMessage("SOM_ProjConfigData","loadProjectConfig","Error after _loadProjConfigData with subDirLocs : idx == -1.   This means an 'END' tag is probably missing in the "+projectConfigFile+" file.", MsgCodes.error2); return;}
 		
 		// MISC GLOBAL VARS - read through individual config vars preBuiltMapDir
 		idx = _loadIndivConfigVars(fileStrings, idx); 
 		if((preBuiltMapDirAra == null)|| (preBuiltMapDirAra.length == 0)){
-			msgObj.dispMessage("SOMProjConfigData","loadProjectConfig","No default preBuilt Map directories specified in config, so none will be used.", MsgCodes.info3);
+			msgObj.dispMessage("SOM_ProjConfigData","loadProjectConfig","No default preBuilt Map directories specified in config, so none will be used.", MsgCodes.info3);
 		} else {
-			msgObj.dispMessage("SOMProjConfigData","loadProjectConfig","Default preBuiltMapDir set to be : " + preBuiltMapDirAra[dfltPreBuiltMapIDX], MsgCodes.info3);
+			msgObj.dispMessage("SOM_ProjConfigData","loadProjectConfig","Default preBuiltMapDir set to be : " + preBuiltMapDirAra[dfltPreBuiltMapIDX], MsgCodes.info3);
 		}
-		if(idx == -1) {msgObj.dispMessage("SOMProjConfigData","loadProjectConfig","Error after _loadIndivConfigVars : idx == -1", MsgCodes.error2); return;}
-		msgObj.dispMessage("SOMProjConfigData","loadProjectConfig","Finished loading project configuration.", MsgCodes.info5);
+		if(idx == -1) {msgObj.dispMessage("SOM_ProjConfigData","loadProjectConfig","Error after _loadIndivConfigVars : idx == -1", MsgCodes.error2); return;}
+		msgObj.dispMessage("SOM_ProjConfigData","loadProjectConfig","Finished loading project configuration.", MsgCodes.info5);
 	}//loadProjectConfig(
 	
 	/**
@@ -217,7 +214,7 @@ public abstract class SOM_ProjConfigData {
 	 * @param fileStrings array of strings from file being read
 	 * @param map destination to put key-value pairs
 	 * @param stIDX index in fileStrings array to start for this section
-	 * @param useFileDelim whether or not to add the appropriate file delimiter for OS to end of every entry
+	 * @param useFileDelim whether or not to add the appropriate file delimiter for OS to end of every entry - this is done for sections containing directory names
 	 * @return ending index in fileStrings of next section start (1+ this section ending)
 	 */
 	private int _loadProjConfigData(String[] fileStrings, HashMap<String,String> map, int stIDX, boolean useFileDelim) {
@@ -228,9 +225,9 @@ public abstract class SOM_ProjConfigData {
 			if((s.contains(fileComment))|| (s.trim().length() == 0)) {continue;}		//ignore comments or empty lines
 			String[] tkns = s.trim().split(SOM_MapManager.csvFileToken);					//split on csv token (comma)
 			//map has keys that describe what the values are (i.e. variable names)
-			String key = tkns[0].trim(), val= tkns[1].trim().replace("\"", "")+sfx;		
+			String key = tkns[0].trim(), val= tkns[1].trim().replace("\"", "")+sfx;		//remove quotes
 			map.put(key,val);	
-			msgObj.dispMessage("SOMProjConfigData","_loadProjConfigData","Key : "+key+" \t| Val : " + val, MsgCodes.info3);
+			msgObj.dispMessage("SOM_ProjConfigData","_loadProjConfigData","Key : "+key+" \t| Val : " + val, MsgCodes.info3);
 		}		
 		return -1;																		//shouldn't ever get here - will crash, means END tag missing in config file
 	}//_loadProjConfigData
@@ -249,19 +246,29 @@ public abstract class SOM_ProjConfigData {
 				case "preBuiltMapDir" 			: {	preBuiltMapDirArrayList.add( val + File.separator); break;			}
 				case "dfltPreBuiltMapIDX" 		: {	dfltPreBuiltMapIDX = Integer.parseInt(val); break;}
 				case "SOMExeName_base" 			: {	SOMExeName_base = val;		break;}
-				case "SOMProjName" 				: {	SOMProjName = val;	SOMProjNameCap = val.substring(0, 1).toUpperCase() + val.substring(1);	break;}
+				case "SOMProjName" 				: {	setSOMProjName(val); break;}
 				case "useSparseTrainingData" 	: {	useSparseTrainingData = Boolean.parseBoolean(val.toLowerCase());  break;}
 				case "useSparseTestingData" 	: {	useSparseTestingData = Boolean.parseBoolean(val.toLowerCase());  break;}
 				//add more variables here in instancing class - use string rep of name in config file, followed by a comma, followed by the string value (may include 2xquotes (") around string;) then can add more cases here
 				default	 						: {_loadIndivConfigVarsPriv(varName,val);}
 			}	
-			msgObj.dispMessage("SOMProjConfigData","_loadIndivConfigVars","config file line : " +stIDX + " | key : " +varName +" value specified in config : " + val, MsgCodes.info3);
+			msgObj.dispMessage("SOM_ProjConfigData","_loadIndivConfigVars","config file line : " +stIDX + " | key : " +varName +" value specified in config : " + val, MsgCodes.info3);
 			++stIDX;
 		}
 		_preBuiltMapFinalSetup(preBuiltMapDirArrayList);
 		return stIDX;			//
 	}//_loadIndivConfigVars	
 	protected abstract void _loadIndivConfigVarsPriv(String varName, String val);
+	
+	/**
+	 * allow for changing/setting the SOM Project-specific prefix/name for file writing and directories
+	 * @param val
+	 */
+	public void setSOMProjName(String valx) {
+		String val = valx.toLowerCase();
+		SOMProjName = val;	
+		SOMProjNameCap = val.substring(0, 1).toUpperCase() + val.substring(1);
+	}
 	
 	private void _preBuiltMapFinalSetup(ArrayList<String> preBuiltMapDirArrayList) {
 		preBuiltMapDirAra = preBuiltMapDirArrayList.toArray(new String[0]);
@@ -302,7 +309,7 @@ public abstract class SOM_ProjConfigData {
 	 * @return
 	 */
 	public TreeMap<String, String[]> buildRawFileNameMap(String[] dataDirNames) {
-		msgObj.dispMessage("SOMProjConfigData","buildFileNameMap","Begin building list of raw data file names for each type of data.", MsgCodes.info3);
+		msgObj.dispMessage("SOM_ProjConfigData","buildFileNameMap","Begin building list of raw data file names for each type of data.", MsgCodes.info3);
 		TreeMap<String, String[]> rawDataFileNames = new TreeMap<String, String[]>();
 		//for each directory, find all file names present, stripping ".csv" from name
 		for (int dIdx = 0; dIdx < dataDirNames.length;++dIdx) {
@@ -324,7 +331,7 @@ public abstract class SOM_ProjConfigData {
 			}//for each dir/file in list
 			rawDataFileNames.put(dataDirNames[dIdx], resList.toArray(new String[0]));
 		}//		
-		msgObj.dispMessage("SOMProjConfigData","buildFileNameMap","Finished building list of raw data file names for each type of data.", MsgCodes.info3);
+		msgObj.dispMessage("SOM_ProjConfigData","buildFileNameMap","Finished building list of raw data file names for each type of data.", MsgCodes.info3);
 		return rawDataFileNames;
 	}//buildFileNameMap
 	
@@ -334,14 +341,14 @@ public abstract class SOM_ProjConfigData {
 	//this will save all essential information for a SOM-based experimental run, to make duplication of experiment easier
 	//Info saved : SOM_MapData; 
 	public void saveSOM_Exp() {
-		msgObj.dispMessage("SOMProjConfigData","saveSOM_Map Config","Saving SOM Exe Map config data.", MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","saveSOM_Map Config","Saving SOM Exe Map config data.", MsgCodes.info5);
 		//build file describing experiment and put at this location
 		String mapConfigFileName = getSOMMapConfigFileName();
 		//get array of data describing SOM training exec info
 		ArrayList<String> SOMDescAra = SOMExeDat.buildStringDescAra();
 		fileIO.saveStrings(mapConfigFileName,SOMDescAra);
-		msgObj.dispMessage("SOMProjConfigData","saveSOM_Exp","Finished saving SOM Exe Map config data.", MsgCodes.info5);
-		msgObj.dispMessage("SOMProjConfigData","saveSOM_Exp","Saving project configuration data for current SOM execution.", MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","saveSOM_Exp","Finished saving SOM Exe Map config data.", MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","saveSOM_Exp","Saving project configuration data for current SOM execution.", MsgCodes.info5);
 		String configFileName = getProjConfigForSOMExeFileName();
 		//get array of data describing config info
 		ArrayList<String> ConfigDescAra = getExpConfigData();
@@ -355,7 +362,7 @@ public abstract class SOM_ProjConfigData {
 			fileIO.saveStrings(custConfigSOMFileName,custSOMConfigData);	
 		}
 		
-		msgObj.dispMessage("SOMProjConfigData","saveSOM_Exp","Finished saving project configuration data for current SOM execution.", MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","saveSOM_Exp","Finished saving project configuration data for current SOM execution.", MsgCodes.info5);
 	}//saveSOM_Exp
 	/**
 	 * Build instance-specific information regarding the SOM to save to specific file within SOM Trained Directory
@@ -398,7 +405,7 @@ public abstract class SOM_ProjConfigData {
 	public void setSOM_DefaultPreBuiltMap(int mapID) {	
 		dfltPreBuiltMapIDX = mapID;		
 		if((null==preBuiltMapDirAra) || (dfltPreBuiltMapIDX >= preBuiltMapDirAra.length) || (dfltPreBuiltMapIDX<0)) {
-			msgObj.dispMessage("SOMProjConfigData","setSOM_DefaultPreBuiltMap","Invalid default pre-built map dir array index specified : " + dfltPreBuiltMapIDX +" so being forced to 0.", MsgCodes.warning1);
+			msgObj.dispMessage("SOM_ProjConfigData","setSOM_DefaultPreBuiltMap","Invalid default pre-built map dir array index specified : " + dfltPreBuiltMapIDX +" so being forced to 0.", MsgCodes.warning1);
 			dfltPreBuiltMapIDX = 0;
 		}
 	}
@@ -410,17 +417,17 @@ public abstract class SOM_ProjConfigData {
 		//load map values from pre-trained map using this data - IGNORES VALUES SET IN UI	
 		//build file name to load
 		if((preBuiltMapDirAra == null) || (preBuiltMapDirAra.length == 0)){
-			msgObj.dispMessage("SOMProjConfigData","setSOM_UsePreBuilt","No pre-built map directories specified (preBuiltMapDirAra.length == 0).  Aborting.", MsgCodes.warning1);
+			msgObj.dispMessage("SOM_ProjConfigData","setSOM_UsePreBuilt","No pre-built map directories specified (preBuiltMapDirAra.length == 0).  Aborting.", MsgCodes.warning1);
 			return false;
 		}
 		if((dfltPreBuiltMapIDX >= preBuiltMapDirAra.length) || (dfltPreBuiltMapIDX<0)) {
-			msgObj.dispMessage("SOMProjConfigData","setSOM_UsePreBuilt","Invalid default pre-built map dir array index specified : " + dfltPreBuiltMapIDX +" so being forced to 0.", MsgCodes.warning1);
+			msgObj.dispMessage("SOM_ProjConfigData","setSOM_UsePreBuilt","Invalid default pre-built map dir array index specified : " + dfltPreBuiltMapIDX +" so being forced to 0.", MsgCodes.warning1);
 			dfltPreBuiltMapIDX = 0;
 		}
 		String preBuiltMapDir = preBuiltMapDirAra[dfltPreBuiltMapIDX];
 		//attempt to build config file name holding map configuration
 		String configFileName = getDirNameAndBuild(subDirLocs.get("SOM_MapProc") + preBuiltMapDir, true) + expProjConfigFileName;
-		msgObj.dispMessage("SOMProjConfigData","setSOM_UsePreBuilt","Attempting to load pre-built map from directory : "+ configFileName , MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","setSOM_UsePreBuilt","Attempting to load pre-built map from directory : "+ configFileName , MsgCodes.info5);
 		//load project config for this SOM execution
 		loadProjConfigForSOMExe(configFileName);		
 		//load and map config
@@ -468,25 +475,25 @@ public abstract class SOM_ProjConfigData {
 	//this will load all essential information for a SOM-based experimental run, from loading preprocced data, configuring map
 	public void loadDefaultSOMExp_Config() {
 		String dfltSOMConfigFName = SOM_QualifiedConfigDir + configFileNames.get("SOMDfltConfigFileName"); 
-		msgObj.dispMessage("SOMProjConfigData","loadDefaultSOMExp_Config","Default file name  :" + dfltSOMConfigFName, MsgCodes.info1);
+		msgObj.dispMessage("SOM_ProjConfigData","loadDefaultSOMExp_Config","Default file name  :" + dfltSOMConfigFName, MsgCodes.info1);
 		loadSOMMap_Config(dfltSOMConfigFName);
 	}
 	public void loadSOMMap_Config() {loadSOMMap_Config(getSOMMapConfigFileName());}  
 	public void loadSOMMap_Config(String expFileName) {
-		msgObj.dispMessage("SOMProjConfigData","loadSOMMap_Config","Start loading SOM Exe config data from " + expFileName, MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","loadSOMMap_Config","Start loading SOM Exe config data from " + expFileName, MsgCodes.info5);
 		//build file describing experiment and put at this location
 		String[] expStrAra = fileIO.loadFileIntoStringAra(expFileName, "SOM_MapDat Config File loaded", "SOM_MapDat Config File Failed to load");
 		//set values from string array from file read
 		SOMExeDat.buildFromStringArray(expStrAra);
 		//send current map data to map mgr to set ui values
 		setUIValsFromLoad();
-		msgObj.dispMessage("SOMProjConfigData","loadSOMMap_Config","Finished loading SOM Exe config data from " + expFileName, MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","loadSOMMap_Config","Finished loading SOM Exe config data from " + expFileName, MsgCodes.info5);
 	}//loadSOM_Exp
 	//send current map data to map mgr to set ui values
 	public void setUIValsFromLoad(){
 		mapMgr.setUIValsFromLoad(SOMExeDat);
 		if((preBuiltMapDirAra == null) || (preBuiltMapDirAra.length == 0)){
-			msgObj.dispWarningMessage("SOMProjConfigData","setUIValsFromLoad","Attempting to pass a null or empty prebuiltmap dir ara. Aborting");
+			msgObj.dispWarningMessage("SOM_ProjConfigData","setUIValsFromLoad","Attempting to pass a null or empty prebuiltmap dir ara. Aborting");
 		} else {
 			mapMgr.setPreBuiltMapDirList(preBuiltMapDirAra);
 		}
@@ -495,11 +502,11 @@ public abstract class SOM_ProjConfigData {
 	//load a specific configuration based on a previously run experiment
 	public void loadProjConfigForSOMExe() {	loadProjConfigForSOMExe( getProjConfigForSOMExeFileName());}
 	private void loadProjConfigForSOMExe(String configFileName) {
-		msgObj.dispMessage("SOMProjConfigData","loadProjConfigForSOMExe","Start loading project config data for SOM Execution : "+ configFileName, MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","loadProjConfigForSOMExe","Start loading project config data for SOM Execution : "+ configFileName, MsgCodes.info5);
 		//NOTE! if running a debug run, be sure to have the line dateTimeStrAra[0],<date_time_value>_DebugRun in proj config file, otherwise will crash
-		String[] configStrAra = fileIO.loadFileIntoStringAra(configFileName, "SOMProjConfigData project config data for SOM Execution File loaded", "SOMProjConfigData project config data for SOM Execution Failed to load");
+		String[] configStrAra = fileIO.loadFileIntoStringAra(configFileName, "SOM_ProjConfigData project config data for SOM Execution File loaded", "SOM_ProjConfigData project config data for SOM Execution Failed to load");
 		setExpConfigData(configStrAra);
-		msgObj.dispMessage("SOMProjConfigData","loadProjConfigForSOMExe","Finished loading project config data for SOM Execution", MsgCodes.info5);				
+		msgObj.dispMessage("SOM_ProjConfigData","loadProjConfigForSOMExe","Finished loading project config data for SOM Execution", MsgCodes.info5);				
 	}//loadProg_Congfig
 		
 	//set experiment vars based on data saved in config file
@@ -542,7 +549,7 @@ public abstract class SOM_ProjConfigData {
 	 * @return map of variable-keyed string representations of variable values in config file
 	 */	
 	protected TreeMap<String,String> getSOMExpConfigData(String configFileName,String descPrfx){
-		String[] configStrAra = fileIO.loadFileIntoStringAra(configFileName, "getSOMExpConfigData::SOMProjConfigData " + descPrfx + " File loaded", "getSOMExpConfigData::SOMProjConfigData " + descPrfx + " Failed to load");
+		String[] configStrAra = fileIO.loadFileIntoStringAra(configFileName, "getSOMExpConfigData::SOM_ProjConfigData " + descPrfx + " File loaded", "getSOMExpConfigData::SOM_ProjConfigData " + descPrfx + " Failed to load");
 		TreeMap<String,String> dataRes = new TreeMap<String,String>();
 		for (int i=0;i<configStrAra.length;++i) {
 			String str = configStrAra[i];
@@ -650,7 +657,7 @@ public abstract class SOM_ProjConfigData {
 	//dataFrmt : format used to train SOM == 0:unmodded; 1:std'ized; 2:normed
 	public void setSOM_ExpFileNames(int _numSmpls, int _numTrain, int _numTest){
 		//enable these to be set manually based on passed "now"		
-		msgObj.dispMessage("SOMProjConfigData","setSOM_ExpFileNames","Start setting file names and example counts", MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","setSOM_ExpFileNames","Start setting file names and example counts", MsgCodes.info5);
 		expNumSmpls = _numSmpls;
 		expNumTrain = _numTrain;
 		expNumTest = _numTest;
@@ -659,7 +666,7 @@ public abstract class SOM_ProjConfigData {
 		String fileNow = dateTimeStrAra[1];
 		//setSOM_ExpFileNames( fileNow, nowDir);		
 		setSOM_ExpFileNames( fileNow, nowSubDirNoSep);		//lacking hardcoded ref to 	subDirLocs.get("SOM_MapProc") 
-		msgObj.dispMessage("SOMProjConfigData","setSOM_ExpFileNames","Finished setting file names and example counts", MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","setSOM_ExpFileNames","Finished setting file names and example counts", MsgCodes.info5);
 	}//setSOM_ExpFileNames	
 			
 	//file names used specifically for SOM data
@@ -678,7 +685,7 @@ public abstract class SOM_ProjConfigData {
 					;
 		for(int i =0; i<SOMFileNamesAra.length;++i){	
 			//build dir as well
-			msgObj.dispMessage("SOMProjConfigData","setSOM_ExpFileNames","Built File Name : " + SOMFileNamesAra[i], MsgCodes.info3);
+			msgObj.dispMessage("SOM_ProjConfigData","setSOM_ExpFileNames","Built File Name : " + SOMFileNamesAra[i], MsgCodes.info3);
 		}				
 	}//setSOM_ExpFileNames	
 	
@@ -758,7 +765,7 @@ public abstract class SOM_ProjConfigData {
 	    try {
 	    Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
 	    } catch (Exception e) {
-	    	msgObj.dispErrorMessage("SOMProjConfigData","saveSOMUsedForSegmentReport","Attempting to copy SOM Descriptor failed :  ");
+	    	msgObj.dispErrorMessage("SOM_ProjConfigData","saveSOMUsedForSegmentReport","Attempting to copy SOM Descriptor failed :  ");
 	    	e.printStackTrace();	    	
 	    }
 	}
@@ -936,6 +943,6 @@ public abstract class SOM_ProjConfigData {
 		return res;	
 	}
 
-}//class SOMProjConfigData
+}//class SOM_ProjConfigData
 
 
