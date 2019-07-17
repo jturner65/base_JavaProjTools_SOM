@@ -125,7 +125,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 		set_sqDistToBMU(0.0);
 		initFlags();	
 		initAllStructs();
-		String tmp = OID + "" + type;
+		String tmp = OID + "" + exampleDataType;
 		_hashCode = tmp.hashCode();
 		_initSegStructs();
 	}//ctor
@@ -721,13 +721,13 @@ public abstract class SOM_Example extends baseDataPtVis{
 	public void mapToBMU(int dataTypeVal) {
 		if(null==bmu) {return;}
 		bmu.addExToBMUs(this,dataTypeVal);	
-		mapMgr.addExToNodesWithExs(bmu, type);		
+		mapMgr.addExToNodesWithExs(bmu, exampleDataType);		
 	}
 	//override for multi-example training data
 	public void mapTrainingToBMU(int trainingDataTypeVal) {
 		if(null==bmu) {return;}
 		bmu.addTrainingExToBMUs(this,trainingDataTypeVal);	
-		mapMgr.addExToNodesWithExs(bmu, type);		
+		mapMgr.addExToNodesWithExs(bmu, exampleDataType);		
 	}
 	
 	//this will return the training label(s) of this example
@@ -1066,11 +1066,11 @@ public abstract class SOM_Example extends baseDataPtVis{
  *
  */
 abstract class baseDataPtVis{
-	public static SOM_MapManager mapMgr;
+	public SOM_MapManager mapMgr;
 	//message object manages logging/printing to screen
-	protected static MessageObject msgObj;
+	protected MessageObject msgObj;
 	//type of example data this is
-	protected SOM_ExDataType type;
+	protected SOM_ExDataType exampleDataType;
 	//location in mapspace most closely matching this node - actual map location (most likely between 4 map nodes), built from neighborhood
 	public myPointf mapLoc;		
 	//bmu map node location - this is same as mapLoc(and ignored) for map nodes
@@ -1085,19 +1085,19 @@ abstract class baseDataPtVis{
 	protected int[] nodeClrs, altClrs;		
 	
 	public baseDataPtVis(SOM_MapManager _map, SOM_ExDataType _type) {
-		mapMgr = _map;type=_type;
+		mapMgr = _map;exampleDataType=_type;
 		if(msgObj==null) {msgObj=mapMgr.buildMsgObj();}//only set 1 msg object for all examples
 		mapLoc = new myPointf();	
 		mapNodeLoc = new myPointf();
 		rad = 1.0f;
 		drawDet = 2;
-		nodeClrs = mapMgr.getClrFillStrkTxtAra(type);
+		nodeClrs = mapMgr.getClrFillStrkTxtAra(exampleDataType);
 		altClrs = mapMgr.getAltClrFillStrkTxtAra();
 	}//ctor	
 	
 	//copy ctor
 	public baseDataPtVis(baseDataPtVis _otr) { 
-		this(_otr.mapMgr,_otr.type);	
+		this(_otr.mapMgr,_otr.exampleDataType);	
 		mapLoc = _otr.mapLoc;
 		mapNodeLoc = _otr.mapNodeLoc;
 		nodeClrs = _otr.nodeClrs;
@@ -1112,8 +1112,8 @@ abstract class baseDataPtVis{
 	}
 	public float getRad(){return rad;}
 	
-	public int getTypeVal() {return type.getVal();}
-	public SOM_ExDataType getType() {return type;}
+	public int getTypeVal() {return exampleDataType.getVal();}
+	public SOM_ExDataType getType() {return exampleDataType;}
 	
 	//set map location for this example
 	public final void setMapLoc(myPointf _pt){mapLoc.set(_pt.x,_pt.y,_pt.z);}

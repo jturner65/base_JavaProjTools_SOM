@@ -841,7 +841,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 
 	
 	
-	protected final float getTrainTestDatPartition() {	return (float)(.01*this.guiObjs[uiTrainDatPartIDX].getVal());}	
+	public final float getTrainTestDatPartition() {	return (float)(.01*this.guiObjs[uiTrainDatPartIDX].getVal());}	
 	
 	/////////////////////////////////////////
 	// draw routines

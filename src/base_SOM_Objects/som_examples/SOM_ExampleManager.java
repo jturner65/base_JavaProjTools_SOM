@@ -212,7 +212,7 @@ public abstract class SOM_ExampleManager {
 //	public abstract boolean saveAllPreProccedExampleData();
 	
 	/**
-	 * load prospect mapped training data into StraffSOMExamples from disk - must reset example maps before this is called
+	 * load preprocessed data into examples from disk - must reset SOM maps before this is called
 	 */
 	public final void loadAllPreProccedExampleData(String subDir) {
 		//perform in multiple threads if possible
@@ -260,7 +260,10 @@ public abstract class SOM_ExampleManager {
 	protected abstract void buildMTLoader(String[] loadSrcFNamePrefixAra, int numPartitions);
 	protected abstract void buildSTLoader(String[] loadSrcFNamePrefixAra, int numPartitions);	
 	
-	//save all pre-processed prospect data
+	/**
+	 * save all pre-processed prospect data
+	 * @return
+	 */
 	public final boolean saveAllPreProccedExampleData() {
 		if ((null != exampleMap) && (exampleMap.size() > 0)) {
 			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","Saving all "+exampleName+" map data : " + exampleMap.size() + " examples to save.", MsgCodes.info5);
@@ -366,7 +369,7 @@ public abstract class SOM_ExampleManager {
 				String str = csvLoadRes[j];
 				int pos = str.indexOf(',');
 				String oid = str.substring(0, pos);
-				SOM_Example ex = buildSingleExample(oid, str);//new Straff_TrueProspectExample(mapMgr, oid, str);
+				SOM_Example ex = buildSingleExample(oid, str);
 				exampleMap.put(oid, ex);			
 			}
 			setAllDataLoaded();
@@ -468,7 +471,7 @@ public abstract class SOM_ExampleManager {
 	// add/remove examples to map
 		//reset function acts as map initializer
 		//add an example, return old example if one existed
-	public final SOM_Example addExampleToMap(String key, SOM_Example ex) {return exampleMap.put(key, ex);	}
+	public final SOM_Example addExampleToMap(SOM_Example ex) {return exampleMap.put(ex.OID, ex);	}
 		//remove an example by key
 	public final SOM_Example removeExampleFromMap(String key) {return exampleMap.remove(key);}
 		//remove an example - use example's OID
