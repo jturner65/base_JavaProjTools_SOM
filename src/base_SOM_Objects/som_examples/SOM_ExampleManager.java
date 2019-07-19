@@ -21,7 +21,7 @@ public abstract class SOM_ExampleManager {
 	/**
 	 * owning map manager
 	 */
-	public static SOM_MapManager mapMgr;
+	public SOM_MapManager mapMgr;
 	/**
 	 * ref to mt executor
 	 */
