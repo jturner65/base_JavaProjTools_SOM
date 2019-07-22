@@ -30,7 +30,7 @@ public class SOM_DataLoader{
 	public final static float nodeDistThresh = 100000.0f;
 	
 	//type of data used to train - 0 : unmodded, 1:std'ized, 2:normalized 
-	public int ftrTypeUsedToTrain;
+	public SOM_FtrDataType ftrTypeUsedToTrain;
 	public boolean useChiSqDist;
 		
 	public SOM_DataLoader(SOM_MapManager _mapMgr, SOM_ProjConfigData _configData) {
@@ -264,11 +264,12 @@ public class SOM_DataLoader{
 		boolean doMT = mapMgr.isMTCapable();
 		//mapping bmus to training examples
 		mapMgr.setTrainDataBMUsMapped(false);
+		int ftrTypeUsedToTrainIDX = ftrTypeUsedToTrain.getVal();
 		if (doMT) {
 			List<Future<Boolean>> bmuDataBldFtrs;
 			List<SOM_ExBMULoader> bmuDataLoaders = new ArrayList<SOM_ExBMULoader>();
 			////////////////////
-			for(int i=0;i<numThds;++i) {bmuDataLoaders.add(new SOM_ExBMULoader(mapMgr.buildMsgObj(),ftrTypeUsedToTrain,useChiSqDist, typeOfData, bmusToExs[i],i));	}
+			for(int i=0;i<numThds;++i) {bmuDataLoaders.add(new SOM_ExBMULoader(mapMgr.buildMsgObj(),ftrTypeUsedToTrainIDX,useChiSqDist, typeOfData, bmusToExs[i],i));	}
 			try {bmuDataBldFtrs = mapMgr.getTh_Exec().invokeAll(bmuDataLoaders);for(Future<Boolean> f: bmuDataBldFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }		
 		} else {		
 			//single threaded version of above - do not use SOMExBMULoader since we have already partitioned structure holding bmus bmusToExs and may not hold only 1 hashmap
@@ -276,14 +277,14 @@ public class SOM_DataLoader{
 				for (HashMap<SOM_MapNode, ArrayList<SOM_Example>> bmuToExsMap : bmusToExs) {
 					for (SOM_MapNode tmpMapNode : bmuToExsMap.keySet()) {
 						ArrayList<SOM_Example> exs = bmuToExsMap.get(tmpMapNode);
-						for(SOM_Example ex : exs) {ex.setTrainingExBMU_ChiSq(tmpMapNode, ftrTypeUsedToTrain);tmpMapNode.addTrainingExToBMUs(ex,typeOfData);	}
+						for(SOM_Example ex : exs) {ex.setTrainingExBMU_ChiSq(tmpMapNode, ftrTypeUsedToTrainIDX);tmpMapNode.addTrainingExToBMUs(ex,typeOfData);	}
 					}
 				}				
 			} else {
 				for (HashMap<SOM_MapNode, ArrayList<SOM_Example>> bmuToExsMap : bmusToExs) {
 					for (SOM_MapNode tmpMapNode : bmuToExsMap.keySet()) {
 						ArrayList<SOM_Example> exs = bmuToExsMap.get(tmpMapNode);
-						for(SOM_Example ex : exs) {ex.setTrainingExBMU(tmpMapNode, ftrTypeUsedToTrain);tmpMapNode.addTrainingExToBMUs(ex,typeOfData);	}
+						for(SOM_Example ex : exs) {ex.setTrainingExBMU(tmpMapNode, ftrTypeUsedToTrainIDX);tmpMapNode.addTrainingExToBMUs(ex,typeOfData);	}
 					}
 				}				
 			}

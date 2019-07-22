@@ -16,7 +16,7 @@ public class SOM_FtrMapVisImgBldr implements Callable<Boolean>{
 	private MessageObject msgObj;
 	private int mapX, mapY, xSt, xEnd, ySt, yEnd, imgW;
 	//type of features to use to build vis, based on type used to train map (unmodified, stdftrs, normftrs)
-	private int ftrType;
+	private SOM_FtrDataType ftrType;
 	private float mapScaleVal, sclMultXPerPxl, sclMultYPerPxl;
 	private TreeMap<Tuple<Integer,Integer>, SOM_MapNode> MapNodes;
 	private PImage[] mapLocClrImg;

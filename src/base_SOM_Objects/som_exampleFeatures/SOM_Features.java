@@ -6,6 +6,7 @@ import java.util.TreeMap;
 
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_Utils_Objects.io.MsgCodes;
 
 /**
@@ -29,7 +30,13 @@ public abstract class SOM_Features {
 	public float ftrVecMag;	
 	
 	//keys for ftr map arrays
-	protected static final int ftrMapTypeKey = SOM_MapManager.useUnmoddedDat, normFtrMapTypeKey = SOM_MapManager.useNormedDat, stdFtrMapTypeKey = SOM_MapManager.useScaledDat;	
+	/**
+	 * 	keys for ftr map arrays
+	 */
+	protected static final int 
+		ftrMapTypeKey = SOM_FtrDataType.Unmodified.getVal(), 
+		normFtrMapTypeKey = SOM_FtrDataType.Normalized.getVal(), 
+		stdFtrMapTypeKey = SOM_FtrDataType.Standardized.getVal();	
 	protected static final Integer[] ftrMapTypeKeysAra = new Integer[] {ftrMapTypeKey, normFtrMapTypeKey, stdFtrMapTypeKey};
 	
 	//idx's in feature vector that have non-zero values

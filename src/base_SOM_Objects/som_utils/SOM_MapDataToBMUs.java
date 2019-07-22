@@ -14,7 +14,8 @@ import base_Utils_Objects.vectorObjs.Tuple;
 public abstract class SOM_MapDataToBMUs implements Callable<Boolean>{
 	protected SOM_MapManager mapMgr;
 	protected MessageObject msgObj;
-	protected final int stIdx, endIdx, curMapFtrType, thdIDX, progressBnd;
+	protected final SOM_FtrDataType curMapFtrType;
+	protected final int stIdx, endIdx, thdIDX, progressBnd;
 	//calculate the exclusionary feature distance(only measure distance from map via features that the node has non-zero values in)
 	protected final boolean useChiSqDist;
 	protected final TreeMap<Tuple<Integer,Integer>, SOM_MapNode> MapNodes;

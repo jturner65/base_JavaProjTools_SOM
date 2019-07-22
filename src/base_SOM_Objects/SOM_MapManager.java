@@ -164,8 +164,8 @@ public abstract class SOM_MapManager {
 
 	////////////////////		
 	//data type to use to describe/train map
-	public static final int useUnmoddedDat = 0, useScaledDat = 1, useNormedDat = 2;
-	public static final String[] uiMapTrainFtrTypeList = new String[] {"Unmodified","Standardized (0->1 per ftr)","Normalized (vector mag==1)"};
+	//public static final int useUnmoddedDat = 0, useScaledDat = 1, Normalized = 2;
+	public static final String[] uiMapTrainFtrTypeList = SOM_FtrDataType.getListOfTypes();//new String[] {"Unmodified","Standardized (0->1 per ftr)","Normalized (vector mag==1)"};
 	/**
 	 * types of possible mappings to particular map node as bmu
 	 *  corresponds to these values : all ExDataTypes except last 2
@@ -174,11 +174,11 @@ public abstract class SOM_MapManager {
 	/**
 	 * feature type used for training currently trained/loaded map
 	 */
-	protected int curMapTrainFtrType;	
+	protected SOM_FtrDataType curMapTrainFtrType;	
 	/**
 	 * feature type used for testing/finding proposals currently - comparing features to map
 	 */
-	protected int curMapTestFtrType;
+	protected SOM_FtrDataType curMapTestFtrType;
 	/**
 	 * distance to use :  1: chisq features or 0 : regular feature dists
 	 */
@@ -362,46 +362,32 @@ public abstract class SOM_MapManager {
 		msgObj.dispMessage("SOM_MapManager","resetTrainDataAras","Init Finished", MsgCodes.info5);
 	}//resetTrainDataAras()
 	
-	public String getDataTypeNameFromCurFtrTrainType() {return getDataTypeNameFromInt(curMapTrainFtrType);}	
-	public String getDataTypeNameFromCurFtrTestType() {return getDataTypeNameFromInt(curMapTestFtrType);}	
-	//useUnmoddedDat = 0, useScaledDat = 1, useNormedDat
-	public String getDataTypeNameFromInt(int dataFrmt) {
-		switch(dataFrmt) {
-		case useUnmoddedDat : {return "unModFtrs";}
-		case useScaledDat : {return "stdFtrs";}
-		case useNormedDat : {return "normFtrs";}
-		default : {return null;}		//unknown data frmt type
-		}
-	}//getDataTypeNameFromInt
+	public String getDataTypeNameFromCurFtrTrainType_Brf() {return curMapTrainFtrType.getBrfName();}	
+	public String getDataTypeNameFromCurFtrTestType_Brf() {return curMapTestFtrType.getBrfName();}	
+	//Unmodified = 0, Standardized = 1, Normalized
+	public String getDataTypeNameFromInt_Brf(SOM_FtrDataType dataFrmt) { return dataFrmt.getBrfName();}//getDataTypeNameFromInt
 	
-	public String getDataDescFromCurFtrTrainType()  {return getDataDescFromInt(curMapTrainFtrType);}
-	public String getDataDescFromCurFtrTestType()  {return getDataDescFromInt(curMapTestFtrType);}
-	public String getDataDescFromInt(int dataFrmt) {
-		switch(dataFrmt) {
-		case useUnmoddedDat : {return "Unmodified";}
-		case useScaledDat : {return "Standardized (across all examples per feature)";}
-		case useNormedDat : {return "Normalized (across all features per example)";}
-		default : {return null;}		//unknown data frmt type
-		}
-	}//getDataTypeNameFromInt
+	public String getDataDescFromCurFtrTrainType()  {return curMapTrainFtrType.getExplanation();}
+	public String getDataDescFromCurFtrTestType()  {return curMapTestFtrType.getExplanation();}
+	public String getDataDescFromInt(SOM_FtrDataType dataFrmt) {return dataFrmt.getExplanation();}//getDataTypeNameFromInt
 	
-	public String getDataDescFromInt_Short(int dataFrmt) {
+	public String getDataDescFromInt_Short(SOM_FtrDataType dataFrmt) {
 		switch(dataFrmt) {
-		case useUnmoddedDat : {return "Unmodified";}
-		case useScaledDat : {return "Standardized";}
-		case useNormedDat : {return "Normalized";}
+		case Unmodified : {return "Unmodified";}
+		case Standardized : {return "Standardized";}
+		case Normalized : {return "Normalized";}
 		default : {return null;}		//unknown data frmt type
 		}
 	}//getDataTypeNameFromInt
 	
 	//return data format enum val based on string name
-	public int getDataFrmtTypeFromName(String dataFrmtName) {
+	public SOM_FtrDataType getDataFrmtTypeFromName(String dataFrmtName) {
 		String comp = dataFrmtName.toLowerCase();
 		switch(comp) {
-		case "unmodftrs": {return useUnmoddedDat;}
-		case "stdftrs"	: {return useScaledDat;}
-		case "normftrs"	: {return useNormedDat;}
-		default : {return -1;}		//unknown data frmt type
+		case "unmodftrs": {return SOM_FtrDataType.Unmodified;}
+		case "stdftrs"	: {return SOM_FtrDataType.Standardized;}
+		case "normftrs"	: {return SOM_FtrDataType.Normalized;}
+		default : {return SOM_FtrDataType.Unmodified;}		//unknown data frmt type
 		}		
 	}//getDataFrmtTypeFromName
 	//load raw data and preprocess, partitioning into different data types as appropriate
@@ -421,10 +407,9 @@ public abstract class SOM_MapManager {
 		getMsgObj().dispMessage("SOM_MapManager","_ftrVecBuild : " + exType + " Examples","Begin "+exs.size()+" example processing.", MsgCodes.info1);
 		boolean canMultiThread=isMTCapable() && !forceST;//if false this means the current machine only has 1 or 2 available processors, numUsableThreads == # available - 2
 		//if((canMultiThread) && (exs.size()>0)) {//MapExFtrCalcs_Runner.rawNumPerPartition*10)){
-		if((canMultiThread) && (exs.size()>SOM_CalcExFtrs_Runner.rawNumPerPartition*10)){//force all to be single threaded - something is not working with multi-threaded customer ftr calc
-			//MapExFtrCalcs_Runner(SOM_MapManager _mapMgr, ExecutorService _th_exec, SOMExample[] _exData, String _dataTypName, ExDataType _dataType, int _typeOfProc)
+		if((canMultiThread) && (exs.size()>SOM_CalcExFtrs_Runner.rawNumPerPartition*10)){
 			//shuffling examples to attempt to spread out calculations more evenly - the examples that require the alt comp vector calc are expensive to calculate
-			//should not be multithread until concurrency issue pertaining to ftr calc can be determined
+			//should not be multithread unless ftr calc is known to be devoid of concurrency issues
 			SOM_CalcExFtrs_Runner calcRunner = new SOM_CalcExFtrs_Runner(this, th_exec, shuffleTrainingData(exs.toArray(new SOM_Example[0]),12345L) , exType, _typeOfProc, false);
 			calcRunner.runMe();
 		} else {//called after all features of this kind of object are built - this calculates alternate compare object
@@ -483,11 +468,13 @@ public abstract class SOM_MapManager {
 		msgObj.dispMessage("SOM_MapManager","setInputTestTrainDataArasShuffle","Finished Shuffling Input, Building Training and Testing Partitions. Train size : " + numTrainData+ " Testing size : " + numTestData+".", MsgCodes.info5);
 	}//setInputTestTrainDataArasShuffle
 	
-	//build file names, including info for data type used to train map
+	/**
+	 * build file names, including info for data type used to train map, save training data, and save mins/diffs
+	 */
 	protected void initNewSOMDirsAndSaveData() {
 		msgObj.dispMessage("SOM_MapManager","initNewSOMDirsAndSaveData","Begin building new directories, saving Train, Test data and data Mins and Diffs. Train size : " + numTrainData+ " Testing size : " + numTestData+".", MsgCodes.info5);	
 		//build directories for this experiment
-		projConfigData.buildDateTimeStrAraAndDType(getDataTypeNameFromCurFtrTrainType());
+		projConfigData.buildDateTimeStrAraAndDType(getDataTypeNameFromCurFtrTrainType_Brf());
 		//save partitioned data in built directories
 		projConfigData.launchTestTrainSaveThrds(th_exec, curMapTrainFtrType, numTrnFtrs,trainData,testData);				//save testing and training data	
 		//save mins and diffs of current training data
@@ -1013,7 +1000,7 @@ public abstract class SOM_MapManager {
 		//for each map node without training example bmus...
 		for(SOM_MapNode emptyNode : withOutMap){//node has no label mappings, so need to determine label		
 			//find list of closest nodes based on ftr similarity
-			closestList = emptyNode.findClosestMapNodes(MapNodesWithExByFtrIDX, emptyNode::getSqDistFromFtrType, SOM_MapManager.useUnmoddedDat);			
+			closestList = emptyNode.findClosestMapNodes(MapNodesWithExByFtrIDX, emptyNode::getSqDistFromFtrType, SOM_FtrDataType.Unmodified);			
 			minSqDist = closestList.getKey();	
 			closestNodeList = closestList.getValue();	
 			
@@ -1192,7 +1179,7 @@ public abstract class SOM_MapManager {
 	
 	//put a map node in PerFtrHiWtMapNodes per-ftr array
 	public void setMapNodeFtrStr(SOM_MapNode mapNode) {
-		TreeMap<Integer, Float> stdFtrMap = mapNode.getCurrentFtrMap(SOM_MapManager.useScaledDat);
+		TreeMap<Integer, Float> stdFtrMap = mapNode.getCurrentFtrMap(SOM_FtrDataType.Standardized);
 		for (Integer ftrIDX : stdFtrMap.keySet()) {
 			Float ftrVal = stdFtrMap.get(ftrIDX);
 			ArrayList<SOM_MapNode> nodeList = PerFtrHiWtMapNodes[ftrIDX].get(ftrVal);
@@ -1845,13 +1832,18 @@ public abstract class SOM_MapManager {
 	
 	public boolean getUseChiSqDist() {return useChiSqDist;}
 	public void setUseChiSqDist(boolean _useChiSq) {useChiSqDist=_useChiSq;}
-	
+
 	//set current map ftr type, and update ui if necessary
-	public void setCurrentTrainDataFormat(int _frmt) {	curMapTrainFtrType = _frmt; msgObj.dispMessage("SOM_MapManager","setCurrentTrainDataFormat","curMapTrainFtrType set to : " +curMapTrainFtrType + ".", MsgCodes.warning2); }//setCurrentDataFormat
-	public int getCurrentTrainDataFormat() {	return curMapTrainFtrType;}
+	public void setCurrentTrainDataFormat(SOM_FtrDataType _frmt) {	curMapTrainFtrType = _frmt; msgObj.dispInfoMessage("SOM_MapManager","setCurrentTrainDataFormat","curMapTrainFtrType set to : " +curMapTrainFtrType + "."); }//setCurrentDataFormat
+	public void setCurrentTrainDataFormatFromConfig(int _frmt) {
+		curMapTrainFtrType = SOM_FtrDataType.getVal(_frmt); 
+		msgObj.dispInfoMessage("SOM_MapManager","setCurrentTrainDataFormatFromConfig","curMapTrainFtrType set to : " +curMapTrainFtrType + " from Config."); 
+		if (win != null) {win.setFtrTrainTypeFromConfig(_frmt);}		
+	}//setCurrentDataFormat
+	public SOM_FtrDataType getCurrentTrainDataFormat() {	return curMapTrainFtrType;}
 	
-	public void setCurrentTestDataFormat(int _frmt) {	curMapTestFtrType = _frmt; }//setCurrentDataFormat
-	public int getCurrentTestDataFormat() {	return curMapTestFtrType;}
+	public void setCurrentTestDataFormat(SOM_FtrDataType _frmt) {	curMapTestFtrType = _frmt; }//setCurrentDataFormat
+	public SOM_FtrDataType getCurrentTestDataFormat() {	return curMapTestFtrType;}
 	public MessageObject getMsgObj(){	return msgObj;}
 	public void setMsgObj(MessageObject msgObj) {	this.msgObj = msgObj;}
 	public float getMapWidth(){return mapDims[0];}
@@ -1900,7 +1892,7 @@ public abstract class SOM_MapManager {
 	//ftr-wt segment thresholds
 	public float getNodeInFtrWtSegThresh() {return nodeInSegFtrWtDistThresh;}
 	public void setNodeInFtrWtSegThresh(float _val) {nodeInSegFtrWtDistThresh=_val;}		
-	public abstract String getFtrWtSegmentTitleString(int ftrCalcType, int ftrIDX);
+	public abstract String getFtrWtSegmentTitleString(SOM_FtrDataType ftrCalcType, int ftrIDX);
 	//class and category segments
 	public TreeMap<Integer, SOM_MappedSegment> getClass_Segments(){ return Class_Segments; }
 	public abstract String getClassSegmentTitleString(int classID);

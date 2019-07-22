@@ -40,7 +40,7 @@ public abstract class SOM_ProjConfigData {
 	//current experiment # of samples total, train partition and test partition
 	protected int expNumSmpls, expNumTrain, expNumTest;
 	//current type of data used to train map - unmodified features, normalized features (ftr vec sums to 1) or standardized features (normalized across all data examples per ftr)
-	protected String dataType;
+	protected String ftrTypeUsedToTrain;
 	
 	//calendar object to be used to query instancing time
 	protected final Calendar instancedNow;
@@ -128,7 +128,7 @@ public abstract class SOM_ProjConfigData {
 		//----end accumulate and manage OS info ----//		
 		
 		SOMOutExpSffx = "x-1_y-1_k-1";//illegal values, needs to be set by config
-		dataType = "NONE";
+		ftrTypeUsedToTrain = "NONE";
 		//get current time
 		instancedNow = Calendar.getInstance();
 //		fnames = new String[numFiles];
@@ -284,7 +284,7 @@ public abstract class SOM_ProjConfigData {
 			TreeMap<String,String> somExecConfigMap = getSOMExpConfigData(SOMExecConfigFileName,"project config data for SOM Execution");
 			//for(String s : somExecConfigMap.keySet()) {	System.out.println("key : " + s +" | value :  " + somExecConfigMap.get(s));}
 			res.add("# Training Examples : "+ String.format("%02d", Integer.parseInt(somExecConfigMap.get("expNumTrain"))));
-			res.add("Feature Type used to train : " + mapMgr.getDataDescFromInt_Short(mapMgr.getDataFrmtTypeFromName(somExecConfigMap.get("dataType"))));
+			res.add("Feature Type used to train : " + mapMgr.getDataDescFromInt_Short(mapMgr.getDataFrmtTypeFromName(somExecConfigMap.get("ftrTypeUsedToTrain"))));
 			
 			String SOMMapConfigFileName = fullQualPreBuiltMapDir + somExecConfigMap.get("SOMFileNamesAra[7]");
 			TreeMap<String,String> somMapConfigMap = getSOMExpConfigData(SOMMapConfigFileName,"project config data for SOM Execution");
@@ -382,7 +382,7 @@ public abstract class SOM_ProjConfigData {
 		reportData.add("SOM Training Data configuration :");
 		reportData.add("Uses Sparse Training Data : "+useSparseTrainingData);
 		reportData.add("# of Training Examples : " + expNumTrain);
-		reportData.add("Nature of the features used to train the SOM : "+dataType);
+		reportData.add("Nature of the features used to train the SOM : "+ftrTypeUsedToTrain);
 		reportData.add("Date and time of Map Training : "+dateTimeStrAra[1] + " : " + dateTimeStrAra[0]);
 		reportData.add("\n");
 		reportData.add("SOM Processing results : ");
@@ -463,7 +463,7 @@ public abstract class SOM_ProjConfigData {
 		res.add("expNumSmpls,"+expNumSmpls);
 		res.add("expNumTrain,"+expNumTrain);
 		res.add("expNumTest,"+expNumTest);
-		res.add("dataType,"+dataType);
+		res.add("ftrTypeUsedToTrain,"+ftrTypeUsedToTrain);
 		res.add("dateTimeStrAra[0],"+dateTimeStrAra[0]);
 		res.add("dateTimeStrAra[1],"+dateTimeStrAra[1]);
 		for(int i =0; i<SOMFileNamesAra.length;++i) {res.add("SOMFileNamesAra["+i+"],"+SOMFileNamesAra[i]);		}
@@ -492,6 +492,7 @@ public abstract class SOM_ProjConfigData {
 	//send current map data to map mgr to set ui values
 	public void setUIValsFromLoad(){
 		mapMgr.setUIValsFromLoad(SOMExeDat);
+		mapMgr.setCurrentTrainDataFormatFromConfig(mapMgr.getDataFrmtTypeFromName(ftrTypeUsedToTrain).getVal());
 		if((preBuiltMapDirAra == null) || (preBuiltMapDirAra.length == 0)){
 			msgObj.dispWarningMessage("SOM_ProjConfigData","setUIValsFromLoad","Attempting to pass a null or empty prebuiltmap dir ara. Aborting");
 		} else {
@@ -527,7 +528,8 @@ public abstract class SOM_ProjConfigData {
 					case "useSparseTrainingData" : 	{  	 useSparseTrainingData = Boolean.parseBoolean(strToks[1].trim());break;}
 					case "useSparseTestingData" : 	{    useSparseTestingData = Boolean.parseBoolean(strToks[1].trim());break;}
 					case "trainTestPartition" : 	{    trainTestPartition = Float.parseFloat(strToks[1].trim());break;}
-					case "dataType" : 				{    dataType = strToks[1].trim();break;}
+					case "dataType" : 				{    ftrTypeUsedToTrain = strToks[1].trim();break;}		//changed, but still wish to support old configs
+					case "ftrTypeUsedToTrain" : 	{    ftrTypeUsedToTrain = strToks[1].trim();break;}
 					case "expNumSmpls" : 			{    expNumSmpls = Integer.parseInt(strToks[1].trim());	break;}
 					case "expNumTrain" : 			{    expNumTrain = Integer.parseInt(strToks[1].trim());	break;}
 					case "expNumTest" : 			{    expNumTest = Integer.parseInt(strToks[1].trim());	break;}
@@ -557,11 +559,14 @@ public abstract class SOM_ProjConfigData {
 			String[] strToks = str.trim().split(SOM_MapManager.csvFileToken);
 			dataRes.put(strToks[0].trim(), strToks[1].trim());
 		}//for each line
+		//changed name, but wish to continue to support old config files - eventually this should be removed TODO
+		String oldFormatDataType = dataRes.get("dataType");
+		if((oldFormatDataType) != null){	dataRes.put("ftrTypeUsedToTrain", oldFormatDataType);}
 		return dataRes;
 	}
 		
 	//save test/train data in multiple threads
-	public void launchTestTrainSaveThrds(ExecutorService th_exec, int curMapFtrType, int numTrainFtrs, SOM_Example[] trainData, SOM_Example[] testData) {
+	public void launchTestTrainSaveThrds(ExecutorService th_exec, SOM_FtrDataType curMapFtrType, int numTrainFtrs, SOM_Example[] trainData, SOM_Example[] testData) {
 		//set exp names
 		int numTtlEx = trainData.length + testData.length;
 		setSOM_ExpFileNames(numTtlEx, trainData.length, testData.length);
@@ -651,7 +656,7 @@ public abstract class SOM_ProjConfigData {
 	}//getDateTimeString
 			
 	//build array with and without year of string representations of dates, used for file name access
-	public void buildDateTimeStrAraAndDType(String _dType) {	dateTimeStrAra = getDateTimeString(false, "_"); dataType = _dType;}//idx 0 has year, idx 1 does not
+	public void buildDateTimeStrAraAndDType(String _dType) {	dateTimeStrAra = getDateTimeString(false, "_"); ftrTypeUsedToTrain = _dType;}//idx 0 has year, idx 1 does not
 	
 	//call when src data are first initialized - sets file names for .lrn file  and testing file output database query; also call when loading saved exp
 	//dataFrmt : format used to train SOM == 0:unmodded; 1:std'ized; 2:normed
@@ -674,12 +679,12 @@ public abstract class SOM_ProjConfigData {
 		SOMFileNamesAra = new String[numFileNames];
 		SOMFileNamesAra[fName_SOMBaseDir_IDX] = nowDir;
 		SOMFileNamesAra[fName_OutPrfx_IDX] = "Out_"+SOMProjName+"_Smp_"+expNumSmpls;
-		SOMFileNamesAra[fName_TrainLRN_IDX] = "Train_"+SOMProjName+"_Smp_"+expNumTrain+"_of_"+expNumSmpls+"_typ_" +dataType + "_Dt_"+fileNow+".lrn";
-		SOMFileNamesAra[fName_TrainSVM_IDX] = "Train_"+SOMProjName+"_Smp_"+expNumTrain+"_of_"+expNumSmpls+"_typ_" + dataType+"_Dt_"+fileNow+".svm";				
-		SOMFileNamesAra[fName_TestSVM_IDX] = "Test_"+SOMProjName+"_Smp_"+expNumTest+"_of_"+expNumSmpls+"_typ_" +dataType +"_Dt_"+fileNow+".svm";
-		SOMFileNamesAra[fName_MinsCSV_IDX] = "Mins_"+SOMProjName+"_Smp_"+expNumSmpls+"_Dt_"+fileNow+"_typ_" +dataType +".csv";
-		SOMFileNamesAra[fName_DiffsCSV_IDX] = "Diffs_"+SOMProjName+"_Smp_"+expNumSmpls+"_Dt_"+fileNow+"_typ_" +dataType +".csv";
-		SOMFileNamesAra[fName_SOMImgPNG_IDX] = "SOMImg_"+SOMProjName+"_Smp_"+expNumSmpls+"_Dt_"+fileNow+"_typ_" +dataType +".png";
+		SOMFileNamesAra[fName_TrainLRN_IDX] = "Train_"+SOMProjName+"_Smp_"+expNumTrain+"_of_"+expNumSmpls+"_typ_" +ftrTypeUsedToTrain + "_Dt_"+fileNow+".lrn";
+		SOMFileNamesAra[fName_TrainSVM_IDX] = "Train_"+SOMProjName+"_Smp_"+expNumTrain+"_of_"+expNumSmpls+"_typ_" + ftrTypeUsedToTrain+"_Dt_"+fileNow+".svm";				
+		SOMFileNamesAra[fName_TestSVM_IDX] = "Test_"+SOMProjName+"_Smp_"+expNumTest+"_of_"+expNumSmpls+"_typ_" +ftrTypeUsedToTrain +"_Dt_"+fileNow+".svm";
+		SOMFileNamesAra[fName_MinsCSV_IDX] = "Mins_"+SOMProjName+"_Smp_"+expNumSmpls+"_Dt_"+fileNow+"_typ_" +ftrTypeUsedToTrain +".csv";
+		SOMFileNamesAra[fName_DiffsCSV_IDX] = "Diffs_"+SOMProjName+"_Smp_"+expNumSmpls+"_Dt_"+fileNow+"_typ_" +ftrTypeUsedToTrain +".csv";
+		SOMFileNamesAra[fName_SOMImgPNG_IDX] = "SOMImg_"+SOMProjName+"_Smp_"+expNumSmpls+"_Dt_"+fileNow+"_typ_" +ftrTypeUsedToTrain +".png";
 		SOMFileNamesAra[fName_SOMMapConfig_IDX] = "SOM_MapConfig_"+SOMProjName+"_Smp_"+expNumSmpls+"_Dt_"+fileNow+".txt";						//map configuration
 		SOMFileNamesAra[fName_EXECProjConfig_IDX] = expProjConfigFileName;					//
 					;

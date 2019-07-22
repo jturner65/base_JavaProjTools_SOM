@@ -60,7 +60,10 @@ public abstract class SOM_Example extends baseDataPtVis{
 	/**
 	 * 	keys for ftr map arrays
 	 */
-	protected static final int ftrMapTypeKey = SOM_MapManager.useUnmoddedDat, normFtrMapTypeKey = SOM_MapManager.useNormedDat, stdFtrMapTypeKey = SOM_MapManager.useScaledDat;	
+	protected static final int 
+		ftrMapTypeKey = SOM_FtrDataType.Unmodified.getVal(), 
+		normFtrMapTypeKey = SOM_FtrDataType.Normalized.getVal(), 
+		stdFtrMapTypeKey = SOM_FtrDataType.Standardized.getVal();	
 	protected static final Integer[] ftrMapTypeKeysAra = new Integer[] {ftrMapTypeKey, normFtrMapTypeKey, stdFtrMapTypeKey};
 	
 	/**
@@ -823,12 +826,12 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * @param _ftrType : kind of features (unmod, normed, stdized) to be used for comparison/distance calc
 	 * @return
 	 */	
-	public final TreeMap<Double, ArrayList<SOM_MapNode>> findMapNodesByDist(TreeMap<Integer, HashSet<SOM_MapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, int _ftrType){
+	public final TreeMap<Double, ArrayList<SOM_MapNode>> findMapNodesByDist(TreeMap<Integer, HashSet<SOM_MapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, SOM_FtrDataType _ftrType){
 		HashSet<SOM_MapNode> _RelevantMapNodes = new HashSet<SOM_MapNode>();
-		buildRelevantMapNodes(_RelevantMapNodes, compFtrMaps[_ftrType].keySet(), _MapNodesByFtr);
+		buildRelevantMapNodes(_RelevantMapNodes, compFtrMaps[_ftrType.getVal()].keySet(), _MapNodesByFtr);
 		TreeMap<Double, ArrayList<SOM_MapNode>> mapNodesByDist = new TreeMap<Double, ArrayList<SOM_MapNode>>();	
 		for (SOM_MapNode mapNode : _RelevantMapNodes) {
-			double sqDistToNode = _distFunc.apply(mapNode.compFtrMaps[_ftrType], compFtrMaps[_ftrType]);
+			double sqDistToNode = _distFunc.apply(mapNode.compFtrMaps[_ftrType.getVal()], compFtrMaps[_ftrType.getVal()]);
 			ArrayList<SOM_MapNode> tmpAra = mapNodesByDist.get(sqDistToNode);
 			if(tmpAra == null) {tmpAra = new ArrayList<SOM_MapNode>();}
 			tmpAra.add(mapNode);
@@ -845,7 +848,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * @param _ftrType : kind of features (unmod, normed, stdized) to be used for comparison/distance calc
 	 * @return
 	 */
-	public final Entry<Double, ArrayList<SOM_MapNode>> findClosestMapNodes(TreeMap<Integer, HashSet<SOM_MapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, int _ftrType){
+	public final Entry<Double, ArrayList<SOM_MapNode>> findClosestMapNodes(TreeMap<Integer, HashSet<SOM_MapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, SOM_FtrDataType _ftrType){
 		TreeMap<Double, ArrayList<SOM_MapNode>> mapNodesByDist = findMapNodesByDist(_MapNodesByFtr,_distFunc, _ftrType );
 		return mapNodesByDist.firstEntry();	
 	}
@@ -861,14 +864,14 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * @param _ftrType : kind of features (unmod, normed, stdized) to be used for comparison/distance calc
 	 * @return
 	 */
-	public synchronized final TreeMap<Double, ArrayList<SOM_MapNode>> findBMUFromFtrNodes(TreeMap<Integer, HashSet<SOM_MapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, int _ftrType) {
+	public synchronized final TreeMap<Double, ArrayList<SOM_MapNode>> findBMUFromFtrNodes(TreeMap<Integer, HashSet<SOM_MapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, SOM_FtrDataType _ftrType) {
 		TreeMap<Double, ArrayList<SOM_MapNode>> mapNodesByDist = findMapNodesByDist(_MapNodesByFtr,_distFunc, _ftrType );
 		//handle if this node has no ftrs that map directly to map node ftrs - perhaps similarity groupings exist to build mappings from
 		//buildMapNodeDistsFromGroupings(mapNodesByDist, _MapNodesByFtr);
 		if(mapNodesByDist.size() == 0) {_setNullBMU(); return null;}
 		_setBMUFromMapNodeDistMap(mapNodesByDist);		
 		//find ftr distance to all 8 surrounding nodes and add them to mapNodeNeighbors
-		buildNghbrhdMapNodes( _ftrType, _distFunc);	
+		buildNghbrhdMapNodes( _ftrType.getVal(), _distFunc);	
 		return mapNodesByDist;
 	}//findBMUFromNodes 
 
@@ -882,11 +885,11 @@ public abstract class SOM_Example extends baseDataPtVis{
 		return res;}
 	//return csv string of this object's features, depending on which type is selected - check to make sure 2ndary features exist before attempting to build data strings
 	////useUnmoddedDat = 0, useScaledDat = 1, useNormedDat
-	public final String toCSVString(int _type) {
+	public final String toCSVString(SOM_FtrDataType _type) {
 		switch(_type){
-			case SOM_MapManager.useUnmoddedDat : {return _toCSVString(ftrMaps[ftrMapTypeKey]); }
-			case SOM_MapManager.useNormedDat  : {return _toCSVString(getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]);}
-			case SOM_MapManager.useScaledDat  : {return _toCSVString(getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]); }
+			case Unmodified 	: {return _toCSVString(ftrMaps[ftrMapTypeKey]); }
+			case Normalized 	: {return _toCSVString(getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]);}
+			case Standardized  	: {return _toCSVString(getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]); }
 			default : {return _toCSVString(ftrMaps[ftrMapTypeKey]); }
 		}
 	}//toCSVString
@@ -900,11 +903,11 @@ public abstract class SOM_Example extends baseDataPtVis{
 		}
 		return res;}	
 	//return LRN-format (dense) string of this object's features, depending on which type is selected - check to make sure 2ndary features exist before attempting to build data strings
-	public final String toLRNString(int _type, String sep) {
+	public final String toLRNString(SOM_FtrDataType _type, String sep) {
 		switch(_type){
-			case SOM_MapManager.useUnmoddedDat : {return _toLRNString(ftrMaps[ftrMapTypeKey], sep); }
-			case SOM_MapManager.useNormedDat   : {return _toLRNString(getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[ftrMapTypeKey], sep);}
-			case SOM_MapManager.useScaledDat   : {return _toLRNString(getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[ftrMapTypeKey], sep); }
+			case Unmodified 	: {return _toLRNString(ftrMaps[ftrMapTypeKey], sep); }
+			case Normalized  	: {return _toLRNString(getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[ftrMapTypeKey], sep);}
+			case Standardized   : {return _toLRNString(getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[ftrMapTypeKey], sep); }
 			default : {return _toLRNString(ftrMaps[ftrMapTypeKey], sep); }
 		}		
 	}//toLRNString
@@ -915,11 +918,11 @@ public abstract class SOM_Example extends baseDataPtVis{
 		return res;}//_toSVMString
 	
 	//return SVM-format (sparse) string of this object's features, depending on which type is selected - check to make sure 2ndary features exist before attempting to build data strings
-	public final String toSVMString(int _type) {
+	public final String toSVMString(SOM_FtrDataType _type) {
 		switch(_type){
-			case SOM_MapManager.useUnmoddedDat : {return _toSVMString(ftrMaps[ftrMapTypeKey]); }
-			case SOM_MapManager.useNormedDat   : {return _toSVMString(getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]);}
-			case SOM_MapManager.useScaledDat   : {return _toSVMString(getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]); }
+			case Unmodified 	: {return _toSVMString(ftrMaps[ftrMapTypeKey]); }
+			case Normalized  	: {return _toSVMString(getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]);}
+			case Standardized   : {return _toSVMString(getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]); }
 			default : {return _toSVMString(ftrMaps[ftrMapTypeKey]); }
 		}		
 	}//toLRNString
@@ -939,11 +942,11 @@ public abstract class SOM_Example extends baseDataPtVis{
 	//build normfeature vector on demand
 	public final float[] getNormFtrs() {return _getFtrsFromMap(ftrMaps[normFtrMapTypeKey]);}	
 	
-	public final TreeMap<Integer, Float> getCurrentFtrMap(int _type){
+	public final TreeMap<Integer, Float> getCurrentFtrMap(SOM_FtrDataType _type){
 		switch(_type){
-			case SOM_MapManager.useUnmoddedDat : {return ftrMaps[ftrMapTypeKey]; }
-			case SOM_MapManager.useNormedDat   : {return (getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]);}
-			case SOM_MapManager.useScaledDat   : {return (getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]); }
+			case Unmodified : {return ftrMaps[ftrMapTypeKey]; }
+			case Normalized  : {return (getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]);}
+			case Standardized   : {return (getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[ftrMapTypeKey]); }
 			default : {return ftrMaps[ftrMapTypeKey]; }
 		}		
 	}

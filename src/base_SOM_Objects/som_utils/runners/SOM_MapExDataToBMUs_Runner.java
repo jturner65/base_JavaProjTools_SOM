@@ -24,7 +24,7 @@ import base_Utils_Objects.vectorObjs.Tuple;
 public class SOM_MapExDataToBMUs_Runner extends SOM_MapRunner{
 
 	SOM_ExDataType dataType;
-	int curMapTestFtrType;
+	SOM_FtrDataType curMapTestFtrType;
 	boolean useChiSqDist;
 	TreeMap<Tuple<Integer,Integer>, SOM_MapNode> MapNodes;
 	//map of ftr idx and all map nodes that have non-zero presence in that ftr

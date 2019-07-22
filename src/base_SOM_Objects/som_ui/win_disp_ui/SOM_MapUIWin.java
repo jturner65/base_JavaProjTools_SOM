@@ -222,8 +222,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		setPrivFlags(mapDrawUMatrixIDX, flagsToSet[0]);
 		setPrivFlags(mapExclProdZeroFtrIDX, flagsToSet[1]);
 		
-		mapMgr.setCurrentTrainDataFormat((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()));
-		mapMgr.setCurrentTestDataFormat((int)(this.guiObjs[uiTestDataFrmtIDX].getVal()));
+		mapMgr.setCurrentTrainDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal())));
+		mapMgr.setCurrentTestDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTestDataFrmtIDX].getVal())));
 		mapNodeWtDispThresh = (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal());
 		mapNodeDispType = SOM_ExDataType.getVal((int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
 		mseOvrData = null;	
@@ -347,8 +347,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		tmpListObjVals.put(uiMapNHdFuncIDX, new String[]{"gaussian","bubble"});		
 		tmpListObjVals.put(uiMapRadCoolIDX, new String[]{"linear","exponential"});
 		tmpListObjVals.put(uiMapLrnCoolIDX, new String[]{"linear","exponential"});		
-		tmpListObjVals.put(uiTrainDataFrmtIDX, SOM_MapManager.uiMapTrainFtrTypeList);
-		tmpListObjVals.put(uiTestDataFrmtIDX, SOM_MapManager.uiMapTrainFtrTypeList);		
+		tmpListObjVals.put(uiTrainDataFrmtIDX, SOM_FtrDataType.getListOfTypes());
+		tmpListObjVals.put(uiTestDataFrmtIDX, SOM_FtrDataType.getListOfTypes());		
 		tmpListObjVals.put(uiMapPreBuiltDirIDX, new String[] {"None"});
 		tmpListObjVals.put(uiMapNodeBMUTypeToDispIDX, SOM_MapManager.getNodeBMUMapTypes());
 		tmpListObjVals.put(uiFtrSelectIDX, new String[] {"None"});		
@@ -610,6 +610,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		guiObjs[uiMapLrnCoolIDX].setValInList(mapStrings.get("mapLearnCool"));
 				
 	}//setUIValues
+	
 	/**
 	 * set display of prebuilt map directories to use based on loaded info from project config file
 	 * @param _pbltMapArray 
@@ -718,10 +719,10 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 			//end map arg-related string/list values
 			
 			case uiTrainDataFrmtIDX 		: {//format of training data
-				mapMgr.setCurrentTrainDataFormat((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()));
+				mapMgr.setCurrentTrainDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal())));
 				break;}
 			case uiTestDataFrmtIDX 			: {
-				mapMgr.setCurrentTestDataFormat((int)(this.guiObjs[uiTestDataFrmtIDX].getVal()));
+				mapMgr.setCurrentTestDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTestDataFrmtIDX].getVal())));
 				break;}
 			case uiTrainDatPartIDX 			: {break;}
 			case uiNodeWtDispThreshIDX : {
@@ -751,6 +752,15 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 			default : {setUIWinValsIndiv(UIidx);}
 		}
 	}//setUIWinVals
+	
+	/**
+	 * feature type used to train currently loaded map
+	 * @param _ftrToTrain
+	 */
+	public void setFtrTrainTypeFromConfig(int _ftrTypeUsedToTrain) {
+		this.guiObjs[uiTrainDataFrmtIDX].setVal(_ftrTypeUsedToTrain);
+		uiVals[uiTrainDataFrmtIDX] = this.guiObjs[uiTrainDataFrmtIDX].getVal();
+	}
 	
 	protected void setCategory_UIObj(boolean settingCategoryFromClass) {
 		curCategoryIDX = (int)(this.guiObjs[uiCategorySelectIDX].getVal());

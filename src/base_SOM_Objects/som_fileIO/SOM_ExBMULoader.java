@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
@@ -25,7 +26,7 @@ public class SOM_ExBMULoader implements Callable<Boolean>{
 	//whether or not we are using chi sq distance (normalized by variance per ftr)
 	boolean useChiSqDist;
 	//what kind of features used to train map (umodded, normalized, std'ized)
-	int ftrTypeUsedToTrain;
+	int ftrTypeUsedToTrainIDX;
 	//should always be training, not necessary
 	int typeOfEx;	
 	//map of map nodes to arrays of examples that consider these map nodes their bmus - loaded in from file written by SOM training code
@@ -34,7 +35,7 @@ public class SOM_ExBMULoader implements Callable<Boolean>{
 	
 	public SOM_ExBMULoader(MessageObject _msgObj, int _ftrTypeUsedToTrain, boolean _useChiSqDist, int _typeOfEx, HashMap<SOM_MapNode, ArrayList<SOM_Example>> _bmusToExmpl, int _thdIDX) {
 		msgObj = _msgObj;
-		ftrTypeUsedToTrain = _ftrTypeUsedToTrain;
+		ftrTypeUsedToTrainIDX = _ftrTypeUsedToTrain;
 		useChiSqDist =_useChiSqDist;
 		thdIDX= _thdIDX;	
 		typeOfEx = _typeOfEx;
@@ -52,12 +53,12 @@ public class SOM_ExBMULoader implements Callable<Boolean>{
 		if (useChiSqDist) {		
 			for (SOM_MapNode tmpMapNode : bmusToExmpl.keySet()) {
 				ArrayList<SOM_Example> exs = bmusToExmpl.get(tmpMapNode);
-				for(SOM_Example ex : exs) {ex.setTrainingExBMU_ChiSq(tmpMapNode, ftrTypeUsedToTrain);tmpMapNode.addTrainingExToBMUs(ex,typeOfEx);	}
+				for(SOM_Example ex : exs) {ex.setTrainingExBMU_ChiSq(tmpMapNode, ftrTypeUsedToTrainIDX);tmpMapNode.addTrainingExToBMUs(ex,typeOfEx);	}
 			}		
 		} else {		
 			for (SOM_MapNode tmpMapNode : bmusToExmpl.keySet()) {
 				ArrayList<SOM_Example> exs = bmusToExmpl.get(tmpMapNode);
-				for(SOM_Example ex : exs) {ex.setTrainingExBMU(tmpMapNode, ftrTypeUsedToTrain); tmpMapNode.addTrainingExToBMUs(ex,typeOfEx);	}
+				for(SOM_Example ex : exs) {ex.setTrainingExBMU(tmpMapNode, ftrTypeUsedToTrainIDX); tmpMapNode.addTrainingExToBMUs(ex,typeOfEx);	}
 			}
 		}	
 		return true;

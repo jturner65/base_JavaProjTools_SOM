@@ -11,16 +11,17 @@ import base_Utils_Objects.io.MsgCodes;
 //save all training/testing data to appropriate format for SOM
 public class SOM_TrainDataWriter implements Callable<Boolean>{
 	private SOM_MapManager mapMgr;	
-	private MessageObject msgObj;
-	private int dataFrmt, numFtrs,numSmpls;
+	private MessageObject msgObj; 
+	private SOM_FtrDataType ftrDataFrmt; 
+	private int numFtrs,numSmpls;
 	private SOM_Example[] exAra;
 	private String savFileFrmt, fileName;
 	//manage IO in this object
 	private FileIOManager fileIO;
 	
-	public SOM_TrainDataWriter(SOM_MapManager _mapData, int _dataFrmt, int _numTrainFtrs, String _fileName, String _savFileFrmt, SOM_Example[] _exAra) {
+	public SOM_TrainDataWriter(SOM_MapManager _mapData, SOM_FtrDataType _dataFrmt, int _numTrainFtrs, String _fileName, String _savFileFrmt, SOM_Example[] _exAra) {
 		mapMgr = _mapData; msgObj = mapMgr.buildMsgObj();
-		dataFrmt = _dataFrmt;		//either unmodified, standardized or normalized -> 0,1,2
+		ftrDataFrmt = _dataFrmt;		//either unmodified, standardized or normalized -> 0,1,2
 		exAra = _exAra;
 		numFtrs = _numTrainFtrs;
 		numSmpls = exAra.length;
@@ -51,32 +52,32 @@ public class SOM_TrainDataWriter implements Callable<Boolean>{
 	//write file to save all data samples in appropriate format for 
 	private void saveLRNData() {
 		String[] outStrings = buildInitLRN();
-		msgObj.dispMessage("SOMTrainDataWriter","saveLRNData","Finished saving .lrn file with " + outStrings.length+ " elements to file : "+ fileName, MsgCodes.info5);			
+		msgObj.dispMessage("SOMTrainDataWriter","saveLRNData","Start saving .lrn file with " + outStrings.length+ " " +ftrDataFrmt.getName() +" elements to file : "+ fileName, MsgCodes.info5);			
 		int strIDX = 4;
-		for (int i=0;i<exAra.length; ++i) {outStrings[i+strIDX]=exAra[i].toLRNString(dataFrmt, " ");	}
+		for (int i=0;i<exAra.length; ++i) {outStrings[i+strIDX]=exAra[i].toLRNString(ftrDataFrmt, " ");	}
 		fileIO.saveStrings(fileName,outStrings);		
-		msgObj.dispMessage("SOMTrainDataWriter","saveLRNData","Finished saving .lrn file with " + outStrings.length+ " elements to file : "+ fileName, MsgCodes.info5);			
+		msgObj.dispMessage("SOMTrainDataWriter","saveLRNData","Finished saving .lrn file with " + outStrings.length+ " " +ftrDataFrmt.getName() +" elements to file : "+ fileName, MsgCodes.info5);			
 	}//save lrn train data
 	
 	//save data in csv format
 	private void saveCSVData() {
 		//use buildInitLRN for test and train
 		String[] outStrings = buildInitLRN();
-		msgObj.dispMessage("SOMTrainDataWriter","saveCSVData","Start saving .csv file with " + outStrings.length+ " elements to file : "+ fileName, MsgCodes.info5);			
+		msgObj.dispMessage("SOMTrainDataWriter","saveCSVData","Start saving .csv file with " + outStrings.length+ " " +ftrDataFrmt.getName() +" elements to file : "+ fileName, MsgCodes.info5);			
 		int strIDX = 4;
-		for (int i=0;i<exAra.length; ++i) {outStrings[i+strIDX]=exAra[i].toCSVString(dataFrmt);	}
+		for (int i=0;i<exAra.length; ++i) {outStrings[i+strIDX]=exAra[i].toCSVString(ftrDataFrmt);	}
 		fileIO.saveStrings(fileName,outStrings);		
-		msgObj.dispMessage("SOMTrainDataWriter","saveCSVData","Finished saving .csv file with " + outStrings.length+ " elements to file : "+ fileName, MsgCodes.info5);			
+		msgObj.dispMessage("SOMTrainDataWriter","saveCSVData","Finished saving .csv file with " + outStrings.length+ " " +ftrDataFrmt.getName() +" elements to file : "+ fileName, MsgCodes.info5);			
 	}//save csv test data
 	
 	//save data in SVM record form - each record is like a map/dict -> idx: val pair.  designed for sparse data
 	private void saveSVMData() {
 		//need to save a vector to determine the 
 		String[] outStrings = new String[numSmpls];
-		msgObj.dispMessage("SOMTrainDataWriter","saveSVMData","Start saving .svm (sparse) file with " + outStrings.length+ " elements to file : "+ fileName, MsgCodes.info5);			
-		for (int i=0;i<exAra.length; ++i) {outStrings[i]=exAra[i].toSVMString(dataFrmt);	}
+		msgObj.dispMessage("SOMTrainDataWriter","saveSVMData","Start saving .svm (sparse) file with " + outStrings.length+ " " +ftrDataFrmt.getName() +" elements to file : "+ fileName, MsgCodes.info5);			
+		for (int i=0;i<exAra.length; ++i) {outStrings[i]=exAra[i].toSVMString(ftrDataFrmt);	}
 		fileIO.saveStrings(fileName,outStrings);		
-		msgObj.dispMessage("SOMTrainDataWriter","saveSVMData","Finished saving .svm (sparse) file with " + outStrings.length+ " elements to file : "+ fileName, MsgCodes.info5);			
+		msgObj.dispMessage("SOMTrainDataWriter","saveSVMData","Finished saving .svm (sparse) file with " + outStrings.length+ " " +ftrDataFrmt.getName() +" elements to file : "+ fileName, MsgCodes.info5);			
 	}
 
 	//write all sphere data to appropriate files

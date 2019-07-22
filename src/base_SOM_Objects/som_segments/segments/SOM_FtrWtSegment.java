@@ -12,14 +12,14 @@ import base_SOM_Objects.som_examples.*;
  */
 public final class SOM_FtrWtSegment extends SOM_MappedSegment {
 	public final int ftrIDX;
-	public final int ftrCalcType;
+	public final SOM_FtrDataType ftrCalcType;
 
 	public SOM_FtrWtSegment(SOM_MapManager _mapMgr, int _ftrIDX) {
 		super(_mapMgr);
 		ftrIDX = _ftrIDX;
 		//TODO may wish to allow for different types of ftrs to be used to build segment
 		//normalized equalizes all map nodes; stdized equalizes features
-		ftrCalcType=SOM_MapManager.useNormedDat;
+		ftrCalcType=SOM_FtrDataType.Normalized;
 	}//ctor
 	
 	/**
