@@ -361,9 +361,9 @@ public abstract class SOM_MapManager {
 		pretrainedMapIDX = -1;
 		msgObj.dispMessage("SOM_MapManager","resetTrainDataAras","Init Finished", MsgCodes.info5);
 	}//resetTrainDataAras()
-	
-	public String getDataTypeNameFromCurFtrTrainType_Brf() {return curMapTrainFtrType.getBrfName();}	
-	public String getDataTypeNameFromCurFtrTestType_Brf() {return curMapTestFtrType.getBrfName();}	
+	//
+	//curMapTrainFtrType.getBrfName();public String getDataTypeNameFromCurFtrTrainType_Brf() {return curMapTrainFtrType.getBrfName();}	
+	//public String getDataTypeNameFromCurFtrTestType_Brf() {return curMapTestFtrType.getBrfName();}	
 	//Unmodified = 0, Standardized = 1, Normalized
 	public String getDataTypeNameFromInt_Brf(SOM_FtrDataType dataFrmt) { return dataFrmt.getBrfName();}//getDataTypeNameFromInt
 	
@@ -407,13 +407,13 @@ public abstract class SOM_MapManager {
 		getMsgObj().dispMessage("SOM_MapManager","_ftrVecBuild : " + exType + " Examples","Begin "+exs.size()+" example processing.", MsgCodes.info1);
 		boolean canMultiThread=isMTCapable() && !forceST;//if false this means the current machine only has 1 or 2 available processors, numUsableThreads == # available - 2
 		//if((canMultiThread) && (exs.size()>0)) {//MapExFtrCalcs_Runner.rawNumPerPartition*10)){
-		if((canMultiThread) && (exs.size()>SOM_CalcExFtrs_Runner.rawNumPerPartition*10)){
+		if((canMultiThread) && (exs.size()>SOM_CalcExFtrs_Runner.rawNumPerPartition*numUsableThreads)){
 			//shuffling examples to attempt to spread out calculations more evenly - the examples that require the alt comp vector calc are expensive to calculate
 			//should not be multithread unless ftr calc is known to be devoid of concurrency issues
 			SOM_CalcExFtrs_Runner calcRunner = new SOM_CalcExFtrs_Runner(this, th_exec, shuffleTrainingData(exs.toArray(new SOM_Example[0]),12345L) , exType, _typeOfProc, false);
 			calcRunner.runMe();
 		} else {//called after all features of this kind of object are built - this calculates alternate compare object
-			int curIDX = 0, ttlNum = exs.size(), modAmt = ttlNum/10;
+			int curIDX = 0, ttlNum = exs.size(), modAmt = (ttlNum > 100 ? ttlNum/10 : ttlNum-1);
 			if(_typeOfProc==0) {
 				getMsgObj().dispMessage("SOM_MapManager","_ftrVecBuild : " + exType + " Examples","Begin build "+exs.size()+" feature vector.", MsgCodes.info1);
 				for (SOM_Example ex : exs) {			ex.buildFeatureVector();	++curIDX; if(curIDX % modAmt == 0) {_dbg_ftrVecBuild_dispProgress(curIDX, ttlNum,exType,"build "+ttlNum+" feature vector.");}}
@@ -473,8 +473,10 @@ public abstract class SOM_MapManager {
 	 */
 	protected void initNewSOMDirsAndSaveData() {
 		msgObj.dispMessage("SOM_MapManager","initNewSOMDirsAndSaveData","Begin building new directories, saving Train, Test data and data Mins and Diffs. Train size : " + numTrainData+ " Testing size : " + numTestData+".", MsgCodes.info5);	
+		//set ftr data type used to train
+		projConfigData.setFtrDataTypeUsedToTrain(curMapTrainFtrType.getBrfName());
 		//build directories for this experiment
-		projConfigData.buildDateTimeStrAraAndDType(getDataTypeNameFromCurFtrTrainType_Brf());
+		projConfigData.buildDateTimeStrAraAndDType();
 		//save partitioned data in built directories
 		projConfigData.launchTestTrainSaveThrds(th_exec, curMapTrainFtrType, numTrnFtrs,trainData,testData);				//save testing and training data	
 		//save mins and diffs of current training data
@@ -1834,7 +1836,7 @@ public abstract class SOM_MapManager {
 	public void setUseChiSqDist(boolean _useChiSq) {useChiSqDist=_useChiSq;}
 
 	//set current map ftr type, and update ui if necessary
-	public void setCurrentTrainDataFormat(SOM_FtrDataType _frmt) {	curMapTrainFtrType = _frmt; msgObj.dispInfoMessage("SOM_MapManager","setCurrentTrainDataFormat","curMapTrainFtrType set to : " +curMapTrainFtrType + "."); }//setCurrentDataFormat
+	public void setCurrentTrainDataFormat(SOM_FtrDataType _frmt) {	curMapTrainFtrType = _frmt; msgObj.dispInfoMessage("SOM_MapManager","setCurrentTrainDataFormat","curMapTrainFtrType set to : " +curMapTrainFtrType + "."); projConfigData.setFtrDataTypeUsedToTrain(curMapTrainFtrType.getBrfName());}//setCurrentDataFormat
 	public void setCurrentTrainDataFormatFromConfig(int _frmt) {
 		curMapTrainFtrType = SOM_FtrDataType.getVal(_frmt); 
 		msgObj.dispInfoMessage("SOM_MapManager","setCurrentTrainDataFormatFromConfig","curMapTrainFtrType set to : " +curMapTrainFtrType + " from Config."); 

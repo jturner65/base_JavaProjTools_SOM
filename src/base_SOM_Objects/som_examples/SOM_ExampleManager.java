@@ -194,11 +194,11 @@ public abstract class SOM_ExampleManager {
 			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildAfterAllFtrVecsBuiltStructs","Post-feature calc process for " + exampleName+ " examples already executed.", MsgCodes.warning1);
 			return false;
 		}
-		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildPostFtrVecStructs","Begin building Post-feature vector data for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
+		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildAfterAllFtrVecsBuiltStructs","Begin building Post-feature vector data for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
 		//instance-specific feature vector building - here primarily are the standardized feature vectors built
 		buildAfterAllFtrVecsBuiltStructs_Priv();
 		setFlag(dataPostFtrsBuiltIDX, true);
-		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildPostFtrVecStructs","Finished building Post-feature vector data for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
+		msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"buildAfterAllFtrVecsBuiltStructs","Finished building Post-feature vector data for " +exampleMap.size()+ " " + exampleName+ " examples.", MsgCodes.info1);
 		return true;
 	}//buildFtrVec	
 	/**

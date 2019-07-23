@@ -655,11 +655,18 @@ public abstract class SOM_ProjConfigData {
 		return new String[] {resWithYear,resWithoutYear};
 	}//getDateTimeString
 			
-	//build array with and without year of string representations of dates, used for file name access
-	public void buildDateTimeStrAraAndDType(String _dType) {	dateTimeStrAra = getDateTimeString(false, "_"); ftrTypeUsedToTrain = _dType;}//idx 0 has year, idx 1 does not
-	
-	//call when src data are first initialized - sets file names for .lrn file  and testing file output database query; also call when loading saved exp
-	//dataFrmt : format used to train SOM == 0:unmodded; 1:std'ized; 2:normed
+	/**
+	 * build array with and without year of string representations of dates, used for file name access
+	 * @param _dType data type used to train
+	 */
+	public void buildDateTimeStrAraAndDType() {	dateTimeStrAra = getDateTimeString(false, "_");}//idx 0 has year, idx 1 does not
+	public void setFtrDataTypeUsedToTrain(String _dType) { ftrTypeUsedToTrain = _dType;}
+	/**
+	 * call when src data are first initialized - sets file names for .lrn file  and testing file output database query; also call when loading saved exp 
+	 * @param _numSmpls
+	 * @param _numTrain
+	 * @param _numTest
+	 */
 	public void setSOM_ExpFileNames(int _numSmpls, int _numTrain, int _numTest){
 		//enable these to be set manually based on passed "now"		
 		msgObj.dispMessage("SOM_ProjConfigData","setSOM_ExpFileNames","Start setting file names and example counts", MsgCodes.info5);

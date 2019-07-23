@@ -7,6 +7,7 @@ import java.util.function.BiFunction;
 
 import base_SOM_Objects.*;
 import base_SOM_Objects.som_exampleFeatures.SOM_Features;
+import base_SOM_Objects.som_examples.base.baseDataPtVis;
 import base_SOM_Objects.som_segments.segmentData.SOM_MapNodeSegmentData;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
 import base_UI_Objects.*;
@@ -62,9 +63,9 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 */
 	protected static final int 
 		ftrMapTypeKey = SOM_FtrDataType.Unmodified.getVal(), 
-		normFtrMapTypeKey = SOM_FtrDataType.Normalized.getVal(), 
-		stdFtrMapTypeKey = SOM_FtrDataType.Standardized.getVal();	
-	protected static final Integer[] ftrMapTypeKeysAra = new Integer[] {ftrMapTypeKey, normFtrMapTypeKey, stdFtrMapTypeKey};
+		stdFtrMapTypeKey = SOM_FtrDataType.Standardized.getVal(), 
+		normFtrMapTypeKey = SOM_FtrDataType.Normalized.getVal();	
+	protected static final Integer[] ftrMapTypeKeysAra = new Integer[] {ftrMapTypeKey, stdFtrMapTypeKey, normFtrMapTypeKey};
 	
 	/**
 	 * probability structure for this example - probability of every map node for each 
@@ -620,6 +621,20 @@ public abstract class SOM_Example extends baseDataPtVis{
 		}//for each non-zero ftr
 	}//standardizeFeatureVector		getSqDistFromFtrType
 		
+	protected final void calcStdFtrVector(TreeMap<Integer, Float> from_ftrs, TreeMap<Integer, Float> to_sclFtrs, Float[] mins, Float[] diffs, Float destMin, Float destDiff) {
+		to_sclFtrs.clear();
+		for (Integer destIDX : from_ftrs.keySet()) {
+			Float lb = mins[destIDX], 	diff = diffs[destIDX];
+			Float val = 0.0f;
+			if (diff==0) {//same min and max
+				if (lb > 0) { val = destDiff + destMin;}//only a single value same min and max-> set feature value to 1.0
+				else {		  val = destMin;}
+			} else {				val = destMin +  ((from_ftrs.get(destIDX)-lb)/diff)*destDiff;			}	
+			to_sclFtrs.put(destIDX,val);
+			
+		}//for each non-zero ftr
+	}//standardizeFeatureVector		getSqDistFromFtrType
+		
 //	//called to report on this example's feature weight rankings 
 //	public final void buildFtrRprtStructs() {features.buildFtrRprtStructs();}//buildFtrReports
 //	
@@ -876,7 +891,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	}//findBMUFromNodes 
 
 	private final String _toCSVString(TreeMap<Integer, Float> ftrs) {
-		String res = ""+OID+",";
+		String res = ""+getDenseTrainDataKey()+",";//""+OID+",";
 		int numTrnFtrs = mapMgr.getNumTrainFtrs();
 		for(int i=0;i<numTrnFtrs;++i){
 			Float ftr = ftrs.get(i);			
@@ -895,13 +910,19 @@ public abstract class SOM_Example extends baseDataPtVis{
 	}//toCSVString
 
 	private final String _toLRNString(TreeMap<Integer, Float> ftrs, String sep) {
-		String res = ""+OID+sep;
+		String res = ""+getDenseTrainDataKey()+sep;//""+OID+sep;
 		int numTrnFtrs = mapMgr.getNumTrainFtrs();
 		for(int i=0;i<numTrnFtrs;++i){
 			Float ftr = ftrs.get(i);			
 			res += String.format("%1.7g", (ftr==null ? 0 : ftr)) + sep;
 		}
 		return res;}	
+	
+	/**
+	 * return the appropriate string value for the dense training data - should be numeric key value to save in lrn or csv dense file
+	 * @return
+	 */
+	protected abstract String getDenseTrainDataKey();
 	//return LRN-format (dense) string of this object's features, depending on which type is selected - check to make sure 2ndary features exist before attempting to build data strings
 	public final String toLRNString(SOM_FtrDataType _type, String sep) {
 		switch(_type){
@@ -1060,108 +1081,6 @@ public abstract class SOM_Example extends baseDataPtVis{
 
 }//SOMExample 
 
-/**
- * This class holds functionality for rendering on the map.
- * Since this functionality is fundamentally different than the 
- * necessary functionality for feature calculation/manipulation
- * we have it separate from the base example class
- * @author john
- *
- */
-abstract class baseDataPtVis{
-	public SOM_MapManager mapMgr;
-	//message object manages logging/printing to screen
-	protected MessageObject msgObj;
-	//type of example data this is
-	protected SOM_ExDataType exampleDataType;
-	//location in mapspace most closely matching this node - actual map location (most likely between 4 map nodes), built from neighborhood
-	public myPointf mapLoc;		
-	//bmu map node location - this is same as mapLoc(and ignored) for map nodes
-	protected myPointf mapNodeLoc;
-	//draw-based vars
-	protected float rad;
-	protected static int drawDet;	
-	//for debugging purposes, gives min and max radii of spheres that will be displayed on map for each node proportional to # of samples - only display related
-	public static float minRad = 100000, maxRad = -100000;
-	//array of color IDXs for specific color roles : idx 0 ==fill, idx 1 == strk, idx 2 == txt
-	//alt is for displaying alternate state
-	protected int[] nodeClrs, altClrs;		
-	
-	public baseDataPtVis(SOM_MapManager _map, SOM_ExDataType _type) {
-		mapMgr = _map;exampleDataType=_type;
-		if(msgObj==null) {msgObj=mapMgr.buildMsgObj();}//only set 1 msg object for all examples
-		mapLoc = new myPointf();	
-		mapNodeLoc = new myPointf();
-		rad = 1.0f;
-		drawDet = 2;
-		nodeClrs = mapMgr.getClrFillStrkTxtAra(exampleDataType);
-		altClrs = mapMgr.getAltClrFillStrkTxtAra();
-	}//ctor	
-	
-	//copy ctor
-	public baseDataPtVis(baseDataPtVis _otr) { 
-		this(_otr.mapMgr,_otr.exampleDataType);	
-		mapLoc = _otr.mapLoc;
-		mapNodeLoc = _otr.mapNodeLoc;
-		nodeClrs = _otr.nodeClrs;
-		altClrs = _otr.altClrs;
-	}//
-	
-	protected void setRad(float _rad){
-		rad = _rad;//((float)(Math.log(2.0f*(_rad+1))));
-		minRad = minRad > rad ? rad : minRad;
-		maxRad = maxRad < rad ? rad : maxRad;
-		//drawDet = ((int)(Math.log(2.0f*(rad+1)))+1);
-	}
-	public float getRad(){return rad;}
-	
-	public int getTypeVal() {return exampleDataType.getVal();}
-	public SOM_ExDataType getType() {return exampleDataType;}
-	
-	//set map location for this example
-	public final void setMapLoc(myPointf _pt){mapLoc.set(_pt.x,_pt.y,_pt.z);}
-	
-	//draw this example with a line linking it to its best matching unit
-	public final void drawMeLinkedToBMU(my_procApplet p, float _rad, String ID){
-		p.pushMatrix();p.pushStyle();
-		//draw point of radius rad at mapLoc - actual location on map
-		//show(myPointf P, float rad, int det, int[] clrs, String[] txtAra)
-		p.show(mapLoc, _rad, drawDet, nodeClrs, new String[] {ID});
-		//draw line to bmu location
-		p.setColorValStroke(nodeClrs[1],255);
-		p.strokeWeight(1.0f);
-		p.line(mapLoc, mapNodeLoc);
-		p.popStyle();p.popMatrix();		
-	}//drawMeLinkedToBMU
-	
-	public void drawMeSmallNoLbl(my_procApplet p){
-		p.pushMatrix();p.pushStyle();
-		p.show(mapLoc, 2, 2, nodeClrs); 
-		p.popStyle();p.popMatrix();		
-	}	
-		
-	//override drawing in map nodes
-	public final void drawMeMap(my_procApplet p){
-		p.pushMatrix();p.pushStyle();	
-		p.show(mapLoc, getRad(), drawDet, nodeClrs);		
-		p.popStyle();p.popMatrix();		
-	}//drawMeMap
-	
-	//override drawing in map nodes
-	public final void drawMeMapClr(my_procApplet p, int[] clr){
-		p.pushMatrix();p.pushStyle();
-		//draw point of radius rad at mapLoc
-		p.show_ClrAra(mapLoc, rad,drawDet, clr, clr);
-		p.popStyle();p.popMatrix();		
-	}//drawMeMapClr
-	
-	public void drawMeRanked(my_procApplet p, String lbl, int[] clr, float rad, int rank){
-		p.pushMatrix();p.pushStyle();
-		//draw point of radius rad at maploc with label and no background box	
-		p.showNoBox_ClrAra(mapLoc, rad, drawDet, clr, clr, my_procApplet.gui_White, lbl);
-		p.popStyle();p.popMatrix();
-	}
-}//baseDataPtVis
 
 
 

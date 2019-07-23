@@ -102,7 +102,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	private void initMapNode(Tuple<Integer,Integer> _mapNode){
 		hasMappedExamples = new boolean[SOM_ExDataType.getNumVals()];
 		dispClrs = new int[hasMappedExamples.length][];
-		for(int i=0;i<hasMappedExamples.length;++i) {		hasMappedExamples[i]=false;		dispClrs[i]=nodeClrs;	}
+		for(int i=0;i<hasMappedExamples.length;++i) {		hasMappedExamples[i]=false;		dispClrs[i]=getMapNodeClrs();	}
 		mapNodeCoord = _mapNode;		
 		mapLoc = mapMgr.buildScaledLoc(mapNodeCoord);
 		dispBoxDims = mapMgr.buildUMatBoxCrnr(mapNodeCoord);		//box around map node
@@ -414,7 +414,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	//MUST BE CALLED after adding all examples but before any visualizations will work
 	public synchronized void finalizeAllBmus(int _typeIDX) {		
 		BMUExampleNodes[_typeIDX].finalize();	
-		dispClrs[_typeIDX] = hasMappedExamples[_typeIDX] ? nodeClrs : altClrs;
+		dispClrs[_typeIDX] = hasMappedExamples[_typeIDX] ? getMapNodeClrs() : getMapAltClrs();
 	}
 	
 	/**
@@ -475,12 +475,12 @@ public abstract class SOM_MapNode extends SOM_Example{
 //	}	
 	public void drawMeSmall(my_procApplet p){
 		p.pushMatrix();p.pushStyle();
-		p.show(mapLoc, 2, 2, nodeClrs, new String[] {this.OID}); 
+		p.show(mapLoc, 2, 2, getMapNodeClrs(), new String[] {this.OID}); 
 		p.popStyle();p.popMatrix();		
 	}		
 	public void drawMeWithWt(my_procApplet p, float wt, String[] disp){
 		p.pushMatrix();p.pushStyle();	
-		p.show(mapLoc, wt, (int)wt+1, nodeClrs,  disp); 
+		p.show(mapLoc, wt, (int)wt+1, getMapNodeClrs(),  disp); 
 		p.popStyle();p.popMatrix();		
 	}//drawMeWithWt
 
@@ -580,7 +580,7 @@ class SOMMapNodeBMUExamples{
 		logExSize = 0;
 		nodeSphrDet = 2;
 		hasExamples = false;
-		dispClrs = node.altClrs;
+		dispClrs = node.getMapAltClrs();
 		sqDistToCopyNode = 0.0;
 		copyNode = node;
 		visLabel = new String[] {""+node.OID+" : ", ""+numMappedEx};
@@ -626,7 +626,7 @@ class SOMMapNodeBMUExamples{
 		logExSize = (float) Math.log(numMappedEx + 1)*1.5f;	
 		nodeSphrDet = (int)( Math.log(logExSize+1)+2);
 		visLabel = new String[] {""+node.OID+" : ", ""+numMappedEx};
-		dispClrs = hasExamples ? node.nodeClrs : node.altClrs;
+		dispClrs = hasExamples ? node.getMapNodeClrs() : node.getMapAltClrs();
 		if(!hasExamples && (dataType==SOM_ExDataType.Training)) {
 			node.mapMgr.getMsgObj().dispInfoMessage("SOMMapNodeBMUExamples", "finalize", "Finalize for " +dataType.getName() + " non-example map node in SOMMapNodeBMUExamples with "+numMappedEx+" copied ex | dispClrs : ["+dispClrs[0]+","+dispClrs[1]+","+dispClrs[2]+"] | node addr : " + node.mapNodeCoord +" | copied node addr : "+copyNode.mapNodeCoord+" | dist to copy node : " + sqDistToCopyNode+".");
 		}

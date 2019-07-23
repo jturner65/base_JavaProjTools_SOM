@@ -32,7 +32,7 @@ public abstract class SOM_MapNodeSegMgr {
 		segDataRatio = new TreeMap<Integer, Float>();
 	}
 	/**
-	 * add segment relevant info from passed training example
+	 * add segment relevant info from passed training example - call from map node, as class information is collected from example calling map node its bmu
 	 * @param idxs idx of class and/or category - idx 0 is always relevant to specific class, idx 1+ is subordinate idxs 
 	 * @param numEx # of examples to add at class
 	 * @param segNameStr string template to use for name of constructed segment
