@@ -120,7 +120,7 @@ public abstract class SOM_MapManager {
 	 */
 	private float[] 
 			map_ftrsMean, 				
-			map_ftrsVar, 
+			map_ftrsVar,
 			map_ftrsDiffs, 
 			map_ftrsMin;				//per feature mean, variance, difference, mins, in -map features- data
 	
@@ -1248,6 +1248,50 @@ public abstract class SOM_MapManager {
 	}//addMappedNodesToEmptyNodes_FtrDist
 	
 	/**
+	 * this function will finalize bmus that have examples mapped to them if they have been trained using normalized features.
+	 * Since the bmu itself doesn't have a conception of the original magnitude of each training vector, the magnitude needs to be derived
+	 * from the average mag of all the training examples that mapped to the bmu
+	 */
+	public synchronized void _finalizeInitBMUForNormTrainedFtrs() {
+		for (SOM_MapNode ex : MapNodes.values()) {			ex.finalSetUpFtrs_TrainedWithNormFtrs();}
+		//do this after all map nodes have been finalized
+		for(SOM_MapNode ex : MapNodes.values()) {			ex.buildMapNodeNeighborSqDistVals(MapNodes);}
+		//all map node features are calculated by here
+		float[] tmpMapMaxs = initMapMgrMeanMinVar(numTrnFtrs);
+		int numEx = MapNodes.size();
+		//build feature stats for all map nodes
+		for(SOM_MapNode mapNode : MapNodes.values()) {
+			float[] ftrData = mapNode.getFtrs();
+			for(int d = 0; d<numTrnFtrs; ++d){
+				map_ftrsMean[d] += ftrData[d];
+				tmpMapMaxs[d] = (tmpMapMaxs[d] < ftrData[d] ? ftrData[d]  : tmpMapMaxs[d]);
+				map_ftrsMin[d] = (map_ftrsMin[d] > ftrData[d] ? ftrData[d]  : map_ftrsMin[d]);
+			}
+		}			
+		for(int d = 0; d<map_ftrsMean.length; ++d){
+			map_ftrsMean[d] /= 1.0f*numEx;
+			map_ftrsDiffs[d]=tmpMapMaxs[d]-map_ftrsMin[d];
+		}
+		//build stats for map nodes
+		float diff;
+		float[] ftrData ;
+		//for every node, now build standardized features 
+		for(Tuple<Integer, Integer> key : MapNodes.keySet()){
+			SOM_MapNode tmp = MapNodes.get(key);
+			//accumulate map ftr moments
+			ftrData = tmp.getFtrs();
+			for(int d = 0; d<map_ftrsMean.length; ++d){
+				diff = map_ftrsMean[d] - ftrData[d];
+				map_ftrsVar[d] += diff*diff;
+			}
+			setMapNodeFtrStr(tmp);
+		}
+		for(int d = 0; d<map_ftrsVar.length; ++d){map_ftrsVar[d] /= 1.0f*numEx;}		
+
+	}//_finalizeInitBMUForNormTrainedFtrs
+	
+	
+	/**
 	 * finalize the bmu processing - move som nodes that have been mapped to out of the list of nodes that have not been mapped to, copy the closest mapped som node to any som nodes without mappings, finalize all som nodes
 	 * @param dataType
 	 */
@@ -1309,26 +1353,35 @@ public abstract class SOM_MapManager {
 		initMapNodesPriv();
 	}//initMapNodes()
 	protected abstract void initMapNodesPriv();
+	
+	
+	private float[] initMapMgrMeanMinVar(int _numTrainFtrs) {
+		map_ftrsMean = new float[_numTrainFtrs];
+		float[] tmpMapMaxs = new float[_numTrainFtrs];
+		map_ftrsMin = new float[_numTrainFtrs];
+		for(int l=0;l<map_ftrsMin.length;++l) {map_ftrsMin[l]=10000.0f;}//need to init to big number to get accurate min
+		map_ftrsVar = new float[_numTrainFtrs];
+		map_ftrsDiffs = new float[_numTrainFtrs];		
+		return tmpMapMaxs;
+	}//_initMapMgrMeanMinVar
+
+	
 		
 	//process map node's ftr vals, add node to map, and add node to struct without any training examples (initial state for all map nodes)
-	public void addToMapNodes(Tuple<Integer,Integer> key, SOM_MapNode mapnode, float[] tmpMapMaxs, int numTrainFtrs) {
-		float[] ftrData = mapnode.getFtrs();
-		for(int d = 0; d<numTrainFtrs; ++d){
-			map_ftrsMean[d] += ftrData[d];
-			tmpMapMaxs[d] = (tmpMapMaxs[d] < ftrData[d] ? ftrData[d]  : tmpMapMaxs[d]);
-			map_ftrsMin[d] = (map_ftrsMin[d] > ftrData[d] ? ftrData[d]  : map_ftrsMin[d]);
-		}
-		MapNodes.put(key, mapnode);	
+	//public void addToMapNodes(Tuple<Integer,Integer> key, SOM_MapNode mapNode, float[] tmpMapMaxs, int numTrainFtrs) {
+	public void addToMapNodes(Tuple<Integer,Integer> key, SOM_MapNode mapNode, int numTrainFtrs) {
+
+		MapNodes.put(key, mapNode);	
 		//set map nodes by ftr idx
-		Integer[] nonZeroIDXs = mapnode.getNonZeroIDXs();
+		Integer[] nonZeroIDXs = mapNode.getNonZeroIDXs();
 		for(Integer idx : nonZeroIDXs) {
 			HashSet<SOM_MapNode> nodeSet = MapNodesByFtrIDX.get(idx);
 			if(null==nodeSet) {nodeSet = new HashSet<SOM_MapNode>();}
-			nodeSet.add(mapnode);
+			nodeSet.add(mapNode);
 			MapNodesByFtrIDX.put(idx,nodeSet);
 		}	
 		//initialize : add all nodes to set, will remove nodes when they get mappings
-		addExToNodesWithNoExs(mapnode, SOM_ExDataType.Training);//nodesWithNoTrainEx.add(dpt);				//initialize : add all nodes to set, will remove nodes when they get mappings
+		addExToNodesWithNoExs(mapNode, SOM_ExDataType.Training);//nodesWithNoTrainEx.add(dpt);				//initialize : add all nodes to set, will remove nodes when they get mappings
 	}//addToMapNodes
 	
 //	private TreeMap<Integer, HashSet<SOMMapNode>>  _buildMapNodesByFtrMap(Collection<SOMMapNode> mapNodes, TreeMap<Integer, HashSet<SOMMapNode>>  MapByFtr){
@@ -1356,20 +1409,12 @@ public abstract class SOM_MapManager {
 			newYa = oldYa + mapDims[1], newYaSq = newYa*newYa;	//a is above b
 		return (oldXaSq < newXaSq ? oldXaSq : newXaSq ) + (oldYaSq < newYaSq ? oldYaSq : newYaSq);
 	}//
-
 	
-	//build all neighborhood values for UMatrix and distance
-	public void buildAllMapNodeNeighborhood_Dists() {for(SOM_MapNode ex : MapNodes.values()) {	ex.buildMapNodeNeighborUMatrixVals(MapNodes); ex.buildMapNodeNeighborSqDistVals(MapNodes);	}}
+	/**
+	 * build all neighborhood values for UMatrix
+	 */
+	public void buildAllMapNodeNeighborhood_UMatrixDists() {for(SOM_MapNode ex : MapNodes.values()) {	ex.buildMapNodeNeighborUMatrixVals(MapNodes);}} //ex.buildMapNodeNeighborSqDistVals(MapNodes);	}}
 
-	public float[] initMapMgrMeanMinVar(int numTrainFtrs) {
-		map_ftrsMean = new float[numTrainFtrs];
-		float[] tmpMapMaxs = new float[numTrainFtrs];
-		map_ftrsMin = new float[numTrainFtrs];
-		for(int l=0;l<map_ftrsMin.length;++l) {map_ftrsMin[l]=10000.0f;}//need to init to big number to get accurate min
-		map_ftrsVar = new float[numTrainFtrs];
-		return tmpMapMaxs;
-	}//_initMapMgrMeanMinVar
-	
 	//set stats of map nodes based on passed features
 	public void setMapNodeStatsFromFtr(float[] ftrData, float[] tmpMapMaxs, int numTrainFtrs) {
 		for(int d = 0; d<numTrainFtrs; ++d){
@@ -1398,43 +1443,41 @@ public abstract class SOM_MapManager {
 	}//setMapNodeFtrStr
 		
 	//after all map nodes are loaded
-	public void finalizeMapNodes(float[] tmpMapMaxs, int _numTrainFtrs, int _numEx) {
+	public void finalizeMapNodes(int _numTrainFtrs, int _numEx) {
 		//build map nodes by ftr index structure 
 		//_buildMapNodesByFtrMap(MapNodes.values(), MapNodesByFtrIDX);
-		
-		//make sure both unmoddified features and std'ized features are built before determining map mean/var
-		//need to have all features built to scale features		
-		map_ftrsDiffs = new float[_numTrainFtrs];
 		//initialize array of images to display map of particular feature with
 		initMapFtrVisAras(_numTrainFtrs);
 		
-		for(int d = 0; d<map_ftrsMean.length; ++d){map_ftrsMean[d] /= 1.0f*_numEx;map_ftrsDiffs[d]=tmpMapMaxs[d]-map_ftrsMin[d];}
+		//make sure both unmoddified features and std'ized features are built before determining map mean/var
+		//need to have all features built to scale features		
+//		map_ftrsDiffs = new float[_numTrainFtrs];
+//		
+//		for(int d = 0; d<map_ftrsMean.length; ++d){map_ftrsMean[d] /= 1.0f*_numEx;map_ftrsDiffs[d]=tmpMapMaxs[d]-map_ftrsMin[d];}
 		//reset this to manage all map nodes
 		initPerFtrMapOfNodes(_numTrainFtrs);
-//		PerFtrHiWtMapNodes = new TreeMap[_numTrainFtrs];
-//		for (int i=0;i<PerFtrHiWtMapNodes.length; ++i) {PerFtrHiWtMapNodes[i] = new TreeMap<Float,ArrayList<SOMMapNode>>(new Comparator<Float>() { @Override public int compare(Float o1, Float o2) {   return o2.compareTo(o1);}});}
-		//build stats for map nodes
-		float diff;
-		float[] ftrData ;
-		//for every node, now build standardized features 
-		for(Tuple<Integer, Integer> key : MapNodes.keySet()){
-			SOM_MapNode tmp = MapNodes.get(key);
-			tmp.buildStdFtrsMapFromFtrData_MapNode(map_ftrsMin, map_ftrsDiffs);
-			//accumulate map ftr moments
-			ftrData = tmp.getFtrs();
-			for(int d = 0; d<map_ftrsMean.length; ++d){
-				diff = map_ftrsMean[d] - ftrData[d];
-				map_ftrsVar[d] += diff*diff;
-			}
-			setMapNodeFtrStr(tmp);
-		}
-		for(int d = 0; d<map_ftrsVar.length; ++d){map_ftrsVar[d] /= 1.0f*_numEx;}		
 		setNumTrainFtrs(_numTrainFtrs); 
+
+//		//build stats for map nodes
+//		float diff;
+//		float[] ftrData ;
+//		//for every node, now build standardized features 
+//		for(Tuple<Integer, Integer> key : MapNodes.keySet()){
+//			SOM_MapNode tmp = MapNodes.get(key);
+//			//accumulate map ftr moments
+//			ftrData = tmp.getFtrs();
+//			for(int d = 0; d<map_ftrsMean.length; ++d){
+//				diff = map_ftrsMean[d] - ftrData[d];
+//				map_ftrsVar[d] += diff*diff;
+//			}
+//			setMapNodeFtrStr(tmp);
+//		}
+//		for(int d = 0; d<map_ftrsVar.length; ++d){map_ftrsVar[d] /= 1.0f*_numEx;}		
 
 	}//finalizeMapNodes
 
 	//build a map node that is formatted specifically for this project
-	public abstract SOM_MapNode buildMapNode(Tuple<Integer,Integer>mapLoc, String[] tkns);
+	public abstract SOM_MapNode buildMapNode(Tuple<Integer,Integer>mapLoc, SOM_FtrDataType _ftrTypeUsedToTrain,  String[] tkns);
 
 	///////////////////////////
 	// end build and manage mapNodes 

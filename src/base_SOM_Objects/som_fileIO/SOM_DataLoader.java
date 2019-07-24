@@ -47,7 +47,7 @@ public class SOM_DataLoader{
 	public Boolean callMe(){
 		msgObj.dispMessage("SOMDataLoader","run","Starting Trained SOM map node data loader", MsgCodes.info5);	
 			//load results from map processing - fnames needs to be modified to handle this
-		ftrTypeUsedToTrain = mapMgr.getCurrentTrainDataFormat();
+		ftrTypeUsedToTrain = projConfigData.getFtrTypeUsedToTrain();
 			//whether chi-sq dist or regular l2 dist should be used
 		useChiSqDist = mapMgr.getUseChiSqDist();
 			//load map weights for all map nodes
@@ -116,7 +116,7 @@ public class SOM_DataLoader{
 		//# of training features in each map node
 		int numTrainFtrs = 0; 
 		
-		float[] tmpMapMaxs = null;
+		//float[] tmpMapMaxs = null;
 		for (int i=0;i<strs.length;++i){//load in data 
 			if(i < 2){//first 2 lines are map description : line 0 is map row/col count; map 2 is # ftrs
 				tkns = strs[i].replace('%', ' ').trim().split(mapMgr.SOM_FileToken);
@@ -127,19 +127,20 @@ public class SOM_DataLoader{
 					ftrNames = new String[numTrainFtrs];
 					for(int j=0;j<ftrNames.length;++j){ftrNames[j]=""+j;}			//build temporary names for each feature idx in feature vector					
 					//mapMgr.dataHdr = new dataDesc(mapMgr, ftrNames);				//assign numbers to feature name data header 
-					tmpMapMaxs = mapMgr.initMapMgrMeanMinVar(ftrNames.length);
+					//tmpMapMaxs = mapMgr.initMapMgrMeanMinVar(ftrNames.length);
 				}	
 				continue;
 			}//if first 2 lines in wts file
 			tkns = strs[i].split(mapMgr.SOM_FileToken);
 			if(tkns.length < 2){continue;}
 			mapLoc = new Tuple<Integer, Integer>((i-2)%mapX, (i-2)/mapX);//map locations in som data are increasing in x first, then y (row major)
-			dpt = mapMgr.buildMapNode(mapLoc, tkns);//give each map node its features		
+			dpt = mapMgr.buildMapNode(mapLoc,ftrTypeUsedToTrain, tkns);//give each map node its features		
 			++numEx;
-			mapMgr.addToMapNodes(mapLoc, dpt, tmpMapMaxs, numTrainFtrs);			
+			//mapMgr.addToMapNodes(mapLoc, dpt, tmpMapMaxs, numTrainFtrs);			
+			mapMgr.addToMapNodes(mapLoc, dpt, numTrainFtrs);			
 		}
 		//make sure both unmoddified features and std'ized features are built before determining map mean/var
-		mapMgr.finalizeMapNodes(tmpMapMaxs, numTrainFtrs, numEx);		
+		mapMgr.finalizeMapNodes(numTrainFtrs, numEx);		
 		msgObj.dispMessage("SOMDataLoader","loadSOMWts","Finished Loading SOM weight data from file : " + getFName(wtsFileName), MsgCodes.info5 );		
 		return true;
 	}//loadSOMWts	
@@ -185,7 +186,7 @@ public class SOM_DataLoader{
 			}	
 		}//
 		//update each map node's neighborhood member's UMatrix weight values
-		mapMgr.buildAllMapNodeNeighborhood_Dists();//for(SOMMapNode ex : mapMgr.MapNodes.values()) {	ex.buildNeighborWtVals();	}
+		mapMgr.buildAllMapNodeNeighborhood_UMatrixDists();//for(SOMMapNode ex : mapMgr.MapNodes.values()) {	ex.buildNeighborWtVals();	}
 		//calculate segments of nodes
 		mapMgr.buildUMatrixSegmentsOnMap();
 		msgObj.dispMessage("SOMDataLoader","loadSOM_UMatrixDists","Finished loading and processing U-Matrix File : "+uMtxBMUFname, MsgCodes.info5);		
@@ -291,6 +292,8 @@ public class SOM_DataLoader{
 		}//if mt else single thd
 		mapMgr.setTrainDataBMUsMapped(true);
 		msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","Start Pruning No-Example list", MsgCodes.info5);
+		//finalize nodes that were trained by normalized features - take all mapped bmus and find average distance weighted magnitude,and use this magnitude to build map node raw ftrs and std features
+		mapMgr._finalizeInitBMUForNormTrainedFtrs();
 		
 		mapMgr._finalizeBMUProcessing(SOM_ExDataType.Training);
 		

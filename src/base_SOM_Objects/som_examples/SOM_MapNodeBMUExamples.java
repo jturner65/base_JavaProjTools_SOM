@@ -82,6 +82,7 @@ public class SOM_MapNodeBMUExamples{
 			if(tmpList == null) {tmpList = new HashSet<SOM_Example>();}
 			tmpList.add(_ex);		
 			examplesBMU.put(sqdist, tmpList);	
+			
 		}
 		hasExamples = true;
 	}//addExample
@@ -103,6 +104,21 @@ public class SOM_MapNodeBMUExamples{
 	public boolean hasMappedExamples(){return hasExamples;}
 	public int getNumExamples() {return numMappedEx;}
 
+	/**
+	 * return the average magnitude of all examples mapped to this node, weighted by distance
+	 * @return
+	 */
+	public float getAvgWtMagOfAllMappedExs() {
+		double ttlMag = 0.0, ttlsqDistP1Inv = 0.0;
+		//contribution is inversely proportional to 1 + distance from node
+		for(Double sqDist : examplesBMU.keySet()) {
+			Double sqDistP1Inv = 1.0/(1.0 + sqDist); //want inverse proportional to distance - very close should be higher than far away
+			HashSet<SOM_Example> setOfEx = examplesBMU.get(sqDist);
+			for(SOM_Example ex : setOfEx) {			ttlMag += ex.ftrVecMag * sqDistP1Inv;			ttlsqDistP1Inv += sqDistP1Inv;	}
+		}
+		return (float) (ttlsqDistP1Inv != 0.0 ? ttlMag/ttlsqDistP1Inv : 1.0);
+	}//getAvgMagOfAllMappedExs
+	
 	/////////////////////
 	// drawing routines for owning node
 	public void drawMapNodeWithLabel(my_procApplet p) {
