@@ -114,39 +114,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		uiMapColsIDX, uiMapRowsIDX, uiMapEpochsIDX, uiMapKTypIDX,uiMapRadStIDX, uiMapRadEndIDX,uiMapLrnStIDX,uiMapLrnEndIDX,
 		uiMapShapeIDX ,uiMapBndsIDX,uiMapRadCoolIDX,uiMapNHdFuncIDX, uiMapLrnCoolIDX
 	};	
-	////////////////////////////////////////////
-	///// data values to maintain from UI input
-	//threshold of wt value to display map node
-	protected float mapNodeWtDispThresh;
-	//type of examples using each map node as a bmu to display
-	protected SOM_ExDataType mapNodeDispType;
-	//current choice for default prebuilt map index, if any exist
-	protected int curPreBuiltMapIDX = -1;
-	
-	//////////////////////////////
-	//map drawing 	draw/interaction variables
-	//start location of SOM image - stX, stY, and dimensions of SOM image - width, height; locations to put calc analysis visualizations
-	public float[] SOM_mapLoc;
-	
-	//array of per-ftr map wts
-	protected PImage[] mapPerFtrWtImgs;
-	//image of umatrix (distance between nodes)
-	protected PImage mapCubicUMatrixImg;
-	//image of segments suggested by UMat Dist
-	protected PImage mapUMatrixCubicSegmentsImg;
-	
-	//which ftr map is currently being shown
-	protected int curMapImgIDX;
-	//which category idx and _label_ is currently selected
-	protected int curCategoryIDX, curCategoryLabel;
-	//which class idx and _label_ is currently selected
-	protected int curClassIDX, curClassLabel;
-
-	//scaling value - use this to decrease the image size and increase the scaling so it is rendered the same size
-	protected static final float mapScaleVal = 10.0f;
-	
-	protected SOM_MseOvrDisplay mseOvrData;//location and label of mouse-over point in map
-	
 	
 	public SOM_MapUIWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, boolean _canDrawTraj) {
 		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt, _canDrawTraj);
@@ -166,7 +133,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 			mapUIIdxToMapDatDescr.put(uiObjIDX,mapDatName);
 		}
 	}//initAndSetSOMDatUIMaps
-	
 	
 	
 	/**
@@ -221,12 +187,9 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		setPrivFlags(mapUseChiSqDistIDX,getPrivFlags(mapUseChiSqDistIDX));
 		setPrivFlags(mapDrawUMatrixIDX, flagsToSet[0]);
 		setPrivFlags(mapExclProdZeroFtrIDX, flagsToSet[1]);
-		
-		mapMgr.setCurrentTrainDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal())));
-		mapMgr.setCurrentTestDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTestDataFrmtIDX].getVal())));
-		mapNodeWtDispThresh = (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal());
-		mapNodeDispType = SOM_ExDataType.getVal((int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
-		mseOvrData = null;	
+		//set initial values for UI
+		mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()), (int)(this.guiObjs[uiTestDataFrmtIDX].getVal()),(float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
+
 		initMeIndiv();
 	}
 	
@@ -241,11 +204,16 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * set map manager from instancing app and reset all mapMgr-governed values in window
 	 */
 	public void setMapMgr(SOM_MapManager _mapMgr) {
+		//save current values to current map mgr
+		
+		//set passed map manager as current
 		mapMgr = _mapMgr;
-		//re-init
+		//re-init window to use this map manager
 		initAfterMapMgrSet(new boolean[] {getPrivFlags(mapDrawUMatrixIDX), getPrivFlags(mapExclProdZeroFtrIDX)});
-		//send mapMgr's config data
+		//send new mapMgr's config data
 		mapMgr.setUIValsFromProjConfig();
+		//set values from saved map manager, if swapping back to this one from leaving
+		
 	}
 	
 	protected abstract void initMeIndiv();	
@@ -459,33 +427,12 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	protected abstract void setupGUIObjsArasIndiv(ArrayList<Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals);
 	
 	public final void resetUIVals(){for(int i=0; i<guiStVals.length;++i){				guiObjs[i].setVal(guiStVals[i]);		}}	
-	
-	///////////////////////////////////////////
-	// map image init	
-	private final void reInitMapCubicSegments() {		mapUMatrixCubicSegmentsImg = pa.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, pa.ARGB);}//ARGB to treat like overlay
-	public final void initMapAras(int numFtrVals, int num2ndryMaps) {
-		curMapImgIDX = 0;
-		int format = pa.RGB; 
-		//int w = (int) (SOM_mapDims[0]/mapScaleVal), h = (int) (SOM_mapDims[1]/mapScaleVal);
-		int w = (int) (mapMgr.getMapWidth()/mapScaleVal), h = (int) (mapMgr.getMapHeight()/mapScaleVal);
-		mapPerFtrWtImgs = new PImage[numFtrVals];
-		for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = pa.createImage(w, h, format);	}		
-		mapCubicUMatrixImg = pa.createImage(w, h, format);			
-		reInitMapCubicSegments();
-		//instancing-window specific initializations
-		initMapArasIndiv(w,h, format,num2ndryMaps);
-	}//initMapAras	
-	
-	protected abstract void initMapArasIndiv(int w, int h, int format, int num2ndFtrVals);
-	
-	///////////////////////////////////////////
-	// end map image init		
-	
+		
 	//set window-specific variables that are based on current visible screen dimensions
 	protected final void setVisScreenDimsPriv() {
 		float xStart = rectDim[0] + .5f*(curVisScrDims[0] - (curVisScrDims[1]-(2*xOff)));
 		//start x and y and dimensions of full map visualization as function of visible window size;
-		SOM_mapLoc = new float[]{xStart, rectDim[1] + yOff};
+		mapMgr.SOM_mapLoc = new float[]{xStart, rectDim[1] + yOff};
 		//now build calc analysis offset struct
 		setVisScreenDimsPriv_Indiv();
 	}//calcAndSetMapLoc
@@ -619,7 +566,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		msgObj.dispInfoMessage("SOM_MapUIWin","setPreBuiltMapArray","Attempting to set prebuilt map values list of size : " +_pbltMapArray.length);
 		int curIDX = guiObjs[uiMapPreBuiltDirIDX].setListVals(_pbltMapArray);
 		uiVals[uiMapPreBuiltDirIDX] = guiObjs[uiMapPreBuiltDirIDX].getVal();
-		curPreBuiltMapIDX = curIDX;
+		mapMgr.setCurPreBuiltMapIDX(curIDX);
 	}//
 
 	///////////////////////////////
@@ -726,22 +673,23 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 				break;}
 			case uiTrainDatPartIDX 			: {break;}
 			case uiNodeWtDispThreshIDX : {
-				mapNodeWtDispThresh = (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal());
-				mapMgr.setNodeInFtrWtSegThresh(mapNodeWtDispThresh);				
+				float _mapNodeWtDispThresh = (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal());
+				mapMgr.setMapNodeWtDispThresh(_mapNodeWtDispThresh);
+				mapMgr.setNodeInFtrWtSegThresh(_mapNodeWtDispThresh);				
 				break;}
 			case uiNodeInSegThreshIDX 		:{		//used to determine threshold of value for setting membership in a segment/cluster
 				mapMgr.setNodeInUMatrixSegThresh((float)(this.guiObjs[uiNodeInSegThreshIDX].getVal()));
 				mapMgr.buildUMatrixSegmentsOnMap();
 				break;}			
 			case uiMapPreBuiltDirIDX 		: {//what prebuilt map of list of maps shown to right of screen to use, if any are defined in project config
-				curPreBuiltMapIDX = (int) (this.guiObjs[uiMapPreBuiltDirIDX].getVal());
+				mapMgr.setCurPreBuiltMapIDX((int) (this.guiObjs[uiMapPreBuiltDirIDX].getVal()));
 				break;}			
 			case uiMapNodeBMUTypeToDispIDX 	: {//type of examples being mapped to each map node to display
-				mapNodeDispType = SOM_ExDataType.getVal((int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
+				mapMgr.setMapNodeDispType(SOM_ExDataType.getVal((int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal())));
 				break;}			
 			case uiMseRegionSensIDX 		: {			break;}
 			case uiFtrSelectIDX				: {		//feature idx map to display
-				curMapImgIDX = (int)guiObjs[uiFtrSelectIDX].getVal();	
+				mapMgr.setCurMapImgIDX((int)guiObjs[uiFtrSelectIDX].getVal());	
 				break;}
 			case uiCategorySelectIDX : {	//category select changed - managed by instancing app		
 				setCategory_UIObj(settingCategoryFromClass); 
@@ -763,15 +711,15 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	}
 	
 	protected void setCategory_UIObj(boolean settingCategoryFromClass) {
-		curCategoryIDX = (int)(this.guiObjs[uiCategorySelectIDX].getVal());
-		curCategoryLabel = getCategoryLabelFromIDX(curCategoryIDX);				
+		mapMgr.setCurCategoryIDX((int)(this.guiObjs[uiCategorySelectIDX].getVal()));
+		mapMgr.setCurCategoryLabel(getCategoryLabelFromIDX(mapMgr.getCurCategoryIDX()));				
 		setUIWinVals_HandleCategory(settingCategoryFromClass); 
 	}
 
 	
 	protected void setClass_UIObj(boolean settingClassFromCategory) {
-		curClassIDX = (int)(this.guiObjs[uiClassSelectIDX].getVal());
-		curClassLabel = getClassLabelFromIDX(curClassIDX);				
+		mapMgr.setCurClassIDX((int)(this.guiObjs[uiClassSelectIDX].getVal()));
+		mapMgr.setCurClassLabel(getClassLabelFromIDX(mapMgr.getCurClassIDX()));				
 		setUIWinVals_HandleClass(settingClassFromCategory);  		
 	}
 	
@@ -870,240 +818,30 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		pa.pushMatrix();pa.pushStyle();
 		//instance-specific drawing
 		drawMapIndiv();
-		if(getPrivFlags(mapDataLoadedIDX)){drawMapRectangle();}	
+		if(getPrivFlags(mapDataLoadedIDX)){mapMgr.drawMapRectangle(pa);}	
 		pa.popStyle();pa.popMatrix();
 	}//drawMap()	
 	protected abstract void drawMapIndiv();
 	
-	protected final void drawMseOverData() {	mseOvrData.drawMeLblMap(pa);}
-	
-	//draw map rectangle and map nodes
-	protected final void drawMapRectangle() {		
-		pa.pushMatrix();pa.pushStyle();
-			pa.noLights();
-			pa.scale(mapScaleVal);
-			PImage tmpImg;
-			int curImgNum;
-			if(getPrivFlags(mapDrawUMatrixIDX)) {				
-				tmpImg =  mapCubicUMatrixImg;
-				curImgNum = -1;
-			} else {
-				tmpImg = mapPerFtrWtImgs[curMapImgIDX];		
-				curImgNum = curMapImgIDX;
-			}
-			//doing this in separate matrix stack frame because map is built small and scaled up
-			pa.image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(getPrivFlags(saveLocClrImgIDX)){tmpImg.save(mapMgr.getSOMLocClrImgForFtrFName(curImgNum));  setPrivFlags(saveLocClrImgIDX,false);}			
-			if(getPrivFlags(mapDrawUMatSegImgIDX)) {pa.image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}//image synthesized (smoother)
-			pa.lights();
-		pa.popStyle();pa.popMatrix(); 
-		pa.pushMatrix();pa.pushStyle();
-			pa.noLights();
-			boolean drawLbl = getPrivFlags(mapDrawNodeLblIDX);
-			pa.translate(SOM_mapLoc[0],SOM_mapLoc[1],0);	
-			if(getPrivFlags(mapDrawTrainDatIDX)){			mapMgr.drawTrainData(pa);}	
-			if(getPrivFlags(mapDrawTestDatIDX)) {			mapMgr.drawTestData(pa);}
-			//draw nodes by population
-			if(getPrivFlags(mapDrawPopMapNodesIDX)) {	if(drawLbl) {mapMgr.drawPopMapNodes(pa, mapNodeDispType);} else {mapMgr.drawPopMapNodesNoLbl(pa, mapNodeDispType);}}
-			if (curImgNum > -1) {
-				if(getPrivFlags(mapDrawWtMapNodesIDX)){		mapMgr.drawNodesWithWt(pa, mapNodeWtDispThresh, curMapImgIDX);} 
-				//display ftr-wt, class and category images, if enabled
-				drawSegmentsFtrWeightDisp(curMapImgIDX);
-				if(getPrivFlags(mapDrawClassSegmentsIDX)) {	 		mapMgr.drawClassSegments(pa,this.curClassLabel);	}		
-				if(getPrivFlags(mapDrawCategorySegmentsIDX)) { 		mapMgr.drawCategorySegments(pa,this.curCategoryLabel);	}				
-				drawPerFtrMap_Indiv();
-			} else {			
-				drawSegmentsUMatrixDisp();
-			}
-			//instance-specific stuff to draw on map, after nodes are drawn
-			drawMapRectangle_Indiv(curImgNum);
-			//if draw all map nodes
-			if(getPrivFlags(mapDrawAllMapNodesIDX)){	if(drawLbl) {mapMgr.drawAllNodes(pa);} else {mapMgr.drawAllNodesNoLbl(pa);} }
-			pa.lights();
-		pa.popStyle();pa.popMatrix();	
-	}//drawMapRectangle
-	
-	protected abstract void drawMapRectangle_Indiv(int curImgNum);
-	//draw various segments in UMatrix Display
-	protected void drawSegmentsUMatrixDisp() {
-		if(getPrivFlags(mapDrawUMatSegMembersIDX)) {		mapMgr.drawUMatrixSegments(pa);}
-		if(getPrivFlags(mapDrawFtrWtSegMembersIDX)) {		mapMgr.drawAllFtrWtSegments(pa, mapNodeWtDispThresh);}	//draw all segments - will overlap here, might look like garbage		
-		if(getPrivFlags(mapDrawClassSegmentsIDX)) {	 		mapMgr.drawAllClassSegments(pa);}
-		if(getPrivFlags(mapDrawCategorySegmentsIDX)) { 		mapMgr.drawAllCategorySegments(pa);}
-
-		drawSegmentsUMatrixDispIndiv();
-	}
-	
-	/**
-	 * draw instance-specific per-ftr map data display
-	 */
-	protected abstract void drawPerFtrMap_Indiv();
-	/**
-	 * Instancing class-specific segments and other data to render during UMatrix display
-	 */
-	protected abstract void drawSegmentsUMatrixDispIndiv();
-	
-	protected final void drawSegmentsFtrWeightDisp(int ftrIDX) {if(getPrivFlags(mapDrawFtrWtSegMembersIDX)) {		mapMgr.drawFtrWtSegments(pa, mapNodeWtDispThresh, ftrIDX);}}//drawSegmentsFtrWeightDisp
+	public final void drawMseOverData() {	mapMgr.drawMseOverData(pa);}
 
 	/////////////////////////////////////////
 	// end draw routines
-	
-	
-	//val is 0->256
-	private final int getDataClrFromFloat(Float val) {
-		int ftr = Math.round(val);		
-		int clrVal = ((ftr & 0xff) << 16) + ((ftr & 0xff) << 8) + (ftr & 0xff);
-		return clrVal;
-	}//getDataClrFromFloat
-	
-	/**
-	 * make color based on ftr value at particular index call this if map is trained on scaled or normed ftr data
-	 * @param ftrMap ftr map
-	 * @param classIDX index in feature vector we are querying
-	 * @return hex clr
-	 */
-	private final int getDataClrFromFtrVec(TreeMap<Integer, Float> ftrMap, Integer classIDX) {
-		Float ftrVal = ftrMap.get(classIDX);
-//		if(ftrVal == null) {	ftrVal=0.0f;		}
-//		if (minFtrValSeen[classIDX] > ftrVal) {minFtrValSeen[classIDX]=ftrVal;}
-//		else if (maxFtrValSeen[classIDX] < ftrVal) {maxFtrValSeen[classIDX]=ftrVal;}
-		int ftr = 0;
-		if(ftrVal != null) {	ftr = Math.round(ftrVal);		}
-		int clrVal = ((ftr & 0xff) << 16) + ((ftr & 0xff) << 8) + (ftr & 0xff);
-		return clrVal;
-	}//getDataClrFromFtrVec
-	
-	//set colors of image of umatrix map
-	public final void setMapUMatImgClrs() {
-		mapCubicUMatrixImg.loadPixels();
-		//float[] c;	
-		//mapUMatrixImg
-		//single threaded exec
-		for(int y = 0; y<mapCubicUMatrixImg.height; ++y){
-			int yCol = y * mapCubicUMatrixImg.width;
-			for(int x = 0; x < mapCubicUMatrixImg.width; ++x){
-				//c = getMapNodeLocFromPxlLoc(x, y,mapScaleVal);
-				Float valC = mapMgr.getBiCubicInterpUMatVal(getMapNodeLocFromPxlLoc(x, y,mapScaleVal));
-				mapCubicUMatrixImg.pixels[x+yCol] = getDataClrFromFloat(valC);
-			}
-		}
-		mapCubicUMatrixImg.updatePixels();	
-	}//setMapUMatImgClrs
-	//set colors of image of umatrix map
-	public final void setMapSegmentImgClrs_UMatrix() {
-		reInitMapCubicSegments();//reinitialize map array
-		mapUMatrixCubicSegmentsImg.loadPixels();
-		//float[] c;	
-		//single threaded exec
-		for(int y = 0; y<mapUMatrixCubicSegmentsImg.height; ++y){
-			int yCol = y * mapUMatrixCubicSegmentsImg.width;
-			for(int x = 0; x < mapUMatrixCubicSegmentsImg.width; ++x){
-				//c = getMapNodeLocFromPxlLoc(x, y,mapScaleVal);
-				int valC = mapMgr.getUMatrixSegementColorAtPxl(getMapNodeLocFromPxlLoc(x, y,mapScaleVal));
-				mapUMatrixCubicSegmentsImg.pixels[x+yCol] = valC;
-			}
-		}
-		mapUMatrixCubicSegmentsImg.updatePixels();
-	}//setMapUMatImgClrs
-	
-	//sets colors of background image of map -- partition pxls for each thread
-	public final void setMapImgClrs(){ //mapRndClrImg
-		float[] c;		
-		int stTime = pa.millis();
-		for (int i=0;i<mapPerFtrWtImgs.length;++i) {	mapPerFtrWtImgs[i].loadPixels();}//needed to retrieve pixel values
-		//build uMatrix image
-		setMapUMatImgClrs();
-		//build segmentation image based on UMatrix distance
-		setMapSegmentImgClrs_UMatrix();
-		//check if single threaded
-		int numThds = mapMgr.getNumUsableThreads();
-		boolean mtCapable = mapMgr.isMTCapable();
-		if(mtCapable) {				
-			//partition into mapMgr.numUsableThreads threads - split x values by this #, use all y values
-			int numPartitions = numThds;
-			int numXPerPart = mapPerFtrWtImgs[0].width / numPartitions;			
-			int numXLastPart = (mapPerFtrWtImgs[0].width - (numXPerPart*numPartitions)) + numXPerPart;
-			List<Future<Boolean>> mapImgFtrs = new ArrayList<Future<Boolean>>();
-			List<SOM_FtrMapVisImgBldr> mapImgBuilders = new ArrayList<SOM_FtrMapVisImgBldr>();
-			int[] xVals = new int[] {0,0};
-			int[] yVals = new int[] {0,mapPerFtrWtImgs[0].height};
-			//each thread builds columns of every map
-			for (int i=0; i<numPartitions-1;++i) {	
-				xVals[1] += numXPerPart;
-				mapImgBuilders.add(new SOM_FtrMapVisImgBldr(mapMgr, mapPerFtrWtImgs, xVals, yVals, mapScaleVal));
-				xVals[0] = xVals[1];				
-			}
-			//last one
-			xVals[1] += numXLastPart;
-			mapImgBuilders.add(new SOM_FtrMapVisImgBldr(mapMgr, mapPerFtrWtImgs, xVals, yVals, mapScaleVal));
-			mapMgr.invokeSOMFtrDispBuild(mapImgBuilders);
-			//try {mapImgFtrs = pa.th_exec.invokeAll(mapImgBuilders);for(Future<Boolean> f: mapImgFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }					
-		} else {
-			//single threaded exec
-			for(int y = 0; y<mapPerFtrWtImgs[0].height; ++y){
-				int yCol = y * mapPerFtrWtImgs[0].width;
-				for(int x = 0; x < mapPerFtrWtImgs[0].width; ++x){
-					int pxlIDX = x+yCol;
-					//c = getMapNodeLocFromPxlLoc(x, y,mapScaleVal);
-					TreeMap<Integer, Float> ftrs = mapMgr.getInterpFtrs(getMapNodeLocFromPxlLoc(x, y,mapScaleVal));
-					for (Integer ftr : ftrs.keySet()) {mapPerFtrWtImgs[ftr].pixels[pxlIDX] = getDataClrFromFtrVec(ftrs, ftr);}
-				}
-			}
-		}
-		for (int i=0;i<mapPerFtrWtImgs.length;++i) {	mapPerFtrWtImgs[i].updatePixels();		}
-		int endTime = pa.millis();
-		msgObj.dispMessage("SOM_MapUIWin", "setMapImgClrs", "Time to build all vis imgs : "  + ((endTime-stTime)/1000.0f) + "s | Threading : " + (mtCapable ? "Multi ("+numThds+")" : "Single" ), MsgCodes.info5);
-	}//setMapImgClrs
-	
-	//get x and y locations relative to upper corner of map
-	public final float getSOMRelX (float x){return (x - SOM_mapLoc[0]);}
-	public final float getSOMRelY (float y){return (y - SOM_mapLoc[1]);}	
+
 	
 	//given pixel location relative to upper left corner of map, return map node float - this measures actual distance in map node coords
 	//so rounding to ints give map node tuple coords, while float gives interp between neighbors
-	protected final float[] getMapNodeLocFromPxlLoc(float mapPxlX, float mapPxlY, float sclVal){	return new float[]{(sclVal* mapPxlX * mapMgr.getNodePerPxlCol()) - .5f, (sclVal* mapPxlY * mapMgr.getNodePerPxlRow()) - .5f};}	
-	//check whether the mouse is over a legitimate map location
-	protected final boolean chkMouseOvr(int mouseX, int mouseY){		
-		float mapMseX = getSOMRelX(mouseX), mapMseY = getSOMRelY(mouseY);//, mapLocX = mapX * mapMseX/mapDims[2],mapLocY = mapY * mapMseY/mapDims[3] ;
-		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapMgr.getMapWidth()) && (mapMseY < mapMgr.getMapHeight())){
-			float[] mapNLoc=getMapNodeLocFromPxlLoc(mapMseX,mapMseY, 1.0f);
-			//msgObj.dispInfoMessage("SOM_MapUIWin","chkMouseOvr","In Map : Mouse loc : " + mouseX + ","+mouseY+ "\tRel to upper corner ("+  mapMseX + ","+mapMseY +") | mapNLoc : ("+mapNLoc[0]+","+ mapNLoc[1]+")" );
-			mseOvrData = getDataPointAtLoc(mapNLoc[0], mapNLoc[1], new myPointf(mapMseX, mapMseY,0));			
-			return true;
-		} else {
-			mapMgr.setMseDataExampleNone();
-			mseOvrData = null;
-			return false;
-		}
+	//protected final float[] getMapNodeLocFromPxlLoc(float mapPxlX, float mapPxlY, float sclVal){	return new float[]{(sclVal* mapPxlX * mapMgr.getNodePerPxlCol()) - .5f, (sclVal* mapPxlY * mapMgr.getNodePerPxlRow()) - .5f};}	
+	/**
+	 * check whether the mouse is over a legitimate map location
+	 * @param mouseX
+	 * @param mouseY
+	 * @return
+	 */
+	protected final boolean chkMouseOvr(int mouseX, int mouseY){	
+		return mapMgr.chkMouseOvr(mouseX, mouseY, (float) guiObjs[uiMseRegionSensIDX].getVal());
 	}//chkMouseOvr
 	
-	//get datapoint at passed location in map coordinates (so should be in frame of map's upper right corner) - assume map is square and not hex
-	protected final SOM_MseOvrDisplay getDataPointAtLoc(float x, float y, myPointf locPt){//, boolean useScFtrs){
-		float sensitivity = (float) guiObjs[uiMseRegionSensIDX].getVal();
-		SOM_MseOvrDisplay dp; 
-		SOM_MapNode nearestNode;
-		if (getPrivFlags(mapDrawClassSegmentsIDX)) {			//disp class probs at nearest node
-			//find nearest map node to location
-			nearestNode = mapMgr.getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
-			dp = mapMgr.setMseDataExampleClassProb(locPt,nearestNode,sensitivity);
-		} else if (getPrivFlags(mapDrawCategorySegmentsIDX)) {	//disp category probs at nearest node			
-			nearestNode = mapMgr.getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
-			dp = mapMgr.setMseDataExampleCategoryProb(locPt,nearestNode,sensitivity);
-			
-		} else if (getPrivFlags(mapDrawPopMapNodesIDX)) { //if showing node pop, mouse over should show actual population
-			nearestNode = mapMgr.getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
-			dp = mapMgr.setMseDataExampleNodePop(locPt,nearestNode,sensitivity);
-		} else {//show mouse data based on which display is currently shown
-			if (getPrivFlags(mapDrawUMatrixIDX)) {		
-				dp = mapMgr.setMseDataExampleDists(locPt, mapMgr.getBiCubicInterpUMatVal(new float[] {x, y}), sensitivity);				
-			} else {
-				TreeMap<Integer, Float> ftrs = mapMgr.getInterpFtrs(new float[] {x, y});
-				if(ftrs == null) {return null;} 
-				dp = mapMgr.setMseDataExampleFtrs(locPt, ftrs, sensitivity);				
-			}
-		}
-		dp.setMapLoc(locPt);
-		return dp;
-	}//getDataPointAtLoc
 	
 	//return strings for directory names and for individual file names that describe the data being saved.  used for screenshots, and potentially other file saving
 	//first index is directory suffix - should have identifying tags based on major/archtypical component of sim run
@@ -1128,6 +866,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	}
 	@Override
 	protected final myPoint getMsePtAs3DPt(myPoint mseLoc){return new myPoint(mseLoc.x,mseLoc.y,0);}
+
 	@Override
 	protected void snapMouseLocs(int oldMouseX, int oldMouseY, int[] newMouseLoc){}//not a snap-to window
 	@Override

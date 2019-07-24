@@ -79,9 +79,18 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * probability of category (ratio of category to all categories mapped to map node)
 	 */
 	protected ConcurrentSkipListMap<Integer, ConcurrentSkipListMap<Tuple<Integer,Integer>,Float>> perCategoryMapNodeProbMap;
+	
+	/**
+	 * map keyed by category/class and value is counts of this category/class occurrence (generally this will be 1)
+	 * Key is tuple t where t.x == category and t.y==class.  Category can be null, but if it is null for any 
+	 * examples it will be assumed to be null for all examples, and if it is not null for any then it must be non-null for all
+	 */
+	private TreeMap<Tuple<Integer, Integer>, Integer> catClassCountsForExample;
 
-
-	private int[] stFlags;						//state flags - bits in array holding relevant process info
+	/**
+	 * state flags - bits in array holding relevant process info
+	 */
+	private int[] stFlags;						
 	public static final int
 			debugIDX 			= 0,
 			ftrsBuiltIDX		= 1,			//whether particular kind of feature was built or not
@@ -92,36 +101,52 @@ public abstract class SOM_Example extends baseDataPtVis{
 		
 	public static final int numFlags = 6;	
 	
-	//reference to map node that best matches this example node
+	/**
+	 * reference to map node that best matches this example node
+	 */
 	private SOM_MapNode bmu;			
-	//this is the squared distance, using the chosen distance measure, to the best matching unit of the map for this example
+	/**
+	 * this is the squared distance, using the chosen distance measure, to the best matching unit of the map for this example
+	 */
 	private double _sqDistToBMU;
 	//to hold 9 node neighborhood surrounding bmu - using array of nodes because nodes can be equidistant form multiple nodes
 	//TODO set a list of these nodes for each SOMMapNodeExample upon their construction? will this speed up anything?
 	private TreeMap<Double, ArrayList<SOM_MapNode>> mapNodeNghbrs;
-	//hash code for using in a map
+	/**
+	 * hash code for using in a map
+	 */
 	private final int _hashCode;
 	
-	//is this datapoint used for training; whether this record has a source "event" attached to it
+	/**
+	 * is this datapoint used for training; 
+	 */
 	protected boolean isTrainingData;
-	//this is index for this data point in training/testing data array; original index in preshuffled array (reflecting build order)
+	/**
+	 * this is index for this data point in training/testing data array; 
+	 */
 	protected int testTrainDataIDX;
-	//two maps of distances to each map node for each example, with each array either including unshared features or excluding unshared features in distance calc
-	//keyed by distance, array list is list of map nodes at that distance
+	/**
+	 * two maps of distances to each map node for each example, with 
+	 * each array either including unshared features or excluding unshared 
+	 * features in distance calc keyed by distance, array list is list 
+	 * of map nodes at that distance
+	 */
 	protected TreeMap<Double,ArrayList<SOM_MapNode>>[] allMapNodesDists;	
-	//two kinds of maps to bmus available - all ftrs looks at all feature values for distances, 
-	//while shared only measures distances where this example's wts are non-zero
+	/**
+	 * idxs in allMapNodesDists
+	 */
 	public static final int
 		AllFtrsIDX = 0,				//looks at all features in this node for distance calculations
 		SharedFtrsIDX = 1;			//looks only at non-zero features in this node for distance calculations
 	protected static int numFtrCompVals = 2;
 
-	//segments this product belongs to, based on features, classes and categories
-	//there will be 1 entry for all ftrs, classes and categories this example belongs to	
+	/**
+	 * segments this product belongs to, based on features, classes and categories 
+	 * There will be 1 entry for all ftrs, classes and categories this example belongs to	
+	 */
 	private TreeMap<Integer, SOM_MappedSegment> ftrWtSegData;			//keyed by non-zero ftr index	
 	private TreeMap<Integer, SOM_MappedSegment> class_SegData;			//segment membership manager class mapping
 	private TreeMap<Integer, SOM_MappedSegment> categorys_SegData;		//segment membership manager category mapping
-
 	
 	public SOM_Example(SOM_MapManager _map, SOM_ExDataType _type, String _id) {
 		super(_map,_type);
@@ -168,6 +193,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * to remain constructed throughout life of example
 	 */
 	private void initAllStructs() {
+		catClassCountsForExample = new TreeMap<Tuple<Integer, Integer>, Integer>();
 		mapNodeNghbrs = new TreeMap<Double, ArrayList<SOM_MapNode>>();
 		ftrMaps = new TreeMap[ftrMapTypeKeysAra.length];
 		for (int i=0;i<ftrMaps.length;++i) {			ftrMaps[i] = new TreeMap<Integer, Float>(); 		}
@@ -196,6 +222,27 @@ public abstract class SOM_Example extends baseDataPtVis{
 	public synchronized SOM_MappedSegment getFtrSegment(int idx) {		return ftrWtSegData.get(idx);}
 	public synchronized SOM_MappedSegment getClassSegment(int idx) {		return class_SegData.get(idx);}
 	public synchronized SOM_MappedSegment getCategorySegment(int idx) {		return categorys_SegData.get(idx);}
+	/**
+	 * initialize the map of category/class-keyed counts of incidents for this example
+	 */
+	protected final void initCatClassCountsForExample() {catClassCountsForExample.clear();}	
+	/**
+	 * return a map keyed by category/class tuple, with value being count of 
+	 * incidents of this class in this example. these will be used as class data 
+	 * for the bmu node of this example.
+	 * If category is not used, null category should be supported by consuming functions.
+	 * THIS SHOULD ONLY BE USED WHEN THIS EXAMPLE IS A TRAINING EXAMPLE; OTHERWISE SHOULD BE ABLE TO RETURN NULL
+	 * @return
+	 */
+	public final TreeMap<Tuple<Integer, Integer>, Integer> getCatClassCountsForExample(){return catClassCountsForExample;}
+	
+	/**
+	 * set the cat/class-keyed map of cat/class incident counts
+	 */
+	public final void setCatClassCountsForExample(TreeMap<Tuple<Integer, Integer>, Integer> _map){catClassCountsForExample = _map;}
+	
+	
+
 
 	/**
 	 * set this example's segment membership and probabilities from the mapped bmu 
@@ -410,6 +457,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 		if(null==bmu) {return 0.0f;}
 		return bmu.getCategoryProb(category);
 	}
+	
 	
 	/**
 	 * assumes bmu exists and is not null
