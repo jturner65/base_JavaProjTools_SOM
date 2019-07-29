@@ -31,6 +31,12 @@ import processing.core.PImage;
 
 public abstract class SOM_MapManager {
 	/**
+	 * name to reference this map manager
+	 */
+	protected String name;
+	protected int ID;
+	protected static int cnt = 0;
+	/**
 	 * owning window - null if console
 	 */
 	public SOM_MapUIWin win;		
@@ -304,6 +310,10 @@ public abstract class SOM_MapManager {
 	 * location and label of mouse-over point in map 
 	 */
 	protected SOM_MseOvrDisplay mseOvrData;//location and label of mouse-over point in map
+	/**
+	 * UI flag data
+	 */
+	private int[] winFlags;
 
 	/**
 	 * @param _win owning window(may be null)
@@ -312,7 +322,9 @@ public abstract class SOM_MapManager {
 	 * 					String[] _args : command line arguments other than directory info
 	 */
 	public SOM_MapManager(SOM_MapUIWin _win, float[] _dims, TreeMap<String, Object> _argsMap) {
-		win=_win;			
+		win=_win;	
+		ID = cnt++;
+		if(win != null) {setName(win.name);} else {setName("No_Win");}
 		mapDims = _dims;
 		mapUIAPI = buildSOM_UI_Interface();
 		initFlags();		
@@ -351,6 +363,11 @@ public abstract class SOM_MapManager {
 		resetTrainDataAras();
 		mseOverExample = buildMseOverExample();
 	}//ctor
+	/**
+	 * only set if win != null
+	 */
+	private void setName(String _winName) {name = _winName + "_MapManager_ID_"+ID;}
+	public String getName() {return name;}
 	
 	/**
 	 * build the map of example mappers used to manage all the data the SOM will consume
@@ -389,6 +406,7 @@ public abstract class SOM_MapManager {
 	 */
 	public void setPADispWinData(SOM_MapUIWin _win, my_procApplet _pa) {
 		win=_win;
+		if(win != null) {setName(win.name);} else {setName("No_Win");}
 		MessageObject.pa = _pa;
 		projConfigData.setUIValsFromLoad();
 	}//setPAWindowData
@@ -651,7 +669,7 @@ public abstract class SOM_MapManager {
 	 * @param mapNodesToData
 	 * @return
 	 */
-	private boolean _ExecSOM(boolean mapNodesToData) {
+	protected boolean _ExecSOM(boolean mapNodesToData) {
 		msgObj.dispMessage("SOM_MapManager","_ExecSOM","Start building map.", MsgCodes.info1);
 		//execute map training
 		SOM_MapDat SOMExeDat = projConfigData.getSOMExeDat();
@@ -741,11 +759,12 @@ public abstract class SOM_MapManager {
 	///////////////////////////////////////////
 	// map image init	
 	public final void initFromUIWinInitMe(int _trainDatFrmt, int _testDatFrmt, float _mapNodeWtDispThresh, int _mapNodeDispType) {
-		setCurrentTrainDataFormat(SOM_FtrDataType.getVal(_testDatFrmt));
+		setCurrentTrainDataFormat(SOM_FtrDataType.getVal(_trainDatFrmt));
 		setCurrentTestDataFormat(SOM_FtrDataType.getVal(_testDatFrmt));
 		mapNodeWtDispThresh = _mapNodeWtDispThresh;
 		mapNodeDispType = SOM_ExDataType.getVal(_mapNodeDispType);
 		mseOvrData = null;	
+		this.winFlags = win.privFlags;
 	}
 	
 	private final void reInitMapCubicSegments() {	if (win != null) {	mapUMatrixCubicSegmentsImg = win.pa.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, win.pa.ARGB);}}//ARGB to treat like overlay
@@ -756,7 +775,8 @@ public abstract class SOM_MapManager {
 			//int w = (int) (SOM_mapDims[0]/mapScaleVal), h = (int) (SOM_mapDims[1]/mapScaleVal);
 			int w = (int) (mapDims[0]/mapScaleVal), h = (int) (mapDims[1]/mapScaleVal);
 			mapPerFtrWtImgs = new PImage[numFtrVals];
-			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = win.pa.createImage(w, h, format);	}		
+			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = win.pa.createImage(w, h, format);	}	
+			
 			mapCubicUMatrixImg = win.pa.createImage(w, h, format);			
 			reInitMapCubicSegments();
 			//instancing-window specific initializations
@@ -769,9 +789,9 @@ public abstract class SOM_MapManager {
 	public void initMapFtrVisAras(int numTrainFtrs) {
 		if (win != null) {
 			int num2ndTrainFtrs = _getNumSecondaryMaps();
-			msgObj.dispMessage("SOM_MapManager","initMapAras","Initializing per-feature map display to hold : "+ numTrainFtrs +" primary feature and " +num2ndTrainFtrs + " secondary feature map images.", MsgCodes.info1);
+			msgObj.dispMessage("SOM_MapManager","initMapFtrVisAras","Initializing per-feature map display to hold : "+ numTrainFtrs +" primary feature and " +num2ndTrainFtrs + " secondary feature map images.", MsgCodes.info1);
 			initMapAras(numTrainFtrs, num2ndTrainFtrs);
-		} else {msgObj.dispMessage("SOM_MapManager","initMapAras","Display window doesn't exist, can't build map visualization image arrays; ignoring.", MsgCodes.warning2);}
+		} else {msgObj.dispMessage("SOM_MapManager","initMapFtrVisAras","Display window doesn't exist, can't build map visualization image arrays; ignoring.", MsgCodes.warning2);}
 	}//initMapAras
 
 	//given pixel location relative to upper left corner of map, return map node float - this measures actual distance in map node coords
@@ -2436,7 +2456,16 @@ public abstract class SOM_MapManager {
 		
 		return res;	
 	}
-	
+
+	public int[] getWinFlags() {
+		return winFlags;
+	}
+
+	public void setWinFlags(int[] winFlags) {
+		this.winFlags = winFlags;
+	}
+
+
 }//abstract class SOM_MapManager
 
 /**

@@ -205,7 +205,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 */
 	public void setMapMgr(SOM_MapManager _mapMgr) {
 		//save current values to current map mgr
-		
+		mapMgr.setWinFlags(privFlags);
 		//set passed map manager as current
 		mapMgr = _mapMgr;
 		//re-init window to use this map manager
@@ -213,8 +213,16 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		//send new mapMgr's config data
 		mapMgr.setUIValsFromProjConfig();
 		//set values from saved map manager, if swapping back to this one from leaving
-		
+		privFlags =  mapMgr.getWinFlags();
+		//setPassedIntFlags(numPrivFlags, mapMgr.getUiFlags());
 	}
+	private void setPassedIntFlags(int _numFlags, int[] _intFlagAra){
+		for(int idx=0;idx<_numFlags; ++idx) {	
+		int bitLoc = 1<<(idx%32);
+		setPrivFlags(idx,(_intFlagAra[idx/32] & bitLoc) == bitLoc);
+		}
+	}	
+	
 	
 	protected abstract void initMeIndiv();	
 	
