@@ -133,6 +133,8 @@ public class SOM_MapNodeBMUExamples{
 		p.popStyle();p.popMatrix();		
 	}
 	
+	public float getPopNodeSize() {return logExSize;}
+	
 	//return a listing of all examples and their distance from this BMU
 	public HashMap<SOM_Example, Double> getExsAndDist(){
 		HashMap<SOM_Example, Double> res = new HashMap<SOM_Example, Double>();

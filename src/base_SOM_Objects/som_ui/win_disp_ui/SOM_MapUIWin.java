@@ -98,11 +98,12 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		uiNodeWtDispThreshIDX 		= 18,			//threshold for display of map nodes on individual weight maps
 		uiNodeInSegThreshIDX		= 19,			//threshold of u-matrix weight for nodes to belong to same segment
 		uiMseRegionSensIDX			= 20,			//senstivity threshold for mouse-over
-		uiFtrSelectIDX				= 21,			//pick the feature to display, if ftr-idx wt graphs are being displayed
-		uiCategorySelectIDX			= 22,			//pick the category to display, if category mapping is available/enabled
-		uiClassSelectIDX			= 23;			//pick the class to display, if class mapping is available/enabled
+		uiPopMapNodeDispSizeIDX		= 21,			//only display populated map nodes that are this size or larger (log of population determines size)
+		uiFtrSelectIDX				= 22,			//pick the feature to display, if ftr-idx wt graphs are being displayed
+		uiCategorySelectIDX			= 23,			//pick the category to display, if category mapping is available/enabled
+		uiClassSelectIDX			= 24;			//pick the class to display, if class mapping is available/enabled
 	
-	public static final int numSOMBaseGUIObjs = 24;
+	public static final int numSOMBaseGUIObjs = 25;
 	//instancing class will specify numGUIObjs	
 	protected double[] uiVals;				//raw values from ui components
 	//
@@ -187,7 +188,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		setPrivFlags(mapDrawUMatrixIDX, flagsToSet[0]);
 		setPrivFlags(mapExclProdZeroFtrIDX, flagsToSet[1]);
 		//set initial values for UI
-		mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()), (int)(this.guiObjs[uiTestDataFrmtIDX].getVal()),(float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
+		mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()), (int)(this.guiObjs[uiTestDataFrmtIDX].getVal()),(float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),(float)(this.guiObjs[uiPopMapNodeDispSizeIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
 
 		initMeIndiv();
 	}
@@ -353,6 +354,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		tmpUIObjArray.add(new Object[] {new double[]{0.0, 1.0, .01}, SOM_MapManager.initNodeInSegFtrWtDistThresh, "Map Node Disp Wt Thresh", new boolean[]{false, false, true}});   	//uiNodeWtDispThreshIDX                                                                     
 		tmpUIObjArray.add(new Object[] {new double[]{0.0, 1.0, .001}, SOM_MapManager.initNodeInSegUMatrixDistThresh, "Segment UDist Thresh", new boolean[]{false, false, true}});   	//uiNodeInSegThreshIDX//threshold of u-matrix weight for nodes to belong to same segment    
 		tmpUIObjArray.add(new Object[] {new double[]{0.0, 1.0, .1},	 0.0, "Mouse Over Sens",	new boolean[]{false, false, true}});   														//uiMseRegionSensIDX                                                                        
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, 20.0, .1},  0.0, "Pop Map Node Display Size Thresh",	new boolean[]{false, false, true}});														//uiPopMapNodeDispSizeIDX
 		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiFtrSelectIDX).length-1,1.0}, 0.0, "Feature IDX To Show", new boolean[] {true, true, true}});					//uiFtrSelectIDX
 		
 		String catUIDesc = getCategoryUIObjLabel();
@@ -442,9 +444,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	protected abstract void setVisScreenDimsPriv_Indiv();
 	
 	@Override
-	public final void setPrivFlags(int idx, boolean val){		
-		msgObj.dispInfoMessage("SOM_MapUIWin::"+name, "setPrivFlags", "Setting flag : " + idx+ " to value : " + val);
-		
+	public final void setPrivFlags(int idx, boolean val){				
 		int flIDX = idx/32, mask = 1<<(idx%32);
 		privFlags[flIDX] = (val ?  privFlags[flIDX] | mask : privFlags[flIDX] & ~mask);
 		switch (idx) {//special actions for each flag
@@ -681,6 +681,10 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 				float _mapNodeWtDispThresh = (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal());
 				mapMgr.setMapNodeWtDispThresh(_mapNodeWtDispThresh);
 				mapMgr.setNodeInFtrWtSegThresh(_mapNodeWtDispThresh);				
+				break;}
+			case  uiPopMapNodeDispSizeIDX:{
+				float _mapNodePopDispThresh = (float)(this.guiObjs[uiPopMapNodeDispSizeIDX].getVal());
+				mapMgr.setMapNodePopDispThresh(_mapNodePopDispThresh);
 				break;}
 			case uiNodeInSegThreshIDX 		:{		//used to determine threshold of value for setting membership in a segment/cluster
 				mapMgr.setNodeInUMatrixSegThresh((float)(this.guiObjs[uiNodeInSegThreshIDX].getVal()));

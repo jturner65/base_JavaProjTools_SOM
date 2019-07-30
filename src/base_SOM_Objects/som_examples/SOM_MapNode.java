@@ -553,8 +553,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 				
 			}	
 		}		
-	}//_buildCatClassForEx
-	
+	}//_buildCatClassForEx	
 	
 	/**
 	 * get salient name prefix for class segment for the objects mapped to this bmu
@@ -576,10 +575,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	 * get salient descriptions for category segment for the objects mapped to this bmu
 	 * @return
 	 */
-	public abstract String getCategorySegDesc();
-
-	
-	
+	public abstract String getCategorySegDesc();	
 	
 	//add passed example to appropriate bmu construct depending on what type of example is passed (training, testing, product)
 	public void addExToBMUs(SOM_Example ex, int _typeIDX) {
@@ -652,7 +648,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	
 	//////////////////////////
 	// draw routines
-	
+	public float getPopNodeSize(int _typeIDX) {return BMUExampleNodes[_typeIDX].getPopNodeSize();}
 	public void drawMePopLbl(my_procApplet p, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeWithLabel(p);	}	
 	public void drawMePopNoLbl(my_procApplet p, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeNoLabel(p);	}	
 //	public void drawMeSmallWt(my_procApplet p, int ftrIDX){

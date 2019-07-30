@@ -303,6 +303,10 @@ public abstract class SOM_MapManager {
 	 */
 	protected float mapNodeWtDispThresh = 0.01f;
 	/**
+	 * threshold of populated map node size to display - should always be positive
+	 */
+	protected float mapNodePopDispThresh = 0.0f;
+	/**
 	 * type of examples using each map node as a bmu to display
 	 */
 	protected SOM_ExDataType mapNodeDispType;
@@ -758,11 +762,12 @@ public abstract class SOM_MapManager {
 	
 	///////////////////////////////////////////
 	// map image init	
-	public final void initFromUIWinInitMe(int _trainDatFrmt, int _testDatFrmt, float _mapNodeWtDispThresh, int _mapNodeDispType) {
+	public final void initFromUIWinInitMe(int _trainDatFrmt, int _testDatFrmt, float _mapNodeWtDispThresh, float _mapNodePopDispThresh, int _mapNodeDispType) {
 		setCurrentTrainDataFormat(SOM_FtrDataType.getVal(_trainDatFrmt));
 		setCurrentTestDataFormat(SOM_FtrDataType.getVal(_testDatFrmt));
 		mapNodeWtDispThresh = _mapNodeWtDispThresh;
 		mapNodeDispType = SOM_ExDataType.getVal(_mapNodeDispType);
+		mapNodePopDispThresh = _mapNodePopDispThresh;
 		mseOvrData = null;	
 	}
 	
@@ -1779,17 +1784,18 @@ public abstract class SOM_MapManager {
 	// mouse and draw routines	
 	
 	//set specific mouse-over display data/values
-	public SOM_MseOvrDisplay setMseDataExampleFtrs(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs(ptrLoc, ftrs, sens); return mseOverExample;}
-	public SOM_MseOvrDisplay setMseDataExampleDists(myPointf ptrLoc, float dist, float sens) {mseOverExample.initMseDatUMat( ptrLoc, dist, sens);return mseOverExample;}
-	public SOM_MseOvrDisplay setMseDataExampleClassProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, true);return mseOverExample;}
-	public SOM_MseOvrDisplay setMseDataExampleCategoryProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, false);return mseOverExample;}
-	public SOM_MseOvrDisplay setMseDataExampleNodePop(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, SOM_ExDataType.Training);return mseOverExample;}
-	public SOM_MseOvrDisplay setMseDataExampleNone() { mseOverExample.clearMseDat(); return mseOverExample;}
+	public final SOM_MseOvrDisplay setMseDataExampleFtrs(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs(ptrLoc, ftrs, sens); return mseOverExample;}
+	public final SOM_MseOvrDisplay setMseDataExampleDists(myPointf ptrLoc, float dist, float distMin, float distDiff, float sens) {mseOverExample.initMseDatUMat( ptrLoc, dist,distMin,distDiff, sens);return mseOverExample;}
+	public final SOM_MseOvrDisplay setMseDataExampleClassProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, true);return mseOverExample;}
+	public final SOM_MseOvrDisplay setMseDataExampleCategoryProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, false);return mseOverExample;}
+	public final SOM_MseOvrDisplay setMseDataExampleNodePop(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, SOM_ExDataType.Training);return mseOverExample;}
+	public final SOM_MseOvrDisplay setMseDataExampleNodeName(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatNodeName(ptrLoc, nearestNode, sens);return mseOverExample;}	
+	public final SOM_MseOvrDisplay setMseDataExampleNone() { mseOverExample.clearMseDat(); return mseOverExample;}
 	
 	//get datapoint at passed location in map coordinates (so should be in frame of map's upper right corner) - assume map is square and not hex
 	public final SOM_MseOvrDisplay getDataPointAtLoc(float x, float y, float sensitivity, myPointf locPt){//, boolean useScFtrs){
 		//float sensitivity = (float) guiObjs[uiMseRegionSensIDX].getVal();
-		SOM_MseOvrDisplay dp; 
+		SOM_MseOvrDisplay dp = null; 
 		SOM_MapNode nearestNode;
 		if (win.getPrivFlags(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {			//disp class probs at nearest node
 			//find nearest map node to location
@@ -1802,18 +1808,24 @@ public abstract class SOM_MapManager {
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) { //if showing node pop, mouse over should show actual population
 			nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 			dp = setMseDataExampleNodePop(locPt,nearestNode,sensitivity);
-		} else {//show mouse data based on which display is currently shown
-			if (win.getPrivFlags(SOM_MapUIWin.mapDrawUMatrixIDX)) {		
-				dp = setMseDataExampleDists(locPt, getBiCubicInterpUMatVal(new float[] {x, y}), sensitivity);				
-			} else {
-				TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y});
-				if(ftrs == null) {return null;} 
-				dp = setMseDataExampleFtrs(locPt, ftrs, sensitivity);				
-			}
+		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawUMatrixIDX)) {		//draw umatrix distance
+			dp = setMseDataExampleDists(locPt, getBiCubicInterpUMatVal(new float[] {x, y}),uMatDist_Min, uMatDist_Diff, sensitivity);				
+		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {	//feature weight display
+			TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y});
+			if(ftrs == null) {return null;} 
+			dp = setMseDataExampleFtrs(locPt, ftrs, sensitivity);				
+		} else {					//application-dependent display
+			dp = getDataPointAtLoc_Priv(x, y, sensitivity, locPt);
+		}
+		if(dp==null) {
+			nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
+			dp = setMseDataExampleNodeName(locPt,nearestNode,sensitivity);
 		}
 		dp.setMapLoc(locPt);
 		return dp;
 	}//getDataPointAtLoc
+	
+	protected abstract SOM_MseOvrDisplay getDataPointAtLoc_Priv(float x, float y, float sensitivity, myPointf locPt);
 	
 	//draw map rectangle and map nodes
 	public final void drawMapRectangle(my_procApplet pa) {
@@ -1857,10 +1869,10 @@ public abstract class SOM_MapManager {
 
 				drawSegmentsUMatrixDispIndiv(pa);
 			}
-			//instance-specific stuff to draw on map, after nodes are drawn
-			drawMapRectangle_Indiv(pa, curImgNum);
 			//if draw all map nodes
 			if(win.getPrivFlags(SOM_MapUIWin.mapDrawAllMapNodesIDX)){	if(drawLbl) {drawAllNodesWithLbl(pa);} else {drawAllNodesNoLbl(pa);} }
+			//instance-specific stuff to draw on map, after nodes are drawn
+			drawMapRectangle_Indiv(pa, curImgNum);
 			pa.lights();
 		pa.popStyle();pa.popMatrix();	
 	}//drawMapRectangle
@@ -2008,13 +2020,17 @@ public abstract class SOM_MapManager {
 	public void drawPopMapNodes(my_procApplet pa, SOM_ExDataType _type) {
 		pa.pushMatrix();pa.pushStyle();
 		int _typeIDX = _type.getVal();
-		for(SOM_MapNode node : MapNodes.values()){	node.drawMePopLbl(pa, _typeIDX);}
+		for(SOM_MapNode node : MapNodes.values()){	
+			if(node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) {	node.drawMePopLbl(pa, _typeIDX);}
+		}
 		pa.popStyle();pa.popMatrix();		
 	}	
 	public void drawPopMapNodesNoLbl(my_procApplet pa, SOM_ExDataType _type) {
 		pa.pushMatrix();pa.pushStyle();
 		int _typeIDX = _type.getVal();
-		for(SOM_MapNode node : MapNodes.values()){				node.drawMePopNoLbl(pa, _typeIDX);}
+		for(SOM_MapNode node : MapNodes.values()){
+			if(node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) {	node.drawMePopNoLbl(pa, _typeIDX);}
+		}
 		pa.popStyle();pa.popMatrix();		
 	}
 	public final void drawMseOverData(my_procApplet pa) {	mseOvrData.drawMeLblMap(pa);}
@@ -2085,6 +2101,7 @@ public abstract class SOM_MapManager {
 			float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;	
 			if(loadedPreBuiltMapData.length==0) {				
 				pa.showOffsetText(0,pa.gui_White,"No Pre-build Map Directories specified.");
+				yOff += sideBarYDisp;
 			} else {	
 				pa.showOffsetText(0,pa.gui_White,"Pre-build Map Directories specified in config : ");
 				yOff += sideBarYDisp;
@@ -2266,10 +2283,15 @@ public abstract class SOM_MapManager {
 	public void setCurClassLabel(int curClassLabel) {	this.curClassLabel = curClassLabel;}
 	public int getCurPreBuiltMapIDX() {	return curPreBuiltMapIDX;}
 	public void setCurPreBuiltMapIDX(int curPreBuiltMapIDX) {	this.curPreBuiltMapIDX = curPreBuiltMapIDX;}
+	
 	public float getMapNodeWtDispThresh() {	return mapNodeWtDispThresh;}
-	public void setMapNodeWtDispThresh(float mapNodeWtDispThresh) {	this.mapNodeWtDispThresh = mapNodeWtDispThresh;}
+	public void setMapNodeWtDispThresh(float _mapNodeWtDispThresh) {	this.mapNodeWtDispThresh = _mapNodeWtDispThresh;}
+	
+	public float getMapNodePopDispThresh() {	return mapNodePopDispThresh;}
+	public void setMapNodePopDispThresh(float _mapNodePopDispThresh) {	this.mapNodePopDispThresh = _mapNodePopDispThresh;}
+	
 	public SOM_ExDataType getMapNodeDispType() {	return mapNodeDispType;}
-	public void setMapNodeDispType(SOM_ExDataType mapNodeDispType) {	this.mapNodeDispType = mapNodeDispType;}	
+	public void setMapNodeDispType(SOM_ExDataType _mapNodeDispType) {	this.mapNodeDispType = _mapNodeDispType;}	
 	//set flag that SOM file loader is finished to false
 	//public void setLoaderRtnFalse() {setFlag(loaderFinishedRtnIDX, false);}	
 	// use functions to easily access states

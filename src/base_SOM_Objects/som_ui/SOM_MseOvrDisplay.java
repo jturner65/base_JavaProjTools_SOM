@@ -116,9 +116,9 @@ public abstract class SOM_MseOvrDisplay {
 	protected abstract void buildPerFtrData(Integer ftrIDX, Float ftr, TreeMap<Float, ArrayList<String>> strongestFtrs);
 	
 	//need to support all ftr types from map - this is built by distance/UMatrix map
-	public final void initMseDatUMat(myPointf ptrLoc, float distData, float _thresh) {
+	public final void initMseDatUMat(myPointf ptrLoc, float distClr, float distMin, float distDiff, float _thresh) {
 		initAllCtor(_thresh);
-
+		float distData = ((distClr/255.0f)*distDiff) + distMin;
 		ArrayList<String> _mseLblDat = new ArrayList<String>();
 		String line = "Dist : " + String.format("%05f", distData);
 		int longestLine = line.length();
@@ -184,6 +184,15 @@ public abstract class SOM_MseOvrDisplay {
 		longestLine = longestLine >= dispLine.length() ? longestLine : dispLine.length();
 		finalizeMseLblDatCtor(_mseLblDat, longestLine);
 	}//ctor for nearest map nod population of mapped training examples
+	
+	public void initMseDatNodeName(myPointf ptrLoc,  SOM_MapNode nearestMapNode, float _thresh) {
+		initAllCtor(_thresh);
+		ArrayList<String> _mseLblDat = new ArrayList<String>();		
+		String dispLine ="Nearest Map Node Name : "+ nearestMapNode.OID;
+		int longestLine = dispLine.length();
+		_mseLblDat.add(dispLine);				
+		finalizeMseLblDatCtor(_mseLblDat, longestLine);
+	}//initMseDatNodeName
 	
 	public final void clearMseDat() {
 		initAllCtor(0.0f);
