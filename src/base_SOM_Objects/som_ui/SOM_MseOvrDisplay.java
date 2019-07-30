@@ -81,6 +81,41 @@ public abstract class SOM_MseOvrDisplay {
 		return longestLine;		
 	}//buildDispArrayList
 
+	//build display label arraylist from passed map of float-name labels, using line as header/desc
+	private int buildDispArrayList_IDXSort(ArrayList<String> _mseLblDat, TreeMap<Float, ArrayList<String>> valsToDisp, String line, int valsPerLine) {
+		int longestLine = line.length();
+		if (valsToDisp.size()== 0) {
+			line += "None";
+			_mseLblDat.add(line);
+			longestLine = longestLine >= line.length() ? longestLine : line.length();
+		}
+		else {
+			_mseLblDat.add(line);
+			longestLine = longestLine >= line.length() ? longestLine : line.length();
+			line="";
+			int valsOnLine = 0;
+			for (Float val : valsToDisp.keySet()) {
+				ArrayList<String> valNameList = valsToDisp.get(val);
+				for(String valName : valNameList) {
+					line += ""+valName;//+":" + String.format("%03f", val);
+					if(valsOnLine < valsPerLine-1) {				line += " | ";			}				
+					++valsOnLine;
+					if (valsOnLine >= valsPerLine) {
+						longestLine = longestLine >= line.length() ? longestLine : line.length();
+						_mseLblDat.add(line);
+						line="";
+						valsOnLine = 0;
+					}
+				}
+			}
+			if(valsOnLine>0) {//catch last values
+				longestLine = longestLine >= line.length() ? longestLine : line.length();
+				_mseLblDat.add(line);
+			}
+		}	
+		return longestLine;		
+	}//buildDispArrayList
+
 	
 	//final setup for mouse label and label dimensions
 	private final void finalizeMseLblDatCtor(ArrayList<String> _mseLblDat, int longestLine) {
@@ -88,14 +123,14 @@ public abstract class SOM_MseOvrDisplay {
 		mseLabelDims = new float[] {10, -10.0f,longestLine*6.0f+10, mseLabelAra.length*10.0f + 15.0f};	
 		display = true;
 	}//finalizeMseLblDatCtor	
-
-	public final void initMseDatFtrs(myPointf ptrLoc, TreeMap<Integer, Float> _ftrs, float _thresh) {
+	
+	public final void initMseDatFtrs_WtSorted(myPointf ptrLoc, TreeMap<Integer, Float> _ftrs, float _thresh) {
 		initAllCtor(_thresh);
 		//decreasing order
 		TreeMap<Float, ArrayList<String>> strongestFtrs = new TreeMap<Float, ArrayList<String>>(Collections.reverseOrder());
 		for(Integer ftrIDX : _ftrs.keySet()) {
 			Float ftr = _ftrs.get(ftrIDX);
-			if(ftr >= dispThesh) {		buildPerFtrData(ftrIDX,ftr,strongestFtrs);	}
+			if(Math.abs(ftr) >= dispThesh) {		buildPerFtrData(ftrIDX,ftr,strongestFtrs);	}
 		}	
 		int count = 0;
 		for(ArrayList<String> list : strongestFtrs.values()) {	count+=list.size();}
@@ -103,6 +138,31 @@ public abstract class SOM_MseOvrDisplay {
 
 		String dispLine = getFtrDispTitleString(count);		
 		int longestLine = buildDispArrayList(_mseLblDat, strongestFtrs, dispLine, 3);
+		
+		finalizeMseLblDatCtor(_mseLblDat, longestLine);
+	}//ctor	for ftrs
+	
+	public final void initMseDatFtrs_IdxSorted(myPointf ptrLoc, TreeMap<Integer, Float> _ftrs, float _thresh) {
+		initAllCtor(_thresh);
+		//decreasing order
+		TreeMap<Float, ArrayList<String>> strongestFtrs = new TreeMap<Float, ArrayList<String>>();
+		for(Integer ftrIDX : _ftrs.keySet()) {
+			Float ftrIDX_F = (float)ftrIDX;
+			Float ftr = _ftrs.get(ftrIDX);
+			if(Math.abs(ftr) >= dispThesh) {		
+				ArrayList<String> vals = strongestFtrs.get(ftrIDX_F);
+				if(null==vals) {vals = new ArrayList<String>();}
+				vals.add("IDX :"+String.format("%3d", ftrIDX) + " | Val : "+String.format("%05f", ftr));
+				strongestFtrs.put(ftrIDX_F, vals);
+			}
+		}	
+		
+		int count = 0;
+		for(ArrayList<String> list : strongestFtrs.values()) {	count+=list.size();}
+		ArrayList<String> _mseLblDat = new ArrayList<String>();
+
+		String dispLine = getFtrDispTitleString(count);		
+		int longestLine = buildDispArrayList_IDXSort(_mseLblDat, strongestFtrs, dispLine, 3);
 		
 		finalizeMseLblDatCtor(_mseLblDat, longestLine);
 	}//ctor	for ftrs

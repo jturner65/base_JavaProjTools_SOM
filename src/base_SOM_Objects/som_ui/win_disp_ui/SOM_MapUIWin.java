@@ -77,33 +77,33 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	//	//GUI Objects	
 	public final static int 
 		uiTrainDataFrmtIDX			= 0,			//format that training data should take : unmodified, normalized or standardized
-		uiTestDataFrmtIDX			= 1,			//format of vectors to use when comparing examples to nodes on map
-		uiTrainDatPartIDX			= 2,			//partition % of training data out of total data (rest is testing)
+		//uiTestDataFrmtIDX			= 1,			//format of vectors to use when comparing examples to nodes on map
+		uiTrainDatPartIDX			= 1,			//partition % of training data out of total data (rest is testing)
 		
-		uiMapRowsIDX 				= 3,            //map rows
-		uiMapColsIDX				= 4,			//map cols
-		uiMapEpochsIDX				= 5,			//# of training epochs
-		uiMapShapeIDX				= 6,			//hexagonal or rectangular
-		uiMapBndsIDX				= 7,			//planar or torroidal bounds
-		uiMapKTypIDX				= 8,			//0 : dense cpu, 1 : dense gpu, 2 : sparse cpu.  dense needs appropriate lrn file format
-		uiMapNHdFuncIDX				= 9,			//neighborhood : 0 : gaussian, 1 : bubble
-		uiMapRadCoolIDX				= 10,			//radius cooling 0 : linear, 1 : exponential
-		uiMapLrnCoolIDX				= 11,			//learning rate cooling 0 : linear 1 : exponential
-		uiMapLrnStIDX				= 12,			//start learning rate
-		uiMapLrnEndIDX				= 13,			//end learning rate
-		uiMapRadStIDX				= 14,			//start radius
-		uiMapRadEndIDX				= 15,			//end radius
-		uiMapPreBuiltDirIDX			= 16,			//list of prebuilt maps as defined in config - this specifies which prebuilt map to use
-		uiMapNodeBMUTypeToDispIDX 	= 17,			//type of examples mapping to a particular node to display in visualization
-		uiNodeWtDispThreshIDX 		= 18,			//threshold for display of map nodes on individual weight maps
-		uiNodeInSegThreshIDX		= 19,			//threshold of u-matrix weight for nodes to belong to same segment
-		uiMseRegionSensIDX			= 20,			//senstivity threshold for mouse-over
-		uiPopMapNodeDispSizeIDX		= 21,			//only display populated map nodes that are this size or larger (log of population determines size)
-		uiFtrSelectIDX				= 22,			//pick the feature to display, if ftr-idx wt graphs are being displayed
-		uiCategorySelectIDX			= 23,			//pick the category to display, if category mapping is available/enabled
-		uiClassSelectIDX			= 24;			//pick the class to display, if class mapping is available/enabled
+		uiMapRowsIDX 				= 2,            //map rows
+		uiMapColsIDX				= 3,			//map cols
+		uiMapEpochsIDX				= 4,			//# of training epochs
+		uiMapShapeIDX				= 5,			//hexagonal or rectangular
+		uiMapBndsIDX				= 6,			//planar or torroidal bounds
+		uiMapKTypIDX				= 7,			//0 : dense cpu, 1 : dense gpu, 2 : sparse cpu.  dense needs appropriate lrn file format
+		uiMapNHdFuncIDX				= 8,			//neighborhood : 0 : gaussian, 1 : bubble
+		uiMapRadCoolIDX				= 9,			//radius cooling 0 : linear, 1 : exponential
+		uiMapLrnCoolIDX				= 10,			//learning rate cooling 0 : linear 1 : exponential
+		uiMapLrnStIDX				= 11,			//start learning rate
+		uiMapLrnEndIDX				= 12,			//end learning rate
+		uiMapRadStIDX				= 13,			//start radius
+		uiMapRadEndIDX				= 14,			//end radius
+		uiMapPreBuiltDirIDX			= 15,			//list of prebuilt maps as defined in config - this specifies which prebuilt map to use
+		uiMapNodeBMUTypeToDispIDX 	= 16,			//type of examples mapping to a particular node to display in visualization
+		uiNodeWtDispThreshIDX 		= 17,			//threshold for display of map nodes on individual weight maps
+		uiNodeInSegThreshIDX		= 18,			//threshold of u-matrix weight for nodes to belong to same segment
+		uiMseRegionSensIDX			= 19,			//senstivity threshold for mouse-over
+		uiPopMapNodeDispSizeIDX		= 20,			//only display populated map nodes that are this size or larger (log of population determines size)
+		uiFtrSelectIDX				= 21,			//pick the feature to display, if ftr-idx wt graphs are being displayed
+		uiCategorySelectIDX			= 22,			//pick the category to display, if category mapping is available/enabled
+		uiClassSelectIDX			= 23;			//pick the class to display, if class mapping is available/enabled
 	
-	public static final int numSOMBaseGUIObjs = 25;
+	public static final int numSOMBaseGUIObjs = 24;
 	//instancing class will specify numGUIObjs	
 	protected double[] uiVals;				//raw values from ui components
 	//
@@ -188,7 +188,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		setPrivFlags(mapDrawUMatrixIDX, flagsToSet[0]);
 		setPrivFlags(mapExclProdZeroFtrIDX, flagsToSet[1]);
 		//set initial values for UI
-		mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()), (int)(this.guiObjs[uiTestDataFrmtIDX].getVal()),(float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),(float)(this.guiObjs[uiPopMapNodeDispSizeIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
+		//mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()), (int)(this.guiObjs[uiTestDataFrmtIDX].getVal()),(float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),(float)(this.guiObjs[uiPopMapNodeDispSizeIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
+		mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()), (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),(float)(this.guiObjs[uiPopMapNodeDispSizeIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
 
 		initMeIndiv();
 	}
@@ -320,7 +321,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		tmpListObjVals.put(uiMapRadCoolIDX, new String[]{"linear","exponential"});
 		tmpListObjVals.put(uiMapLrnCoolIDX, new String[]{"linear","exponential"});		
 		tmpListObjVals.put(uiTrainDataFrmtIDX, SOM_FtrDataType.getListOfTypes());
-		tmpListObjVals.put(uiTestDataFrmtIDX, SOM_FtrDataType.getListOfTypes());		
+		//tmpListObjVals.put(uiTestDataFrmtIDX, SOM_FtrDataType.getListOfTypes());		
 		tmpListObjVals.put(uiMapPreBuiltDirIDX, new String[] {"None"});
 		tmpListObjVals.put(uiMapNodeBMUTypeToDispIDX, SOM_MapManager.getNodeBMUMapTypes());
 		tmpListObjVals.put(uiFtrSelectIDX, new String[] {"None"});		
@@ -334,7 +335,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		//	the 4th element is boolean array of {treat as int, has list values, value is sent to owning window}
 		
 		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiTrainDataFrmtIDX).length-1, 1.0}, 1.0, "Train Data Frmt", new boolean[]{true, true, true}});   				//uiTrainDataFrmtIDX                                                                        
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiTestDataFrmtIDX).length-1, 1.0}, 2.0, "Data Mapping Frmt", new boolean[]{true, true, true}});  				//uiTestDataFrmtIDX                                                                         
+		//tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiTestDataFrmtIDX).length-1, 1.0}, 2.0, "Data Mapping Frmt", new boolean[]{true, true, true}});  				//uiTestDataFrmtIDX                                                                         
 		tmpUIObjArray.add(new Object[] {new double[]{1.0, 100.0, 1.0}, 100.0,	"Data % To Train", new boolean[]{true, false, true}});   													//uiTrainDatPartIDX                                                                         
 		tmpUIObjArray.add(new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Rows", new boolean[]{true, false, true}});   															//uiMapRowsIDX 	 		                                                                    
 		tmpUIObjArray.add(new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Columns", new boolean[]{true, false, true}});   															//uiMapColsIDX	 		                                                                    
@@ -673,9 +674,9 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 			case uiTrainDataFrmtIDX 		: {//format of training data
 				mapMgr.setCurrentTrainDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal())));
 				break;}
-			case uiTestDataFrmtIDX 			: {
-				mapMgr.setCurrentTestDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTestDataFrmtIDX].getVal())));
-				break;}
+//			case uiTestDataFrmtIDX 			: {
+//				mapMgr.setCurrentTestDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTestDataFrmtIDX].getVal())));
+//				break;}
 			case uiTrainDatPartIDX 			: {break;}
 			case uiNodeWtDispThreshIDX : {
 				float _mapNodeWtDispThresh = (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal());

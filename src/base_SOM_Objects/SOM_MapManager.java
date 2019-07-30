@@ -186,10 +186,10 @@ public abstract class SOM_MapManager {
 	 * feature type used for training currently trained/loaded map
 	 */
 	protected SOM_FtrDataType curMapTrainFtrType;	
-	/**
-	 * feature type used for testing/finding proposals currently - comparing features to map
-	 */
-	protected SOM_FtrDataType curMapTestFtrType;
+//	/**
+//	 * feature type used for testing/finding proposals currently - comparing features to map
+//	 */
+//	protected SOM_FtrDataType curMapTestFtrType;
 	/**
 	 * distance to use :  1: chisq features or 0 : regular feature dists
 	 */
@@ -456,7 +456,7 @@ public abstract class SOM_MapManager {
 	public String getDataTypeNameFromInt_Brf(SOM_FtrDataType dataFrmt) { return dataFrmt.getBrfName();}//getDataTypeNameFromInt
 	
 	public String getDataDescFromCurFtrTrainType()  {return curMapTrainFtrType.getExplanation();}
-	public String getDataDescFromCurFtrTestType()  {return curMapTestFtrType.getExplanation();}
+	//public String getDataDescFromCurFtrTestType()  {return curMapTestFtrType.getExplanation();}
 	public String getDataDescFromInt(SOM_FtrDataType dataFrmt) {return dataFrmt.getExplanation();}//getDataTypeNameFromInt
 	
 	public String getDataDescFromInt_Short(SOM_FtrDataType dataFrmt) {
@@ -762,9 +762,9 @@ public abstract class SOM_MapManager {
 	
 	///////////////////////////////////////////
 	// map image init	
-	public final void initFromUIWinInitMe(int _trainDatFrmt, int _testDatFrmt, float _mapNodeWtDispThresh, float _mapNodePopDispThresh, int _mapNodeDispType) {
+	public final void initFromUIWinInitMe(int _trainDatFrmt, float _mapNodeWtDispThresh, float _mapNodePopDispThresh, int _mapNodeDispType) {
 		setCurrentTrainDataFormat(SOM_FtrDataType.getVal(_trainDatFrmt));
-		setCurrentTestDataFormat(SOM_FtrDataType.getVal(_testDatFrmt));
+		//setCurrentTestDataFormat(SOM_FtrDataType.getVal(_testDatFrmt));
 		mapNodeWtDispThresh = _mapNodeWtDispThresh;
 		mapNodeDispType = SOM_ExDataType.getVal(_mapNodeDispType);
 		mapNodePopDispThresh = _mapNodePopDispThresh;
@@ -905,8 +905,8 @@ public abstract class SOM_MapManager {
 					for(int x = 0; x < mapPerFtrWtImgs[0].width; ++x){
 						int pxlIDX = x+yCol;
 						//c = getMapNodeLocFromPxlLoc(x, y,mapScaleVal);
-						TreeMap<Integer, Float> ftrs = getInterpFtrs(getMapNodeLocFromPxlLoc(x, y,mapScaleVal));
-						for (Integer ftr : ftrs.keySet()) {mapPerFtrWtImgs[ftr].pixels[pxlIDX] = getDataClrFromFtrVec(ftrs, ftr);}
+						TreeMap<Integer, Float> clrftrs = getInterpFtrs(getMapNodeLocFromPxlLoc(x, y,mapScaleVal),curMapTrainFtrType,1.0f, 255.0f);
+						for (Integer ftr : clrftrs.keySet()) {mapPerFtrWtImgs[ftr].pixels[pxlIDX] = getDataClrFromFtrVec(clrftrs, ftr);}
 					}
 				}
 			}
@@ -1609,23 +1609,42 @@ public abstract class SOM_MapManager {
 	// ftr interp routines	
 	//return interpolated feature vector on map at location given by x,y, where x,y is float location of map using mapnodes as integral locations
 	//only uses training features here
-	public TreeMap<Integer, Float> getInterpFtrs(float[] c){
+	public TreeMap<Integer, Float> getInterpFtrs(float[] c, SOM_FtrDataType _ftrType, float rowMult, float colMult){
 		float xColShift = (c[0]+mapNodeCols), 
 				yRowShift = (c[1]+mapNodeRows), 
 				xInterp = (xColShift) %1, 
 				yInterp = (yRowShift) %1;
 		int xInt = (int) Math.floor(xColShift)%mapNodeCols, yInt = (int) Math.floor(yRowShift)%mapNodeRows, xIntp1 = (xInt+1)%mapNodeCols, yIntp1 = (yInt+1)%mapNodeRows;		//assume torroidal map		
 		//always compare standardized feature data in test/train data to standardized feature data in map
-		TreeMap<Integer, Float> LowXLowYFtrs = MapNodes.get(new Tuple<Integer, Integer>(xInt,yInt)).getCurrentFtrMap(curMapTrainFtrType), LowXHiYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xInt,yIntp1)).getCurrentFtrMap(curMapTrainFtrType),
-				 HiXLowYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xIntp1,yInt)).getCurrentFtrMap(curMapTrainFtrType),  HiXHiYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xIntp1,yIntp1)).getCurrentFtrMap(curMapTrainFtrType);
+		TreeMap<Integer, Float> LowXLowYFtrs = MapNodes.get(new Tuple<Integer, Integer>(xInt,yInt)).getCurrentFtrMap(_ftrType), LowXHiYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xInt,yIntp1)).getCurrentFtrMap(_ftrType),
+				 HiXLowYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xIntp1,yInt)).getCurrentFtrMap(_ftrType),  HiXHiYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xIntp1,yIntp1)).getCurrentFtrMap(_ftrType);
 		try{
-			TreeMap<Integer, Float> ftrs = interpTreeMap(interpTreeMap(LowXLowYFtrs, LowXHiYFtrs,yInterp,1.0f),interpTreeMap(HiXLowYFtrs, HiXHiYFtrs,yInterp,1.0f),xInterp,255.0f);	
+			TreeMap<Integer, Float> ftrs = interpTreeMap(interpTreeMap(LowXLowYFtrs, LowXHiYFtrs,yInterp,rowMult),interpTreeMap(HiXLowYFtrs, HiXHiYFtrs,yInterp,rowMult),xInterp,colMult);	
 			return ftrs;
 		} catch (Exception e){
 			msgObj.dispMessage("SOM_MapManager::"+name,"getInterpFtrs","Exception triggered in SOM_MapManager::getInterpFtrs : \n"+e.toString() + "\n\tMessage : "+e.getMessage(), MsgCodes.error1);
 			return null;
 		}		
 	}//getInterpFtrs
+	
+//	private TreeMap<Integer, Float> getInterpFtrs_Clrs(float[] c){
+//		float xColShift = (c[0]+mapNodeCols), 
+//				yRowShift = (c[1]+mapNodeRows), 
+//				xInterp = (xColShift) %1, 
+//				yInterp = (yRowShift) %1;
+//		int xInt = (int) Math.floor(xColShift)%mapNodeCols, yInt = (int) Math.floor(yRowShift)%mapNodeRows, xIntp1 = (xInt+1)%mapNodeCols, yIntp1 = (yInt+1)%mapNodeRows;		//assume torroidal map		
+//		//always compare standardized feature data in test/train data to standardized feature data in map
+//		TreeMap<Integer, Float> LowXLowYFtrs = MapNodes.get(new Tuple<Integer, Integer>(xInt,yInt)).getCurrentFtrMap(curMapTrainFtrType), LowXHiYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xInt,yIntp1)).getCurrentFtrMap(curMapTrainFtrType),
+//				 HiXLowYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xIntp1,yInt)).getCurrentFtrMap(curMapTrainFtrType),  HiXHiYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xIntp1,yIntp1)).getCurrentFtrMap(curMapTrainFtrType);
+//		try{
+//			TreeMap<Integer, Float> ftrs = interpTreeMap(interpTreeMap(LowXLowYFtrs, LowXHiYFtrs,yInterp,1.0f),interpTreeMap(HiXLowYFtrs, HiXHiYFtrs,yInterp,1.0f),xInterp,255.0f);	
+//			return ftrs;
+//		} catch (Exception e){
+//			msgObj.dispMessage("SOM_MapManager::"+name,"getInterpFtrs","Exception triggered in SOM_MapManager::getInterpFtrs : \n"+e.toString() + "\n\tMessage : "+e.getMessage(), MsgCodes.error1);
+//			return null;
+//		}		
+//	}
+	
 	//get treemap of features that interpolates between two maps of features
 	private TreeMap<Integer, Float> interpTreeMap(TreeMap<Integer, Float> a, TreeMap<Integer, Float> b, float t, float mult){
 		TreeMap<Integer, Float> res = new TreeMap<Integer, Float>();
@@ -1784,7 +1803,31 @@ public abstract class SOM_MapManager {
 	// mouse and draw routines	
 	
 	//set specific mouse-over display data/values
-	public final SOM_MseOvrDisplay setMseDataExampleFtrs(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs(ptrLoc, ftrs, sens); return mseOverExample;}
+	/**
+	 * instancing application should determine whether we want to display features sorted in magnitude order, or sorted in idx order
+	 * @param ptrLoc
+	 * @param ftrs
+	 * @param sens
+	 * @return
+	 */
+	public abstract SOM_MseOvrDisplay setMseDataExampleFtrs(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens);
+	/**
+	 * display features in wt-descending order
+	 * @param ptrLoc
+	 * @param ftrs
+	 * @param sens
+	 * @return
+	 */
+	public final SOM_MseOvrDisplay setMseDataExampleFtrs_WtSorted(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs_WtSorted(ptrLoc, ftrs, sens); return mseOverExample;}
+	/**
+	 * display features in idx-ascending order
+	 * @param ptrLoc
+	 * @param ftrs
+	 * @param sens
+	 * @return
+	 */
+	public final SOM_MseOvrDisplay setMseDataExampleFtrs_IdxSorted(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs_IdxSorted(ptrLoc, ftrs, sens); return mseOverExample;}
+	
 	public final SOM_MseOvrDisplay setMseDataExampleDists(myPointf ptrLoc, float dist, float distMin, float distDiff, float sens) {mseOverExample.initMseDatUMat( ptrLoc, dist,distMin,distDiff, sens);return mseOverExample;}
 	public final SOM_MseOvrDisplay setMseDataExampleClassProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, true);return mseOverExample;}
 	public final SOM_MseOvrDisplay setMseDataExampleCategoryProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, false);return mseOverExample;}
@@ -1804,16 +1847,15 @@ public abstract class SOM_MapManager {
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) {	//disp category probs at nearest node			
 			nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 			dp = setMseDataExampleCategoryProb(locPt,nearestNode,sensitivity);
-			
+		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {	//feature weight display
+			TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y},curMapTrainFtrType, 1.0f, 1.0f);
+			if(ftrs == null) {return null;} 
+			dp = setMseDataExampleFtrs_IdxSorted(locPt, ftrs, sensitivity);							
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) { //if showing node pop, mouse over should show actual population
 			nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 			dp = setMseDataExampleNodePop(locPt,nearestNode,sensitivity);
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawUMatrixIDX)) {		//draw umatrix distance
 			dp = setMseDataExampleDists(locPt, getBiCubicInterpUMatVal(new float[] {x, y}),uMatDist_Min, uMatDist_Diff, sensitivity);				
-		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {	//feature weight display
-			TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y});
-			if(ftrs == null) {return null;} 
-			dp = setMseDataExampleFtrs(locPt, ftrs, sensitivity);				
 		} else {					//application-dependent display
 			dp = getDataPointAtLoc_Priv(x, y, sensitivity, locPt);
 		}
@@ -2206,8 +2248,8 @@ public abstract class SOM_MapManager {
 	}//setCurrentDataFormat
 	public SOM_FtrDataType getCurrentTrainDataFormat() {	return curMapTrainFtrType;}
 	
-	public void setCurrentTestDataFormat(SOM_FtrDataType _frmt) {	curMapTestFtrType = _frmt; }//setCurrentDataFormat
-	public SOM_FtrDataType getCurrentTestDataFormat() {	return curMapTestFtrType;}
+//	public void setCurrentTestDataFormat(SOM_FtrDataType _frmt) {	curMapTestFtrType = _frmt; }//setCurrentDataFormat
+//	public SOM_FtrDataType getCurrentTestDataFormat() {	return curMapTestFtrType;}
 	public MessageObject getMsgObj(){	return msgObj;}
 	public void setMsgObj(MessageObject msgObj) {	this.msgObj = msgObj;}
 	

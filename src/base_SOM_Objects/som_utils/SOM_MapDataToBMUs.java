@@ -43,8 +43,8 @@ public abstract class SOM_MapDataToBMUs implements Callable<Boolean>{
 		progressBnd = (int) ((endIdx-stIdx) * progAmt);
 		thdIDX= _thdIDX;
 		dataType = _type;
-		curMapFtrType = mapMgr.getCurrentTestDataFormat();
-		ftrTypeDesc = mapMgr.getDataDescFromCurFtrTestType();
+		curMapFtrType = mapMgr.getCurrentTrainDataFormat();
+		ftrTypeDesc = mapMgr.getDataDescFromCurFtrTrainType();
 		useChiSqDist = _useChiSqDist;		
 	}//ctor
 	
