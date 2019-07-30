@@ -3,10 +3,8 @@ package base_SOM_Objects.som_geom;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import SOM_GeometryProj_PKG.geom_Utils.Geom_SOMMseOvrDisp;
-import SOM_GeometryProj_PKG.geom_Utils.Geom_SOMProjConfig;
+
 import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_ExDataType;
 import base_SOM_Objects.som_examples.SOM_Example;
 import base_SOM_Objects.som_examples.SOM_ExampleManager;
 import base_SOM_Objects.som_examples.SOM_FtrDataType;
@@ -15,6 +13,7 @@ import base_SOM_Objects.som_geom.geom_UI.SOM_AnimWorldWin;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomExampleManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomFtrBndMon;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
+import base_SOM_Objects.som_geom.geom_utils.SOM_GeomProjConfig;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen.SOM_GeomObjBldrRunner;
 import base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen.SOM_GeomObjBldrTasks;
@@ -102,7 +101,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	/** 
 	 * Type of geometric object
 	 */
-	private SOM_GeomObjTypes geomObjType;
+	protected SOM_GeomObjTypes geomObjType;
 	
 	/**
 	 * coordinate bounds in world for the objects this map manager owns 
@@ -148,11 +147,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 * build instance-specific project file configuration 
 	 */
 	@Override
-	protected final SOM_ProjConfigData buildProjConfigData(TreeMap<String, Object> _argsMap) {				return new Geom_SOMProjConfig(this,_argsMap);	}	
-
-	@Override
-	//build the example that represents the SOM data where the mouse is
-	protected final SOM_MseOvrDisplay buildMseOverExample() {return new Geom_SOMMseOvrDisp(this,0.0f);}
+	protected final SOM_ProjConfigData buildProjConfigData(TreeMap<String, Object> _argsMap) {				return new SOM_GeomProjConfig(this,_argsMap);	}	
 
 	/**
 	 * build an interface to manage communications between UI and SOM map dat

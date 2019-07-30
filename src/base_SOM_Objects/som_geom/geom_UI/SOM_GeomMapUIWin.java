@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import SOM_GeometryProj_PKG.SOM_GeometryMain;
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_UI_Objects.my_procApplet;
@@ -74,7 +73,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		if(this.mapMgr != null) {return mapMgr;}
 		//no need to set win here - this is set in SOM Win UI Base class
 		//this is just a place holder - windows will set proper map manager when this window is selected to be active
-		return ((SOM_GeometryMain)pa).getCurrentWindow().getMapMgr();
+		return ((SOM_AnimWorldWin)pa.getCurrentWindow()).getMapMgr();
 	}
 
 	/**
