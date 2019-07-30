@@ -151,7 +151,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	@Override
 	public int getUIidxFromMapKeyString(String mapKey){		return mapDatDescrToUIIdx.get(mapKey);	}
 
-
 	@Override
 	protected final void initMe() {
 		//initUIBox();				//set up ui click region to be in sidebar menu below menu's entries	
@@ -178,7 +177,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		//init specific sim flags
 		initPrivFlags(numPrivFlags);
 		/**
-		 * set these values from when UI was created mapUseChiSqDistIDX
+		 * set these values from when UI was created 
 		 */
 		setPrivFlags(_categoryCanBeShownIDX, _catExistsAndIsShown);
 		setPrivFlags(_classCanBeShownIDX, _classExistsAndIsShown);		
@@ -204,24 +203,20 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * set map manager from instancing app and reset all mapMgr-governed values in window
 	 */
 	public void setMapMgr(SOM_MapManager _mapMgr) {
-		//save current values to current map mgr
-		mapMgr.setWinFlags(privFlags);
+		this.msgObj.dispInfoMessage("SOM_MapUIWin", "setMapMgr", "Start setting map manager from " +  mapMgr.getName() + " to " + _mapMgr.getName());		
 		//set passed map manager as current
 		mapMgr = _mapMgr;
 		//re-init window to use this map manager
 		initAfterMapMgrSet(new boolean[] {getPrivFlags(mapDrawUMatrixIDX), getPrivFlags(mapExclProdZeroFtrIDX)});
 		//send new mapMgr's config data
 		mapMgr.setUIValsFromProjConfig();
-		//set values from saved map manager, if swapping back to this one from leaving
-		privFlags =  mapMgr.getWinFlags();
-		//setPassedIntFlags(numPrivFlags, mapMgr.getUiFlags());
 	}
-	private void setPassedIntFlags(int _numFlags, int[] _intFlagAra){
-		for(int idx=0;idx<_numFlags; ++idx) {	
-		int bitLoc = 1<<(idx%32);
-		setPrivFlags(idx,(_intFlagAra[idx/32] & bitLoc) == bitLoc);
-		}
-	}	
+//	private void setPassedIntFlags(int _numFlags, int[] _intFlagAra){
+//		for(int idx=0;idx<_numFlags; ++idx) {	
+//		int bitLoc = 1<<(idx%32);
+//		setPrivFlags(idx,(_intFlagAra[idx/32] & bitLoc) == bitLoc);
+//		}
+//	}	
 	
 	
 	protected abstract void initMeIndiv();	
@@ -440,14 +435,16 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	protected final void setVisScreenDimsPriv() {
 		float xStart = rectDim[0] + .5f*(curVisScrDims[0] - (curVisScrDims[1]-(2*xOff)));
 		//start x and y and dimensions of full map visualization as function of visible window size;
-		mapMgr.SOM_mapLoc = new float[]{xStart, rectDim[1] + yOff};
+		mapMgr.setSOM_mapLoc(new float[]{xStart, rectDim[1] + yOff});
 		//now build calc analysis offset struct
 		setVisScreenDimsPriv_Indiv();
 	}//calcAndSetMapLoc
 	protected abstract void setVisScreenDimsPriv_Indiv();
 	
 	@Override
-	public final void setPrivFlags(int idx, boolean val){
+	public final void setPrivFlags(int idx, boolean val){		
+		msgObj.dispInfoMessage("SOM_MapUIWin::"+name, "setPrivFlags", "Setting flag : " + idx+ " to value : " + val);
+		
 		int flIDX = idx/32, mask = 1<<(idx%32);
 		privFlags[flIDX] = (val ?  privFlags[flIDX] | mask : privFlags[flIDX] & ~mask);
 		switch (idx) {//special actions for each flag
@@ -815,18 +812,19 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	@Override
 	protected final void drawMe(float animTimeMod) {
 		drawSetDispFlags();
-		setPrivFlags(mapDataLoadedIDX,mapMgr.isMapDrawable());
-		drawMap();		
+		if(getPrivFlags(mapDataLoadedIDX) != mapMgr.isMapDrawable()){setPrivFlags(mapDataLoadedIDX,mapMgr.isMapDrawable());}
+		boolean isMapDataLoaded = getPrivFlags(mapDataLoadedIDX);
+		drawMap(isMapDataLoaded);		
 		if(getPrivFlags(buildSOMExe)){buildNewSOMMap();}
 	}
 	protected abstract void drawSetDispFlags();
 	
-	private void drawMap(){		
+	private void drawMap(boolean mapDataLoaded){		
 		//draw map rectangle
 		pa.pushMatrix();pa.pushStyle();
 		//instance-specific drawing
 		drawMapIndiv();
-		if(getPrivFlags(mapDataLoadedIDX)){mapMgr.drawMapRectangle(pa);}	
+		if(mapDataLoaded){mapMgr.drawMapRectangle(pa);}	
 		pa.popStyle();pa.popMatrix();
 	}//drawMap()	
 	protected abstract void drawMapIndiv();

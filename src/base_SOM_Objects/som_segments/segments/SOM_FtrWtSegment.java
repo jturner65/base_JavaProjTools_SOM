@@ -19,7 +19,7 @@ public final class SOM_FtrWtSegment extends SOM_MappedSegment {
 		ftrIDX = _ftrIDX;
 		//TODO may wish to allow for different types of ftrs to be used to build segment
 		//normalized equalizes all map nodes; stdized equalizes features
-		ftrCalcType=SOM_FtrDataType.Normalized;
+		ftrCalcType=SOM_FtrDataType.Standardized;
 	}//ctor
 	
 	/**

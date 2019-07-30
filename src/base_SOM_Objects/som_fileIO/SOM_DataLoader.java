@@ -137,7 +137,7 @@ public class SOM_DataLoader{
 			dpt = mapMgr.buildMapNode(mapLoc,ftrTypeUsedToTrain, tkns);//give each map node its features		
 			++numEx;
 			//mapMgr.addToMapNodes(mapLoc, dpt, tmpMapMaxs, numTrainFtrs);			
-			mapMgr.addToMapNodes(mapLoc, dpt, numTrainFtrs);			
+			mapMgr.addToMapNodes(mapLoc, dpt);			
 		}
 		//make sure both unmoddified features and std'ized features are built before determining map mean/var
 		mapMgr.finalizeMapNodes(numTrainFtrs, numEx);		
@@ -166,6 +166,7 @@ public class SOM_DataLoader{
 		Tuple<Integer, Integer> mapLoc;
 		SOM_MapNode dpt;
 		int row;
+		Float minUMatDist = Float.MAX_VALUE, maxUMatDist = -1.0f*minUMatDist;
 		for (int i=0;i<strs.length;++i){//load in data 
 			if(i < 1){//line 0 is map row/col count
 				tkns = strs[i].replace('%', ' ').trim().split(mapMgr.SOM_FileToken);
@@ -182,11 +183,14 @@ public class SOM_DataLoader{
 			for (int col=0;col<tkns.length;++col) {
 				mapLoc = new Tuple<Integer, Integer>(col, row);//map locations in som data are increasing in x first, then y (row major)
 				dpt = mapMgr.getMapNodeByCoords(mapLoc);//mapMgr.MapNodes.get(mapLoc);//give each map node its features
-				dpt.setUMatDist(Float.parseFloat(tkns[col].trim()));
+				Float val = Float.parseFloat(tkns[col].trim());
+				if(val < minUMatDist) {minUMatDist = val;}
+				if(val > maxUMatDist) {maxUMatDist = val;}
+				dpt.setRawUMatDist(val);
 			}	
 		}//
 		//update each map node's neighborhood member's UMatrix weight values
-		mapMgr.buildAllMapNodeNeighborhood_UMatrixDists();//for(SOMMapNode ex : mapMgr.MapNodes.values()) {	ex.buildNeighborWtVals();	}
+		mapMgr.buildAllMapNodeNeighborhood_UMatrixDists((maxUMatDist - minUMatDist), minUMatDist);//for(SOMMapNode ex : mapMgr.MapNodes.values()) {	ex.buildNeighborWtVals();	}
 		//calculate segments of nodes
 		mapMgr.buildUMatrixSegmentsOnMap();
 		msgObj.dispMessage("SOMDataLoader","loadSOM_UMatrixDists","Finished loading and processing U-Matrix File : "+uMtxBMUFname, MsgCodes.info5);		

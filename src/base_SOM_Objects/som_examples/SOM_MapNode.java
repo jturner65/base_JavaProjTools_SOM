@@ -404,8 +404,14 @@ public abstract class SOM_MapNode extends SOM_Example{
 	public final SOM_MappedSegment getUMatrixSegment() {return  uMatrixSegData.getSegment();}
 	public final int getUMatrixSegClrAsInt() {return uMatrixSegData.getSegClrAsInt();}
 	
-	//UMatrix distance as calculated by SOM Executable
-	public final void setUMatDist(float _d) {uMatDist = (_d < 0 ? 0.0f : _d > 1.0f ? 1.0f : _d); int clr=(int) (255*uMatDist); uMatClr = new int[] {clr,clr,clr};}
+	public final void scaleUMatDist(float _diff, float _min) {
+		if(_diff==0) {		uMatDist = 0.0f;	} else {	uMatDist = (uMatDist-_min)/_diff;	}	
+		int clr=(int) (255*uMatDist); uMatClr = new int[] {clr,clr,clr};
+	}
+	
+	
+	//UMatrix distance as calculated by SOM Executable - temporary, and unscaled - scaleUMatDiswt needs to be called before any processing using uMatDist occurs
+	public final void setRawUMatDist(float _d) {	uMatDist =_d;	}
 	public final float getUMatDist() {return uMatDist;}	
 	
 	/**
