@@ -1850,7 +1850,7 @@ public abstract class SOM_MapManager {
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {	//feature weight display
 			TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y},curMapTrainFtrType, 1.0f, 1.0f);
 			if(ftrs == null) {return null;} 
-			dp = setMseDataExampleFtrs_IdxSorted(locPt, ftrs, sensitivity);							
+			dp = setMseDataExampleFtrs(locPt, ftrs, sensitivity);							
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) { //if showing node pop, mouse over should show actual population
 			nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 			dp = setMseDataExampleNodePop(locPt,nearestNode,sensitivity);
