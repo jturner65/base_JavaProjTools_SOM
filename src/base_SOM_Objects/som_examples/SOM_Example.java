@@ -6,13 +6,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.BiFunction;
 
 import base_SOM_Objects.*;
-import base_SOM_Objects.som_exampleFeatures.SOM_Features;
 import base_SOM_Objects.som_examples.base.baseDataPtVis;
-import base_SOM_Objects.som_segments.segmentData.SOM_MapNodeSegmentData;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
-import base_UI_Objects.*;
-import base_Utils_Objects.*;
-import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.Tuple;
 import base_Utils_Objects.vectorObjs.myPointf;
@@ -192,6 +187,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * structs holding feature values and other pertinent information 
 	 * to remain constructed throughout life of example
 	 */
+	@SuppressWarnings("unchecked")
 	private void initAllStructs() {
 		catClassCountsForExample = new TreeMap<Tuple<Integer, Integer>, Integer>();
 		mapNodeNghbrs = new TreeMap<Double, ArrayList<SOM_MapNode>>();
@@ -576,7 +572,8 @@ public abstract class SOM_Example extends baseDataPtVis{
 		for (double _dist : mapNodeNghbrs.keySet()) {
 			invDistP1 = (float) (1.0f/(1.0f+_dist));					//handles 0 dist - max will be 0, min will be some fraction
 			ArrayList<SOM_MapNode> tmpMap = mapNodeNghbrs.get(_dist);
-			for (SOM_MapNode ex : tmpMap) {			ttlInvDist +=invDistP1;		}			
+			ttlInvDist += tmpMap.size() * invDistP1;
+			//for (SOM_MapNode ex : tmpMap) {			ttlInvDist +=invDistP1;		}			
 		}
 		float mapW = mapMgr.getMapWidth(), mapH = mapMgr.getMapHeight();
 		Integer bmuX = getBmu().mapNodeCoord.x,  bmuY = getBmu().mapNodeCoord.y;

@@ -3,22 +3,16 @@ package base_SOM_Objects.som_ui.win_disp_ui;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.Future;
 
 import base_SOM_Objects.*;
 import base_SOM_Objects.som_examples.*;
-import base_SOM_Objects.som_ui.SOM_FtrMapVisImgBldr;
-import base_SOM_Objects.som_ui.SOM_MseOvrDisplay;
 import base_UI_Objects.*;
 import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
 import base_UI_Objects.windowUI.myDispWindow;
 import base_UI_Objects.windowUI.myGUIObj;
 import base_Utils_Objects.*;
 import base_Utils_Objects.io.MsgCodes;
-import base_Utils_Objects.vectorObjs.Tuple;
 import base_Utils_Objects.vectorObjs.myPoint;
-import base_Utils_Objects.vectorObjs.myPointf;
-import processing.core.PImage;
 
 /**
  * base UI window functionality to be used for any SOM-based projects
@@ -116,6 +110,22 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		uiMapShapeIDX ,uiMapBndsIDX,uiMapRadCoolIDX,uiMapNHdFuncIDX, uiMapLrnCoolIDX
 	};	
 	
+	/**
+	 * default scale factor for size of SOM Map
+	 */
+	private float SOMDimScaleFact = .95f;
+	/**
+	 * window constructor
+	 * @param _p
+	 * @param _n
+	 * @param _flagIdx
+	 * @param fc
+	 * @param sc
+	 * @param rd
+	 * @param rdClosed
+	 * @param _winTxt
+	 * @param _canDrawTraj
+	 */
 	public SOM_MapUIWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, boolean _canDrawTraj) {
 		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt, _canDrawTraj);
 		initAndSetSOMDatUIMaps();
@@ -155,10 +165,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	@Override
 	protected final void initMe() {
 		//initUIBox();				//set up ui click region to be in sidebar menu below menu's entries	
-		//start x and y and dimensions of full map visualization as function of visible window size;
-		float width = rectDim[3]-(2*xOff);//actually also height, but want it square, and space is wider than high, so we use height as constraint - ends up being 834.8 x 834.8 with default screen dims and without side menu
-		float[] SOM_mapDims = new float[] {width,width};
-		mapMgr = buildMapMgr(SOM_mapDims);
+		mapMgr = buildMapMgr();
 		initAfterMapMgrSet(new boolean[] {true,true});
 	}//initMe()	
 	
@@ -199,7 +206,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * @param _mapDims : dimensions of visible rep of map calculated based on visible size of window
 	 * @return
 	 */
-	protected abstract SOM_MapManager buildMapMgr(float[] _mapDims);
+	protected abstract SOM_MapManager buildMapMgr();
 	
 	/**
 	 * set map manager from instancing app and reset all mapMgr-governed values in window
@@ -811,6 +818,19 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	
 	public final float getTrainTestDatPartition() {	return (float)(.01*this.guiObjs[uiTrainDatPartIDX].getVal());}	
 	
+	
+	/**
+	 * return map dims based on the size of this window
+	 */
+	public final float[] getWinUIMapDims() {
+		float width = this.rectDim[3] * SOMDimScaleFact;
+		return new float[] {width,width};
+	}
+	/**
+	 * set the % of the height of the window that the som display should take up
+	 * @param _sclFact
+	 */
+	public final void setSOMDimScaleFact(float _sclFact) {SOMDimScaleFact=_sclFact;}
 	/////////////////////////////////////////
 	// draw routines
 	

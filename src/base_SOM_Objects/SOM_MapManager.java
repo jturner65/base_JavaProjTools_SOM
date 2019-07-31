@@ -20,6 +20,7 @@ import base_SOM_Objects.som_utils.runners.SOM_CalcExFtrs_Runner;
 import base_SOM_Objects.som_utils.runners.SOM_MapExDataToBMUs_Runner;
 import base_SOM_Objects.som_utils.runners.SOM_SaveExToBMUs_Runner;
 import base_UI_Objects.*;
+import base_UI_Objects.windowUI.myDispWindow;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
@@ -27,6 +28,7 @@ import base_Utils_Objects.threading.myProcConsoleMsgMgr;
 import base_Utils_Objects.vectorObjs.Tuple;
 import base_Utils_Objects.vectorObjs.myPoint;
 import base_Utils_Objects.vectorObjs.myPointf;
+import processing.core.PConstants;
 import processing.core.PImage;
 
 public abstract class SOM_MapManager {
@@ -198,6 +200,8 @@ public abstract class SOM_MapManager {
 	 * map dims is used to calculate distances for BMUs - based on screen dimensions - need to change this?
 	 */
 	protected float[] mapDims;
+	//default value to use if no window sent
+	protected final float[] SOM_DefaultMapDims = new float[] {834.8f,834.8f};
 	/**
 	 * # of nodes in SOM in x/y
 	 */
@@ -325,11 +329,9 @@ public abstract class SOM_MapManager {
 	 * @param _argsMap String[] _dirs : idx 0 is config directory, as specified by cmd line; idx 1 is data directory, as specified by cmd line
 	 * 					String[] _args : command line arguments other than directory info
 	 */
-	public SOM_MapManager(SOM_MapUIWin _win, float[] _dims, TreeMap<String, Object> _argsMap) {
-		win=_win;	
-		ID = cnt++;
-		if(win != null) {setName(win.name);} else {setName("No_Win");}
-		mapDims = _dims;
+	public SOM_MapManager(SOM_MapUIWin _win, TreeMap<String, Object> _argsMap) {
+		setWinAndWinData(_win);//win=_win;	
+		ID = cnt++;		
 		mapUIAPI = buildSOM_UI_Interface();
 		initFlags();		
 		//message object manages displaying to screen and potentially to log files - needs to be built first
@@ -368,11 +370,35 @@ public abstract class SOM_MapManager {
 		mseOverExample = buildMseOverExample();
 	}//ctor
 	/**
+	 * set window and win-related variables
+	 */
+	private void setWinAndWinData(SOM_MapUIWin _win) {
+		win=_win;
+		if(win != null) {			//update dims with window size values
+			setName(win.name);
+			mapDims = win.getWinUIMapDims();
+		} else {
+			setName("No_Win");
+			mapDims = SOM_DefaultMapDims;
+		}
+	}//setWinAndWinData
+	/**
 	 * only set if win != null
 	 */
 	private void setName(String _winName) {name = _winName + "_MapManager_ID_"+ID;}
 	public String getName() {return name;}
-	
+	/**
+	 * use this to set window/UI components, if exist
+	 * @param _win
+	 * @param _pa
+	 */
+	public void setPADispWinData(SOM_MapUIWin _win, my_procApplet _pa) {
+		setWinAndWinData(_win);//win=_win;
+		//if(win != null) {setName(win.name);} else {setName("No_Win");}
+		MessageObject.pa = _pa;
+		projConfigData.setUIValsFromLoad();
+	}//setPAWindowData
+
 	/**
 	 * build the map of example mappers used to manage all the data the SOM will consume
 	 */
@@ -403,18 +429,6 @@ public abstract class SOM_MapManager {
 		return nodeBMUMapTypes;
 	}
 	
-	/**
-	 * use this to set window/UI components, if exist
-	 * @param _win
-	 * @param _pa
-	 */
-	public void setPADispWinData(SOM_MapUIWin _win, my_procApplet _pa) {
-		win=_win;
-		if(win != null) {setName(win.name);} else {setName("No_Win");}
-		MessageObject.pa = _pa;
-		projConfigData.setUIValsFromLoad();
-	}//setPAWindowData
-
 	/**
 	 * determine how many values should be per thread
 	 * @param numVals # of values total
@@ -734,7 +748,8 @@ public abstract class SOM_MapManager {
 		File wkDir = new File(wkDirStr); 
 		pb.directory(wkDir);
 		
-		String resultIn = "",resultErr = "";
+		String //resultIn = "",
+				resultErr = "";
 		try {
 			final Process process=pb.start();			
 			myProcConsoleMsgMgr inMsgs = new mySOMProcConsoleMgr(process,new InputStreamReader(process.getInputStream()), "Input" );
@@ -743,7 +758,7 @@ public abstract class SOM_MapManager {
 			procMsgMgrs.add(errMsgs);			
 			procMsgMgrsFtrs = th_exec.invokeAll(procMsgMgrs);for(Future<Boolean> f: procMsgMgrsFtrs) { f.get(); }
 
-			resultIn = inMsgs.getResults(); 
+			//resultIn = inMsgs.getResults(); 
 			resultErr = errMsgs.getResults() ;//results of running map TODO save to log?	
 			if(resultErr.toLowerCase().contains("error:")) {throw new InterruptedException("SOM Executable aborted");}
 		} 
@@ -776,15 +791,15 @@ public abstract class SOM_MapManager {
 		if (win != null) {	
 			msgObj.dispMessage("SOM_MapManager::"+name,"initMapAras","Start Initializing per-feature map display to hold : "+ numFtrVals +" primary feature and " +num2ndryMaps + " secondary feature map images.", MsgCodes.info1);
 			curMapImgIDX = 0;
-			int format = win.pa.RGB; 
+			int format = PConstants.RGB; 
 			//int w = (int) (SOM_mapDims[0]/mapScaleVal), h = (int) (SOM_mapDims[1]/mapScaleVal);
 			int w = (int) (mapDims[0]/mapScaleVal), h = (int) (mapDims[1]/mapScaleVal);
 			mapPerFtrWtImgs = new PImage[numFtrVals];
-			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = win.pa.createImage(w, h, format);	}	
+			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = myDispWindow.pa.createImage(w, h, format);	}	
 			
-			mapCubicUMatrixImg = win.pa.createImage(w, h, format);			
+			mapCubicUMatrixImg = myDispWindow.pa.createImage(w, h, format);			
 			//reInit MapCubicSegments 
-			mapUMatrixCubicSegmentsImg = win.pa.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, win.pa.ARGB);
+			mapUMatrixCubicSegmentsImg = myDispWindow.pa.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
 			//instancing-window specific initializations
 			initMapArasIndiv(w,h, format,num2ndryMaps);
 		}
@@ -849,7 +864,7 @@ public abstract class SOM_MapManager {
 		if(win!=null) {
 			msgObj.dispInfoMessage("SOM_MapManager::"+name, "setMapSegmentImgClrs_UMatrix", "Start building mapUMatrixCubicSegmentsImg for UMatrix Display.");
 			//reinitialize map array
-			mapUMatrixCubicSegmentsImg = win.pa.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, win.pa.ARGB);
+			mapUMatrixCubicSegmentsImg = myDispWindow.pa.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
 			mapUMatrixCubicSegmentsImg.loadPixels();
 			//float[] c;	
 			//single threaded exec
@@ -883,7 +898,7 @@ public abstract class SOM_MapManager {
 				int numPartitions = numThds;
 				int numXPerPart = mapPerFtrWtImgs[0].width / numPartitions;			
 				int numXLastPart = (mapPerFtrWtImgs[0].width - (numXPerPart*numPartitions)) + numXPerPart;
-				List<Future<Boolean>> mapImgFtrs = new ArrayList<Future<Boolean>>();
+				//List<Future<Boolean>> mapImgFtrs = new ArrayList<Future<Boolean>>();
 				List<SOM_FtrMapVisImgBldr> mapImgBuilders = new ArrayList<SOM_FtrMapVisImgBldr>();
 				int[] xVals = new int[] {0,0};
 				int[] yVals = new int[] {0,mapPerFtrWtImgs[0].height};
@@ -1850,7 +1865,7 @@ public abstract class SOM_MapManager {
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {	//feature weight display
 			TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y},curMapTrainFtrType, 1.0f, 1.0f);
 			if(ftrs == null) {return null;} 
-			dp = setMseDataExampleFtrs(locPt, ftrs, sensitivity);							
+			dp = setMseDataExampleFtrs(locPt, ftrs, sensitivity);				
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) { //if showing node pop, mouse over should show actual population
 			nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 			dp = setMseDataExampleNodePop(locPt,nearestNode,sensitivity);
@@ -2101,7 +2116,7 @@ public abstract class SOM_MapManager {
 	//draw right sidebar data
 	public void drawResultBar(my_procApplet pa, float yOff) {
 		yOff-=4;
-		float sbrMult = 1.2f, lbrMult = 1.5f;//offsets multiplier for barriers between contextual ui elements
+		//float sbrMult = 1.2f, lbrMult = 1.5f;//offsets multiplier for barriers between contextual ui elements
 		pa.pushMatrix();pa.pushStyle();
 		//display preloaded maps
 		yOff=drawLoadedPreBuiltMaps(pa,yOff,curPreBuiltMapIDX);
@@ -2125,7 +2140,7 @@ public abstract class SOM_MapManager {
 	private final float drawMseRes(my_procApplet pa,float yOff) {
 		if((getFlag(dispMseDataSideBarIDX)) && mseOverExample.canDisplayMseLabel()) {
 			pa.translate(10.0f, 0.0f, 0.0f);
-			pa.showOffsetText(0,pa.gui_White,"Mouse Values : ");
+			pa.showOffsetText(0,IRenderInterface.gui_White,"Mouse Values : ");
 			yOff += sideBarYDisp;
 			pa.translate(0.0f,sideBarYDisp, 0.0f);
 			mseOverExample.drawMseLbl_Info(pa, new myPointf(0,0,0));
@@ -2140,19 +2155,19 @@ public abstract class SOM_MapManager {
 		if(getFlag(dispLdPreBuitMapsIDX)) {	
 			String[][] loadedPreBuiltMapData = projConfigData.getPreBuiltMapInfoAra();		
 			pa.translate(0.0f, 0.0f, 0.0f);
-			float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;	
+			//float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;	
 			if(loadedPreBuiltMapData.length==0) {				
-				pa.showOffsetText(0,pa.gui_White,"No Pre-build Map Directories specified.");
+				pa.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
 				yOff += sideBarYDisp;
 			} else {	
-				pa.showOffsetText(0,pa.gui_White,"Pre-build Map Directories specified in config : ");
+				pa.showOffsetText(0,IRenderInterface.gui_White,"Pre-build Map Directories specified in config : ");
 				yOff += sideBarYDisp;
 				pa.translate(10.0f, sideBarYDisp, 0.0f);
 				
 				for(int i=0;i<loadedPreBuiltMapData.length;++i) {
 					boolean isDefault = i==curDefaultMap;
 					boolean isLoaded = i==pretrainedMapIDX;
-					int clrIDX = (isLoaded ? pa.gui_Yellow : pa.gui_White);
+					int clrIDX = (isLoaded ? IRenderInterface.gui_Yellow : IRenderInterface.gui_White);
 					pa.showOffsetText(0,clrIDX,""+String.format("%02d", i+1)+" | "+loadedPreBuiltMapData[i][0]);
 					yOff += sideBarYDisp;
 					pa.translate(10.0f,sideBarYDisp,0.0f);
@@ -2192,8 +2207,8 @@ public abstract class SOM_MapManager {
 	protected abstract float drawResultBarPriv2(my_procApplet pa, float yOff);
 	protected abstract float drawResultBarPriv3(my_procApplet pa, float yOff);
 
-	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return win.pa.getRndClr2();}
-	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return win.pa.getRndClr2(alpha);}
+	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return myDispWindow.pa.getRndClr2();}
+	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return myDispWindow.pa.getRndClr2(alpha);}
 
 	//////////////////////////////
 	// getters/setters

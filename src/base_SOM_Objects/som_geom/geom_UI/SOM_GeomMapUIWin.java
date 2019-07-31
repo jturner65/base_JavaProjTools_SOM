@@ -68,7 +68,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * build instance-specific map manager
 	 */
 	@Override
-	protected SOM_MapManager buildMapMgr(float[] SOM_mapDims) { 
+	protected SOM_MapManager buildMapMgr() { 
 		msgObj.dispInfoMessage("SOM_GeomMapUIWin", "buildMapMgr", "Entering buildMapMgr : magMgr is currently :"+ (null==mapMgr ? " null" : " not null"));
 		if(this.mapMgr != null) {return mapMgr;}
 		//no need to set win here - this is set in SOM Win UI Base class

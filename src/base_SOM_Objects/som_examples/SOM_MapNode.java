@@ -1,7 +1,6 @@
 package base_SOM_Objects.som_examples;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 import base_SOM_Objects.*;
 import base_SOM_Objects.som_segments.SOM_MapNodeCategorySegMgr;
@@ -14,7 +13,6 @@ import base_SOM_Objects.som_segments.segments.SOM_ClassSegment;
 import base_SOM_Objects.som_segments.segments.SOM_FtrWtSegment;
 import base_SOM_Objects.som_segments.segments.SOM_UMatrixSegment;
 import base_UI_Objects.*;
-import base_Utils_Objects.*;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.Tuple;
 
@@ -111,7 +109,8 @@ public abstract class SOM_MapNode extends SOM_Example{
 				mapNodeFtrsHaveBeenSet = true;
 				break;}
 			case Standardized : {											//standardized data used to build features - multiply by mins/diffs to find ftr data, and then normalize
-				float dmy = _buildInitFtrMap(_ftrs, stdFtrMapTypeKey);
+				//float dmy = 
+				_buildInitFtrMap(_ftrs, stdFtrMapTypeKey);
 				setFlag(stdFtrsBuiltIDX,true);	
 				//get mins/diffs
 				buildRawFtrsMapFromStdFtrData_MapNode(mapMgr.getTrainFtrMins(), mapMgr.getTrainFtrDiffs());
@@ -430,6 +429,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	//initialize 4-neighbor node neighborhood - grid of adjacent 4x4 nodes
 	//this is for individual visualization calculations - 
 	//1 node lesser and 2 nodes greater than this node, with location in question being > this node's location
+	@SuppressWarnings("unchecked")
 	private void initNeighborMap() {
 		int xLoc,yLoc;
 		neighborMapCoords = new Tuple[4][];
@@ -536,10 +536,11 @@ public abstract class SOM_MapNode extends SOM_Example{
 		//if any category is null, then all categories are assumed to be null
 		if(firstCatClassKey.x == null) {					//no categories specified for these examples
 			for (Tuple<Integer, Integer> catClass : trainExCatClassCounts.keySet()) {
-				Integer cat = catClass.x, cls = catClass.y;
+				Integer cls = catClass.y;
 				//# of examples of class in training example
 				Float numClassInEx = 1.0f*trainExCatClassCounts.get(catClass);	
-				Float newCount = getClassSegManager().addSegDataFromTrainingEx(new Integer[] {cls}, numClassInEx, getClassSegName(), getClassSegDesc());
+				//Float newCount = 
+				getClassSegManager().addSegDataFromTrainingEx(new Integer[] {cls}, numClassInEx, getClassSegName(), getClassSegDesc());
 				//newcount includes existing counts in this node, so needs to be used to map to category as well
 			}				
 		} else {											//categories have been specified for these examples			
@@ -549,7 +550,8 @@ public abstract class SOM_MapNode extends SOM_Example{
 				Float numClassInEx = 1.0f*trainExCatClassCounts.get(catClass);	
 				Float newCount = getClassSegManager().addSegDataFromTrainingEx(new Integer[] {cls}, numClassInEx, getClassSegName(), getClassSegDesc());
 				//newcount includes existing counts in this node, so needs to be used to map to category as well
-				Float dummy = getCategorySegManager().addSegDataFromTrainingEx(new Integer[] {cat,cls}, newCount, getCategorySegName(), getCategorySegDesc());
+				//Float dummy = 
+				getCategorySegManager().addSegDataFromTrainingEx(new Integer[] {cat,cls}, newCount, getCategorySegName(), getCategorySegDesc());
 				
 			}	
 		}		

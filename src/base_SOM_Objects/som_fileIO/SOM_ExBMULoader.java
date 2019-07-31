@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 import base_SOM_Objects.som_examples.SOM_Example;
-import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;

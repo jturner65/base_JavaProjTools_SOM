@@ -4,7 +4,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
-import base_SOM_Objects.som_geom.geom_UI.SOM_AnimWorldWin;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSamplePointf;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSmplDataForEx;
@@ -247,7 +246,7 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 		myPointf a = getRandPosOnSphere(rad, ctr),b;
 		do { b = getRandPosOnSphere(rad, ctr);} while (a.equals(b));
 		myPointf c,d;
-		myVectorf ab = new myVectorf(a,b), ac = myVectorf.ZEROVEC, bc, ad;
+		myVectorf ab = new myVectorf(a,b), ac = myVectorf.ZEROVEC, ad;
 		ab._normalize();
 		int iter = 0;
 		boolean eqFail = false, dotProdFail = false;
@@ -288,7 +287,7 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 		myPoint a = getRandPosOnSphere_Double(rad, ctr), b;
 		do{b= getRandPosOnSphere_Double(rad, ctr);} while (a.equals(b));
 		myPoint c,d;
-		myVector ab = new myVector(a,b), ac = myVector.ZEROVEC, bc, ad;
+		myVector ab = new myVector(a,b), ac = myVector.ZEROVEC, ad;
 		ab._normalize();
 		int iter = 0;
 		boolean eqFail = false, dotProdFail = false;

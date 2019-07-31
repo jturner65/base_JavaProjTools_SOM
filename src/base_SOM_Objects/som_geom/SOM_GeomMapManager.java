@@ -110,8 +110,8 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 */
 	protected final float[][] worldBounds;
 		
-	public SOM_GeomMapManager(SOM_MapUIWin _win, SOM_AnimWorldWin _dispWin, float[] _dims, float[][] _worldBounds, TreeMap<String, Object> _argsMap, SOM_GeomObjTypes _geomObjType, int _numFtrs) {
-		super(_win, _dims, _argsMap);
+	public SOM_GeomMapManager(SOM_MapUIWin _win, SOM_AnimWorldWin _dispWin, float[][] _worldBounds, TreeMap<String, Object> _argsMap, SOM_GeomObjTypes _geomObjType, int _numFtrs) {
+		super(_win, _argsMap);
 			//# of training features determined by type of object
 		setNumTrainFtrs(_numFtrs);
 		//worldBounds=_worldBounds;

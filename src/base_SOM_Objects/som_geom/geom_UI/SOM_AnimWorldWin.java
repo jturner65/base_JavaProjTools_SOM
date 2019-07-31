@@ -12,6 +12,7 @@ import base_UI_Objects.my_procApplet;
 import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
 import base_UI_Objects.windowUI.myDispWindow;
 import base_UI_Objects.windowUI.myGUIObj;
+import base_Utils_Objects.MyMathUtils;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.myPoint;
 import base_Utils_Objects.vectorObjs.myVector;
@@ -29,9 +30,9 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	public SOM_GeomMapManager mapMgr;	
 	
 	/**
-	 * window for map UI for this object
+	 * window for map UI for this object 
 	 */
-	protected SOM_GeomMapUIWin somUIWin;
+	protected SOM_GeomMapUIWin somUIWin = null;
 	
 	//ui vars
 	public static final int
@@ -135,7 +136,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 * instancing window will build the map manager that this anim world will use
 	 * @return
 	 */
-	public abstract SOM_GeomMapManager buildMapManager();
+	public abstract SOM_GeomMapManager buildGeom_SOMMapManager();
 	/**
 	 * return appropriate SOM Map Manager for this window
 	 * @return
@@ -392,7 +393,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 			setMapMgrGeomObjVals();
 			break;}
 		case gIDX_SelDispUIObj :{
-			if(ival != curSelGeomObjIDX){curSelGeomObjIDX = pa.min(ival, numGeomObjs-1);}//don't select a sphere Higher than the # of spheres
+			if(ival != curSelGeomObjIDX){curSelGeomObjIDX = MyMathUtils.min(ival, numGeomObjs-1);}//don't select a sphere Higher than the # of spheres
 			break;}
 		default : {setUIWinVals_Indiv(UIidx, val);}
 		}	
@@ -405,8 +406,10 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	@Override
 	protected final void initMe() {
-		//build map manager
-		mapMgr = buildMapManager();
+		//build map associated with this geometric experiment
+		//perform in this window since SOM window is subordinate to this one
+
+		mapMgr = buildGeom_SOMMapManager();
 		
 		//capable of using right side menu
 		setFlags(drawRightSideMenu, true);	
@@ -814,7 +817,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	}
 	@Override
 	protected final void setVisScreenDimsPriv() {
-		float xStart = rectDim[0] + .5f*(curVisScrDims[0] - (curVisScrDims[1]-(2*xOff)));
+		//float xStart = rectDim[0] + .5f*(curVisScrDims[0] - (curVisScrDims[1]-(2*xOff)));
 		
 	}	
 	

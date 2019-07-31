@@ -7,7 +7,6 @@ import java.util.concurrent.*;
 import base_SOM_Objects.*;
 import base_SOM_Objects.som_examples.*;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
-import base_Utils_Objects.*;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
@@ -101,7 +100,7 @@ public class SOM_DataLoader{
 	//Map nodes are similar in format to training examples but scaled based on -their own- data
 	//consider actual map data to be feature data, scale map nodes based on min/max feature data seen in wts file
 	private boolean loadSOMWts(){//builds mapnodes structure - each map node's weights 
-		String wtsFileName = projConfigData.getSOMResFName(projConfigData.wtsIDX);
+		String wtsFileName = projConfigData.getSOMResFName(SOM_ProjConfigData.wtsIDX);
 		if(wtsFileName.length() < 1){msgObj.dispMessage("SOMDataLoader","loadSOMWts","getSOMResFName call failed for wts : "+wtsFileName, MsgCodes.info5);return false;}
 		msgObj.dispMessage("SOMDataLoader","loadSOMWts","Starting Loading SOM weight data from file : " + getFName(wtsFileName), MsgCodes.info5 );
 		mapMgr.initMapNodes();
@@ -119,7 +118,7 @@ public class SOM_DataLoader{
 		//float[] tmpMapMaxs = null;
 		for (int i=0;i<strs.length;++i){//load in data 
 			if(i < 2){//first 2 lines are map description : line 0 is map row/col count; map 2 is # ftrs
-				tkns = strs[i].replace('%', ' ').trim().split(mapMgr.SOM_FileToken);
+				tkns = strs[i].replace('%', ' ').trim().split(SOM_MapManager.SOM_FileToken);
 				//set map size in nodes
 				if(i==0){mapY = Integer.parseInt(tkns[0]);mapMgr.setMapNumRows(mapY);mapX = Integer.parseInt(tkns[1]);mapMgr.setMapNumCols(mapX);	} 
 				else {	//# ftrs in map
@@ -131,7 +130,7 @@ public class SOM_DataLoader{
 				}	
 				continue;
 			}//if first 2 lines in wts file
-			tkns = strs[i].split(mapMgr.SOM_FileToken);
+			tkns = strs[i].split(SOM_MapManager.SOM_FileToken);
 			if(tkns.length < 2){continue;}
 			mapLoc = new Tuple<Integer, Integer>((i-2)%mapX, (i-2)/mapX);//map locations in som data are increasing in x first, then y (row major)
 			dpt = mapMgr.buildMapNode(mapLoc,ftrTypeUsedToTrain, tkns);//give each map node its features		
@@ -145,6 +144,7 @@ public class SOM_DataLoader{
 		return true;
 	}//loadSOMWts	
 	
+	@SuppressWarnings("unused")
 	private void dbgDispFtrAra(float[] ftrData, String exStr) {
 		msgObj.dispMessage("SOMDataLoader","dbgDispFtrAra",ftrData.length + " " +exStr + " vals : ", MsgCodes.warning1 );	
 		String res = ""+String.format("%.4f",ftrData[0]);
@@ -155,12 +155,13 @@ public class SOM_DataLoader{
 	
 	//load the u-matrix data used to build the node distance visualization
 	private boolean loadSOM_UMatrixDists() {
-		String uMtxBMUFname =  projConfigData.getSOMResFName(projConfigData.umtxIDX);
+		String uMtxBMUFname =  projConfigData.getSOMResFName(SOM_ProjConfigData.umtxIDX);
 		if(uMtxBMUFname.length() < 1){msgObj.dispMessage("SOMDataLoader","loadSOM_UMatrixDists","getSOMResFName call failed for umatrix file : "+uMtxBMUFname, MsgCodes.info5);return false;}
 		msgObj.dispMessage("SOMDataLoader","loadSOM_UMatrixDists","Start Loading U-Matrix File : "+uMtxBMUFname, MsgCodes.info5);
 		if(uMtxBMUFname.length() < 1){return false;}
 		String [] strs= fileIO.loadFileIntoStringAra(uMtxBMUFname, "Loaded U Matrix data file : "+uMtxBMUFname, "Error reading U Matrix data file : "+uMtxBMUFname);
 		if(strs==null){return false;}
+		@SuppressWarnings("unused")
 		int numEx = 0, mapX=1, mapY=1,numWtData = 0;
 		String[] tkns;
 		Tuple<Integer, Integer> mapLoc;
@@ -169,14 +170,14 @@ public class SOM_DataLoader{
 		Float minUMatDist = Float.MAX_VALUE, maxUMatDist = -1.0f*minUMatDist;
 		for (int i=0;i<strs.length;++i){//load in data 
 			if(i < 1){//line 0 is map row/col count
-				tkns = strs[i].replace('%', ' ').trim().split(mapMgr.SOM_FileToken);
+				tkns = strs[i].replace('%', ' ').trim().split(SOM_MapManager.SOM_FileToken);
 				//set map size in nodes
 				mapY = Integer.parseInt(tkns[0]);
 				mapX = Integer.parseInt(tkns[1]);	
-				//TODO compare values here to set values
+				
 				continue;
 			}//if first 2 lines in wts file
-			tkns = strs[i].trim().split(mapMgr.SOM_FileToken);
+			tkns = strs[i].trim().split(SOM_MapManager.SOM_FileToken);
 			//System.out.println("String : ---"+strs[i]+"---- has length : "+ tkns.length);
 			if(tkns.length < 2){continue;}
 			row = i-1;
@@ -199,9 +200,9 @@ public class SOM_DataLoader{
 	
 	//verify the best matching units file is as we expect it to be
 	private boolean checkBMUHeader(String[] hdrStrAra, String bmFileName) {
-		String[] tkns = hdrStrAra[0].replace('%', ' ').trim().split(mapMgr.SOM_FileToken);
+		String[] tkns = hdrStrAra[0].replace('%', ' ').trim().split(SOM_MapManager.SOM_FileToken);
 		if(!checkMapDim(tkns,"Best Matching Units file " + getFName(bmFileName))){return false;}//otw continue
-		tkns = hdrStrAra[1].replace('%', ' ').trim().split(mapMgr.SOM_FileToken);
+		tkns = hdrStrAra[1].replace('%', ' ').trim().split(SOM_MapManager.SOM_FileToken);
 		int tNumTDat = Integer.parseInt(tkns[0]);
 		if(tNumTDat != mapMgr.numTrainData) { //don't forget added emtpy vector
 			msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","!!Best Matching Units file " + getFName(bmFileName) + " # of training examples : " + tNumTDat +" does not match # of training examples in training data " + mapMgr.numTrainData+". Loading aborted.", MsgCodes.error2 ); 
@@ -211,7 +212,7 @@ public class SOM_DataLoader{
 	
 	//load best matching units for each training example - has values : idx, mapy, mapx.  Uses file built by som code.  can be verified by comparing actual example distance from each node
 	private boolean loadSOM_BMUs(){//modifies existing nodes and datapoints only
-		String bmFileName = projConfigData.getSOMResFName(projConfigData.bmuIDX);
+		String bmFileName = projConfigData.getSOMResFName(SOM_ProjConfigData.bmuIDX);
 		if(bmFileName.length() < 1){msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","getSOMResFName call failed : "+bmFileName, MsgCodes.info5);return false;}
 		//clear out listing of bmus that have training examples already
 		mapMgr.clearBMUNodesWithExs(SOM_ExDataType.Training);
@@ -224,6 +225,7 @@ public class SOM_DataLoader{
 		int bmuListIDX = 0;
 		int numMapCols = mapMgr.getMapNodeCols();
 		//build array of maps keyed by map node, values being arrays of training examples that consider map node key to be their BMU
+		@SuppressWarnings("unchecked")
 		HashMap<SOM_MapNode, ArrayList<SOM_Example>>[] bmusToExs = new HashMap[numThds];
 		for (int i=0;i<numThds;++i) {
 			bmusToExs[i] = new HashMap<SOM_MapNode, ArrayList<SOM_Example>>();
@@ -233,7 +235,7 @@ public class SOM_DataLoader{
 		//this should always be training data
 		int typeOfData = _trainData[0].getTypeVal();
 		for (int i=2;i<strs.length;++i){//load in data on all bmu's
-			tkns = strs[i].split(mapMgr.SOM_FileToken);
+			tkns = strs[i].split(SOM_MapManager.SOM_FileToken);
 			if(tkns.length < 2){continue;}//shouldn't happen	
 			mapNodeX = Integer.parseInt(tkns[2]);
 			mapNodeY = Integer.parseInt(tkns[1]);

@@ -4,6 +4,7 @@ import base_SOM_Objects.som_geom.geom_UI.SOM_AnimWorldWin;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_UI_Objects.my_procApplet;
 import base_Utils_Objects.vectorObjs.myPointf;
+import processing.core.PConstants;
 import processing.core.PShape;
 
 /**
@@ -124,7 +125,7 @@ public class SOM_GeomObjSamples {
 	
 	private PShape buildSampleCloud(my_procApplet pa, int[] clrs) {
 		PShape poly = pa.createShape(); 
-		poly.beginShape(pa.POINTS);
+		poly.beginShape(PConstants.POINTS);
 		poly.fill(clrs[0],clrs[1],clrs[2],255);
 		poly.stroke(clrs[0],clrs[1],clrs[2],255);
 		poly.strokeWeight(5.0f);
@@ -187,7 +188,7 @@ public class SOM_GeomObjSamples {
 			SOM_GeomSamplePointf pt = objSamplePts[i];
 			pa.pushMatrix(); pa.pushStyle();
 			pa.translate(pt); 
-			pa.text(""+pt.name, ownr.lblDist,-ownr.lblDist,0); 
+			pa.text(""+pt.name, SOM_GeomObj.lblDist,-SOM_GeomObj.lblDist,0); 
 			pa.popStyle();pa.popMatrix();
 		}
 		pa.popStyle();pa.popMatrix();
@@ -206,7 +207,7 @@ public class SOM_GeomObjSamples {
 			pa.pushMatrix(); pa.pushStyle();
 			pa.translate(pt); 
 			animWin.unSetCamOrient();
-			pa.text(""+pt.name, ownr.lblDist,-ownr.lblDist,0); 
+			pa.text(""+pt.name, SOM_GeomObj.lblDist,-SOM_GeomObj.lblDist,0); 
 			pa.popStyle();pa.popMatrix();
 		}
 		pa.popStyle();pa.popMatrix();

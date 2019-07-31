@@ -7,7 +7,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import base_SOM_Objects.som_examples.SOM_ExDataType;
 import base_SOM_Objects.som_examples.SOM_Example;
-import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_UI.SOM_AnimWorldWin;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjDrawType;
@@ -16,11 +15,10 @@ import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSamplePointf;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSmplDataForEx;
 import base_UI_Objects.my_procApplet;
+import base_UI_Objects.windowUI.myDispWindow;
 import base_Utils_Objects.MyMathUtils;
-import base_Utils_Objects.vectorObjs.Tuple;
 import base_Utils_Objects.vectorObjs.myPointf;
 import base_Utils_Objects.vectorObjs.myVectorf;
-import processing.core.PShape;
 
 /**
  * class to instance the base functionality of a geometric object represented by 
@@ -302,7 +300,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 */
 	protected final void buildLocClrAndSamplesFromCSVStr(myPointf _locForClr, String _csvStr) {
 		locClrAra = getClrFromWorldLoc(_locForClr);			
-		if(null!=objSamples) {objSamples.buildSampleSetAndPShapesFromCSVStr(mapMgr.win.pa, _csvStr);}
+		if(null!=objSamples) {objSamples.buildSampleSetAndPShapesFromCSVStr(myDispWindow.pa, _csvStr);}
 		//else {msgObj.dispWarningMessage("SOM_GeomObj::"+GeomObj_ID, "buildLocClrAndSamplesFromCSVStr", "Attempting to rebuild samples from CSV for obj "+dispLabel +" when no objSamples Object exists");}
 	}
 	
@@ -311,7 +309,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _numSmplPts
 	 */
 	public final void buildSmplSetAndSmplPShapes(int _numSmplPts) {
-		if(null!=objSamples) {objSamples.buildSampleSetAndPShapes(mapMgr.win.pa,_numSmplPts);} 
+		if(null!=objSamples) {objSamples.buildSampleSetAndPShapes(myDispWindow.pa,_numSmplPts);} 
 		//else {msgObj.dispWarningMessage("SOM_GeomObj::"+GeomObj_ID, "buildSmplSetAndSmplPShapes", "Attempting to rebuild samples for obj "+dispLabel +" when no objSamples Object exists");}
 	}//buildSampleSet
 	
@@ -362,7 +360,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		myPointf a = getRandPosOnSphere(rad, ctr),b;
 		do { b = getRandPosOnSphere(rad, ctr);} while (a.equals(b));
 		myPointf c,d;
-		myVectorf ab = new myVectorf(a,b), ac = myVectorf.ZEROVEC, bc, ad;
+		myVectorf ab = new myVectorf(a,b), ac = myVectorf.ZEROVEC, ad;
 		ab._normalize();
 		int iter = 0;
 		boolean eqFail = false, dotProdFail = false;

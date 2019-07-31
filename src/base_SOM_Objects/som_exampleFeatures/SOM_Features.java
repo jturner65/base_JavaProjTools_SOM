@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeMap;
 
-import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;
 import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_Utils_Objects.io.MsgCodes;
@@ -76,6 +75,7 @@ public abstract class SOM_Features {
 
 
 	//initialize structures used to aggregate and report the ranking of particular ftrs for this example
+	@SuppressWarnings("unchecked")
 	private final void initPerFtrObjs() {
 		mapOfWtsToFtrIDXs = new TreeMap[ftrMapTypeKeysAra.length];
 		mapOfFtrIDXVsWtRank = new TreeMap[ftrMapTypeKeysAra.length];
@@ -88,12 +88,12 @@ public abstract class SOM_Features {
 	//to execute per-example ftr-based reporting, first call buildFtrRptStructs for all examples, then iterate through getters for ftr type == mapToGet, then call clearFtrRptStructs to release memory
 	//called to report on this example's feature weight rankings 
 	public final void buildFtrRprtStructs() {
-		if(ex.getFlag(ex.ftrWtRptBuiltIDX)) {return;}
+		if(ex.getFlag(SOM_Example.ftrWtRptBuiltIDX)) {return;}
 		initPerFtrObjs();
 		//for every feature type build report structures		
 		buildFtrRprtStructs_Indiv();
 
-		ex.setFlag(ex.ftrWtRptBuiltIDX, true);
+		ex.setFlag(SOM_Example.ftrWtRptBuiltIDX, true);
 	}//buildFtrReports
 	/**
 	 * build feature report structures for specific type of features
@@ -107,7 +107,7 @@ public abstract class SOM_Features {
 	 * @return
 	 */
 	public final TreeMap<Integer,Integer> getMapOfFtrIDXBsWtRank(int mapToGet){
-		if(!ex.getFlag(ex.ftrWtRptBuiltIDX)) {
+		if(!ex.getFlag(SOM_Example.ftrWtRptBuiltIDX)) {
 			ex.mapMgr.getMsgObj().dispMessage("SOMExample" + ex.OID,"getMapOfFtrIDXBsWtRank","Feature-based report structures not yet built. Aborting.", MsgCodes.warning2);
 			return null;
 		}
@@ -115,7 +115,7 @@ public abstract class SOM_Features {
 	}//getMapOfFtrIDXBsWtRank
 	
 	public final TreeMap<Float, ArrayList<Integer>> getMapOfWtsToFtrIDXs(int mapToGet){
-		if(!ex.getFlag(ex.ftrWtRptBuiltIDX)) {
+		if(!ex.getFlag(SOM_Example.ftrWtRptBuiltIDX)) {
 			ex.mapMgr.getMsgObj().dispMessage("SOMExample" + ex.OID,"getMapOfWtsToFtrIDXs","Feature-based report structures not yet built. Aborting.", MsgCodes.warning2);
 			return null;
 		}
@@ -126,7 +126,7 @@ public abstract class SOM_Features {
 	public final void clearFtrRprtStructs() {		
 		mapOfWtsToFtrIDXs = null;
 		mapOfFtrIDXVsWtRank = null;		
-		ex.setFlag(ex.ftrWtRptBuiltIDX, false);		
+		ex.setFlag(SOM_Example.ftrWtRptBuiltIDX, false);		
 	}//clearFtrReports
 	
 	/**

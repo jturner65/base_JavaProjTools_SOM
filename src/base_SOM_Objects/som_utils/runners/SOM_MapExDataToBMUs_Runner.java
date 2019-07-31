@@ -6,13 +6,11 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.*;
 import base_SOM_Objects.som_utils.SOM_MapDataToBMUs;
-import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.Tuple;
 

@@ -4,7 +4,6 @@ package base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen;
 import java.util.concurrent.ExecutorService;
 
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
-import base_SOM_Objects.som_geom.geom_examples.SOM_GeomExampleManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_Utils_Objects.threading.runners.myThreadRunner;
 

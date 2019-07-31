@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;

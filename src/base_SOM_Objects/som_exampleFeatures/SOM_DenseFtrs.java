@@ -3,9 +3,7 @@ package base_SOM_Objects.som_exampleFeatures;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;
-import base_Utils_Objects.MyMathUtils;
 import base_Utils_Objects.io.MsgCodes;
 
 /**

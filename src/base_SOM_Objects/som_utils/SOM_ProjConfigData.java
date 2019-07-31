@@ -9,7 +9,6 @@ import base_SOM_Objects.*;
 import base_SOM_Objects.som_examples.*;
 import base_SOM_Objects.som_fileIO.*;
 
-import base_Utils_Objects.*;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
@@ -516,7 +515,7 @@ public abstract class SOM_ProjConfigData {
 		ArrayList<String> somFileNamesAraTmp = new ArrayList<String>();
 		for (int i=0;i<dataAra.length;++i) {
 			String str = dataAra[i];
-			if(str.contains(this.fileComment)) {continue;}
+			if(str.contains(SOM_ProjConfigData.fileComment)) {continue;}
 			String[] strToks = str.trim().split(SOM_MapManager.csvFileToken);
 			if(strToks[0].trim().contains("SOMFileNamesAra")){//read in pre-saved directory and file names
 				String[] araStrToks_1 = str.trim().split("\\[");
@@ -555,7 +554,7 @@ public abstract class SOM_ProjConfigData {
 		TreeMap<String,String> dataRes = new TreeMap<String,String>();
 		for (int i=0;i<configStrAra.length;++i) {
 			String str = configStrAra[i];
-			if(str.contains(this.fileComment)) {continue;}
+			if(str.contains(SOM_ProjConfigData.fileComment)) {continue;}
 			String[] strToks = str.trim().split(SOM_MapManager.csvFileToken);
 			dataRes.put(strToks[0].trim(), strToks[1].trim());
 		}//for each line
@@ -680,7 +679,7 @@ public abstract class SOM_ProjConfigData {
 		String fileNow = dateTimeStrAra[1];
 		//setSOM_ExpFileNames( fileNow, nowDir);		
 		setSOM_ExpFileNames( fileNow, nowSubDirNoSep);		//lacking hardcoded ref to 	subDirLocs.get("SOM_MapProc") 
-		msgObj.dispMessage("SOM_ProjConfigData","setSOM_ExpFileNames","Finished setting file names and example counts", MsgCodes.info5);
+		msgObj.dispMessage("SOM_ProjConfigData","setSOM_ExpFileNames","Finished setting file names and example counts, with nowDir : " + nowDir, MsgCodes.info5);
 	}//setSOM_ExpFileNames	
 			
 	//file names used specifically for SOM data

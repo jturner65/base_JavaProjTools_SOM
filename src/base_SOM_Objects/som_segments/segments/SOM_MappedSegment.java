@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 import base_SOM_Objects.*;
 import base_SOM_Objects.som_examples.*;
-import base_Utils_Objects.*;
 import base_Utils_Objects.vectorObjs.Tuple;
 
 /**
