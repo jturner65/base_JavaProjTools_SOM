@@ -110,6 +110,11 @@ public abstract class SOM_ProjConfigData {
 		
 		SOM_QualifiedConfigDir = buildQualifiedBaseDir(_configDir,"Specified Config");
 		SOM_QualifiedDataDir = buildQualifiedBaseDir(_dataDir,"Specified Data");
+		
+		SOMOutExpSffx = "x-1_y-1_k-1";//illegal values, needs to be set by config
+		ftrTypeUsedToTrainStr = "NONE";
+		//get current time
+		instancedNow = Calendar.getInstance();
 
 		fileIO = new FileIOManager(msgObj,"SOM_ProjConfigData");		
 		//load project configuration
@@ -125,14 +130,7 @@ public abstract class SOM_ProjConfigData {
 		msgObj.dispMessage("SOM_ProjConfigData","Constructor","OS this application is running on : "  + OSUsed + " | SOM Exec String : " +  execStr +" | Supports ANSI Terminal colors : " + supportsANSITerm, MsgCodes.info5);		
 		SOM_Map_EXECSTR = execStr;				
 		//----end accumulate and manage OS info ----//		
-		
-		SOMOutExpSffx = "x-1_y-1_k-1";//illegal values, needs to be set by config
-		ftrTypeUsedToTrainStr = "NONE";
-		//get current time
-		instancedNow = Calendar.getInstance();
-//		fnames = new String[numFiles];
-//		for(int i=0;i<numFiles;++i){fnames[i]="";}
-		//initFlags();
+
 		SOMExeDat = new SOM_MapDat(this, OSUsed);	
 		//load default data for this map dat
 		loadDefaultSOMExp_Config();
@@ -198,7 +196,7 @@ public abstract class SOM_ProjConfigData {
 		if(idx == -1) {msgObj.dispMessage("SOM_ProjConfigData","loadProjectConfig","Error after _loadProjConfigData with subDirLocs : idx == -1.   This means an 'END' tag is probably missing in the "+projectConfigFile+" file.", MsgCodes.error2); return;}
 		
 		// MISC GLOBAL VARS - read through individual config vars preBuiltMapDir
-		idx = _loadIndivConfigVars(fileStrings, idx); 
+		idx = _loadIndivProjectConfigVars(fileStrings, idx); 
 		if((preBuiltMapDirAra == null)|| (preBuiltMapDirAra.length == 0)){
 			msgObj.dispMessage("SOM_ProjConfigData","loadProjectConfig","No default preBuilt Map directories specified in config, so none will be used.", MsgCodes.info3);
 		} else {
@@ -231,7 +229,7 @@ public abstract class SOM_ProjConfigData {
 		return -1;																		//shouldn't ever get here - will crash, means END tag missing in config file
 	}//_loadProjConfigData
 	
-	private int _loadIndivConfigVars(String[] fileStrings, int stIDX) {
+	private int _loadIndivProjectConfigVars(String[] fileStrings, int stIDX) {
 		boolean endFound = false;
 		ArrayList<String> preBuiltMapDirArrayList = new ArrayList<String> ();
 		while((stIDX < fileStrings.length) && (!endFound)) {
@@ -239,6 +237,9 @@ public abstract class SOM_ProjConfigData {
 			if(s.contains("END")) {++stIDX; break;}//move to next line, should be "begin" tag
 			if((s.contains(fileComment)) || (s.trim().length() == 0)){++stIDX; continue;}
 			String[] tkns = s.trim().split(SOM_MapManager.csvFileToken);
+			if(tkns.length < 1) {
+				msgObj.dispWarningMessage("SOM_ProjConfigData","_loadIndivConfigVars","Inappropriately formatted string token found in config file : '" +s+ "' of length "+s.length()+".  Should be format <key>,<value>. Ignored");
+				continue;}
 			String val = tkns[1].trim().replace("\"", "");
 			String varName = tkns[0].trim();
 			switch (varName) {
@@ -248,10 +249,11 @@ public abstract class SOM_ProjConfigData {
 				case "SOMProjName" 				: {	setSOMProjName(val); break;}
 				case "useSparseTrainingData" 	: {	useSparseTrainingData = Boolean.parseBoolean(val.toLowerCase());  break;}
 				case "useSparseTestingData" 	: {	useSparseTestingData = Boolean.parseBoolean(val.toLowerCase());  break;}
+				case "ftrTypeUsedToTrainStr" 	: { System.out.println("ftrTypeUsedToTrainStr accessed : " + val);ftrTypeUsedToTrainStr = val;break;}			//set default
 				//add more variables here in instancing class - use string rep of name in config file, followed by a comma, followed by the string value (may include 2xquotes (") around string;) then can add more cases here
 				default	 						: {_loadIndivConfigVarsPriv(varName,val);}
 			}	
-			msgObj.dispMessage("SOM_ProjConfigData","_loadIndivConfigVars","config file line : " +stIDX + " | key : " +varName +" value specified in config : " + val, MsgCodes.info3);
+			msgObj.dispMessage("SOM_ProjConfigData","_loadIndivConfigVars","Config file line : " +stIDX + " | key : " +varName +" value specified in config : " + val, MsgCodes.info3);
 			++stIDX;
 		}
 		_preBuiltMapFinalSetup(preBuiltMapDirArrayList);

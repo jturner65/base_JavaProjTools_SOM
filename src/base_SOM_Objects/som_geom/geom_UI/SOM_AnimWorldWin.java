@@ -294,7 +294,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		tmpUIObjArray.add(new Object[] {new double[]{0.00001,1.000,0.00001}, fractOfBinomialForBaseNumTrainEx,  "Fract of Binomial for Train Ex", new boolean[]{false, false, true}});  				//gIDX_FractNumTrainEx 
 		
 		//gIDX_NumTraingEx
-		long minNumTrainingExamples = getNumTrainingExamples(minNumObjs,minNumSmplsPerObj), maxNumTrainingExamples = getNumTrainingExamples(numGeomObjs,numSmplPointsPerObj), diffNumTrainingEx = (maxNumTrainingExamples - minNumTrainingExamples) > 1000 ? 1000 : 10;
+		long minNumTrainingExamples = getNumTrainingExamples(minNumObjs,minNumSmplsPerObj), maxNumTrainingExamples = 10*minNumTrainingExamples, diffNumTrainingEx = (maxNumTrainingExamples - minNumTrainingExamples) > 1000 ? 1000 : 10;
 		numTrainingExamples = (int) minNumTrainingExamples;
 		tmpUIObjArray.add(new Object[] {new double[]{minNumTrainingExamples,maxNumTrainingExamples,diffNumTrainingEx}, (double)(numTrainingExamples), "Ttl # of Train Ex ["+minNumTrainingExamples+", "+maxNumTrainingExamples+"]", new boolean[]{true, false, true}});  				//gIDX_NumUISamplesPerObj 
 		

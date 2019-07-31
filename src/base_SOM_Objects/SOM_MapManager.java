@@ -515,7 +515,7 @@ public abstract class SOM_MapManager {
 			SOM_CalcExFtrs_Runner calcRunner = new SOM_CalcExFtrs_Runner(this, th_exec, shuffleTrainingData(exs.toArray(new SOM_Example[0]),12345L) , exType, _typeOfProc, false);
 			calcRunner.runMe();
 		} else {//called after all features of this kind of object are built - this calculates alternate compare object
-			int curIDX = 0, ttlNum = exs.size(), modAmt = (ttlNum > 100 ? ttlNum/10 : ttlNum-1);
+			int curIDX = 0, ttlNum = exs.size(), modAmt = (ttlNum > 100 ? ttlNum/10 : ttlNum);
 			if(_typeOfProc==0) {
 				getMsgObj().dispMessage("SOM_MapManager::"+name,"_ftrVecBuild : " + exType + " Examples","Begin build "+exs.size()+" feature vector.", MsgCodes.info1);
 				for (SOM_Example ex : exs) {			ex.buildFeatureVector();	++curIDX; if(curIDX % modAmt == 0) {_dbg_ftrVecBuild_dispProgress(curIDX, ttlNum,exType,"build "+ttlNum+" feature vector.");}}

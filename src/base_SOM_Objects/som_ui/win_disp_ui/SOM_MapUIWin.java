@@ -341,7 +341,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		//	the 3rd elem is label for object
 		//	the 4th element is boolean array of {treat as int, has list values, value is sent to owning window}
 		
-		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiTrainDataFrmtIDX).length-1, 1.0}, 1.0, "Train Data Frmt", new boolean[]{true, true, true}});   				//uiTrainDataFrmtIDX                                                                        
+		tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiTrainDataFrmtIDX).length-1, 1.0}, 1.0*SOM_FtrDataType.Standardized.getVal(), "Train Data Frmt", new boolean[]{true, true, true}});   				//uiTrainDataFrmtIDX                                                                        
 		//tmpUIObjArray.add(new Object[] {new double[]{0.0, tmpListObjVals.get(uiTestDataFrmtIDX).length-1, 1.0}, 2.0, "Data Mapping Frmt", new boolean[]{true, true, true}});  				//uiTestDataFrmtIDX                                                                         
 		tmpUIObjArray.add(new Object[] {new double[]{1.0, 100.0, 1.0}, 100.0,	"Data % To Train", new boolean[]{true, false, true}});   													//uiTrainDatPartIDX                                                                         
 		tmpUIObjArray.add(new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Rows", new boolean[]{true, false, true}});   															//uiMapRowsIDX 	 		                                                                    
@@ -538,7 +538,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	//build new SOM_MAP map using UI-entered values, then load resultant data - map nodes, bmus to training data
 	protected final void buildNewSOMMap(){
 		msgObj.dispMessage("SOM_MapUIWin","buildNewSOMMap","Starting Map Build", MsgCodes.info5);
-		setPrivFlags(buildSOMExe, false);
+		//setPrivFlags(buildSOMExe, false);			//causes button to never display
+		super.addPrivBtnToClear(buildSOMExe);		//causes map to be built 2x if called from draw
 		//send current UI values to map manager, load appropriate data, build directory structure and execute map
 		boolean returnCode = mapMgr.loadTrainDataMapConfigAndBuildMap(true);
 		//returnCode is whether map was built and trained successfully
@@ -833,14 +834,15 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	public final void setSOMDimScaleFact(float _sclFact) {SOMDimScaleFact=_sclFact;}
 	/////////////////////////////////////////
 	// draw routines
-	
+	private boolean doBuildMap = false;
 	@Override
 	protected final void drawMe(float animTimeMod) {
 		drawSetDispFlags();
 		if(getPrivFlags(mapDataLoadedIDX) != mapMgr.isMapDrawable()){setPrivFlags(mapDataLoadedIDX,mapMgr.isMapDrawable());}
 		boolean isMapDataLoaded = getPrivFlags(mapDataLoadedIDX);
 		drawMap(isMapDataLoaded);		
-		if(getPrivFlags(buildSOMExe)){buildNewSOMMap();}
+		if(doBuildMap){buildNewSOMMap(); doBuildMap = false;setPrivFlags(buildSOMExe,false);} 
+		else if(getPrivFlags(buildSOMExe)) {	doBuildMap = true;	}	
 	}
 	protected abstract void drawSetDispFlags();
 	
