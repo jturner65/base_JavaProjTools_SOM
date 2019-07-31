@@ -299,8 +299,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		tmpUIObjArray.add(new Object[] {new double[]{minNumTrainingExamples,maxNumTrainingExamples,diffNumTrainingEx}, (double)(numTrainingExamples), "Ttl # of Train Ex ["+minNumTrainingExamples+", "+maxNumTrainingExamples+"]", new boolean[]{true, false, true}});  				//gIDX_NumUISamplesPerObj 
 		
 		tmpUIObjArray.add(new Object[] {new double[]{0,numGeomObjs-1,1}, (double)(curSelGeomObjIDX), "ID of Object to Select", new boolean[]{true, false, true}});   													//gIDX_SelDispUIObj	      
-	
-		
+			
 		//populate instancing application objects
 		setupGUIObjsAras_Indiv(tmpUIObjArray,tmpListObjVals);
 		
@@ -356,10 +355,12 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		guiObjs[gIDX_NumTrainingEx].setNewMax(newMaxVal);	
 		int minVal = (int) guiObjs[gIDX_NumTrainingEx].getMinVal();
 		guiObjs[gIDX_NumTrainingEx].setNewDispText("Ttl # of Train Ex ["+minVal+", "+newMaxVal+"]");
-		refreshNumTrainingExamples();
+		double curNum = guiObjs[gIDX_NumTrainingEx].getVal();
+		if(curNum < minVal) {guiObjs[gIDX_NumTrainingEx].setVal(minVal);}
+		if(curNum > newMaxVal) {guiObjs[gIDX_NumTrainingEx].setVal(newMaxVal);}
 	}//refreshNumTrainingExampleBounds
 	
-	private void refreshNumTrainingExamples() {
+	private void refreshNumTrainingExamples() {		
 		long TtlNumExamples = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj);
 		double newVal = fractOfBinomialForBaseNumTrainEx * TtlNumExamples;
 		guiObjs[gIDX_NumTrainingEx].setVal(newVal);

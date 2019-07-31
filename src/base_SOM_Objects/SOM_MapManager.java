@@ -136,6 +136,13 @@ public abstract class SOM_MapManager {
 		uMatDist_Min,
 		uMatDist_Diff;
 	
+	/**
+	 * min and diff target span for standardizing/scaling features - populated by project config
+	 */
+	private float
+		stdFtr_destMin,
+		stdFtr_destDiff;
+	
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//data descriptions
 	/**
@@ -342,6 +349,9 @@ public abstract class SOM_MapManager {
 		projConfigData = buildProjConfigData(_argsMap);
 		Integer _logLevel = (Integer)_argsMap.get("logLevel");
 		msgObj.setOutputMethod(projConfigData.getFullLogFileNameString(), _logLevel);
+		stdFtr_destMin = projConfigData.getStdFtr_destMin();
+		stdFtr_destDiff = projConfigData.getStdFtr_destDiff();
+
 
 		//fileIO is used to load and save info from/to local files except for the raw data loading, which has its own handling
 		fileIO = new FileIOManager(msgObj,"SOM_MapManager::"+name);
@@ -2262,6 +2272,13 @@ public abstract class SOM_MapManager {
 		if (win != null) {win.setFtrTrainTypeFromConfig(_frmt);}		
 	}//setCurrentDataFormat
 	public SOM_FtrDataType getCurrentTrainDataFormat() {	return curMapTrainFtrType;}
+	
+	public void setStdMinAndDiffValsFromConfig(float _stdFtr_destMin,float _stdFtr_destDiff) {
+		stdFtr_destMin = _stdFtr_destMin;
+		stdFtr_destDiff =_stdFtr_destDiff;		
+	};
+	public float getStdFtr_destMin() {return stdFtr_destMin;}
+	public float getStdFtr_destDiff() {return stdFtr_destDiff;}
 	
 //	public void setCurrentTestDataFormat(SOM_FtrDataType _frmt) {	curMapTestFtrType = _frmt; }//setCurrentDataFormat
 //	public SOM_FtrDataType getCurrentTestDataFormat() {	return curMapTestFtrType;}

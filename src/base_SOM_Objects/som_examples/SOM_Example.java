@@ -652,22 +652,23 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * @param mins mins found per feature across all examples, used to scale
 	 * @param diffs diffs found per feature across all examples, used to scale
 	 */
+//	protected final void calcStdFtrVector(TreeMap<Integer, Float> from_ftrs, TreeMap<Integer, Float> to_sclFtrs, Float[] mins, Float[] diffs) {
+//		to_sclFtrs.clear();
+//		for (Integer destIDX : from_ftrs.keySet()) {
+//			Float lb = mins[destIDX], 	diff = diffs[destIDX];
+//			Float val = 0.0f;
+//			if (diff==0) {//same min and max
+//				if (lb > 0) { val = 1.0f;}//only a single value same min and max-> set feature value to 1.0
+//				else {		  val = 0.0f;}
+//			} else {				val = (from_ftrs.get(destIDX)-lb)/diff;			}	
+//			to_sclFtrs.put(destIDX,val);
+//			
+//		}//for each non-zero ftr
+//	}//standardizeFeatureVector		getSqDistFromFtrType
+		
 	protected final void calcStdFtrVector(TreeMap<Integer, Float> from_ftrs, TreeMap<Integer, Float> to_sclFtrs, Float[] mins, Float[] diffs) {
 		to_sclFtrs.clear();
-		for (Integer destIDX : from_ftrs.keySet()) {
-			Float lb = mins[destIDX], 	diff = diffs[destIDX];
-			Float val = 0.0f;
-			if (diff==0) {//same min and max
-				if (lb > 0) { val = 1.0f;}//only a single value same min and max-> set feature value to 1.0
-				else {		  val = 0.0f;}
-			} else {				val = (from_ftrs.get(destIDX)-lb)/diff;			}	
-			to_sclFtrs.put(destIDX,val);
-			
-		}//for each non-zero ftr
-	}//standardizeFeatureVector		getSqDistFromFtrType
-		
-	protected final void calcStdFtrVector(TreeMap<Integer, Float> from_ftrs, TreeMap<Integer, Float> to_sclFtrs, Float[] mins, Float[] diffs, Float destMin, Float destDiff) {
-		to_sclFtrs.clear();
+		float destDiff = mapMgr.getStdFtr_destDiff(), destMin =  mapMgr.getStdFtr_destMin();
 		for (Integer destIDX : from_ftrs.keySet()) {
 			Float lb = mins[destIDX], 	diff = diffs[destIDX];
 			Float val = 0.0f;

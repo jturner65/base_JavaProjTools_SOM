@@ -16,30 +16,54 @@ import base_Utils_Objects.io.MsgCodes;
 //structure to hold all the file names, file configurations and general program configurations required to run the SOM project
 //will manage that all file names need to be reset when any are changed
 public abstract class SOM_ProjConfigData {
-	//owning map manager
+	/**
+	 * owning map manager
+	 */
 	protected SOM_MapManager mapMgr;
-	//object to manage screen and log output
+	/**
+	 * object to manage screen and log output
+	 */
 	protected MessageObject msgObj;
-	//manage IO in this object
+	/**
+	 * manage IO in this object
+	 */
 	protected FileIOManager fileIO;	
-	//ref to SOM_MapDat SOM executiond descriptor object
-	protected SOM_MapDat SOMExeDat;	
-	
-	//string delimiter defining a comment in a file
-	public static final String fileComment = "#";
-		
-	//TODO these are a function of data stucture, so should be set via config file
-	protected boolean useSparseTrainingData, useSparseTestingData;
-	
-	//fileNow date string array for most recent experiment
+	/**
+	 * ref to SOM_MapDat SOM executiond descriptor object
+	 */
+	protected SOM_MapDat SOMExeDat;		
+	/**
+	 * string delimiter defining a comment in a file
+	 */
+	public static final String fileComment = "#";		
+	/**
+	 * TODO these are a function of data stucture, so should be set via config file
+	 */
+	protected boolean useSparseTrainingData, useSparseTestingData;	
+	/**
+	 * fileNow date string array for most recent experiment
+	 */
 	protected String[] dateTimeStrAra;
 
-	//test/train partition - ratio of # of training data points to total # of data points 0->1.0f
+	/**
+	 * test/train partition - ratio of # of training data points to total # of data points 0->1.0f
+	 */
 	protected float trainTestPartition = 1.0f;	
-	//current experiment # of samples total, train partition and test partition
+	/**
+	 * current experiment # of samples total, train partition and test partition
+	 */
 	protected int expNumSmpls, expNumTrain, expNumTest;
-	//current type of data used to train map - unmodified features, normalized features (ftr vec sums to 1) or standardized features (normalized across all data examples per ftr)
+	/**
+	 * current type of data used to train map - unmodified features, normalized features (ftr vec sums to 1) or standardized features (normalized across all data examples per ftr)
+	 */
 	protected String ftrTypeUsedToTrainStr;
+	/**
+	 * min and diff target span for standardizing/scaling features - populated by project config
+	 */
+	protected float
+		stdFtr_destMin = 0.0f,
+		stdFtr_destDiff = 1.0f;
+
 	
 	//calendar object to be used to query instancing time
 	protected final Calendar instancedNow;
@@ -250,6 +274,8 @@ public abstract class SOM_ProjConfigData {
 				case "useSparseTrainingData" 	: {	useSparseTrainingData = Boolean.parseBoolean(val.toLowerCase());  break;}
 				case "useSparseTestingData" 	: {	useSparseTestingData = Boolean.parseBoolean(val.toLowerCase());  break;}
 				case "ftrTypeUsedToTrainStr" 	: { System.out.println("ftrTypeUsedToTrainStr accessed : " + val);ftrTypeUsedToTrainStr = val;break;}			//set default
+				case "stdFtr_destMin" 			: { stdFtr_destMin = Float.parseFloat(val); break;}
+				case "stdFtr_destDiff" 			: { stdFtr_destDiff = Float.parseFloat(val); break;}				
 				//add more variables here in instancing class - use string rep of name in config file, followed by a comma, followed by the string value (may include 2xquotes (") around string;) then can add more cases here
 				default	 						: {_loadIndivConfigVarsPriv(varName,val);}
 			}	
@@ -465,6 +491,8 @@ public abstract class SOM_ProjConfigData {
 		res.add("expNumTrain,"+expNumTrain);
 		res.add("expNumTest,"+expNumTest);
 		res.add("ftrTypeUsedToTrainStr,"+ftrTypeUsedToTrainStr);
+		res.add("stdFtr_destMin,"+String.format("%.6f",stdFtr_destMin));
+		res.add("stdFtr_destDiff,"+String.format("%.6f",stdFtr_destDiff));
 		res.add("dateTimeStrAra[0],"+dateTimeStrAra[0]);
 		res.add("dateTimeStrAra[1],"+dateTimeStrAra[1]);
 		for(int i =0; i<SOMFileNamesAra.length;++i) {res.add("SOMFileNamesAra["+i+"],"+SOMFileNamesAra[i]);		}
@@ -494,12 +522,17 @@ public abstract class SOM_ProjConfigData {
 	public void setUIValsFromLoad(){
 		mapMgr.setUIValsFromLoad(SOMExeDat);
 		mapMgr.setCurrentTrainDataFormatFromConfig(mapMgr.getDataFrmtTypeFromName(ftrTypeUsedToTrainStr).getVal());
+		mapMgr.setStdMinAndDiffValsFromConfig(stdFtr_destMin,stdFtr_destDiff);
 		if((preBuiltMapDirAra == null) || (preBuiltMapDirAra.length == 0)){
 			msgObj.dispWarningMessage("SOM_ProjConfigData","setUIValsFromLoad","Attempting to pass a null or empty prebuiltmap dir ara. Aborting");
 		} else {
 			mapMgr.setPreBuiltMapDirList(preBuiltMapDirAra);
 		}
 	}
+	
+	public float getStdFtr_destMin() {return stdFtr_destMin;}
+	public float getStdFtr_destDiff() {return stdFtr_destDiff;}
+	
 	
 	//load a specific configuration based on a previously run experiment
 	public void loadProjConfigForSOMExe() {	loadProjConfigForSOMExe( getProjConfigForSOMExeFileName());}
@@ -526,16 +559,18 @@ public abstract class SOM_ProjConfigData {
 				somFileNamesAraTmp.add(idx, strToks[1].trim());
 			} else {
 				switch(strToks[0].trim()) {
-					case "useSparseTrainingData" : 	{  	 useSparseTrainingData = Boolean.parseBoolean(strToks[1].trim());break;}
-					case "useSparseTestingData" : 	{    useSparseTestingData = Boolean.parseBoolean(strToks[1].trim());break;}
-					case "trainTestPartition" : 	{    trainTestPartition = Float.parseFloat(strToks[1].trim());break;}
-					case "dataType" : 				{    ftrTypeUsedToTrainStr = strToks[1].trim();break;}		//changed, but still wish to support old configs
-					case "ftrTypeUsedToTrainStr" : 	{    ftrTypeUsedToTrainStr = strToks[1].trim();break;}
-					case "expNumSmpls" : 			{    expNumSmpls = Integer.parseInt(strToks[1].trim());	break;}
-					case "expNumTrain" : 			{    expNumTrain = Integer.parseInt(strToks[1].trim());	break;}
-					case "expNumTest" : 			{    expNumTest = Integer.parseInt(strToks[1].trim());	break;}
-					case "dateTimeStrAra[0]" : 		{    dateTimeStrAra[0] = strToks[1].trim();				break;}
-					case "dateTimeStrAra[1]" : 		{    dateTimeStrAra[1] = strToks[1].trim();				break;}			
+					case "useSparseTrainingData" : 	{useSparseTrainingData = Boolean.parseBoolean(strToks[1].trim());break;}
+					case "useSparseTestingData" : 	{useSparseTestingData = Boolean.parseBoolean(strToks[1].trim());break;}
+					case "trainTestPartition" : 	{trainTestPartition = Float.parseFloat(strToks[1].trim());break;}
+					case "dataType" : 				{ftrTypeUsedToTrainStr = strToks[1].trim();break;}		//changed, but still wish to support old configs
+					case "ftrTypeUsedToTrainStr" : 	{ftrTypeUsedToTrainStr = strToks[1].trim();break;}
+					case "stdFtr_destMin" 		: 	{stdFtr_destMin = Float.parseFloat(strToks[1].trim()); break;}
+					case "stdFtr_destDiff" 		: 	{stdFtr_destDiff = Float.parseFloat(strToks[1].trim()); break;}				
+					case "expNumSmpls" : 			{expNumSmpls = Integer.parseInt(strToks[1].trim());	break;}
+					case "expNumTrain" : 			{expNumTrain = Integer.parseInt(strToks[1].trim());	break;}
+					case "expNumTest" : 			{expNumTest = Integer.parseInt(strToks[1].trim());	break;}
+					case "dateTimeStrAra[0]" : 		{dateTimeStrAra[0] = strToks[1].trim();				break;}
+					case "dateTimeStrAra[1]" : 		{dateTimeStrAra[1] = strToks[1].trim();				break;}			
 					default : {}		
 				}
 			}

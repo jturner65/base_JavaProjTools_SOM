@@ -206,11 +206,11 @@ public abstract class SOM_MapNode extends SOM_Example{
 	 */
 	private void buildRawFtrsMapFromStdFtrData_MapNode(Float[] minsAra, Float[] diffsAra) {
 		ftrVecMag = 0.0f;
-		if (ftrMaps[stdFtrMapTypeKey].size() > 0) {
-			
+		if (ftrMaps[stdFtrMapTypeKey].size() > 0) {		
+			float destDiff = mapMgr.getStdFtr_destDiff(), destMin =  mapMgr.getStdFtr_destMin();
 			for(Integer destIDX : ftrMaps[stdFtrMapTypeKey].keySet()) {
-				Float lb = minsAra[destIDX], diff = diffsAra[destIDX];
-				float val = (ftrMaps[stdFtrMapTypeKey].get(destIDX)*diff)+lb;				
+				float stdVal = ftrMaps[stdFtrMapTypeKey].get(destIDX);
+				float val = (((stdVal + destMin)/destDiff)*diffsAra[destIDX])+minsAra[destIDX];				
 				ftrMaps[rawftrMapTypeKey].put(destIDX,val);
 				ftrVecMag += val * val;
 			}//for each non-zero feature
@@ -227,14 +227,16 @@ public abstract class SOM_MapNode extends SOM_Example{
 	protected final void buildStdFtrsMapFromFtrData_MapNode(Float[] minsAra, Float[] diffsAra) {
 //		clearFtrMap(stdFtrMapTypeKey);
 		if (ftrMaps[rawftrMapTypeKey].size() > 0) {
+			float destDiff = mapMgr.getStdFtr_destDiff(), destMin =  mapMgr.getStdFtr_destMin();
 			for(Integer destIDX : ftrMaps[rawftrMapTypeKey].keySet()) {
 				Float lb = minsAra[destIDX], diff = diffsAra[destIDX];
 				float val = 0.0f;
 				if (diff==0) {//same min and max
 					if (lb > 0) {	val = 1.0f;}//only a single value same min and max-> set feature value to 1.0
 					else {val= 0.0f;}
-				} else {				val = (ftrMaps[rawftrMapTypeKey].get(destIDX)-lb)/diff;				}
-				ftrMaps[stdFtrMapTypeKey].put(destIDX,val);
+				} else {				val = (ftrMaps[rawftrMapTypeKey].get(destIDX)-lb)/diff;				}				
+				float stdVal = (val * destDiff) + destMin;
+				ftrMaps[stdFtrMapTypeKey].put(destIDX,stdVal);
 			}//for each non-zero feature
 		}
 		setFlag(stdFtrsBuiltIDX,true);

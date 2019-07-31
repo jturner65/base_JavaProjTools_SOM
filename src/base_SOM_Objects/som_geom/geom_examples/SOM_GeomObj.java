@@ -440,7 +440,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	
 	@Override
 	protected final void buildStdFtrsMap() {	//build standardized features
-		calcStdFtrVector(ftrMaps[rawftrMapTypeKey], ftrMaps[stdFtrMapTypeKey], mapMgr.getTrainFtrMins(),mapMgr.getTrainFtrDiffs(), -1.0f, 2.0f);
+		calcStdFtrVector(ftrMaps[rawftrMapTypeKey], ftrMaps[stdFtrMapTypeKey], mapMgr.getTrainFtrMins(),mapMgr.getTrainFtrDiffs());
 		setFlag(stdFtrsBuiltIDX, true);
 	}	
 	
