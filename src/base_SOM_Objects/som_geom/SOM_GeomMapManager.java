@@ -12,6 +12,7 @@ import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_SOM_Objects.som_geom.geom_UI.SOM_AnimWorldWin;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomExampleManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomFtrBndMon;
+import base_SOM_Objects.som_geom.geom_examples.SOM_GeomMapNode;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_SOM_Objects.som_geom.geom_utils.SOM_GeomProjConfig;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
@@ -538,7 +539,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	@Override
 	protected final boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode,myPoint mseClckInWorld, int btn, boolean _wasSelNotDeSel) {
 		// TODO Auto-generated method stub
-		return false;
+		return _wasSelNotDeSel;
 	}
 
 	@Override
@@ -627,6 +628,18 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	protected void drawSegmentsUMatrixDispIndiv(my_procApplet pa) {
 			
 	}
+	
+	public final void drawSelectedMapNodeGeomObjs(my_procApplet pa, float animTimeMod, boolean showLabels, boolean useLocAsClr) {
+		if((SelectedMapNodes!= null) && (SelectedMapNodes.size() > 0)) {
+			if(useLocAsClr) {
+				for(SOM_MapNode node : SelectedMapNodes.values()) {	((SOM_GeomMapNode) node).getVisObj().drawMeSelected_ClrLoc(pa, animTimeMod, false);}
+			} else {
+				for(SOM_MapNode node : SelectedMapNodes.values()) {	((SOM_GeomMapNode) node).getVisObj().drawMeSelected_ClrRnd(pa, animTimeMod, false);}			
+			}
+			if(showLabels) {for(SOM_MapNode node : SelectedMapNodes.values()) {	((SOM_GeomMapNode) node).getVisObj().drawMyLabel(pa, dispWin);}	}
+		}
+	}
+	
 	@Override
 	protected void drawMapRectangle_Indiv(my_procApplet pa, int curImgNum) {	
 		if (mseOvrData != null){	drawMseOverData(pa);}//draw mouse-over info if not showing calc analysis		 		

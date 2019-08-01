@@ -221,7 +221,19 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		}
 		return ptAra;
 	}//initAndBuildSourcePoints
-
+	
+	
+	/**
+	 * build new point location for color, increasing the distance from the origin to provide more diversity
+	 * @param planeOrigin
+	 * @param norm
+	 * @return
+	 */
+	protected myPointf buildLocForColor(myPointf pt, myVectorf norm) {		
+		float distFromOrigin = myPointf._dist(pt, myPointf.ZEROPT) + 1.0f;
+		float mod = (float) Math.pow(distFromOrigin, 1.2);
+		return new myPointf(myPointf.ZEROPT, mod, norm);
+	}
 	
 	/**
 	 * column names of rawDescrForCSV data (preprocessed data)
@@ -506,11 +518,19 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _worldBounds
 	 * @return
 	 */
-	public final int[] getClrFromWorldLoc_2D(myPointf pt,float[][] _worldBounds) {		//for 2d world bounds is idx 0 == 0,1 for min, diff, idx 1 == 0,1 for x,y
-		float rs = (pt.x-_worldBounds[0][0])/_worldBounds[1][0], gs = (pt.y-_worldBounds[0][1])/_worldBounds[1][1];
-		float bs = Math.abs(rs - gs);
+	public final int[] getClrFromWorldLoc_2D(myPointf pt, myVectorf _dir, float[][] _worldBounds) {		//for 2d world bounds is idx 0 == 0,1 for min, diff, idx 1 == 0,1 for x,y
+		//use x/y value as base color value for point
+		float rs = getBoundedClrVal(pt.x, 0, _worldBounds), gs = getBoundedClrVal(pt.y, 1, _worldBounds);//(pt.y-_worldBounds[0][1])/_worldBounds[1][1];		
+		//dir is normalized, find angle for blue value
+		float bs = (_dir.x + 1)/2.0f;
 		return new int[]{(int)(rndBnd*rs)+lBnd,(int)(rndBnd*gs)+lBnd,(int)(rndBnd*bs)+lBnd,255};
 	}
+	
+	private float getBoundedClrVal(float val, int boundIDX,float[][] _worldBounds) {
+		return (val -_worldBounds[0][boundIDX])/_worldBounds[1][boundIDX];
+		//return (rs > 1.0 ? 1.0f : rs < 0.0f  ? 0.0f : rs);
+	}
+	
 	/**
 	 * 3 d get world loc color
 	 * @param pt point
@@ -518,7 +538,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @return
 	 */
 	public final int[] getClrFromWorldLoc_3D(myPointf pt,float[][] _worldBounds) {		
-		return new int[]{(int)(255*(pt.x-_worldBounds[0][0])/_worldBounds[1][0]),(int)(255*(pt.y-_worldBounds[0][1])/_worldBounds[1][1]),(int)(255*(pt.z-_worldBounds[0][2])/_worldBounds[1][2]),255};
+		return new int[]{(int)(255*getBoundedClrVal(pt.x, 0, _worldBounds)),(int)(255*getBoundedClrVal(pt.y, 1, _worldBounds)),(int)(255*getBoundedClrVal(pt.z, 2, _worldBounds)),255};
 	}
 	
 	/**

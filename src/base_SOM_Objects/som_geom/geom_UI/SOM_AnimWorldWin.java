@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import base_SOM_Objects.SOM_MapManager;
+import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
+import base_SOM_Objects.som_geom.geom_examples.SOM_GeomMapNode;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_UI_Objects.my_procApplet;
@@ -14,6 +16,7 @@ import base_UI_Objects.windowUI.myDispWindow;
 import base_UI_Objects.windowUI.myGUIObj;
 import base_Utils_Objects.MyMathUtils;
 import base_Utils_Objects.io.MsgCodes;
+import base_Utils_Objects.vectorObjs.Tuple;
 import base_Utils_Objects.vectorObjs.myPoint;
 import base_Utils_Objects.vectorObjs.myVector;
 
@@ -74,9 +77,10 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		uiObjBMUsSetIDX			= 11,				//ui object's bmus have been set
 		mapBuiltToCurUIObjsIDX 	= 12,				//the current ui obj configuration has an underlying map built to it
 		regenUIObjsIDX 			= 13,				//regenerate ui objs with current specs
-		drawSOM_MapUIVis		= 14;
+		drawMapNodeGeomObjsIDX	= 14,				//whether or not to draw the selected map nodes' geometric representations
+		drawSOM_MapUIVis		= 15;
 	
-	protected static final int numBaseAnimWinPrivFlags = 15;
+	protected static final int numBaseAnimWinPrivFlags = 16;
 		
 	//initial values
 	public int numGeomObjs = 10, numSmplPointsPerObj = 200, numTrainingExamples = 40000, curSelGeomObjIDX = 0;
@@ -160,6 +164,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		tmpBtnNamesArray.add(new Object[]{"Hi-Light Sel " +geomObjType + " ", "Enable " +geomObjType + " Hi-Light", showSelUIObjIDX});  		
 		tmpBtnNamesArray.add(new Object[]{"Train From " +geomObjType + " Samples", "Train From " +geomObjType + " Centers/Bases", useSmplsForTrainIDX});    
 		//tmpBtnNamesArray.add(new Object[]{"Save Data", "Save Data", saveUIObjDataIDX});        
+		tmpBtnNamesArray.add(new Object[]{"Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX});
 		tmpBtnNamesArray.add(new Object[]{"Showing BMU-derived Locs", "Showing Actual Locs", showMapBasedLocsIDX});  
 		
 		String[] showWFObjsTFLabels = getShowWireFrameBtnTFLabels();
@@ -256,6 +261,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 			case mapBuiltToCurUIObjsIDX 	: { break;}     //whether map has been built and loaded for current config of spheres
 			case regenUIObjsIDX				: { if(val){rebuildSourceGeomObjs(); addPrivBtnToClear(regenUIObjsIDX);} break;}		//remake all objects, turn off flag
 			case showObjByWireFrmIDX		: { break;}
+			case drawMapNodeGeomObjsIDX		: { break;}
 			case drawSOM_MapUIVis			: { 				
 				this.setSOM_MapUIWinState(val);
 				break;}
@@ -522,10 +528,13 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 			setPrivFlags(showFullTrainingObjIDX, false);
 		}
 		 //else {			msgObj.dispInfoMessage("SOM_AnimWorldWin", "drawMe", "ui obj data loaded is false");}
+		//draw geom objects for selected map node objects
+		if(getPrivFlags(drawMapNodeGeomObjsIDX)) {mapMgr.drawSelectedMapNodeGeomObjs(pa, animTimeMod, getPrivFlags(showUIObjLabelIDX), getPrivFlags(useUIObjLocAsClrIDX));}
 		drawMeLast_Indiv();
 		pa.popStyle();pa.popMatrix();
 			
 	}//drawMe
+
 	
 	private void _drawObjs(SOM_GeomObj[] objs, int curSelObjIDX, float animTimeMod, boolean mapBuiltAndUseMapLoc, boolean showSmpls, boolean showObjs, boolean useLocClr, boolean showSel, boolean showWireFrame, boolean showLabel, boolean showSmplsLabel) {
 		if(mapBuiltAndUseMapLoc) {	//show bmus for objs
