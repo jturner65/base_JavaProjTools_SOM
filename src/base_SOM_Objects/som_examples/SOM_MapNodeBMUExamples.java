@@ -123,16 +123,35 @@ public class SOM_MapNodeBMUExamples{
 	// drawing routines for owning node
 	public void drawMapNodeWithLabel(my_procApplet p) {
 		p.pushMatrix();p.pushStyle();	
-		p.show(node.mapLoc, logExSize, nodeSphrDet, dispClrs,  visLabel); 		
+			p.show(node.mapLoc, logExSize, nodeSphrDet, dispClrs,  visLabel); 		
 		p.popStyle();p.popMatrix();		
 	}
 
 	public void drawMapNodeNoLabel(my_procApplet p) {
 		p.pushMatrix();p.pushStyle();	
-		p.show(node.mapLoc, logExSize, nodeSphrDet, dispClrs); 		
+			p.show(node.mapLoc, logExSize, nodeSphrDet, dispClrs); 		
+		p.popStyle();p.popMatrix();		
+	}
+	public void drawMapNodeWithLabel_Clr(my_procApplet p, int[] _dispClrs) {
+		p.pushMatrix();p.pushStyle();			 
+			p.translate(node.mapLoc.x,node.mapLoc.y,node.mapLoc.z); 
+			p.setFill(_dispClrs,255); p.setStroke(_dispClrs,255);			
+			p.sphereDetail(nodeSphrDet);
+			p.sphere(logExSize); 
+			p.showOffsetTextAra(1.2f * logExSize,my_procApplet.gui_Cyan, visLabel);		
+		p.popStyle();p.popMatrix();		
+	}
+
+	public void drawMapNodeNoLabel_Clr(my_procApplet p, int[] _dispClrs) {
+		p.pushMatrix();p.pushStyle();			 
+			p.translate(node.mapLoc.x,node.mapLoc.y,node.mapLoc.z); 
+			p.setFill(_dispClrs,255); p.setStroke(_dispClrs,255);			
+			p.sphereDetail(nodeSphrDet);
+			p.sphere(logExSize); 	
 		p.popStyle();p.popMatrix();		
 	}
 	
+
 	public float getPopNodeSize() {return logExSize;}
 	
 	//return a listing of all examples and their distance from this BMU

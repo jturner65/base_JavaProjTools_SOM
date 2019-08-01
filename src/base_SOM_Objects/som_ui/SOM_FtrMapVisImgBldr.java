@@ -19,10 +19,11 @@ public class SOM_FtrMapVisImgBldr implements Callable<Boolean>{
 	private float mapScaleVal, sclMultXPerPxl, sclMultYPerPxl;
 	private TreeMap<Tuple<Integer,Integer>, SOM_MapNode> MapNodes;
 	private PImage[] mapLocClrImg;
-	public SOM_FtrMapVisImgBldr(SOM_MapManager _mapMgr, PImage[] _mapLocClrImg, int[] _xVals, int[] _yVals,  float _mapScaleVal) {
+	private float[] map_ftrsMin, map_ftrsDiffs;
+	public SOM_FtrMapVisImgBldr(SOM_MapManager _mapMgr, SOM_FtrDataType _ftrType, PImage[] _mapLocClrImg, int[] _xVals, int[] _yVals, float[] _map_ftrsMins, float[] _map_ftrsDiffs, float _mapScaleVal) {
 		msgObj= _mapMgr.buildMsgObj();
 		MapNodes = _mapMgr.getMapNodes();
-		ftrType = _mapMgr.getCurrentTrainDataFormat();
+		ftrType = _ftrType;
 		mapLocClrImg = _mapLocClrImg;
 		mapX = _mapMgr.getMapNodeCols();
 		xSt = _xVals[0];
@@ -32,7 +33,10 @@ public class SOM_FtrMapVisImgBldr implements Callable<Boolean>{
 		mapY = _mapMgr.getMapNodeRows();
 		ySt = _yVals[0];
 		yEnd = _yVals[1];
-
+		map_ftrsMin = new float[_map_ftrsMins.length];
+		System.arraycopy(_map_ftrsMins, 0, map_ftrsMin, 0, map_ftrsMin.length);
+		map_ftrsDiffs = new float[_map_ftrsDiffs.length];
+		System.arraycopy(_map_ftrsDiffs, 0, map_ftrsDiffs, 0, map_ftrsDiffs.length);
 		mapScaleVal = _mapScaleVal;
 		sclMultXPerPxl = mapScaleVal * _mapMgr.getNodePerPxlCol();
 		sclMultYPerPxl = mapScaleVal * _mapMgr.getNodePerPxlRow();
@@ -87,21 +91,13 @@ public class SOM_FtrMapVisImgBldr implements Callable<Boolean>{
 				HiXLowYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xIntp1,yInt)).getCurrentFtrMap(ftrType),  
 				HiXHiYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xIntp1,yIntp1)).getCurrentFtrMap(ftrType);
 		try{
-			TreeMap<Integer, Float> ftrs = interpTreeMap(interpTreeMap(LowXLowYFtrs, LowXHiYFtrs,yInterp,1.0f),interpTreeMap(HiXLowYFtrs, HiXHiYFtrs,yInterp,1.0f),xInterp,255.0f);	
+			TreeMap<Integer, Float> ftrs = interpTreeMap(interpTreeMap(LowXLowYFtrs, LowXHiYFtrs,yInterp,1.0f),interpTreeMap(HiXLowYFtrs, HiXHiYFtrs,yInterp,1.0f),xInterp,1.0f);	
 			return ftrs;
 		} catch (Exception e){
 			msgObj.dispMessage("SOMFtrMapVisImgBuilder","getInterpFtrs","Exception triggered in mySOMMapUIWin::getInterpFtrs : \n"+e.toString() + "\n\tMessage : "+e.getMessage() , MsgCodes.error1);
 			return null;
 		}		
 	}//getInterpFtrs	
-	
-	private int getDataClrFromFtrVec(TreeMap<Integer, Float> ftrMap, Integer jpIDX) {
-		Float ftrVal = ftrMap.get(jpIDX);
-		if(ftrVal == null) {return 0;}
-		int ftr = Math.round(ftrVal);
-		int clrVal = ((ftr & 0xff) << 16) + ((ftr & 0xff) << 8) + (ftr & 0xff);
-		return clrVal;
-	}//getDataClrFromFtrVec	
 	
 	@Override
 	public Boolean call() throws Exception {
@@ -112,10 +108,21 @@ public class SOM_FtrMapVisImgBldr implements Callable<Boolean>{
 			for(int x = xSt; x < xEnd; ++x){
 				int pxlIDX = x+yCol;
 				c = getMapNodeLocFromPxlLoc(x, y);
-				TreeMap<Integer, Float> ftrs = getInterpFtrs(c[0],c[1]);
+				TreeMap<Integer, Float> clrftrs = getInterpFtrs(c[0],c[1]);
+				for (Integer ftrIDX : clrftrs.keySet()) {
+					Float ftrVal = clrftrs.get(ftrIDX);
+					int ftr;
+					if((ftrVal == null) || (map_ftrsDiffs[ftrIDX] == 0)) {ftr = 0;}
+					else {
+						float ftrClrRaw = 255.0f *((ftrVal-map_ftrsMin[ftrIDX])/map_ftrsDiffs[ftrIDX]);
+						ftr = Math.round(ftrClrRaw);
+					}
+					mapLocClrImg[ftrIDX].pixels[pxlIDX] = ((ftr & 0xff) << 16) + ((ftr & 0xff) << 8) + (ftr & 0xff);
+
+				}
 				//for (int i=0;i<mapLocClrImg.length;++i) {	mapLocClrImg[i].pixels[x+yCol] = getDataClrFromFtrVec(ftrs, i);}
 				//only access map that the interpolated vector has values for
-				for (Integer jp : ftrs.keySet()) {mapLocClrImg[jp].pixels[pxlIDX] = getDataClrFromFtrVec(ftrs, jp);}
+				//for (Integer jp : ftrs.keySet()) {mapLocClrImg[jp].pixels[pxlIDX] = getDataClrFromFtrVec(ftrs, jp);}
 			}
 		}
 		return true;

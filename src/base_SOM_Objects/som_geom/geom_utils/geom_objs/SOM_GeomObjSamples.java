@@ -166,13 +166,13 @@ public class SOM_GeomObjSamples {
 	 * draw this object's samples, using the random color
 	 * @param pa
 	 */
-	public final void drawMeSmplsClrRnd(my_procApplet pa){		pa.shape(sampleObjPShapes[SOM_GeomObjDrawType.rndClr.getVal()]);}//
+	public final void drawMeSmpls_ClrRnd(my_procApplet pa){		pa.shape(sampleObjPShapes[SOM_GeomObjDrawType.rndClr.getVal()]);}//
 	
 	/**
 	 * draw this object's samples, using the location-based color
 	 * @param pa
 	 */
-	public final void drawMeSmplsClrLoc(my_procApplet pa){		pa.shape(sampleObjPShapes[SOM_GeomObjDrawType.locClr.getVal()]);}//		
+	public final void drawMeSmpls_ClrLoc(my_procApplet pa){		pa.shape(sampleObjPShapes[SOM_GeomObjDrawType.locClr.getVal()]);}//		
 	
 	public final void drawMeSmplsSelected(my_procApplet pa) {	pa.shape(sampleObjPShapes[2]);}
 	

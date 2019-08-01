@@ -273,7 +273,7 @@ public abstract class SOM_ProjConfigData {
 				case "SOMProjName" 				: {	setSOMProjName(val); break;}
 				case "useSparseTrainingData" 	: {	useSparseTrainingData = Boolean.parseBoolean(val.toLowerCase());  break;}
 				case "useSparseTestingData" 	: {	useSparseTestingData = Boolean.parseBoolean(val.toLowerCase());  break;}
-				case "ftrTypeUsedToTrainStr" 	: { System.out.println("ftrTypeUsedToTrainStr accessed : " + val);ftrTypeUsedToTrainStr = val;break;}			//set default
+				case "ftrTypeUsedToTrainStr" 	: { ftrTypeUsedToTrainStr = val;break;}			//set default
 				case "stdFtr_destMin" 			: { stdFtr_destMin = Float.parseFloat(val); break;}
 				case "stdFtr_destDiff" 			: { stdFtr_destDiff = Float.parseFloat(val); break;}				
 				//add more variables here in instancing class - use string rep of name in config file, followed by a comma, followed by the string value (may include 2xquotes (") around string;) then can add more cases here

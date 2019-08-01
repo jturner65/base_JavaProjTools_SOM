@@ -1003,9 +1003,20 @@ public abstract class SOM_Example extends baseDataPtVis{
 		for (Integer ftrIdx : ftrMap.keySet()) {ftrs[ftrIdx]=ftrMap.get(ftrIdx);		}
 		return ftrs;
 	}
-	
 	//build feature vector on demand
-	public final float[] getFtrs() {return _getFtrsFromMap(ftrMaps[rawftrMapTypeKey]);}
+	public final float[] getFtrs(SOM_FtrDataType _type) {
+		switch(_type){
+		case Unmodified 	: {return getRawFtrs(); }
+		case Normalized  	: {return (getFlag(normFtrsBuiltIDX) ? getNormFtrs() : getRawFtrs());}
+		case Standardized   : {return (getFlag(stdFtrsBuiltIDX) ? getStdFtrs() : getRawFtrs()); }
+		default : {return getRawFtrs(); }
+	}		
+
+	
+	}
+
+	//build feature vector on demand
+	public final float[] getRawFtrs() {return _getFtrsFromMap(ftrMaps[rawftrMapTypeKey]);}
 	//build stdfeature vector on demand
 	public final float[] getStdFtrs() {return _getFtrsFromMap(ftrMaps[stdFtrMapTypeKey]);}
 	//build normfeature vector on demand

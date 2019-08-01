@@ -23,8 +23,6 @@ import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_UI_Objects.my_procApplet;
 import base_Utils_Objects.io.MsgCodes;
-import base_Utils_Objects.vectorObjs.Tuple;
-import base_Utils_Objects.vectorObjs.myPoint;
 import base_Utils_Objects.vectorObjs.myPointf;
 
 /**
@@ -195,7 +193,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 		if(numObjsToBuild!=_numObjs) {		//reset if forcing regen of all objects, required if # of objs changes
 			numObjsToBuild=_numObjs;			
 				//geom object data in example manager is now out of synch - reset to require rebuild of base array
-			geomSrcToTrainExDataManager.reset();
+			resetGeomAndTrainDataObjs();
 		}
 		numSamplesPerObj=_numSamples;		
 		ttlNumTrainExamples = _numTrainExamples;
@@ -220,7 +218,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjType.toString()+"::"+name,"execGeomObjRunnerTask::"+_callingMethod, "Finished " + _taskDescr,MsgCodes.info1);
 	}//execObjRunnerTask	
 	
-	public final void resetTrainDataObjs() {
+	public final void resetTrainDataObjs() { 
 		resetTrainDataAras();
 		trainExDataManager.reset();
 		trainDatGeomObjects = new SOM_GeomObj[0];
@@ -256,6 +254,8 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 */
 	public final void rebuildGeomExObjSamples() {
 		objRunner.setNumSamplesPerObj(numSamplesPerObj);
+		//reset training data executor since training data is built off # of samples
+		resetTrainDataObjs();
 		execGeomObjRunnerTask(sourceGeomObjects, SOM_GeomObjBldrTasks.regenSamplesBaseObj, "rebuildGeomExObjSamples","rebuilding " + numSamplesPerObj +" samples for all "+ numObjsToBuild+" geom example objects of type : " + this.geomObjType);	
 	}
 	
@@ -296,29 +296,29 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 			}
 				//now load actual object data
 			geomSrcToTrainExDataManager.loadAllPreProccedExampleData(subDir);
+				//copy mapper geom examples to example array
+			sourceGeomObjects = (SOM_GeomObj[]) geomSrcToTrainExDataManager.buildExampleArray();
+			setFlag(srcGeomObjsAllBuiltIDX, true);
+				//finalize and calc ftr vecs on geometry if we have loaded new data 
+			finishSOMExampleBuild(geomSrcToTrainExDataManager,  ""+geomObjType +" geometric (graphical source) example");		
 			this.resetTrainDataObjs();
+			
 		} else {getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjType.toString()+"::"+name,"loadPreProcTrainData","Not loading preprocessed " + geomObjType +" geometric examples since they are already loaded.", MsgCodes.info1);}
 		
-			//copy mapper geom examples to example array
-		sourceGeomObjects = (SOM_GeomObj[]) geomSrcToTrainExDataManager.buildExampleArray();
-		setFlag(srcGeomObjsAllBuiltIDX, true);
-			//finalize and calc ftr vecs on geometry if we have loaded new data 
-		finishSOMExampleBuild(geomSrcToTrainExDataManager,  ""+geomObjType +" geometric (graphical source) example");		
 		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjType.toString()+"::"+name,"loadAllPreProccedData","Finished loading preprocced data from " + subDir +  " directory.", MsgCodes.info5);
 	}//loadPreProcTrainData
-	
-
 	
 	
 	/**
 	 * train map with currently set SOM control values - UI will set values as they change, if UI is being used, otherwise values set via config files
+	 * this is what is called by "build som" button on UI
 	 */
 	public final boolean loadTrainDataMapConfigAndBuildMap(boolean mapNodesToData) {	
 		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjType.toString()+"::"+name,"loadTrainDataMapConfigAndBuildMap","Start Loading training data and building map. Mapping examples to SOM Nodes : "+mapNodesToData, MsgCodes.info1);
 		//load all training data and build test and training data partitions
 		//loadPreprocAndBuildTestTrainPartitions(projConfigData.getTrainTestPartition(), false);
 		loadPreProcTrainData(projConfigData.getPreProcDataDesiredSubDirName(),false);
-		//build test/train data partitions
+		//build test/train data partitions only if changed
 		buildTrainTestFromPartition(projConfigData.getTrainTestPartition());			
 		//build experimental directories, save training, testing and diffs/mins data to directories - only should be called when building a new map
 		initNewSOMDirsAndSaveData();		
@@ -412,17 +412,18 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	protected void buildTrainTestFromPartition(float trainTestPartition) {
 		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjType,"buildTestTrainFromInput","Starting Building Input, Test, Train data arrays.", MsgCodes.info5);		
 		if(!getFlag(srcGeomObjsAllBuiltIDX)) {
-			getMsgObj().dispWarningMessage("SOM_GeomMapManager::"+geomObjType,"buildTestTrainFromInput","Failed Building Input, Test, Train data arrays due to no Geometric data loaded to build training data from.  Aborting");return;
+			getMsgObj().dispWarningMessage("SOM_GeomMapManager::"+geomObjType,"buildTestTrainFromInput","Rebuilding Geometric Objects using current UI Values.");
+			buildGeomExampleObjs();
 		} 
-		
-		resetTrainDataObjs();
-		
-			//synthesize training data using current configuration from UI with loaded data
-		trainExDataManager.buildTrainingDataFromGeomObjs(geomSrcToTrainExDataManager, ttlNumTrainExamples);
-		trainDatGeomObjects = (SOM_GeomObj[]) trainExDataManager.buildExampleArray();
-		setFlag(trainDatObjsAllBuiltIDX,true);
-			//finalize and calc ftr vecs on geometry if we have loaded new data 
-		finishSOMExampleBuild(trainExDataManager,  ""+geomObjType +" Geom object-derived training example");
+		if(!getFlag(trainDatObjsAllBuiltIDX)) {
+			resetTrainDataObjs();		
+				//synthesize training data using current configuration from UI with loaded data
+			trainExDataManager.buildTrainingDataFromGeomObjs(geomSrcToTrainExDataManager, ttlNumTrainExamples);
+			trainDatGeomObjects = (SOM_GeomObj[]) trainExDataManager.buildExampleArray();
+			setFlag(trainDatObjsAllBuiltIDX,true);
+				//finalize and calc ftr vecs on geometry if we have loaded new data 
+			finishSOMExampleBuild(trainExDataManager,  ""+geomObjType +" Geom object-derived training example");
+		}
 		//set input data, shuffle it and set test and train partitions
 		//only build test and train partitions if training data has been synthesized from geometric examples
 		setInputTrainTestShuffleDataAras(trainTestPartition);
@@ -514,9 +515,8 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 * geom-specific SOM value display - TODO
 	 */
 	@Override
-	protected final SOM_MseOvrDisplay getDataPointAtLoc_Priv(float x, float y, float sensitivity, myPointf locPt) {
+	protected final SOM_MseOvrDisplay getDataPointAtLoc_Priv(float x, float y, float sensitivity, SOM_MapNode nearestNode, myPointf locPt) {
 		SOM_MseOvrDisplay dp; 
-		SOM_MapNode nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 		dp = setMseDataExampleNodeName(locPt,nearestNode,sensitivity);		
 		return dp;
 	}
@@ -532,29 +532,6 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 		return this.setMseDataExampleFtrs_IdxSorted(ptrLoc, ftrs, sens);
 	}
 
-
-	/**
-	 * check mouse over/click in experiment; if btn == -1 then mouse over
-	 * @param msx
-	 * @param msy
-	 * @param mseClckInWorld
-	 * @param btn
-	 * @return
-	 */
-	public abstract boolean checkMouseClick(int msx, int msy, myPoint mseClckInWorld, int btn);
-	/**
-	 * check mouse drag/move in experiment; if btn == -1 then mouse over
-	 * @param msx
-	 * @param msy
-	 * @param mseClckInWorld
-	 * @param btn
-	 * @return
-	 */
-	public abstract boolean checkMouseDragMove(int msx, int msy, myPoint mseClckInWorld, int btn);
-	/**
-	 * notify all exps that mouse has been released
-	 */
-	public abstract void setMouseRelease();
 
 	
 	/**

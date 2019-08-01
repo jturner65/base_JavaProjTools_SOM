@@ -60,7 +60,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	/**
 	 * type of features used to train map
 	 */
-	protected SOM_FtrDataType ftrTypeUsedToTrain; 
+	private SOM_FtrDataType ftrTypeUsedToTrain; 
 	/**
 	 * whether or not all features have been set - if trained by norm features, this will not be true after ctor, otherwise it will be
 	 */
@@ -210,7 +210,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 			float destDiff = mapMgr.getStdFtr_destDiff(), destMin =  mapMgr.getStdFtr_destMin();
 			for(Integer destIDX : ftrMaps[stdFtrMapTypeKey].keySet()) {
 				float stdVal = ftrMaps[stdFtrMapTypeKey].get(destIDX);
-				float val = (((stdVal + destMin)/destDiff)*diffsAra[destIDX])+minsAra[destIDX];				
+				float val = (((stdVal - destMin)/destDiff)*diffsAra[destIDX])+minsAra[destIDX];				
 				ftrMaps[rawftrMapTypeKey].put(destIDX,val);
 				ftrVecMag += val * val;
 			}//for each non-zero feature
@@ -631,6 +631,14 @@ public abstract class SOM_MapNode extends SOM_Example{
 	
 	public float[] getDispBoxDims() {return dispBoxDims;}
 	
+	public SOM_FtrDataType getFtrTypeUsedToTrain() {
+		return ftrTypeUsedToTrain;
+	}
+
+	public void setFtrTypeUsedToTrain(SOM_FtrDataType ftrTypeUsedToTrain) {
+		this.ftrTypeUsedToTrain = ftrTypeUsedToTrain;
+	}
+
 	//get class probability from bmu for passed class
 	//treat this example's probability for a particular class as the probability of its BMU for that class (# examples of that class divided by total # of class seen at that node)
 	//override these base class functions to be aliases for map node functions

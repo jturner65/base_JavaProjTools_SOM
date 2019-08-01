@@ -7,6 +7,7 @@ import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;
 import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_SOM_Objects.som_examples.SOM_MapNode;
+import base_UI_Objects.my_procApplet;
 import base_Utils_Objects.vectorObjs.Tuple;
 
 public abstract class SOM_GeomMapNode extends SOM_MapNode {
@@ -133,8 +134,25 @@ public abstract class SOM_GeomMapNode extends SOM_MapNode {
 	 * called at the end of feature vector building, but before another map node is built
 	 */
 	@Override
-	protected void _buildFeatureVectorEnd_Priv() {visObj = buildVisObj();}
+	protected void _buildFeatureVectorEnd_Priv() {
+		visObj = buildVisObj();
+	}
+	
+	////////////////
+	// draw
+	
+	///////////////
+	// draw geometric representations
+	public final SOM_GeomObj getVisObj() {return visObj;} 
+	//////////
+	// overriding base class
+	@Override
+	public final void drawMePopLbl(my_procApplet p, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeWithLabel_Clr(p, visObj.locClrAra);	}	
+	@Override
+	public final void drawMePopNoLbl(my_procApplet p, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeNoLabel_Clr(p, visObj.locClrAra);	}	
 
+	
+	
 	@Override
 	protected String dispFtrVal(TreeMap<Integer, Float> ftrs, Integer idx) {
 		return "";

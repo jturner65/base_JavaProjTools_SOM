@@ -13,6 +13,7 @@ import base_UI_Objects.windowUI.myGUIObj;
 import base_Utils_Objects.*;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.myPoint;
+import base_Utils_Objects.vectorObjs.myVector;
 
 /**
  * base UI window functionality to be used for any SOM-based projects
@@ -538,8 +539,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	//build new SOM_MAP map using UI-entered values, then load resultant data - map nodes, bmus to training data
 	protected final void buildNewSOMMap(){
 		msgObj.dispMessage("SOM_MapUIWin","buildNewSOMMap","Starting Map Build", MsgCodes.info5);
-		//setPrivFlags(buildSOMExe, false);			//causes button to never display
-		super.addPrivBtnToClear(buildSOMExe);		//causes map to be built 2x if called from draw
+		setPrivFlags(buildSOMExe,false);
 		//send current UI values to map manager, load appropriate data, build directory structure and execute map
 		boolean returnCode = mapMgr.loadTrainDataMapConfigAndBuildMap(true);
 		//returnCode is whether map was built and trained successfully
@@ -841,7 +841,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		if(getPrivFlags(mapDataLoadedIDX) != mapMgr.isMapDrawable()){setPrivFlags(mapDataLoadedIDX,mapMgr.isMapDrawable());}
 		boolean isMapDataLoaded = getPrivFlags(mapDataLoadedIDX);
 		drawMap(isMapDataLoaded);		
-		if(doBuildMap){buildNewSOMMap(); doBuildMap = false;setPrivFlags(buildSOMExe,false);} 
+		if(doBuildMap){buildNewSOMMap(); doBuildMap = false;} 
 		else if(getPrivFlags(buildSOMExe)) {	doBuildMap = true;	}	
 	}
 	protected abstract void drawSetDispFlags();
@@ -871,10 +871,35 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * @param mouseY
 	 * @return
 	 */
-	protected final boolean chkMouseOvr(int mouseX, int mouseY){	
+	protected final boolean checkMouseOvr(int mouseX, int mouseY){	
 		return mapMgr.chkMouseOvr(mouseX, mouseY, (float) guiObjs[uiMseRegionSensIDX].getVal());
 	}//chkMouseOvr
 	
+
+	/**
+	 * check mouse over/click in experiment; if btn == -1 then mouse over
+	 * @param msx
+	 * @param msy
+	 * @param mseClckInWorld
+	 * @param btn
+	 * @return
+	 */
+	public final boolean checkMouseClick(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
+		return mapMgr.checkMouseClick(mouseX, mouseY, mseClckInWorld, mseBtn);
+	};
+	/**
+	 * check mouse drag/move in experiment; if btn == -1 then mouse over
+	 * @param msx
+	 * @param msy
+	 * @param mseClckInWorld
+	 * @param btn
+	 * @return  
+	 */
+	public final boolean checkMouseDragMove(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
+		return mapMgr.checkMouseDragMove(mouseX, mouseY,pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
+	};
+	
+	public final void checkMouseRelease() {mapMgr.checkMouseRelease();};
 	
 	//return strings for directory names and for individual file names that describe the data being saved.  used for screenshots, and potentially other file saving
 	//first index is directory suffix - should have identifying tags based on major/archtypical component of sim run

@@ -28,6 +28,7 @@ import base_Utils_Objects.threading.myProcConsoleMsgMgr;
 import base_Utils_Objects.vectorObjs.Tuple;
 import base_Utils_Objects.vectorObjs.myPoint;
 import base_Utils_Objects.vectorObjs.myPointf;
+import base_Utils_Objects.vectorObjs.myVector;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -349,9 +350,6 @@ public abstract class SOM_MapManager {
 		projConfigData = buildProjConfigData(_argsMap);
 		Integer _logLevel = (Integer)_argsMap.get("logLevel");
 		msgObj.setOutputMethod(projConfigData.getFullLogFileNameString(), _logLevel);
-		stdFtr_destMin = projConfigData.getStdFtr_destMin();
-		stdFtr_destDiff = projConfigData.getStdFtr_destDiff();
-
 
 		//fileIO is used to load and save info from/to local files except for the raw data loading, which has its own handling
 		fileIO = new FileIOManager(msgObj,"SOM_MapManager::"+name);
@@ -581,7 +579,7 @@ public abstract class SOM_MapManager {
 	}//setInputTestTrainDataArasShuffle
 	
 	/**
-	 * build file names, including info for data type used to train map, save training data, and save mins/diffs
+	 * build file names, including info for data type used to train map, save training data using specified ftr structure, and save mins/diffs
 	 */
 	protected void initNewSOMDirsAndSaveData() {
 		msgObj.dispMessage("SOM_MapManager::"+name,"initNewSOMDirsAndSaveData","Begin building new directories, saving Train, Test data and data Mins and Diffs. Train size : " + numTrainData+ " Testing size : " + numTestData+".", MsgCodes.info5);	
@@ -829,29 +827,32 @@ public abstract class SOM_MapManager {
 	//so rounding to ints give map node tuple coords, while float gives interp between neighbors
 	protected final float[] getMapNodeLocFromPxlLoc(float mapPxlX, float mapPxlY, float sclVal){	return new float[]{(sclVal* mapPxlX * nodeXPerPxl) - .5f, (sclVal* mapPxlY * nodeYPerPxl) - .5f};}	
 	
-	//val is 0->256
+	//val is 0.0f->256.0f
 	private final int getDataClrFromFloat(Float val) {
 		int ftr = Math.round(val);		
 		int clrVal = ((ftr & 0xff) << 16) + ((ftr & 0xff) << 8) + (ftr & 0xff);
 		return clrVal;
 	}//getDataClrFromFloat
 	
-	/**
-	 * make color based on ftr value at particular index call this if map is trained on scaled or normed ftr data
-	 * @param ftrMap ftr map
-	 * @param classIDX index in feature vector we are querying
-	 * @return hex clr
-	 */
-	private final int getDataClrFromFtrVec(TreeMap<Integer, Float> ftrMap, Integer classIDX) {
-		Float ftrVal = ftrMap.get(classIDX);
-//		if(ftrVal == null) {	ftrVal=0.0f;		}
-//		if (minFtrValSeen[classIDX] > ftrVal) {minFtrValSeen[classIDX]=ftrVal;}
-//		else if (maxFtrValSeen[classIDX] < ftrVal) {maxFtrValSeen[classIDX]=ftrVal;}
-		int ftr = 0;
-		if(ftrVal != null) {	ftr = Math.round(ftrVal);		}
-		int clrVal = ((ftr & 0xff) << 16) + ((ftr & 0xff) << 8) + (ftr & 0xff);
-		return clrVal;
-	}//getDataClrFromFtrVec
+//	/**
+//	 * make color based on ftr value at particular index call this if map is trained on scaled or normed ftr data
+//	 * @param ftrMap ftr map
+//	 * @param classIDX index in feature vector we are querying
+//	 * @return hex clr
+//	 */
+//	private final int getDataClrFromFtrVec(TreeMap<Integer, Float> ftrMap, Integer classIDX) {
+//		Float ftrVal = ftrMap.get(classIDX);
+////		if(ftrVal == null) {	ftrVal=0.0f;		}
+////		if (minFtrValSeen[classIDX] > ftrVal) {minFtrValSeen[classIDX]=ftrVal;}
+////		else if (maxFtrValSeen[classIDX] < ftrVal) {maxFtrValSeen[classIDX]=ftrVal;}
+//		if(ftrVal == null) {return 0;}
+//		float ftrClrRaw = 255.0f *((ftrVal-trainDat_destMin)/trainDat_destDiff);
+//		int ftr = Math.round(ftrClrRaw);		
+//
+//		
+//		int clrVal = ((ftr & 0xff) << 16) + ((ftr & 0xff) << 8) + (ftr & 0xff);
+//		return clrVal;
+//	}//getDataClrFromFtrVec
 	
 	//set colors of image of umatrix map
 	public final void setMapUMatImgClrs() {
@@ -903,7 +904,15 @@ public abstract class SOM_MapManager {
 			//check if single threaded
 			int numThds = getNumUsableThreads();
 			boolean mtCapable = isMTCapable();
-			if(mtCapable) {				
+			for(int i=0;i<this.map_ftrsMin.length;++i) {
+				msgObj.dispInfoMessage("SOM_MapManager::"+name, "setMapImgClrs", "\tidx:"+i+" | min ftr val seen : " + map_ftrsMin[i] + " | Diffs " + this.map_ftrsDiffs[i]);
+			}
+
+			//map_ftrsDiffs, 
+			//map_ftrsMin
+			
+			if(mtCapable) {			
+				msgObj.dispMessage("SOM_MapManager::"+name, "setMapImgClrs", "Building Feature Map Vis Images in Multiple threads.", MsgCodes.info5);
 				//partition into numUsableThreads threads - split x values by this #, use all y values
 				int numPartitions = numThds;
 				int numXPerPart = mapPerFtrWtImgs[0].width / numPartitions;			
@@ -915,15 +924,16 @@ public abstract class SOM_MapManager {
 				//each thread builds columns of every map
 				for (int i=0; i<numPartitions-1;++i) {	
 					xVals[1] += numXPerPart;
-					mapImgBuilders.add(new SOM_FtrMapVisImgBldr(this, mapPerFtrWtImgs, xVals, yVals, mapScaleVal));
+					mapImgBuilders.add(new SOM_FtrMapVisImgBldr(this,curMapTrainFtrType,  mapPerFtrWtImgs, xVals, yVals,map_ftrsMin,map_ftrsDiffs, mapScaleVal));
 					xVals[0] = xVals[1];				
 				}
 				//last one
 				xVals[1] += numXLastPart;
-				mapImgBuilders.add(new SOM_FtrMapVisImgBldr(this, mapPerFtrWtImgs, xVals, yVals, mapScaleVal));
+				mapImgBuilders.add(new SOM_FtrMapVisImgBldr(this,curMapTrainFtrType, mapPerFtrWtImgs, xVals, yVals,map_ftrsMin,map_ftrsDiffs, mapScaleVal));
 				invokeSOMFtrDispBuild(mapImgBuilders);
 				//try {mapImgFtrs = pa.th_exec.invokeAll(mapImgBuilders);for(Future<Boolean> f: mapImgFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }					
 			} else {
+				msgObj.dispMessage("SOM_MapManager::"+name, "setMapImgClrs", "Building Feature Map Vis Images in a Single thread.", MsgCodes.info5);
 				//single threaded exec
 				for(int y = 0; y<mapPerFtrWtImgs[0].height; ++y){
 					int yCol = y * mapPerFtrWtImgs[0].width;
@@ -931,7 +941,16 @@ public abstract class SOM_MapManager {
 						int pxlIDX = x+yCol;
 						//c = getMapNodeLocFromPxlLoc(x, y,mapScaleVal);
 						TreeMap<Integer, Float> clrftrs = getInterpFtrs(getMapNodeLocFromPxlLoc(x, y,mapScaleVal),curMapTrainFtrType,1.0f, 255.0f);
-						for (Integer ftr : clrftrs.keySet()) {mapPerFtrWtImgs[ftr].pixels[pxlIDX] = getDataClrFromFtrVec(clrftrs, ftr);}
+						for (Integer ftrIDX : clrftrs.keySet()) {
+							Float ftrVal = clrftrs.get(ftrIDX);
+							if((ftrVal == null) || (map_ftrsDiffs[ftrIDX] == 0)) {mapPerFtrWtImgs[ftrIDX].pixels[pxlIDX] = 0;}
+							else {
+								float ftrClrRaw = 255.0f *((ftrVal-map_ftrsMin[ftrIDX])/map_ftrsDiffs[ftrIDX]);
+								int ftr = Math.round(ftrClrRaw);
+								mapPerFtrWtImgs[ftrIDX].pixels[pxlIDX] = ((ftr & 0xff) << 16) + ((ftr & 0xff) << 8) + (ftr & 0xff);
+	
+							}
+						}
 					}
 				}
 			}
@@ -1314,8 +1333,8 @@ public abstract class SOM_MapManager {
 		float[] tmpMapMaxs = initMapMgrMeanMinVar(numTrnFtrs);
 		int numEx = MapNodes.size();
 		//build feature stats for all map nodes
-		for(SOM_MapNode mapNode : MapNodes.values()) {
-			float[] ftrData = mapNode.getFtrs();
+		for(SOM_MapNode _mapNode : MapNodes.values()) {
+			float[] ftrData = _mapNode.getFtrs(_mapNode.getFtrTypeUsedToTrain());
 			for(int d = 0; d<numTrnFtrs; ++d){
 				map_ftrsMean[d] += ftrData[d];
 				tmpMapMaxs[d] = (tmpMapMaxs[d] < ftrData[d] ? ftrData[d]  : tmpMapMaxs[d]);
@@ -1331,14 +1350,14 @@ public abstract class SOM_MapManager {
 		float[] ftrData ;
 		//for every node, now build standardized features 
 		for(Tuple<Integer, Integer> key : MapNodes.keySet()){
-			SOM_MapNode tmp = MapNodes.get(key);
+			SOM_MapNode _mapNode = MapNodes.get(key);
 			//accumulate map ftr moments
-			ftrData = tmp.getFtrs();
+			ftrData = _mapNode.getFtrs(_mapNode.getFtrTypeUsedToTrain());
 			for(int d = 0; d<map_ftrsMean.length; ++d){
 				diff = map_ftrsMean[d] - ftrData[d];
 				map_ftrsVar[d] += diff*diff;
 			}
-			setNodesArrayOfMapNodeByFtr(tmp);
+			setNodesArrayOfMapNodeByFtr(_mapNode);
 		}
 		for(int d = 0; d<map_ftrsVar.length; ++d){map_ftrsVar[d] /= 1.0f*numEx;}		
 
@@ -1364,6 +1383,11 @@ public abstract class SOM_MapManager {
 		
 		//finalize all examples - needs to finalize all nodes to manage the SOMMapNodeBMUExamples for the nodes that have not been mapped to 
 		for(SOM_MapNode node : MapNodes.values()){		node.finalizeAllBmus(typeIDX);	}
+		
+		
+		//calculate ftr segments of nodes
+		buildFtrWtSegmentsOnMap();
+		
 		msgObj.dispMessage("SOM_MapManager::"+name,"_finalizeBMUProcessing","Finished finalizing BMU processing for data type : "+ dataType.getName()+".", MsgCodes.info5);		
 	}//sa_finalizeBMUProcessing
 		
@@ -1864,35 +1888,35 @@ public abstract class SOM_MapManager {
 	public final SOM_MseOvrDisplay getDataPointAtLoc(float x, float y, float sensitivity, myPointf locPt){//, boolean useScFtrs){
 		//float sensitivity = (float) guiObjs[uiMseRegionSensIDX].getVal();
 		SOM_MseOvrDisplay dp = null; 
-		SOM_MapNode nearestNode;
+		SOM_MapNode nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 		if (win.getPrivFlags(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {			//disp class probs at nearest node
 			//find nearest map node to location
-			nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
+			//nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 			dp = setMseDataExampleClassProb(locPt,nearestNode,sensitivity);
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) {	//disp category probs at nearest node			
-			nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
+			//nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 			dp = setMseDataExampleCategoryProb(locPt,nearestNode,sensitivity);
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {	//feature weight display
 			TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y},curMapTrainFtrType, 1.0f, 1.0f);
 			if(ftrs == null) {return null;} 
 			dp = setMseDataExampleFtrs(locPt, ftrs, sensitivity);				
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) { //if showing node pop, mouse over should show actual population
-			nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
+			//nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 			dp = setMseDataExampleNodePop(locPt,nearestNode,sensitivity);
 		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawUMatrixIDX)) {		//draw umatrix distance
 			dp = setMseDataExampleDists(locPt, getBiCubicInterpUMatVal(new float[] {x, y}),uMatDist_Min, uMatDist_Diff, sensitivity);				
 		} else {					//application-dependent display
-			dp = getDataPointAtLoc_Priv(x, y, sensitivity, locPt);
+			dp = getDataPointAtLoc_Priv(x, y, sensitivity,nearestNode, locPt);
 		}
 		if(dp==null) {
-			nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
+			//nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 			dp = setMseDataExampleNodeName(locPt,nearestNode,sensitivity);
 		}
 		dp.setMapLoc(locPt);
 		return dp;
 	}//getDataPointAtLoc
 	
-	protected abstract SOM_MseOvrDisplay getDataPointAtLoc_Priv(float x, float y, float sensitivity, myPointf locPt);
+	protected abstract SOM_MseOvrDisplay getDataPointAtLoc_Priv(float x, float y, float sensitivity, SOM_MapNode nearestNode, myPointf locPt);
 	
 	//draw map rectangle and map nodes
 	public final void drawMapRectangle(my_procApplet pa) {
@@ -2005,15 +2029,22 @@ public abstract class SOM_MapManager {
 	}//drawUMatrix
 	
 	//draw boxes around each node representing ftrwt-based segments that nodes belong to, so long as their ftr values are higher than threshold amount
-	public final void drawFtrWtSegments(my_procApplet pa, float valThresh, int curFtrIdx) {
+	public final void drawFtrWtSegments(my_procApplet pa, float valThresh, int curFtrIdx) { 
 		pa.pushMatrix();pa.pushStyle();
 		TreeMap<Float,ArrayList<SOM_MapNode>> map = PerFtrHiWtMapNodes[curFtrIdx];
 		//map holds map nodes keyed by wt of nodes that actually have curFtrIdx presence
 		SortedMap<Float,ArrayList<SOM_MapNode>> headMap = map.headMap(valThresh);
-		for(Float key : headMap.keySet()) {
-			ArrayList<SOM_MapNode> ara = headMap.get(key);
-			for (SOM_MapNode node : ara) {		node.drawMeFtrWtSegClr(pa, curFtrIdx, key);}
-		}		
+		if(headMap.size()!=0) {
+			float minVal = headMap.lastKey();
+			float diffVal = headMap.firstKey() - minVal;
+			if(diffVal == 0) {		minVal =0.0f;		diffVal = 1.0f;	}
+			for(Float key : headMap.keySet()) {
+				float wt = (key-minVal)/diffVal;
+				ArrayList<SOM_MapNode> ara = headMap.get(key);
+				//System.out.println("Min Val :  " + minVal + " | Diff Val : " + diffVal + " WT : " + wt);
+				for (SOM_MapNode node : ara) {		node.drawMeFtrWtSegClr(pa, curFtrIdx, wt);}
+			}	
+		}
 		pa.popStyle();pa.popMatrix();
 	}//drawFtrWtSegments
 	
@@ -2104,7 +2135,7 @@ public abstract class SOM_MapManager {
 
 	public final boolean chkMouseOvr(int mouseX, int mouseY, float sens) {
 		float mapMseX = mouseX - SOM_mapLoc[0], mapMseY = mouseY - SOM_mapLoc[1];//, mapLocX = mapX * mapMseX/mapDims[2],mapLocY = mapY * mapMseY/mapDims[3] ;
-		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapDims[0]) && (mapMseY < mapDims[1])){
+		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapDims[0]) && (mapMseY < mapDims[1])){	//within bounds of map
 			float[] mapNLoc=getMapNodeLocFromPxlLoc(mapMseX,mapMseY, 1.0f);
 			//msgObj.dispInfoMessage("SOM_MapManager::"+name,"chkMouseOvr","In Map : Mouse loc : " + mouseX + ","+mouseY+ "\tRel to upper corner ("+  mapMseX + ","+mapMseY +") | mapNLoc : ("+mapNLoc[0]+","+ mapNLoc[1]+")" );
 			mseOvrData = getDataPointAtLoc(mapNLoc[0], mapNLoc[1], sens, new myPointf(mapMseX, mapMseY,0));			
@@ -2115,7 +2146,45 @@ public abstract class SOM_MapManager {
 			return false;
 		}
 	}
+
+	/**
+	 * check mouse over/click in experiment; if btn == -1 then mouse over
+	 * @param mouseX mouse x in world
+	 * @param mouseY mouse y in world
+	 * @param mseClckInWorld
+	 * @param btn
+	 * @return
+	 */
+	public final boolean checkMouseClick(int mouseX, int mouseY, myPoint mseClckInWorld, int btn) {
+		float mapMseX = mouseX - SOM_mapLoc[0], mapMseY = mouseY - SOM_mapLoc[1];//, mapLocX = mapX * mapMseX/mapDims[2],mapLocY = mapY * mapMseY/mapDims[3] ;
+		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapDims[0]) && (mapMseY < mapDims[1])){	//within bounds of map
+			float[] mapNLoc=getMapNodeLocFromPxlLoc(mapMseX,mapMseY, 1.0f);
+			SOM_MapNode nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(mapNLoc[0]+.5f), (int)(mapNLoc[1]+.5f)));			
+			return checkMouseClick_Indiv(mouseX, mouseY, mapNLoc[0], mapNLoc[1], nearestNode, mseClckInWorld, btn);
+		} else {//clicked in blank space, treat like release
+			checkMouseRelease();
+			return false;
+		}		
+	};
+	protected abstract boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode, myPoint mseClckInWorld, int btn);
+	/**
+	 * check mouse drag/move in experiment; if btn == -1 then mouse over
+	 * @param mouseX mouse x in world
+	 * @param mouseY mouse y in world
+	 * @param mseClckInWorld
+	 * @param btn
+	 * @return
+	 */
+	public final boolean checkMouseDragMove(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
+		if(-1==mseBtn) {return false;}		//should be handled by mouse move 
+		return checkMouseDragMove_Indiv( mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
+	};
+	public abstract boolean checkMouseDragMove_Indiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn);
 	
+	public final void checkMouseRelease() {
+		checkMouseRelease_Indiv();
+	}
+	protected abstract void checkMouseRelease_Indiv();
 	
 	//get ftr name/idx/instance-specific value based to save an image of current map
 	public abstract String getSOMLocClrImgForFtrFName(int ftrIDX);
@@ -2276,6 +2345,7 @@ public abstract class SOM_MapManager {
 	public void setStdMinAndDiffValsFromConfig(float _stdFtr_destMin,float _stdFtr_destDiff) {
 		stdFtr_destMin = _stdFtr_destMin;
 		stdFtr_destDiff =_stdFtr_destDiff;		
+		msgObj.dispInfoMessage("SOM_MapManager::"+name,"setStdMinAndDiffValsFromConfig","stdFtr_destMin set to : " +stdFtr_destMin + " and stdFtr_destDiff set to : " + stdFtr_destDiff+" from Config."); 	
 	};
 	public float getStdFtr_destMin() {return stdFtr_destMin;}
 	public float getStdFtr_destDiff() {return stdFtr_destDiff;}

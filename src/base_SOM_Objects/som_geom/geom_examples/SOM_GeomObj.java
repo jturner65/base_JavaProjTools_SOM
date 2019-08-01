@@ -149,7 +149,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		super(_mapMgr, SOM_ExDataType.MapNode,_GeoType.toString()+"_"+_mapNode.OID);
 		_ctorInit(_mapMgr,incrID(), _GeoType, true);
 
-		float[] mapFtrsAra = _mapNode.getFtrs();	
+		float[] mapFtrsAra = _mapNode.getRawFtrs();	
 		srcPts = buildSrcPtsFromBMUMapNodeFtrs(mapFtrsAra,  objGeomType.getVal(), dispLabel);
 		//_DBG_DispObjStats(mapFtrsAra,"map node ctor", "Map Node:  "+ _mapNode.OID);
 		//build geomSrcSamples from srcPts 
@@ -534,6 +534,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * draw entire object this class represents, using location as color or using randomly assigned color
 	 * @param pa
 	 */	
+		
 	public final void drawMeClrRnd(my_procApplet pa) {
 		pa.pushMatrix();pa.pushStyle();		
 		pa.setFill(rndClrAra,255);
@@ -571,47 +572,6 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		pa.popStyle();pa.popMatrix();	
 	}
 	
-	/**
-	 * draw entire object this class represents at location dictated by BMU, using location as color or using randomly assigned color
-	 * @param pa
-	 */	
-	public final void drawMeClrRnd_BMU(my_procApplet pa) {
-		pa.pushMatrix();pa.pushStyle();		
-		pa.setFill(rndClrAra,255);
-		pa.setStroke(rndClrAra,255);
-		_drawMe_Geom_BMU(pa,  SOM_GeomObjDrawType.rndClr);
-		pa.popStyle();pa.popMatrix();	
-	}	
-	
-	
-	public final void drawMeClrLoc_BMU(my_procApplet pa) {
-		pa.pushMatrix();pa.pushStyle();		
-		pa.setFill(locClrAra,255);
-		pa.setStroke(locClrAra,255);
-		_drawMe_Geom_BMU(pa, SOM_GeomObjDrawType.locClr );
-		pa.popStyle();pa.popMatrix();	
-	}
-	
-	/**
-	 * draw entire object this class represents, using location as color or using randomly assigned color
-	 * @param pa
-	 */	
-	public final void drawMeClrRnd_WF_BMU(my_procApplet pa) {
-		pa.pushMatrix();pa.pushStyle();		
-		pa.noFill();
-		pa.setStroke(rndClrAra,255);
-		_drawMe_Geom_BMU(pa, SOM_GeomObjDrawType.noFillRndClr);
-		pa.popStyle();pa.popMatrix();	
-	}	
-	
-	
-	public final void drawMeClrLoc_WF_BMU(my_procApplet pa) {
-		pa.pushMatrix();pa.pushStyle();		
-		pa.noFill();
-		pa.setStroke(locClrAra,255);
-		_drawMe_Geom_BMU(pa, SOM_GeomObjDrawType.noFillLocClr);
-		pa.popStyle();pa.popMatrix();	
-	}
 		
 	/**
 	 * Draw this object's label
@@ -635,41 +595,26 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	protected abstract void _drawMe_Geom(my_procApplet pa, SOM_GeomObjDrawType drawType);
 	
 	/**
-	 * draw this object at location dictated by bmu
-	 * @param pa
-	 * @param animTmMod
-	 */	
-	protected abstract void _drawMe_Geom_BMU(my_procApplet pa, SOM_GeomObjDrawType drawType);
-	
-	/**
 	 * draw this object with appropriate selected highlight/cue
 	 * @param pa
-	 * @param animTmMod
+	 * @param animTimeMod
 	 */
-	public void drawMeSelected_ClrLoc(my_procApplet pa, float animTmMod) {
+	public final void drawMeSelected_ClrLoc(my_procApplet pa, float animTimeMod, boolean drawSamples) {
 		drawMeClrLoc(pa);
-		_drawMeSelected(pa,animTmMod);
-	
+		_drawMeSelected(pa,animTimeMod);
+		if(drawSamples && null!=objSamples) {objSamples.drawMeSmplsSelected(pa);}	
 	};
-	public void drawMeSelected_ClrLoc_Smpl(my_procApplet pa, float animTmMod) {
-		drawMeSelected_ClrLoc(pa,animTmMod);
-		if(null!=objSamples) {objSamples.drawMeSmplsSelected(pa);}
-	}
 	/**
 	 * draw this object with appropriate selected highlight/cue
 	 * @param pa
 	 * @param animTmMod
 	 */
-	public void drawMeSelected_ClrRnd(my_procApplet pa, float animTmMod) {
+	public void drawMeSelected_ClrRnd(my_procApplet pa, float animTmMod, boolean drawSamples) {
 		drawMeClrRnd(pa);
 		_drawMeSelected(pa,animTmMod);
+		if(drawSamples && null!=objSamples) {objSamples.drawMeSmplsSelected(pa);}
 	};
-	public void drawMeSelected_ClrRnd_Smpl(my_procApplet pa, float animTmMod) {
-		drawMeSelected_ClrRnd(pa,animTmMod);
-		if(null!=objSamples) {objSamples.drawMeSmplsSelected(pa);}
-	}
 	protected abstract void _drawMeSelected(my_procApplet pa, float animTmMod);
-	
 	
 	/**
 	 * draw this object's samples, using the random color
@@ -681,62 +626,59 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * draw this object's samples, using the random color
 	 * @param pa
 	 */
-	public final void drawMeSmplsClrRnd(my_procApplet pa){	if(null!=objSamples) {objSamples.drawMeSmplsClrRnd(pa);}}//
+	public final void drawMeSmpls_ClrRnd(my_procApplet pa){	if(null!=objSamples) {objSamples.drawMeSmpls_ClrRnd(pa);}}//
 	
 	/**
 	 * draw this object's samples, using the location-based color
 	 * @param pa
 	 */
-	public final void drawMeSmplsClrLoc(my_procApplet pa){	if(null!=objSamples) {objSamples.drawMeSmplsClrLoc(pa);}}//
+	public final void drawMeSmpls_ClrLoc(my_procApplet pa){	if(null!=objSamples) {objSamples.drawMeSmpls_ClrLoc(pa);}}//
 	
-
-
 	//////////////////////////////
 	// bmu drawing
+	
 	/**
-	 * Draw this object's bmu with a label
+	 * draw entire object this class represents at location dictated by BMU, using location as color or using randomly assigned color
 	 * @param pa
-	 */
-	public abstract void drawMyLabel_BMU(my_procApplet pa);
-	public void drawMeSelected_BMU_ClrLoc(my_procApplet pa,float animTmMod) {
-		drawMeClrLoc_BMU(pa);
-		_drawMeSelected_BMU(pa, animTmMod);
-	}
-	public void drawMeSelected_BMU_ClrRnd(my_procApplet pa,float animTmMod) { 
-		drawMeClrRnd_BMU(pa);
-		_drawMeSelected_BMU(pa, animTmMod);
-	}
-	protected abstract void _drawMeSelected_BMU(my_procApplet pa, float animTmMod);
+	 */	
+	public final void drawMeClrRnd_BMU(my_procApplet pa) {
+		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeClrRnd(pa);}
+	}	
 	
 	
-	public final void drawMeSmplsClrRnd_BMU(my_procApplet pa){
-//		pa.pushMatrix();pa.pushStyle();
-//		pa.setFill(rndClrAra,255); 
-//		pa.setStroke(rndClrAra,255);
-//		pa.sphereDetail(ptDet);
-//		for(myPointf pt : objSamplePts){
-//			//pt.drawMeObjRandClr_BMU(pa);
-//			pa.pushMatrix(); 
-//			pa.translate(((Geom_SOMMapNode)(pt.getBmu())).mapLoc); 
-//			pa.sphere(ptRad); 
-//			pa.popMatrix();
-//		}
-//		pa.popStyle();pa.popMatrix();
+	public final void drawMeClrLoc_BMU(my_procApplet pa) {
+		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeClrLoc(pa);}
+	}
+	
+	/**
+	 * draw wireframe rep of object's bmu
+	 * @param pa
+	 */	
+	public final void drawMeClrRnd_WF_BMU(my_procApplet pa) {
+		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeClrRnd_WF(pa);}
+	}		
+	
+	public final void drawMeClrLoc_WF_BMU(my_procApplet pa) {
+		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeClrLoc_WF(pa);}
+	}
+	
+	public final void drawMyLabel_BMU(my_procApplet pa, SOM_AnimWorldWin animWin) {	
+		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMyLabel(pa, animWin);	}
+	}
+	
+	public final void drawMeSelected_ClrLoc_BMU(my_procApplet pa,float animTmMod, boolean drawSamples) {
+		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeSelected_ClrLoc(pa, animTmMod,drawSamples);}
+	}
+	public void drawMeSelected_ClrRnd_BMU(my_procApplet pa,float animTmMod, boolean drawSamples) { 
+		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeSelected_ClrRnd(pa, animTmMod,drawSamples);}
+	}	
+	
+	public final void drawMeSmpls_ClrRnd_BMU(my_procApplet pa){
+		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeSmpls_ClrRnd(pa);}
 	}//
 	
-	public final void drawMeSmplsClrLoc_BMU(my_procApplet pa){
-//		pa.pushMatrix();pa.pushStyle();		
-//		pa.setFill(locClrAra,255);
-//		pa.setStroke(locClrAra,255);
-//		pa.sphereDetail(ptDet);
-//		for(myPointf pt : objSamplePts){
-//			//pt.drawMeObjLocClr_BMU(pa);
-//			pa.pushMatrix(); 
-//			pa.translate(((Geom_SOMMapNode)(pt.getBmu())).worldLoc); 
-//			pa.sphere(ptRad); 
-//			pa.popMatrix();
-//		}
-//		pa.popStyle();pa.popMatrix();
+	public final void drawMeSmpls_ClrLoc_BMU(my_procApplet pa){
+		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeSmpls_ClrLoc(pa);}
 	}//	
 
 
