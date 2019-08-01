@@ -23,7 +23,9 @@ import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_UI_Objects.my_procApplet;
 import base_Utils_Objects.io.MsgCodes;
+import base_Utils_Objects.vectorObjs.myPoint;
 import base_Utils_Objects.vectorObjs.myPointf;
+import base_Utils_Objects.vectorObjs.myVector;
 
 /**
  * extension of SOM_MapManager intended for geometric/graphical objects
@@ -358,8 +360,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	
 	public void saveCurrentTrainData() {
 		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjType.toString()+"::"+name,"saveCurrentTrainData","Begin saving current data as training data, mins and diffs. Train size : " + numTrainData+ " Testing size : " + numTestData+".", MsgCodes.info5);	
-		initNewSOMDirsAndSaveData();
-		
+		initNewSOMDirsAndSaveData();	
 		
 		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjType.toString()+"::"+name,"saveCurrentTrainData","Finished saving current data as training data, mins and diffs. Train size : " + numTrainData+ " Testing size : " + numTestData+".", MsgCodes.info5);	
 	}
@@ -530,6 +531,27 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	@Override
 	public final SOM_MseOvrDisplay setMseDataExampleFtrs(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {
 		return this.setMseDataExampleFtrs_IdxSorted(ptrLoc, ftrs, sens);
+	}
+	////////////////////////
+	// mouse functions
+	
+	@Override
+	protected final boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode,myPoint mseClckInWorld, int btn, boolean _wasSelNotDeSel) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public final boolean checkMouseDragMove_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D,
+			myVector mseDragInWorld, int mseBtn) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected final void checkMouseRelease_Indiv() {
+		// TODO Auto-generated method stub
+		
 	}
 
 

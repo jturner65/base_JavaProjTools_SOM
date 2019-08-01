@@ -65,8 +65,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	 * whether or not all features have been set - if trained by norm features, this will not be true after ctor, otherwise it will be
 	 */
 	protected boolean mapNodeFtrsHaveBeenSet;
-	
-	
+
 	//build a map node from a float array of ftrs
 	public SOM_MapNode(SOM_MapManager _map, Tuple<Integer,Integer> _mapNodeLoc, SOM_FtrDataType _ftrTypeUsedToTrain, float[] _ftrs) {
 		super(_map, SOM_ExDataType.MapNode,"Node_"+_mapNodeLoc.x+"_"+_mapNodeLoc.y);
@@ -659,7 +658,8 @@ public abstract class SOM_MapNode extends SOM_Example{
 	public final Tuple<Integer,Integer> getBMUMapNodeCoord(){	return mapNodeCoord;}
 	
 	//////////////////////////
-	// draw routines
+	// UI Interaction and draw routines
+
 	public float getPopNodeSize(int _typeIDX) {return BMUExampleNodes[_typeIDX].getPopNodeSize();}
 	public void drawMePopLbl(my_procApplet p, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeWithLabel(p);	}	
 	public void drawMePopNoLbl(my_procApplet p, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeNoLabel(p);	}	
@@ -690,6 +690,15 @@ public abstract class SOM_MapNode extends SOM_Example{
 		if(null==ftrWtMgrAtIdx) {return;}			//does not have weight at this feature index
 		ftrWtMgrAtIdx.drawMe(p,(int) (255*wt));
 	}//drawMeFtrWtSegClr
+	
+	public final void drawMeSelected(my_procApplet p) {
+		p.pushMatrix();p.pushStyle();
+		p.noFill();
+		p.setStroke(new int[] {255,255,0}, 255);
+		p.setStrokeWt(3.0f);
+		p.drawRect(dispBoxDims);		
+		p.popStyle();p.popMatrix();	
+	}
 	
 	//draw class pop segment contribution 
 	public final void drawMeClassClr(my_procApplet p, Integer cls) {classSegManager.drawMeSegClr(p,  cls);	}//drawMeFtrWtSegClr

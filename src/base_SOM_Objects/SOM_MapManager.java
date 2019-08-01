@@ -65,7 +65,12 @@ public abstract class SOM_MapManager {
 	/**
 	 * all nodes of som map, keyed by node location as tuple of row/col coordinates
 	 */
-	protected TreeMap<Tuple<Integer,Integer>, SOM_MapNode> MapNodes;	
+	protected TreeMap<Tuple<Integer,Integer>, SOM_MapNode> MapNodes;
+	/**
+	 * all nodes of current som map that have been selected by the user, keyed by node location as tuple of row/col coordinates
+	 */
+	protected TreeMap<Tuple<Integer,Integer>, SOM_MapNode> SelectedMapNodes;	
+
 	/**
 	 * map of ftr idx and all map nodes that have non-zero presence in that ftr
 	 */
@@ -1407,6 +1412,7 @@ public abstract class SOM_MapManager {
 	//called when som wts are first loaded
 	public void initMapNodes() {
 		MapNodes = new TreeMap<Tuple<Integer,Integer>, SOM_MapNode>();
+		SelectedMapNodes = new TreeMap<Tuple<Integer,Integer>, SOM_MapNode>();
 		//this will hold all map nodes keyed by the ftr idx where they have non-zero weight
 		MapNodesByFtrIDX = new TreeMap<Integer, HashSet<SOM_MapNode>>();
 		//reset segement holders
@@ -1962,6 +1968,8 @@ public abstract class SOM_MapManager {
 			}
 			//if draw all map nodes
 			if(win.getPrivFlags(SOM_MapUIWin.mapDrawAllMapNodesIDX)){	if(drawLbl) {drawAllNodesWithLbl(pa);} else {drawAllNodesNoLbl(pa);} }
+			//draw nodes that are selected
+			if(SelectedMapNodes.size() > 0) {drawNodesIfSelected(pa);}
 			//instance-specific stuff to draw on map, after nodes are drawn
 			drawMapRectangle_Indiv(pa, curImgNum);
 			pa.lights();
@@ -2014,6 +2022,12 @@ public abstract class SOM_MapManager {
 		}
 		pa.popStyle();pa.popMatrix();		
 	}//drawValidationData
+	
+	public final void drawNodesIfSelected(my_procApplet pa) {
+		pa.pushMatrix();pa.pushStyle();
+		for(SOM_MapNode node : SelectedMapNodes.values()){	node.drawMeSelected(pa);	}		
+		pa.popStyle();pa.popMatrix();
+	}
 	
 	//draw boxes around each node representing umtrx values derived in SOM code - deprecated, now drawing image
 	public final void drawUMatrixVals(my_procApplet pa) {
@@ -2159,14 +2173,19 @@ public abstract class SOM_MapManager {
 		float mapMseX = mouseX - SOM_mapLoc[0], mapMseY = mouseY - SOM_mapLoc[1];//, mapLocX = mapX * mapMseX/mapDims[2],mapLocY = mapY * mapMseY/mapDims[3] ;
 		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapDims[0]) && (mapMseY < mapDims[1])){	//within bounds of map
 			float[] mapNLoc=getMapNodeLocFromPxlLoc(mapMseX,mapMseY, 1.0f);
-			SOM_MapNode nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(mapNLoc[0]+.5f), (int)(mapNLoc[1]+.5f)));			
-			return checkMouseClick_Indiv(mouseX, mouseY, mapNLoc[0], mapNLoc[1], nearestNode, mseClckInWorld, btn);
+			Tuple<Integer, Integer> nodeCoords = new Tuple<Integer,Integer> ((int)(mapNLoc[0]+.5f), (int)(mapNLoc[1]+.5f));
+			SOM_MapNode nearestNode = getMapNodeByCoords(nodeCoords);
+			SOM_MapNode oldNode = SelectedMapNodes.get(nodeCoords);
+			boolean _wasSelNotDeSel = (oldNode == null);
+			if(_wasSelNotDeSel) {	SelectedMapNodes.put(nodeCoords,nearestNode);}
+			else {					SelectedMapNodes.remove(nodeCoords);}
+			return checkMouseClick_Indiv(mouseX, mouseY, mapNLoc[0], mapNLoc[1], nearestNode, mseClckInWorld, btn,_wasSelNotDeSel);
 		} else {//clicked in blank space, treat like release
 			checkMouseRelease();
 			return false;
 		}		
 	};
-	protected abstract boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode, myPoint mseClckInWorld, int btn);
+	protected abstract boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode, myPoint mseClckInWorld, int btn, boolean _wasSelNotDeSel);
 	/**
 	 * check mouse drag/move in experiment; if btn == -1 then mouse over
 	 * @param mouseX mouse x in world
