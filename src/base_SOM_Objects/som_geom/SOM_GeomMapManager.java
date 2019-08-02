@@ -18,7 +18,6 @@ import base_SOM_Objects.som_geom.geom_utils.SOM_GeomProjConfig;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen.SOM_GeomObjBldrRunner;
 import base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen.SOM_GeomObjBldrTasks;
-import base_SOM_Objects.som_ui.SOM_MseOvrDisplay;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
@@ -517,10 +516,8 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 * geom-specific SOM value display - TODO
 	 */
 	@Override
-	protected final SOM_MseOvrDisplay getDataPointAtLoc_Priv(float x, float y, float sensitivity, SOM_MapNode nearestNode, myPointf locPt) {
-		SOM_MseOvrDisplay dp; 
-		dp = setMseDataExampleNodeName(locPt,nearestNode,sensitivity);		
-		return dp;
+	protected final void getDataPointAtLoc_Priv(float x, float y, float sensitivity, SOM_MapNode nearestNode, myPointf locPt, int uiMseDispData) {
+		setMseDataExampleNodeName(locPt,nearestNode,sensitivity);		
 	}
 	/**
 	 * instancing application should determine whether we want to display features sorted in magnitude order, or sorted in idx order
@@ -530,8 +527,8 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 * @return
 	 */
 	@Override
-	public final SOM_MseOvrDisplay setMseDataExampleFtrs(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {
-		return this.setMseDataExampleFtrs_IdxSorted(ptrLoc, ftrs, sens);
+	public final void setMseDataExampleFtrs(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {
+		setMseDataExampleFtrs_IdxSorted(ptrLoc, ftrs, sens);
 	}
 	////////////////////////
 	// mouse functions
@@ -642,7 +639,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	
 	@Override
 	protected void drawMapRectangle_Indiv(my_procApplet pa, int curImgNum) {	
-		if (mseOvrData != null){	drawMseOverData(pa);}//draw mouse-over info if not showing calc analysis		 		
+		drawMseOverData(pa);			
 
 	}
 

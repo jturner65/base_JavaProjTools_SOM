@@ -14,6 +14,7 @@ import base_SOM_Objects.som_segments.segments.SOM_FtrWtSegment;
 import base_SOM_Objects.som_segments.segments.SOM_UMatrixSegment;
 import base_SOM_Objects.som_ui.*;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
+import base_SOM_Objects.som_ui.win_disp_ui.SOM_MseOvrDispTypeVals;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.*;
 import base_SOM_Objects.som_utils.runners.SOM_CalcExFtrs_Runner;
@@ -264,8 +265,6 @@ public abstract class SOM_MapManager {
 	 */
 	protected ExecutorService th_exec;	//to access multithreading - instance from calling program
 	protected final int numUsableThreads;		//# of threads usable by the application
-
-	protected SOM_MseOvrDisplay mseOverExample;
 	
 	
 	//////////////////////////////
@@ -335,7 +334,14 @@ public abstract class SOM_MapManager {
 	/**
 	 * location and label of mouse-over point in map 
 	 */
-	protected SOM_MseOvrDisplay mseOvrData;//location and label of mouse-over point in map
+	protected SOM_MseOvrDisplay mseOverExample;
+	/**
+	 * UI-chosen desired mouse display data
+	 */
+	protected SOM_MseOvrDispTypeVals uiMseDispData = SOM_MseOvrDispTypeVals.mseOvrNoneIDX;
+	protected int custUIMseDispData = -1;
+
+	
 	/**
 	 * @param _win owning window(may be null)
 	 * @param _dims dimensions of SOM Map in pxls (used for topological distances)
@@ -796,7 +802,8 @@ public abstract class SOM_MapManager {
 		mapNodeWtDispThresh = _mapNodeWtDispThresh;
 		mapNodeDispType = SOM_ExDataType.getVal(_mapNodeDispType);
 		mapNodePopDispThresh = _mapNodePopDispThresh;
-		mseOvrData = null;	
+		mseOverExample.clearMseDat();
+		//mseOvrData = null;	
 	}
 	
 	//private final void reInitMapCubicSegments() {	if (win != null) {	mapUMatrixCubicSegmentsImg = win.pa.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, win.pa.ARGB);}}//ARGB to treat like overlay
@@ -1865,7 +1872,7 @@ public abstract class SOM_MapManager {
 	 * @param sens
 	 * @return
 	 */
-	public abstract SOM_MseOvrDisplay setMseDataExampleFtrs(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens);
+	public abstract void setMseDataExampleFtrs(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens);
 	/**
 	 * display features in wt-descending order
 	 * @param ptrLoc
@@ -1873,7 +1880,7 @@ public abstract class SOM_MapManager {
 	 * @param sens
 	 * @return
 	 */
-	public final SOM_MseOvrDisplay setMseDataExampleFtrs_WtSorted(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs_WtSorted(ptrLoc, ftrs, sens); return mseOverExample;}
+	public final void setMseDataExampleFtrs_WtSorted(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs_WtSorted(ptrLoc, ftrs, sens); mseOverExample.setMapLoc(ptrLoc);}
 	/**
 	 * display features in idx-ascending order
 	 * @param ptrLoc
@@ -1881,48 +1888,123 @@ public abstract class SOM_MapManager {
 	 * @param sens
 	 * @return
 	 */
-	public final SOM_MseOvrDisplay setMseDataExampleFtrs_IdxSorted(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs_IdxSorted(ptrLoc, ftrs, sens); return mseOverExample;}
+	public final void setMseDataExampleFtrs_IdxSorted(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs_IdxSorted(ptrLoc, ftrs, sens); mseOverExample.setMapLoc(ptrLoc);}
 	
-	public final SOM_MseOvrDisplay setMseDataExampleDists(myPointf ptrLoc, float dist, float distMin, float distDiff, float sens) {mseOverExample.initMseDatUMat( ptrLoc, dist,distMin,distDiff, sens);return mseOverExample;}
-	public final SOM_MseOvrDisplay setMseDataExampleClassProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, true);return mseOverExample;}
-	public final SOM_MseOvrDisplay setMseDataExampleCategoryProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, false);return mseOverExample;}
-	public final SOM_MseOvrDisplay setMseDataExampleNodePop(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, SOM_ExDataType.Training);return mseOverExample;}
-	public final SOM_MseOvrDisplay setMseDataExampleNodeName(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatNodeName(ptrLoc, nearestNode, sens);return mseOverExample;}	
-	public final SOM_MseOvrDisplay setMseDataExampleNone() { mseOverExample.clearMseDat(); return mseOverExample;}
+	public final void setMseDataExampleDists(myPointf ptrLoc, float dist, float distMin, float distDiff, float sens) {mseOverExample.initMseDatUMat( ptrLoc, dist,distMin,distDiff, sens);mseOverExample.setMapLoc(ptrLoc);}
+	public final void setMseDataExampleClassProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, true);mseOverExample.setMapLoc(ptrLoc);}
+	public final void setMseDataExampleCategoryProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, false);mseOverExample.setMapLoc(ptrLoc);}
+	public final void setMseDataExampleNodePop(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, SOM_ExDataType.Training);mseOverExample.setMapLoc(ptrLoc);}
+	public final void setMseDataExampleNodeName(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatNodeName(ptrLoc, nearestNode, sens);mseOverExample.setMapLoc(ptrLoc);}	
+	public final void setMseDataExampleNone() { mseOverExample.clearMseDat(); }
 	
 	//get datapoint at passed location in map coordinates (so should be in frame of map's upper right corner) - assume map is square and not hex
-	public final SOM_MseOvrDisplay getDataPointAtLoc(float x, float y, float sensitivity, myPointf locPt){//, boolean useScFtrs){
+	public final void setMouseOverDataText(float x, float y, float sensitivity, myPointf locPt){//, boolean useScFtrs){
 		//float sensitivity = (float) guiObjs[uiMseRegionSensIDX].getVal();
-		SOM_MseOvrDisplay dp = null; 
+		
 		SOM_MapNode nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
-		if (win.getPrivFlags(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {			//disp class probs at nearest node
-			//find nearest map node to location
-			//nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
-			dp = setMseDataExampleClassProb(locPt,nearestNode,sensitivity);
-		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) {	//disp category probs at nearest node			
-			//nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
-			dp = setMseDataExampleCategoryProb(locPt,nearestNode,sensitivity);
-		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {	//feature weight display
-			TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y},curMapTrainFtrType, 1.0f, 1.0f);
-			if(ftrs == null) {return null;} 
-			dp = setMseDataExampleFtrs(locPt, ftrs, sensitivity);				
-		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) { //if showing node pop, mouse over should show actual population
-			//nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
-			dp = setMseDataExampleNodePop(locPt,nearestNode,sensitivity);
-		} else if (win.getPrivFlags(SOM_MapUIWin.mapDrawUMatrixIDX)) {		//draw umatrix distance
-			dp = setMseDataExampleDists(locPt, getBiCubicInterpUMatVal(new float[] {x, y}),uMatDist_Min, uMatDist_Diff, sensitivity);				
-		} else {					//application-dependent display
-			dp = getDataPointAtLoc_Priv(x, y, sensitivity,nearestNode, locPt);
-		}
-		if(dp==null) {
-			//nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
-			dp = setMseDataExampleNodeName(locPt,nearestNode,sensitivity);
-		}
-		dp.setMapLoc(locPt);
-		return dp;
+		switch(uiMseDispData) {
+			case mseOvrMapNodeLocIDX : {			//Map loc
+				setMseDataExampleNodeName(locPt,nearestNode,sensitivity);
+				break;}
+			case mseOvrUMatDistIDX : {			//UMatrix dist
+				setMseDataExampleDists(locPt, getBiCubicInterpUMatVal(new float[] {x, y}),uMatDist_Min, uMatDist_Diff, sensitivity);	
+				break;}
+			case mseOvrMapNodePopIDX : {			//Population
+				setMseDataExampleNodePop(locPt,nearestNode,sensitivity);
+				break;}
+			case mseOvrFtrIDX : {			//feature values
+				TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y},curMapTrainFtrType, 1.0f, 1.0f);
+				if(ftrs == null) {setMseDataExampleNone();return ;} 
+				setMseDataExampleFtrs(locPt, ftrs, sensitivity);				
+				break;}
+			case mseOvrClassIDX : {			//class	
+				setMseDataExampleClassProb(locPt,nearestNode,sensitivity);
+				break;}
+			case mseOvrCatIDX : {			//category
+				setMseDataExampleCategoryProb(locPt,nearestNode,sensitivity);
+				break;}
+			case mseOvrNoneIDX : {			//none
+				setMseDataExampleNodeName(locPt,nearestNode,sensitivity);
+				break;}
+			default : {
+				getDataPointAtLoc_Priv(x, y, sensitivity,nearestNode, locPt, custUIMseDispData);
+			}
+		}//switch
+
+		mseOverExample.setMapLoc(locPt);
+
 	}//getDataPointAtLoc
 	
-	protected abstract SOM_MseOvrDisplay getDataPointAtLoc_Priv(float x, float y, float sensitivity, SOM_MapNode nearestNode, myPointf locPt);
+	protected abstract void getDataPointAtLoc_Priv(float x, float y, float sensitivity, SOM_MapNode nearestNode, myPointf locPt, int uiMseDispData);
+	
+
+	public SOM_MseOvrDispTypeVals getUiMseDispData() {	return uiMseDispData;}
+	public void setUiMseDispData(SOM_MseOvrDispTypeVals uiMseDispData) {	this.uiMseDispData = uiMseDispData;}
+	
+	public int getCustUIMseDispData() {	return custUIMseDispData;}
+	public void setCustUIMseDispData(int _custUIMseDispData) {	custUIMseDispData = _custUIMseDispData;}
+	
+	public final boolean checkMouseOvr(int mouseX, int mouseY, float sens) {
+		float mapMseX = mouseX - SOM_mapLoc[0], mapMseY = mouseY - SOM_mapLoc[1];//, mapLocX = mapX * mapMseX/mapDims[2],mapLocY = mapY * mapMseY/mapDims[3] ;
+		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapDims[0]) && (mapMseY < mapDims[1])){	//within bounds of map
+			float[] mapNLoc=getMapNodeLocFromPxlLoc(mapMseX,mapMseY, 1.0f);
+			//msgObj.dispInfoMessage("SOM_MapManager::"+name,"chkMouseOvr","In Map : Mouse loc : " + mouseX + ","+mouseY+ "\tRel to upper corner ("+  mapMseX + ","+mapMseY +") | mapNLoc : ("+mapNLoc[0]+","+ mapNLoc[1]+")" );
+			//mseOvrData = 
+			//mseOverExample = 
+					setMouseOverDataText(mapNLoc[0], mapNLoc[1], sens, new myPointf(mapMseX, mapMseY,0));		
+			
+			return true;
+		} else {
+			setMseDataExampleNone();
+			//mseOvrData = null;
+			return false;
+		}
+	}
+
+	/**
+	 * check mouse over/click in experiment; if btn == -1 then mouse over
+	 * @param mouseX mouse x in world
+	 * @param mouseY mouse y in world
+	 * @param mseClckInWorld
+	 * @param btn
+	 * @return
+	 */
+	public final boolean checkMouseClick(int mouseX, int mouseY, myPoint mseClckInWorld, int btn) {
+		float mapMseX = mouseX - SOM_mapLoc[0], mapMseY = mouseY - SOM_mapLoc[1];//, mapLocX = mapX * mapMseX/mapDims[2],mapLocY = mapY * mapMseY/mapDims[3] ;
+		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapDims[0]) && (mapMseY < mapDims[1])){	//within bounds of map
+			float[] mapNLoc=getMapNodeLocFromPxlLoc(mapMseX,mapMseY, 1.0f);
+			Tuple<Integer, Integer> nodeCoords = new Tuple<Integer,Integer> ((int)(mapNLoc[0]+.5f), (int)(mapNLoc[1]+.5f));
+			SOM_MapNode nearestNode = getMapNodeByCoords(nodeCoords);
+			SOM_MapNode oldNode = SelectedMapNodes.get(nodeCoords);
+			boolean _wasSelNotDeSel = (oldNode == null);
+			if(_wasSelNotDeSel) {	SelectedMapNodes.put(nodeCoords,nearestNode);}
+			else {					SelectedMapNodes.remove(nodeCoords);}
+			return checkMouseClick_Indiv(mouseX, mouseY, mapNLoc[0], mapNLoc[1], nearestNode, mseClckInWorld, btn,_wasSelNotDeSel);
+		} else {//clicked in blank space, treat like release
+			checkMouseRelease();
+			return false;
+		}		
+	};
+	protected abstract boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode, myPoint mseClckInWorld, int btn, boolean _wasSelNotDeSel);
+	/**
+	 * check mouse drag/move in experiment; if btn == -1 then mouse over
+	 * @param mouseX mouse x in world
+	 * @param mouseY mouse y in world
+	 * @param mseClckInWorld
+	 * @param btn
+	 * @return
+	 */
+	public final boolean checkMouseDragMove(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
+		if(-1==mseBtn) {return false;}		//should be handled by mouse move 
+		return checkMouseDragMove_Indiv( mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
+	};
+	public abstract boolean checkMouseDragMove_Indiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn);
+	
+	public final void checkMouseRelease() {
+		checkMouseRelease_Indiv();
+	}
+	protected abstract void checkMouseRelease_Indiv();
+	
 	
 	//draw map rectangle and map nodes
 	public final void drawMapRectangle(my_procApplet pa) {
@@ -2145,65 +2227,9 @@ public abstract class SOM_MapManager {
 		}
 		pa.popStyle();pa.popMatrix();		
 	}
-	public final void drawMseOverData(my_procApplet pa) {	mseOvrData.drawMeLblMap(pa);}
+	//public final void drawMseOverData(my_procApplet pa) {	mseOvrData.drawMeLblMap(pa);}
 
-	public final boolean chkMouseOvr(int mouseX, int mouseY, float sens) {
-		float mapMseX = mouseX - SOM_mapLoc[0], mapMseY = mouseY - SOM_mapLoc[1];//, mapLocX = mapX * mapMseX/mapDims[2],mapLocY = mapY * mapMseY/mapDims[3] ;
-		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapDims[0]) && (mapMseY < mapDims[1])){	//within bounds of map
-			float[] mapNLoc=getMapNodeLocFromPxlLoc(mapMseX,mapMseY, 1.0f);
-			//msgObj.dispInfoMessage("SOM_MapManager::"+name,"chkMouseOvr","In Map : Mouse loc : " + mouseX + ","+mouseY+ "\tRel to upper corner ("+  mapMseX + ","+mapMseY +") | mapNLoc : ("+mapNLoc[0]+","+ mapNLoc[1]+")" );
-			mseOvrData = getDataPointAtLoc(mapNLoc[0], mapNLoc[1], sens, new myPointf(mapMseX, mapMseY,0));			
-			return true;
-		} else {
-			setMseDataExampleNone();
-			mseOvrData = null;
-			return false;
-		}
-	}
-
-	/**
-	 * check mouse over/click in experiment; if btn == -1 then mouse over
-	 * @param mouseX mouse x in world
-	 * @param mouseY mouse y in world
-	 * @param mseClckInWorld
-	 * @param btn
-	 * @return
-	 */
-	public final boolean checkMouseClick(int mouseX, int mouseY, myPoint mseClckInWorld, int btn) {
-		float mapMseX = mouseX - SOM_mapLoc[0], mapMseY = mouseY - SOM_mapLoc[1];//, mapLocX = mapX * mapMseX/mapDims[2],mapLocY = mapY * mapMseY/mapDims[3] ;
-		if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapDims[0]) && (mapMseY < mapDims[1])){	//within bounds of map
-			float[] mapNLoc=getMapNodeLocFromPxlLoc(mapMseX,mapMseY, 1.0f);
-			Tuple<Integer, Integer> nodeCoords = new Tuple<Integer,Integer> ((int)(mapNLoc[0]+.5f), (int)(mapNLoc[1]+.5f));
-			SOM_MapNode nearestNode = getMapNodeByCoords(nodeCoords);
-			SOM_MapNode oldNode = SelectedMapNodes.get(nodeCoords);
-			boolean _wasSelNotDeSel = (oldNode == null);
-			if(_wasSelNotDeSel) {	SelectedMapNodes.put(nodeCoords,nearestNode);}
-			else {					SelectedMapNodes.remove(nodeCoords);}
-			return checkMouseClick_Indiv(mouseX, mouseY, mapNLoc[0], mapNLoc[1], nearestNode, mseClckInWorld, btn,_wasSelNotDeSel);
-		} else {//clicked in blank space, treat like release
-			checkMouseRelease();
-			return false;
-		}		
-	};
-	protected abstract boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode, myPoint mseClckInWorld, int btn, boolean _wasSelNotDeSel);
-	/**
-	 * check mouse drag/move in experiment; if btn == -1 then mouse over
-	 * @param mouseX mouse x in world
-	 * @param mouseY mouse y in world
-	 * @param mseClckInWorld
-	 * @param btn
-	 * @return
-	 */
-	public final boolean checkMouseDragMove(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
-		if(-1==mseBtn) {return false;}		//should be handled by mouse move 
-		return checkMouseDragMove_Indiv( mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
-	};
-	public abstract boolean checkMouseDragMove_Indiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn);
-	
-	public final void checkMouseRelease() {
-		checkMouseRelease_Indiv();
-	}
-	protected abstract void checkMouseRelease_Indiv();
+	public final void drawMseOverData(my_procApplet pa) {	mseOverExample.drawMeLblMap(pa);}
 	
 	//get ftr name/idx/instance-specific value based to save an image of current map
 	public abstract String getSOMLocClrImgForFtrFName(int ftrIDX);

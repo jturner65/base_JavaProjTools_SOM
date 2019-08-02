@@ -127,6 +127,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * @param _winTxt
 	 * @param _canDrawTraj
 	 */
+
+	
 	public SOM_MapUIWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, boolean _canDrawTraj) {
 		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt, _canDrawTraj);
 		initAndSetSOMDatUIMaps();
@@ -862,6 +864,33 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	// end draw routines
 
 	
+	@Override
+	public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {
+		msgObj.dispMessage("Straff_SOMMapUIWin","handleSideMenuMseOvrDispSel","Click Mouse display in "+name+" : btn : " + btn, MsgCodes.info4);
+		SOM_MseOvrDispTypeVals uiMseDispData = handleSideMenuMseOvrDisp_MapBtnToType(btn, val);
+		//msgObj.dispInfoMessage("Straff_SOMMapUIWin","handleSideMenuMseOvrDispSel","Mouse Display Function : " + btn +" selected == "+ uiMseDispData.toString());
+		if(uiMseDispData == SOM_MseOvrDispTypeVals.mseOvrOtherIDX) {	handleSideMenuMseOvrDispSel_Indiv(btn,val);	}
+		mapMgr.setUiMseDispData(uiMseDispData);
+		msgObj.dispMessage("Straff_SOMMapUIWin","handleSideMenuMseOvrDispSel","Done Click Mouse display in "+name+" : btn : " + btn + " | Dist Type : " + uiMseDispData.toString(), MsgCodes.info4);
+	}
+	
+	/**
+	 * determine how buttons map to mouse over display types
+	 * @param btn 
+	 * @return
+	 */
+	protected abstract SOM_MseOvrDispTypeVals handleSideMenuMseOvrDisp_MapBtnToType(int btn, boolean val);
+	
+	/**
+	 * custom mouse button handling
+	 * @param btn
+	 * @param val
+	 */
+	protected final void handleSideMenuMseOvrDispSel_Indiv(int btn, boolean val) {
+		if(val) {		mapMgr.setCustUIMseDispData(btn);} else {	mapMgr.setCustUIMseDispData(-1);}	
+	}
+
+	
 	//given pixel location relative to upper left corner of map, return map node float - this measures actual distance in map node coords
 	//so rounding to ints give map node tuple coords, while float gives interp between neighbors
 	//protected final float[] getMapNodeLocFromPxlLoc(float mapPxlX, float mapPxlY, float sclVal){	return new float[]{(sclVal* mapPxlX * mapMgr.getNodePerPxlCol()) - .5f, (sclVal* mapPxlY * mapMgr.getNodePerPxlRow()) - .5f};}	
@@ -872,7 +901,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * @return
 	 */
 	protected final boolean checkMouseOvr(int mouseX, int mouseY){	
-		return mapMgr.chkMouseOvr(mouseX, mouseY, (float) guiObjs[uiMseRegionSensIDX].getVal());
+		return mapMgr.checkMouseOvr(mouseX, mouseY, (float) guiObjs[uiMseRegionSensIDX].getVal());
 	}//chkMouseOvr
 	
 

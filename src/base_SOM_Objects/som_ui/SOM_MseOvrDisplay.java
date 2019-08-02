@@ -30,7 +30,7 @@ public abstract class SOM_MseOvrDisplay {
 		dpFillClr =  new int[] {255,255,255,255}; 
 		dpStkClr = new int[] {255,255,255,255}; 
 	}//ctor
-	
+
 	protected abstract int[] setNodeColors(); 
 	
 	
@@ -256,6 +256,11 @@ public abstract class SOM_MseOvrDisplay {
 	
 	public final void clearMseDat() {
 		initAllCtor(0.0f);
+		mapLoc = new myPointf(0,0,0);
+		nodeClrs = setNodeColors(); 
+		dpFillClr =  new int[] {255,255,255,255}; 
+		dpStkClr = new int[] {255,255,255,255}; 
+
 		display = false;
 	}
 		
@@ -280,6 +285,11 @@ public abstract class SOM_MseOvrDisplay {
 	/**
 	 * draw current mouse label data at current position
 	 * @param p
+	 */	
+	public void drawMeLblMap(my_procApplet p){drawMseLbl_Info(p,mapLoc);}
+	/**
+	 * draw current mouse label data at passed position
+	 * @param p
 	 */
 	public void drawMseLbl_Info(my_procApplet p, myPointf drawLoc) {
 		if(!display) {return;}
@@ -291,8 +301,6 @@ public abstract class SOM_MseOvrDisplay {
 		p.showBox(drawLoc, 5, 5, nodeClrs, mseLabelAra, mseLabelDims);
 		p.popStyle();p.popMatrix();		
 	}
-	//specified by interface
-	public void drawMeLblMap(my_procApplet p){drawMseLbl_Info(p,mapLoc);}
 	public void setMapLoc(myPointf _pt) {mapLoc.set(_pt);}
 	
 }//SOM_MseOvrDisplay

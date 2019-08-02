@@ -91,13 +91,14 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	protected float[] SOMMapDims = new float[] {834.8f,834.8f};
 
 	public String[][] menuBtnNames = new String[][] {		//each must have literals for every button defined in side bar menu, or ignored
-		{},
 		{"Load Geometry Data", "Save Geometry Data","Build Training Data"},		//row 1
 		{"Save Train Data","---","---","Show SOM Win"},	//row 3
 		{"Build Map","LD SOM Config","---","---"},	//row 2 
 		{"---","---","---","---"},
 		{"---","---","---","---","---"}	
 	};
+	
+	public static final String[] MseOvrLblsAra = new String[]{"Loc","Dist","Pop","Ftr","Class","Cat","None"};
 
 	public SOM_AnimWorldWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, boolean _canDrawTraj, SOM_GeomObjTypes _type) {
 		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt, _canDrawTraj);
@@ -660,11 +661,11 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	// end sim routines	
 	
 	@Override
-	protected final void launchMenuBtnHndlr() {
+	protected final void launchMenuBtnHndlr(int funcRow, int btn) {
 		msgObj.dispMessage("SOM_AnimWorldWin","launchMenuBtnHndlr","Begin requested action", MsgCodes.info4);
-		int btn = curCustBtn[curCustBtnType];
-		switch(curCustBtnType) {
-		case SOM_GeomSideBarMenu.btnAuxFunc1Idx : {//row 1 of menu side bar buttons
+		
+		switch(funcRow) {
+		case 0 : {//row 1 of menu side bar buttons
 			//{"Gen Training Data", "Save Training data","Load Training Data"},		//row 1
 			msgObj.dispMessage("SOM_AnimWorldWin","launchMenuBtnHndlr","Click Functions 1 in "+name+" : btn : " + btn, MsgCodes.info4);
 			switch(btn){
@@ -686,7 +687,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 			}	
 			break;}//row 1 of menu side bar buttons
 	
-		case SOM_GeomSideBarMenu.btnAuxFunc2Idx : {//row 2 of menu side bar buttons
+		case 1 : {//row 2 of menu side bar buttons
 			msgObj.dispMessage("SOM_AnimWorldWin","launchMenuBtnHndlr","Click Functions 2 in "+name+" : btn : " + btn, MsgCodes.info4);//{"Ld&Bld SOM Data", "Load SOM Config", "Ld & Make Map", "Ld Prebuilt Map"},	//row 2
 			//		{"Train Data","True Prspcts", "Prods", "SOM Cfg", "Func 14"},	//row 2
 
@@ -711,7 +712,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 					break;}	
 			}
 			break;}//row 2 of menu side bar buttons
-		case SOM_GeomSideBarMenu.btnAuxFunc3Idx : {//row 3 of menu side bar buttons
+		case 2 : {//row 3 of menu side bar buttons
 			msgObj.dispMessage("SOM_AnimWorldWin","launchMenuBtnHndlr","Click Functions 3 in "+name+" : btn : " + btn, MsgCodes.info4);//{"Ld&Bld SOM Data", "Load SOM Config", "Ld & Make Map", "Ld Prebuilt Map"},	//row 2
 			switch(btn){
 				case 0 : {	
@@ -734,7 +735,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 					break;}	
 			}
 			break;}//row 3 of menu side bar buttons
-		case SOM_GeomSideBarMenu.btnAuxFunc4Idx : {//row 3 of menu side bar buttons
+		case 3 : {//row 3 of menu side bar buttons
 			msgObj.dispMessage("SOM_AnimWorldWin","launchMenuBtnHndlr","Click Functions 3 in "+name+" : btn : " + btn, MsgCodes.info4);//{"Ld&Bld SOM Data", "Load SOM Config", "Ld & Make Map", "Ld Prebuilt Map"},	//row 2
 			switch(btn){
 				case 0 :
@@ -749,35 +750,46 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 					resetButtonState();
 					break;}	
 			}
-			break;}//row 3 of menu side bar buttons
-		case SOM_GeomSideBarMenu.btnDBGSelCmpIdx : {//row 4 of menu side bar buttons (debug)	
-			msgObj.dispMessage("SOM_AnimWorldWin","launchMenuBtnHndlr","Click Debug in "+name+" : btn : " + btn, MsgCodes.info4);
-			//{"All->Bld Map","All Dat To Map", "Func 22", "Func 23", "Prblt Map"},	//row 3
-			switch(btn){
-				case 0 : {	
-					resetButtonState();
-					break;}
-				case 1 : {	
-					resetButtonState();
-					break;}
-				case 2 : {	
-					resetButtonState();
-					break;}
-				case 3 : {//show current mapdat status
-					resetButtonState();
-					break;}
-				case 4 : {						
-					resetButtonState();
-					break;}
-				default : {
-					msgObj.dispMessage("SOM_AnimWorldWin","launchMenuBtnHndlr","Unknown Debug btn : "+btn, MsgCodes.warning2);
-					resetButtonState();
-					break;}
-			}				
-			break;}//row 4 of menu side bar buttons (debug)			
+			break;}//row 3 of menu side bar buttons	
 		}		
 		msgObj.dispMessage("SOM_AnimWorldWin","launchMenuBtnHndlr","End requested action (multithreaded actions may still be working).", MsgCodes.info4);
 	}
+	
+
+	@Override
+	public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {
+		somUIWin.handleSideMenuMseOvrDispSel(btn,val);
+		
+	}
+
+	@Override
+	public final void handleSideMenuDebugSel(int btn, int val) {	
+		msgObj.dispMessage("SOM_AnimWorldWin","handleSideMenuDebugSel","Click Debug functionality in "+name+" : btn : " + btn, MsgCodes.info4);
+		//{"All->Bld Map","All Dat To Map", "Func 22", "Func 23", "Prblt Map"},	//row 3
+		switch(btn){
+			case 0 : {	
+				resetButtonState();
+				break;}
+			case 1 : {	
+				resetButtonState();
+				break;}
+			case 2 : {	
+				resetButtonState();
+				break;}
+			case 3 : {//show current mapdat status
+				resetButtonState();
+				break;}
+			case 4 : {						
+				resetButtonState();
+				break;}
+			default : {
+				msgObj.dispMessage("SOM_AnimWorldWin","launchMenuBtnHndlr","Unknown Debug btn : "+btn, MsgCodes.warning2);
+				resetButtonState();
+				break;}
+		}	
+		msgObj.dispMessage("SOM_AnimWorldWin","handleSideMenuDebugSel","End Debug functionality selection.", MsgCodes.info4);
+	}
+	
 	@Override
 	protected final void setVisScreenDimsPriv() {
 		//float xStart = rectDim[0] + .5f*(curVisScrDims[0] - (curVisScrDims[1]-(2*xOff)));

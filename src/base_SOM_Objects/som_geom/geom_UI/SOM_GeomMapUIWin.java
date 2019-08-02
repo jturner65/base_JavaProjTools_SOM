@@ -6,6 +6,7 @@ import java.util.TreeMap;
 
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
+import base_SOM_Objects.som_ui.win_disp_ui.SOM_MseOvrDispTypeVals;
 import base_UI_Objects.my_procApplet;
 import base_Utils_Objects.vectorObjs.myPoint;
 import base_Utils_Objects.vectorObjs.myVector;
@@ -194,37 +195,63 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	/**
+	 * build SOM_MseOvrDispTypeVals value based on which button was chosen
+	 */
+	@Override
+	protected SOM_MseOvrDispTypeVals handleSideMenuMseOvrDisp_MapBtnToType(int btn, boolean val) {
+		//based on : 
+		//SOM_AnimWorldWin.MseOvrLblsAra = new String[]{"Loc","Dist","Pop","Ftr","Class","Cat","None"};
+		switch(btn){
+			case 0 : { return val ? SOM_MseOvrDispTypeVals.mseOvrMapNodeLocIDX : SOM_MseOvrDispTypeVals.mseOvrNoneIDX;} 	//"loc"
+			case 1 : { return val ? SOM_MseOvrDispTypeVals.mseOvrUMatDistIDX : SOM_MseOvrDispTypeVals.mseOvrNoneIDX;} 	//u mat dist
+			case 2 : { return val ? SOM_MseOvrDispTypeVals.mseOvrMapNodePopIDX : SOM_MseOvrDispTypeVals.mseOvrNoneIDX;}  //pop
+			case 3 : { return val ? SOM_MseOvrDispTypeVals.mseOvrFtrIDX : SOM_MseOvrDispTypeVals.mseOvrNoneIDX;}         //ftr
+			case 4 : { return val ? SOM_MseOvrDispTypeVals.mseOvrClassIDX : SOM_MseOvrDispTypeVals.mseOvrNoneIDX;}       //class
+			case 5 : { return val ? SOM_MseOvrDispTypeVals.mseOvrCatIDX : SOM_MseOvrDispTypeVals.mseOvrNoneIDX;}         //category
+			case 6 : { return SOM_MseOvrDispTypeVals.mseOvrNoneIDX;}        //none
+			default : { return SOM_MseOvrDispTypeVals.mseOvrOtherIDX;}      //other/custom
+		}
+	}
 
+	@Override
+	public final void handleSideMenuDebugSel(int btn, int val) {	}
+	
 	//handle mouseover 
 	@Override
 	protected boolean hndlMouseMoveIndiv(int mouseX, int mouseY, myPoint mseClckInWorld){
-		//msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseMoveIndiv", "In Mouse Move mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
 		boolean res = false;
 		if(getPrivFlags(mapDataLoadedIDX)){ res = checkMouseOvr(mouseX, mouseY);	}
 		return res;
 	}	
 	@Override
 	protected boolean hndlMouseClickIndiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
-		msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseClickIndiv", "In Mouse Move mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
 		boolean mod = false;	
-		if(getPrivFlags(mapDataLoadedIDX)){ mod = this.checkMouseClick(mouseX, mouseY, mseClckInWorld, mseBtn);}
+		if(getPrivFlags(mapDataLoadedIDX)){ 
+			//msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseClickIndiv", "In Mouse Click mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
+			mod = this.checkMouseClick(mouseX, mouseY, mseClckInWorld, mseBtn);
+		}
 		if(mod) {return mod;}
 		else {return checkUIButtons(mouseX, mouseY);}
 	}
 	@Override
 	protected boolean hndlMouseDragIndiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
-		msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseDragIndiv", "In Mouse Drag mx : " +mouseX+ " | my : " + mouseY+" | pmx : " +pmouseX+ " | pmy : " + pmouseY+" | mouseClickIn3D : " + mouseClickIn3D.toStrBrf()+" | mseDragInWorld : " + mseDragInWorld.toStrBrf()+ " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
 		boolean mod = false;
-		if(getPrivFlags(mapDataLoadedIDX)){ mod = this.checkMouseDragMove(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);}		
+		if(getPrivFlags(mapDataLoadedIDX)){ 
+			//msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseDragIndiv", "In Mouse Drag mx : " +mouseX+ " | my : " + mouseY+" | pmx : " +pmouseX+ " | pmy : " + pmouseY+" | mouseClickIn3D : " + mouseClickIn3D.toStrBrf()+" | mseDragInWorld : " + mseDragInWorld.toStrBrf()+ " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
+			mod = this.checkMouseDragMove(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
+		}		
 		return mod;
 	}
 	@Override
-	protected void hndlMouseRelIndiv() {	
-		msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseRelIndiv", "In Mouse Release");
-		if(getPrivFlags(mapDataLoadedIDX)){ this.checkMouseRelease();}		
-	
-		
+	protected void hndlMouseRelIndiv() {			
+		if(getPrivFlags(mapDataLoadedIDX)){ 
+			//msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseRelIndiv", "In Mouse Release");
+			this.checkMouseRelease();
+		}		
 	}	
+	
 	@Override
 	public String toString(){
 		String res = super.toString();
@@ -274,7 +301,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	}
 
 	@Override
-	protected final void launchMenuBtnHndlr() {	}
+	protected final void launchMenuBtnHndlr(int funcRow, int btn) {	}
 	
 	@Override
 	public void hndlFileLoad(File file, String[] vals, int[] stIdx) {
@@ -286,5 +313,6 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }//myTrajEditWin
