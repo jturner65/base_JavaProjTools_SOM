@@ -198,8 +198,11 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 				//geom object data in example manager is now out of synch - reset to require rebuild of base array
 			resetGeomAndTrainDataObjs();
 		}
-		numSamplesPerObj=_numSamples;		
-		ttlNumTrainExamples = _numTrainExamples;
+		numSamplesPerObj=_numSamples;	
+		if(ttlNumTrainExamples != _numTrainExamples) {
+			ttlNumTrainExamples = _numTrainExamples;
+			resetTrainDataObjs();
+		}
 	}
 	
 	/**

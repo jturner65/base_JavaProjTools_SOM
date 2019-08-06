@@ -71,7 +71,11 @@ public abstract class SOM_MapManager {
 	 * all nodes of current som map that have been selected by the user, keyed by node location as tuple of row/col coordinates
 	 */
 	protected TreeMap<Tuple<Integer,Integer>, SOM_MapNode> SelectedMapNodes;	
-
+	
+	/**
+	 * map of all map nodes, keyed by population (# of mapped examples), value is map node map loc
+	 */
+	protected TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>>[] MapNodesByPopulation;	
 	/**
 	 * map of ftr idx and all map nodes that have non-zero presence in that ftr
 	 */
@@ -274,7 +278,7 @@ public abstract class SOM_MapManager {
 	//images displaying map data
 	
 	/**
-	 * start location of SOM image - stX, stY, and dimensions of SOM image - width, height; 
+	 * start location of SOM image - stX, stY; 
 	 */
 	protected float[] SOM_mapLoc;
 
@@ -321,9 +325,14 @@ public abstract class SOM_MapManager {
 	 */
 	protected float mapNodeWtDispThresh = 0.01f;
 	/**
-	 * threshold of populated map node size to display - should always be positive
+	 * % of max node pop threshold of populated map node size to display - should always be positive
 	 */
-	protected float mapNodePopDispThresh = 0.0f;
+	protected float mapNodePopDispThreshPct = 0.0f;
+	protected int numMapNodeByPopNowShown = 0;
+	/**
+	 * for display only - threshold of count of type 
+	 */
+	protected float[] mapNodePopDispThreshVals;
 	/**
 	 * type of examples using each map node as a bmu to display
 	 */
@@ -342,6 +351,10 @@ public abstract class SOM_MapManager {
 	 */
 	protected SOM_MseOvrDispTypeVals uiMseDispData = SOM_MseOvrDispTypeVals.mseOvrNoneIDX;
 	protected int custUIMseDispData = -1;
+	/**
+	 * PImage object to represent map node population graph
+	 */
+	protected PImage[] mapNodePopGraph; 
 
 	
 	/**
@@ -798,12 +811,15 @@ public abstract class SOM_MapManager {
 	
 	///////////////////////////////////////////
 	// map image init	
-	public final void initFromUIWinInitMe(int _trainDatFrmt,int _BMUDispDatFrmt, float _mapNodeWtDispThresh, float _mapNodePopDispThresh, int _mapNodeDispType) {
+	public final void initFromUIWinInitMe(int _trainDatFrmt,int _BMUDispDatFrmt, float _mapNodeWtDispThresh, float _mapNodePopDispThreshPct, int _mapNodeDispType) {
 		setCurrentTrainDataFormat(SOM_FtrDataType.getVal(_trainDatFrmt));
 		setBMU_DispFtrTypeFormat(SOM_FtrDataType.getVal(_BMUDispDatFrmt));
 		mapNodeWtDispThresh = _mapNodeWtDispThresh;
 		mapNodeDispType = SOM_ExDataType.getVal(_mapNodeDispType);
-		mapNodePopDispThresh = _mapNodePopDispThresh;
+		if(mapNodePopDispThreshPct != _mapNodePopDispThreshPct) {
+			mapNodePopDispThreshPct = _mapNodePopDispThreshPct;
+			buildMapNodePopGraphImage();
+		}
 		mseOverExample.clearMseDat();
 		//mseOvrData = null;	
 	}
@@ -1336,10 +1352,11 @@ public abstract class SOM_MapManager {
 	
 	/**
 	 * this function will finalize bmus that have examples mapped to them if they have been trained using normalized features.
+	 * This should only be called after initial load from SOM results of bmu data
 	 * Since the bmu itself doesn't have a conception of the original magnitude of each training vector, the magnitude needs to be derived
-	 * from the average mag of all the training examples that mapped to the bmu
+	 * from the average mag of all the training examples that mapped to the bmu - will be imprecise, but better than nothing
 	 */
-	public synchronized void _finalizeInitBMUForNormTrainedFtrs() {
+	public synchronized void _finalizeInitTrainingDataBMUAssignments() {
 		for (SOM_MapNode ex : MapNodes.values()) {			ex.finalSetUpFtrs_TrainedWithNormFtrs();}
 		//do this after all map nodes have been finalized
 		for(SOM_MapNode ex : MapNodes.values()) {			ex.buildMapNodeNeighborSqDistVals(MapNodes);}
@@ -1377,6 +1394,94 @@ public abstract class SOM_MapManager {
 
 	}//_finalizeInitBMUForNormTrainedFtrs
 	
+	/**
+	 * this will take the map nodes and build a population based graph image of them, with x being proportional to population, and y being the node ID, sorted from largest pop(top) to least (bottom)
+	 * call whenever map vals change
+	 */
+	public void setMapNodePopGraphImage() {
+		if(win!=null) {
+			msgObj.dispMessage("SOM_MapManager::"+name,"setMapNodePopGraphImage","Start building map nod population graph for all examples.", MsgCodes.info5);		
+			//all map nodes of som map, sorted by mapped population of training data		
+			for(int i=0;i<MapNodesByPopulation.length;++i) {		MapNodesByPopulation[i].clear();}
+			int lstTypeIDX = MapNodesByPopulation.length-1;
+			for(int i=0;i<lstTypeIDX;++i) {		//for each type of example data
+				for(Tuple<Integer,Integer> key : MapNodes.keySet()) {
+					SOM_MapNode node = MapNodes.get(key);
+					Integer ttlForNode = node.getBMUMapNodePopulation(i);
+					ArrayList<Tuple<Integer,Integer>> nodesAtCount = MapNodesByPopulation[i].get(ttlForNode);
+					if(null==nodesAtCount) {nodesAtCount = new ArrayList<Tuple<Integer,Integer>> ();MapNodesByPopulation[i].put(ttlForNode,nodesAtCount);}
+					nodesAtCount.add(key);		
+				}
+			}
+			for(Tuple<Integer,Integer> key : MapNodes.keySet()) {
+				SOM_MapNode node = MapNodes.get(key);
+				Integer ttlForNode = node.getAllBMUMapNodePopulation();
+				ArrayList<Tuple<Integer,Integer>> nodesAtCount = MapNodesByPopulation[lstTypeIDX].get(ttlForNode);
+				if(null==nodesAtCount) {nodesAtCount = new ArrayList<Tuple<Integer,Integer>> ();MapNodesByPopulation[lstTypeIDX].put(ttlForNode,nodesAtCount);}
+				nodesAtCount.add(key);		
+			}
+		
+			//use MapNodesByPopulation to build PShape
+			buildMapNodePopGraphImage();
+			msgObj.dispMessage("SOM_MapManager::"+name,"setMapNodePopGraphImage","Finished building map nod population graph for all examples.", MsgCodes.info5);		
+		} else {			msgObj.dispMessage("SOM_MapManager::"+name,"setMapNodePopGraphImage","No UI To display Map Node Population Graph, so Aborting.", MsgCodes.info5);			}
+	}//setMapNodePopGraphImage
+	/**
+	 * build/rebuild image of map node population graph
+	 */
+	protected void buildMapNodePopGraphImage() {
+		if(MapNodesByPopulation == null) {return;}
+		if(win!=null) {
+			msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","Started building map nod population graph image for all examples.", MsgCodes.info5);	
+			TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>> tmpMapNodesByPopForType;
+			int whiteClr = 0xFFFFFFFF, greyClr = 0xFF888888;
+			int clrToUse;			
+			mapNodePopGraph = new PImage[MapNodesByPopulation.length];
+			int numMapNodes = MapNodes.size();
+			for(int i=0;i<MapNodesByPopulation.length;++i) {						
+				tmpMapNodesByPopForType = MapNodesByPopulation[i];
+				if(0 == tmpMapNodesByPopForType.size()) {continue;}
+				Integer largestCount = tmpMapNodesByPopForType.firstKey();		
+				mapNodePopDispThreshVals[i]=largestCount*mapNodePopDispThreshPct;
+
+				mapNodePopGraph[i] = myDispWindow.pa.createImage(largestCount, numMapNodes, PConstants.ARGB);
+				mapNodePopGraph[i].loadPixels();
+				int row = 0, pxlIDX = 0;
+				for(Integer count : tmpMapNodesByPopForType.keySet()) {
+					ArrayList<Tuple<Integer,Integer>> nodesAtCount = tmpMapNodesByPopForType.get(count);
+					//mapNodePopDispThresh
+					clrToUse = (count > mapNodePopDispThreshVals[i] ? whiteClr : greyClr);
+					for(int j=0;j<nodesAtCount.size();++j) {
+						for(int p = 0;p<count;++p) {	mapNodePopGraph[i].pixels[pxlIDX+p] = clrToUse;}
+						for(int p=count;p<largestCount;++p) {mapNodePopGraph[i].pixels[pxlIDX+p] = 0x00000000;}
+						++row;
+						pxlIDX = row * largestCount;
+					}				
+				}		
+				mapNodePopGraph[i].updatePixels();		
+			}
+	//			
+			msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","Finished building map nod population graph image for all examples.", MsgCodes.info5);		
+		} else {			msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","No UI To display Map Node Population Graph, so Aborting.", MsgCodes.info5);			}
+	}//buildMapNodePopGraphImage
+	
+	
+	
+//	private PShape buildMapNodePopGraphAsPShape(TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>> MapNodesByPopulation) {
+//		PShape grph = myDispWindow.pa.createShape();
+//		grph.beginShape(PConstants.LINES);
+//		grph.noFill();
+//		grph.stroke(255,255,255,255);
+//		grph.strokeWeight(1.0f);
+//		int y = 0;
+//		for(Integer key : MapNodesByPopulation.keySet()) {
+//			grph.vertex(0, y);grph.vertex(key, y);
+//			++y;
+//		}
+//		grph.endShape();
+//		return grph;
+//	}
+
 	
 	/**
 	 * finalize the bmu processing - move som nodes that have been mapped to out of the list of nodes that have not been mapped to, copy the closest mapped som node to any som nodes without mappings, finalize all som nodes
@@ -1395,9 +1500,11 @@ public abstract class SOM_MapManager {
 		//copy closest som node with mapped training examples to each som map node that has none
 		if(dataType == SOM_ExDataType.Training) {addMappedNodesToEmptyNodes_FtrDist(withMap,withOutMap,typeIDX);}
 		
-		//finalize all examples - needs to finalize all nodes to manage the SOMMapNodeBMUExamples for the nodes that have not been mapped to 
+		//finalize all examples - needs to finalize all nodes to manage the SOMMapNodeBMUExamples for the nodes that have not been mapped to
+		//This is what gives each map node the # of examples that have mapped to it
 		for(SOM_MapNode node : MapNodes.values()){		node.finalizeAllBmus(typeIDX);	}
-		
+		//build image of map node population graph, if win exists
+		setMapNodePopGraphImage();
 		
 		//calculate ftr segments of nodes
 		buildFtrWtSegmentsOnMap();
@@ -1419,9 +1526,20 @@ public abstract class SOM_MapManager {
 	public HashSet<SOM_MapNode> getNodesWithNoExOfType(SOM_ExDataType _type){return nodesWithNoEx.get(_type);}
 	
 	//called when som wts are first loaded
+	@SuppressWarnings("unchecked")
 	public void initMapNodes() {
 		MapNodes = new TreeMap<Tuple<Integer,Integer>, SOM_MapNode>();
 		SelectedMapNodes = new TreeMap<Tuple<Integer,Integer>, SOM_MapNode>();
+		
+		//MapNodesByPopulation = new TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>>[SOM_ExDataType.getNumVals()+1];//1 extra for "total"
+		MapNodesByPopulation = new TreeMap[SOM_ExDataType.getNumVals()+1];//1 extra for "total"
+		mapNodePopDispThreshVals = new float[MapNodesByPopulation.length];
+		for(int i=0;i<MapNodesByPopulation.length;++i) {
+			MapNodesByPopulation[i] = new TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>>(new Comparator<Integer>() { @Override public int compare(Integer o1, Integer o2) {   return o2.compareTo(o1);}});
+			mapNodePopDispThreshVals[i]=0;
+		}
+		
+		
 		//this will hold all map nodes keyed by the ftr idx where they have non-zero weight
 		MapNodesByFtrIDX = new TreeMap<Integer, HashSet<SOM_MapNode>>();
 		//reset segement holders
@@ -1527,10 +1645,9 @@ public abstract class SOM_MapManager {
 	}//setMapNodeFtrStr
 		
 	//after all map nodes are loaded
-	public void finalizeMapNodes(int _numTrainFtrs, int _numEx) {
+	public void finalizeMapNodeFtrWts(int _numTrainFtrs, int _numEx) {
 		//initialize array of images to display map of particular feature with
-		initMapFtrVisAras(_numTrainFtrs);
-		
+		initMapFtrVisAras(_numTrainFtrs);		
 		//reset this to manage all map nodes
 		initPerFtrMapOfNodes(_numTrainFtrs);
 		setNumTrainFtrs(_numTrainFtrs); 
@@ -1926,7 +2043,7 @@ public abstract class SOM_MapManager {
 				setMseDataExampleCategoryProb(locPt,nearestNode,sensitivity);
 				break;}
 			case mseOvrNoneIDX : {			//none
-				setMseDataExampleNodeName(locPt,nearestNode,sensitivity);
+				setMseDataExampleNone();//setMseDataExampleNodeName(locPt,nearestNode,sensitivity);
 				break;}
 			default : {
 				getDataPointAtLoc_Priv(x, y, sensitivity,nearestNode, locPt, custUIMseDispData);
@@ -2033,7 +2150,8 @@ public abstract class SOM_MapManager {
 			pa.translate(SOM_mapLoc[0],SOM_mapLoc[1],0);	
 			if(win.getPrivFlags(SOM_MapUIWin.mapDrawTrainDatIDX)){			drawTrainData(pa);}	
 			if(win.getPrivFlags(SOM_MapUIWin.mapDrawTestDatIDX)) {			drawTestData(pa);}
-			if(win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {	if(drawLbl) {drawPopMapNodes(pa, draw0PopNodes, mapNodeDispType);} else {drawPopMapNodesNoLbl(pa, draw0PopNodes, mapNodeDispType);}}
+			if(win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {	if(drawLbl) {drawPopMapNodes(pa, draw0PopNodes, mapNodeDispType.getVal());} else {drawPopMapNodesNoLbl(pa, draw0PopNodes, mapNodeDispType.getVal());}}
+			else {numMapNodeByPopNowShown = 0;}
 		
 			if (curImgNum > -1) {
 				if(win.getPrivFlags(SOM_MapUIWin.mapDrawWtMapNodesIDX)){			drawNodesWithWt(pa, mapNodeWtDispThresh, curFtrMapImgIDX);} 
@@ -2048,7 +2166,6 @@ public abstract class SOM_MapManager {
 				if(win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawAllFtrWtSegments(pa, mapNodeWtDispThresh);}	//draw all segments - will overlap here, might look like garbage		
 				if(win.getPrivFlags(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawAllClassSegments(pa);}
 				if(win.getPrivFlags(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawAllCategorySegments(pa);}
-
 				drawSegmentsUMatrixDispIndiv(pa);
 			}
 			//if draw all map nodes
@@ -2057,9 +2174,22 @@ public abstract class SOM_MapManager {
 			if(SelectedMapNodes.size() > 0) {drawNodesIfSelected(pa);}
 			//instance-specific stuff to draw on map, after nodes are drawn
 			drawMapRectangle_Indiv(pa, curImgNum);
+			//if selected, draw map
+			if(win.getPrivFlags(SOM_MapUIWin.drawMapNodePopGraphIDX)) {drawMapNodePopGraph(pa, mapNodeDispType.getVal());}
 			pa.lights();
 		pa.popStyle();pa.popMatrix();	
+		
 	}//drawMapRectangle
+	
+	protected final void drawMapNodePopGraph(my_procApplet pa, int typIDX) {
+		pa.pushMatrix();pa.pushStyle();
+		pa.translate(mapDims[0],0.0f,0.0f);
+		pa.scale(200.0f/(1.0f*mapNodePopGraph[typIDX].width),mapDims[1]/(1.0f*mapNodePopGraph[typIDX].height));
+		pa.image(mapNodePopGraph[typIDX], 0.0f, 0.0f);
+		
+		pa.popStyle();pa.popMatrix();
+	}//drawMapNodePopGraph
+	
 	
 	protected abstract void drawMapRectangle_Indiv(my_procApplet pa, int curImgNum);
 	/**
@@ -2214,24 +2344,24 @@ public abstract class SOM_MapManager {
 		pa.popStyle();pa.popMatrix();
 	}//drawNodesWithWt
 	
-	public void drawPopMapNodes(my_procApplet pa, boolean draw0PopNodes, SOM_ExDataType _type) {
+	public void drawPopMapNodes(my_procApplet pa, boolean draw0PopNodes, int _typeIDX) {
 		pa.pushMatrix();pa.pushStyle();
-		int _typeIDX = _type.getVal();
+		numMapNodeByPopNowShown = 0;
 		if(draw0PopNodes) {			
-			for(SOM_MapNode node : MapNodes.values()){	if(node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) {	node.drawMePopLbl(pa, _typeIDX);}	}
+			for(SOM_MapNode node : MapNodes.values()){	if(node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) {	node.drawMePopLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
 		} else {
-			for(SOM_MapNode node : MapNodes.values()){	if((node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopLbl(pa, _typeIDX);}	}
+			for(SOM_MapNode node : MapNodes.values()){	if((node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
 			
 		}
 		pa.popStyle();pa.popMatrix();		
 	}	
-	public void drawPopMapNodesNoLbl(my_procApplet pa, boolean draw0PopNodes, SOM_ExDataType _type) {
+	public void drawPopMapNodesNoLbl(my_procApplet pa, boolean draw0PopNodes, int _typeIDX) {
 		pa.pushMatrix();pa.pushStyle();
-		int _typeIDX = _type.getVal();
+		numMapNodeByPopNowShown = 0;
 		if(draw0PopNodes) {			
-			for(SOM_MapNode node : MapNodes.values()){	if(node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) {	node.drawMePopNoLbl(pa, _typeIDX);}	}
+			for(SOM_MapNode node : MapNodes.values()){	if(node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) {	node.drawMePopNoLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
 		} else {
-			for(SOM_MapNode node : MapNodes.values()){	if((node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopNoLbl(pa, _typeIDX);}	}
+			for(SOM_MapNode node : MapNodes.values()){	if((node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopNoLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
 			
 		}
 		pa.popStyle();pa.popMatrix();		
@@ -2253,6 +2383,8 @@ public abstract class SOM_MapManager {
 		pa.pushMatrix();pa.pushStyle();
 		//display preloaded maps
 		yOff=drawLoadedPreBuiltMaps(pa,yOff,curPreBuiltMapIDX);
+		//display # of map nodes currently shown if showing by population
+		yOff=drawNumMapNodesShownByPop(pa, yOff);
 		//display mouse-over results in side bar
 		yOff= drawMseRes(pa,yOff);
 		pa.sphere(3.0f);
@@ -2264,6 +2396,17 @@ public abstract class SOM_MapManager {
 
 		pa.popStyle();pa.popMatrix();	
 	}//drawResultBar
+	
+	private final float drawNumMapNodesShownByPop(my_procApplet pa,float yOff) {
+		if(win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {
+			pa.translate(10.0f, 0.0f, 0.0f);
+			pa.showOffsetText(0,IRenderInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
+			yOff += sideBarYDisp;
+			pa.translate(-10.0f,sideBarYDisp, 0.0f);
+			
+		}
+		return yOff;
+	}
 	
 	/**
 	 * draw mouse-over results
@@ -2292,6 +2435,7 @@ public abstract class SOM_MapManager {
 			if(loadedPreBuiltMapData.length==0) {				
 				pa.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
 				yOff += sideBarYDisp;
+				pa.translate(10.0f, sideBarYDisp, 0.0f);
 			} else {	
 				pa.showOffsetText(0,IRenderInterface.gui_White,"Pre-build Map Directories specified in config : ");
 				yOff += sideBarYDisp;
@@ -2485,8 +2629,13 @@ public abstract class SOM_MapManager {
 	public float getMapNodeWtDispThresh() {	return mapNodeWtDispThresh;}
 	public void setMapNodeWtDispThresh(float _mapNodeWtDispThresh) {	this.mapNodeWtDispThresh = _mapNodeWtDispThresh;}
 	
-	public float getMapNodePopDispThresh() {	return mapNodePopDispThresh;}
-	public void setMapNodePopDispThresh(float _mapNodePopDispThresh) {	this.mapNodePopDispThresh = _mapNodePopDispThresh;}
+	public float getMapNodePopDispThreshPct() {	return mapNodePopDispThreshPct;}
+	public void setMapNodePopDispThreshPct(float _mapNodePopDispThresh) {	
+		if(mapNodePopDispThreshPct != _mapNodePopDispThresh) {
+			mapNodePopDispThreshPct = _mapNodePopDispThresh;
+			buildMapNodePopGraphImage();
+		}
+	}
 	
 	public SOM_ExDataType getMapNodeDispType() {	return mapNodeDispType;}
 	public void setMapNodeDispType(SOM_ExDataType _mapNodeDispType) {	this.mapNodeDispType = _mapNodeDispType;}	

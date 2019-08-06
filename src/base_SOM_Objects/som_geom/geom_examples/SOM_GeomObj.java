@@ -13,7 +13,6 @@ import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjDrawType;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjSamples;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSamplePointf;
-import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSmplDataForEx;
 import base_UI_Objects.my_procApplet;
 import base_UI_Objects.windowUI.myDispWindow;
 import base_Utils_Objects.MyMathUtils;
@@ -63,7 +62,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * list of original object point samples and their owning objects making up this example - 
 	 * these will be used to determine the classes for this object, to be passed to bmu map node for this example 
 	 */
-	protected final SOM_GeomSmplDataForEx[] geomSrcSamples;	
+	protected final SOM_GeomSamplePointf[] geomSrcSamples;	
 	/**
 	 * given source points that make up this object
 	 */
@@ -104,7 +103,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _worldBounds : bounds in world for valid values for this object
 	 * @param _GeoType : geometric object type
 	 */	
-	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _id, SOM_GeomSmplDataForEx[] _geomSrcSmpls, SOM_GeomObjTypes _GeoType, boolean _shouldBuildSamples) {
+	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _id, SOM_GeomSamplePointf[] _geomSrcSmpls, SOM_GeomObjTypes _GeoType, boolean _shouldBuildSamples) {
 		super(_mapMgr, _exType,_id);
 		_ctorInit(_mapMgr,incrID(), _GeoType, _shouldBuildSamples);
 		
@@ -134,8 +133,8 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		srcPts = buildSrcPtsFromCSVString(objGeomType.getVal(), _csvDat);
 		
 		//build geomSrcSamples from srcPts 
-		geomSrcSamples = new SOM_GeomSmplDataForEx[getSrcPts().length];
-		for(int i=0;i<geomSrcSamples.length;++i) {geomSrcSamples[i] = new SOM_GeomSmplDataForEx(this, new SOM_GeomSamplePointf(getSrcPts()[i], dispLabel+"_gen_pt_"+i));}
+		geomSrcSamples = new SOM_GeomSamplePointf[getSrcPts().length];
+		for(int i=0;i<geomSrcSamples.length;++i) {geomSrcSamples[i] =  new SOM_GeomSamplePointf(getSrcPts()[i], dispLabel+"_gen_pt_"+i, this);}
 
 		objSamples = new SOM_GeomObjSamples(this, objGeomType, rndClrAra, labelClrAra);
 	}
@@ -153,8 +152,8 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		srcPts = buildSrcPtsFromBMUMapNodeFtrs(mapFtrsAra,  objGeomType.getVal(), dispLabel);
 		//_DBG_DispObjStats(mapFtrsAra,"map node ctor", "Map Node:  "+ _mapNode.OID);
 		//build geomSrcSamples from srcPts 
-		geomSrcSamples = new SOM_GeomSmplDataForEx[getSrcPts().length];
-		for(int i=0;i<geomSrcSamples.length;++i) {geomSrcSamples[i] = new SOM_GeomSmplDataForEx(this, new SOM_GeomSamplePointf(getSrcPts()[i], dispLabel+"_gen_pt_"+i));}
+		geomSrcSamples = new SOM_GeomSamplePointf[getSrcPts().length];
+		for(int i=0;i<geomSrcSamples.length;++i) {geomSrcSamples[i] =  new SOM_GeomSamplePointf(getSrcPts()[i], dispLabel+"_gen_pt_"+i, this);}
 		
 		objSamples = new SOM_GeomObjSamples(this, objGeomType, rndClrAra, labelClrAra);
 	}
@@ -213,11 +212,11 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _srcSmpls
 	 * @return
 	 */
-	protected final SOM_GeomSamplePointf[] initAndBuildSourcePoints(SOM_GeomSmplDataForEx[] _srcSmpls) {
+	protected final SOM_GeomSamplePointf[] initAndBuildSourcePoints(SOM_GeomSamplePointf[] _srcSmpls) {
 		SOM_GeomSamplePointf[] ptAra = new SOM_GeomSamplePointf[_srcSmpls.length];
 		for(int i=0;i<_srcSmpls.length;++i) {
 			if(_srcSmpls[i].getObj() == null) {_srcSmpls[i].setObj(this);}
-			ptAra[i]=new SOM_GeomSamplePointf(_srcSmpls[i].getPoint(), dispLabel+"_SrcPt_"+i);
+			ptAra[i]=new SOM_GeomSamplePointf(_srcSmpls[i], dispLabel+"_SrcPt_"+i, this);
 		}
 		return ptAra;
 	}//initAndBuildSourcePoints
@@ -295,7 +294,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		//from idx 1 to end is src point csv strs
 		for(int i=0;i<res.length;++i) {	
 			parseStrAra = strDatAra[i+1].trim().split(",");			
-			res[i] = new SOM_GeomSamplePointf(parseStrAra);}
+			res[i] = new SOM_GeomSamplePointf(parseStrAra, this);}
 		return res;		
 	}//buildSrcPtsFromCSVString
 	

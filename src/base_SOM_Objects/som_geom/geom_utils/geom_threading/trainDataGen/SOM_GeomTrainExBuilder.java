@@ -8,7 +8,7 @@ import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomExampleManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomTrainingExUniqueID;
-import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSmplDataForEx;
+import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSamplePointf;
 import base_SOM_Objects.som_geom.geom_utils.geom_threading.base.SOM_GeomCallable;
 /**
  * build training data
@@ -28,7 +28,7 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	/**
 	 * ref to array of all example samples from which to build geometric objects
 	 */
-	protected final SOM_GeomSmplDataForEx[] allExamples;
+	protected final SOM_GeomSamplePointf[] allExamples;
 	
 	/**
 	 * the number of samples required to build an object
@@ -40,7 +40,7 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	 */
 	protected final SOM_GeomTrainingExUniqueID[] idxsToUse;
 	
-	public SOM_GeomTrainExBuilder(SOM_GeomMapManager _mapMgr, SOM_GeomExampleManager _exMgr, SOM_GeomSmplDataForEx[] _allExs, int[] _intVals, SOM_GeomTrainingExUniqueID[] _idxsToUse) {
+	public SOM_GeomTrainExBuilder(SOM_GeomMapManager _mapMgr, SOM_GeomExampleManager _exMgr, SOM_GeomSamplePointf[] _allExs, int[] _intVals, SOM_GeomTrainingExUniqueID[] _idxsToUse) {
 		super(_mapMgr, _intVals[0],_intVals[1],_intVals[2]);
 		//idxs 0,1,2 are st,end,thrdIDX
 		numExToBuildThisThread = endIdx -stIdx;//calcNumPerThd(_intVals[3], _intVals[4]);
@@ -54,7 +54,7 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 
 	private void buildTrainExData() {
 		ThreadLocalRandom rnd = ThreadLocalRandom.current();
-		SOM_GeomSmplDataForEx[] exAra = new SOM_GeomSmplDataForEx[numExPerObj];
+		SOM_GeomSamplePointf[] exAra = new SOM_GeomSamplePointf[numExPerObj];
 		for(int i=0;i<numExToBuildThisThread;++i) {
 			exAra = genPtsForObj(rnd);
 			SOM_GeomObj obj = _buildSingleObjectFromSamples(SOM_ExDataType.Training,exAra, i); incrProgress(i,"Building Training Data");
@@ -64,10 +64,10 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	
 	private void buildTrainExData_UniqueIDXs() {
 		//ThreadLocalRandom rnd = ThreadLocalRandom.current();
-		SOM_GeomSmplDataForEx[] exAra = new SOM_GeomSmplDataForEx[numExPerObj];
+		SOM_GeomSamplePointf[] exAra = new SOM_GeomSamplePointf[numExPerObj];
 		for(int i=this.stIdx; i<this.endIdx;++i) {
 			Integer[] objIDXs = idxsToUse[i].idxs;
-			exAra = new SOM_GeomSmplDataForEx[objIDXs.length];
+			exAra = new SOM_GeomSamplePointf[objIDXs.length];
 			for(int j=0;j<exAra.length;++j) {		exAra[j] = allExamples[objIDXs[j]];		}
 			SOM_GeomObj obj = _buildSingleObjectFromSamples(SOM_ExDataType.Training,exAra, i); incrProgress(i,"Building Training Data");
 			exMgr.addExampleToMap(obj);		
@@ -81,7 +81,7 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	 * for lines just need 2 points; planes need 3 non-colinear points; spheres need 4 non-coplanar points, no 3 of which are colinear
 	 * @return
 	 */
-	protected abstract SOM_GeomSmplDataForEx[] genPtsForObj(ThreadLocalRandom rnd);
+	protected abstract SOM_GeomSamplePointf[] genPtsForObj(ThreadLocalRandom rnd);
 	
 	protected Integer[] genUniqueIDXs(int numToGen,  ThreadLocalRandom rnd){
 		HashSet<Integer> idxs = new HashSet<Integer>();
@@ -96,7 +96,7 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	 * @param idx idx of object in resultant array
 	 * @return build object
 	 */
-	protected abstract SOM_GeomObj _buildSingleObjectFromSamples(SOM_ExDataType _exDataType, SOM_GeomSmplDataForEx[] exAra, int idx);
+	protected abstract SOM_GeomObj _buildSingleObjectFromSamples(SOM_ExDataType _exDataType, SOM_GeomSamplePointf[] exAra, int idx);
 
 	
 	@Override

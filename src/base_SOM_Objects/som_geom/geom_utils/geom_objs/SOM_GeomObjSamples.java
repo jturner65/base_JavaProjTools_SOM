@@ -71,7 +71,7 @@ public class SOM_GeomObjSamples {
 		objSamplePts = new SOM_GeomSamplePointf[numSmplPts];
 		for(int i=0;i<objSamplePts.length;++i) {	
 			String[] ptDescAra = samplePtAra[i+1].trim().split(",");
-			objSamplePts[i] = new SOM_GeomSamplePointf(ptDescAra);				
+			objSamplePts[i] = new SOM_GeomSamplePointf(ptDescAra, ownr);				
 		}		
 		buildSamplePShapeObjs(pa);
 	}
@@ -100,12 +100,12 @@ public class SOM_GeomObjSamples {
 		int stIDX = 0;
 		if(0==_stSmplLblIDX) {//if starting from 0, then this means we are making original sample set - add ownr.src pts
 			for(int i=0;i<ownr.getSrcPts().length;++i) {
-				tmpSmplAra[i]=new SOM_GeomSamplePointf(ownr.getSrcPts()[i],objTypeStrAndID+"_Smpl_"+String.format("%04d", i));
+				tmpSmplAra[i]=new SOM_GeomSamplePointf(ownr.getSrcPts()[i],objTypeStrAndID+"_Smpl_"+String.format("%04d", i), ownr);
 			}
 			stIDX=ownr.getSrcPts().length;
 		}
 		for(int i=stIDX;i<tmpSmplAra.length;++i) {	
-			tmpSmplAra[i]=new SOM_GeomSamplePointf(ownr.getRandPointOnObj(), objTypeStrAndID+"_Smpl_"+String.format("%04d", (i+_stSmplLblIDX))); 
+			tmpSmplAra[i]=new SOM_GeomSamplePointf(ownr.getRandPointOnObj(), objTypeStrAndID+"_Smpl_"+String.format("%04d", (i+_stSmplLblIDX)), ownr); 
 			//msgObj.dispInfoMessage("SOM_GeomObj::"+type.toString(), "buildLocClrInitObjAndSamples", "ID : " + ID + " | sample pt loc : " + objSamplePts[i].toStrBrf());
 		}		
 		return tmpSmplAra;

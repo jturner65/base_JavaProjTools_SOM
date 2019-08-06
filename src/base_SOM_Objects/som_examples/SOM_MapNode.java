@@ -657,6 +657,38 @@ public abstract class SOM_MapNode extends SOM_Example{
 	@Override
 	public final Tuple<Integer,Integer> getBMUMapNodeCoord(){	return mapNodeCoord;}
 	
+	/**
+	 * return the number of all examples that consider this map node a bmu
+	 * @return
+	 */
+	public final int getAllBMUMapNodePopulation() {
+		int ttl = 0;
+		for(int i=0;i<BMUExampleNodes.length;++i) {	ttl += BMUExampleNodes[i].getNumExamples();}			
+		return ttl;
+	}
+	
+	/**
+	 * return the log number of all examples that consider this map node a bmu - use this to compare to node radii
+	 * @return
+	 */
+	public final float getAllBMUMapNodeLogPopulation() {
+		int ttl = 0;
+		for(int i=0;i<BMUExampleNodes.length;++i) {	ttl += BMUExampleNodes[i].getNumExamples();}		
+		return (float) Math.log(ttl + 1)*1.5f;	
+	}
+	
+	/**
+	 * return the number of all examples that consider this map node a bmu
+	 * @return
+	 */
+	public final int getBMUMapNodePopulation(int dataTypeIDX) {return BMUExampleNodes[dataTypeIDX].getNumExamples();}
+	
+	/**
+	 * return the log number of all examples that consider this map node a bmu - use this to compare to node radii
+	 * @return
+	 */
+	public final float getBMUMapNodeLogPopulation(int dataTypeIDX) {return (float) Math.log(BMUExampleNodes[dataTypeIDX].getNumExamples() + 1)*1.5f;}
+	
 	//////////////////////////
 	// UI Interaction and draw routines
 

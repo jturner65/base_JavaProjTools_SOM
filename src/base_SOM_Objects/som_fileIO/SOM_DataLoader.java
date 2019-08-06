@@ -35,7 +35,7 @@ public class SOM_DataLoader{
 	public SOM_DataLoader(SOM_MapManager _mapMgr, SOM_ProjConfigData _configData) {
 		mapMgr = _mapMgr; 
 		msgObj = mapMgr.buildMsgObj();
-		fileIO = new FileIOManager(msgObj,"SOMDataLoader");
+		fileIO = new FileIOManager(msgObj,"SOM_DataLoader");
 		projConfigData = _configData;
 	}
 	
@@ -44,30 +44,30 @@ public class SOM_DataLoader{
 	 * @return
 	 */
 	public Boolean callMe(){
-		msgObj.dispMessage("SOMDataLoader","run","Starting Trained SOM map node data loader", MsgCodes.info5);	
+		msgObj.dispMessage("SOM_DataLoader","run","Starting Trained SOM map node data loader", MsgCodes.info5);	
 			//load results from map processing - fnames needs to be modified to handle this
 		ftrTypeUsedToTrain = projConfigData.getFtrTypeUsedToTrain();
 			//whether chi-sq dist or regular l2 dist should be used
 		useChiSqDist = mapMgr.getUseChiSqDist();
 			//load map weights for all map nodes
 		boolean success = loadSOMWts();	
-		if(success) {msgObj.dispMessage("SOMDataLoader", "execDataLoad", "Loading SOM Weights successfully completed.", MsgCodes.info1);}
-		else		{msgObj.dispMessage("SOMDataLoader", "execDataLoad", "Loading SOM Weights failed.  Aborting further processing.", MsgCodes.error2);	return false;}
+		if(success) {msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading SOM Weights successfully completed.", MsgCodes.info1);}
+		else		{msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading SOM Weights failed.  Aborting further processing.", MsgCodes.error2);	return false;}
 			//set u-matrix for all map nodes
 		success = loadSOM_UMatrixDists();		
-		if(success) {msgObj.dispMessage("SOMDataLoader", "execDataLoad", "Loading UMatrix distances successfully completed.", MsgCodes.info1);}
-		else		{msgObj.dispMessage("SOMDataLoader", "execDataLoad", "Loading UMatrix distances failed.  Aborting further processing.", MsgCodes.error2);	return false;}
+		if(success) {msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading UMatrix distances successfully completed.", MsgCodes.info1);}
+		else		{msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading UMatrix distances failed.  Aborting further processing.", MsgCodes.error2);	return false;}
 			//load mins and diffs of data used to train map
 		success = mapMgr.loadDiffsMins();	
-		if(success) {msgObj.dispMessage("SOMDataLoader", "execDataLoad", "Loading Diffs/Mins of training data successfully completed.", MsgCodes.info1);}
-		else		{msgObj.dispMessage("SOMDataLoader", "execDataLoad", "Loading Diffs/Mins of training data failed.  Aborting further processing.", MsgCodes.error2);	return false;}		
+		if(success) {msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading Diffs/Mins of training data successfully completed.", MsgCodes.info1);}
+		else		{msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading Diffs/Mins of training data failed.  Aborting further processing.", MsgCodes.error2);	return false;}		
 			//load SOM's best matching units for training data - must be after map wts and training data has been loaded
 		success = loadSOM_BMUs();
 		if(success) {
-			msgObj.dispMessage("SOMDataLoader", "execDataLoad", "Loading BMUs for training data successfully completed.", MsgCodes.info1);
+			msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading BMUs for training data successfully completed.", MsgCodes.info1);
 			mapMgr.setAllBMUsFromMap();
 		} else {
-			msgObj.dispMessage("SOMDataLoader", "execDataLoad", "Loading BMUs for training data failed.  Unable to match products to map nodes since BMU loading failed.  Aborting further processing.", MsgCodes.error2);	
+			msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading BMUs for training data failed.  Unable to match products to map nodes since BMU loading failed.  Aborting further processing.", MsgCodes.error2);	
 			return false;
 		}		
 			//finish up 
@@ -75,7 +75,7 @@ public class SOM_DataLoader{
 		mapMgr.setLoaderRTN(true);
 		mapMgr.setMapImgClrs();
 		mapMgr.resetButtonState();
-		msgObj.dispMessage("SOMDataLoader","run","Finished data loader", MsgCodes.info5);	
+		msgObj.dispMessage("SOM_DataLoader","run","Finished data loader", MsgCodes.info5);	
 		return true;
 	}//run
 
@@ -91,7 +91,7 @@ public class SOM_DataLoader{
 	private boolean checkMapDim(String[] tkns, String errorMSG){
 		int tmapY = Integer.parseInt(tkns[0]), tmapX = Integer.parseInt(tkns[1]);
 		if((tmapY != mapMgr.getMapNodeRows()) || (tmapX != mapMgr.getMapNodeCols())) { 
-			msgObj.dispMessage("SOMDataLoader","checkMapDim","!!"+ errorMSG + " dimensions : " + tmapX +","+tmapY+" do not match dimensions of learned weights " + mapMgr.getMapNodeCols() +","+mapMgr.getMapNodeRows()+". Loading aborted.", MsgCodes.error2); 
+			msgObj.dispMessage("SOM_DataLoader","checkMapDim","!!"+ errorMSG + " dimensions : " + tmapX +","+tmapY+" do not match dimensions of learned weights " + mapMgr.getMapNodeCols() +","+mapMgr.getMapNodeRows()+". Loading aborted.", MsgCodes.error2); 
 			return false;} 
 		return true;		
 	}//checkMapDim
@@ -101,8 +101,8 @@ public class SOM_DataLoader{
 	//consider actual map data to be feature data, scale map nodes based on min/max feature data seen in wts file
 	private boolean loadSOMWts(){//builds mapnodes structure - each map node's weights 
 		String wtsFileName = projConfigData.getSOMResFName(SOM_ProjConfigData.wtsIDX);
-		if(wtsFileName.length() < 1){msgObj.dispMessage("SOMDataLoader","loadSOMWts","getSOMResFName call failed for wts : "+wtsFileName, MsgCodes.info5);return false;}
-		msgObj.dispMessage("SOMDataLoader","loadSOMWts","Starting Loading SOM weight data from file : " + getFName(wtsFileName), MsgCodes.info5 );
+		if(wtsFileName.length() < 1){msgObj.dispMessage("SOM_DataLoader","loadSOMWts","getSOMResFName call failed for wts : "+wtsFileName, MsgCodes.info5);return false;}
+		msgObj.dispMessage("SOM_DataLoader","loadSOMWts","Starting Loading SOM weight data from file : " + getFName(wtsFileName), MsgCodes.info5 );
 		mapMgr.initMapNodes();
 		mapMgr.clearBMUNodesWithNoExs(SOM_ExDataType.Training);//clear structures holding map nodes with and without training examples
 		if(wtsFileName.length() < 1){return false;}
@@ -139,25 +139,25 @@ public class SOM_DataLoader{
 			mapMgr.addToMapNodes(mapLoc, dpt);			
 		}
 		//make sure both unmoddified features and std'ized features are built before determining map mean/var
-		mapMgr.finalizeMapNodes(numTrainFtrs, numEx);		
-		msgObj.dispMessage("SOMDataLoader","loadSOMWts","Finished Loading SOM weight data from file : " + getFName(wtsFileName), MsgCodes.info5 );		
+		mapMgr.finalizeMapNodeFtrWts(numTrainFtrs, numEx);		
+		msgObj.dispMessage("SOM_DataLoader","loadSOMWts","Finished Loading SOM weight data from file : " + getFName(wtsFileName), MsgCodes.info5 );		
 		return true;
 	}//loadSOMWts	
 	
 	@SuppressWarnings("unused")
 	private void dbgDispFtrAra(float[] ftrData, String exStr) {
-		msgObj.dispMessage("SOMDataLoader","dbgDispFtrAra",ftrData.length + " " +exStr + " vals : ", MsgCodes.warning1 );	
+		msgObj.dispMessage("SOM_DataLoader","dbgDispFtrAra",ftrData.length + " " +exStr + " vals : ", MsgCodes.warning1 );	
 		String res = ""+String.format("%.4f",ftrData[0]);
 		for(int d=1;d<ftrData.length;++d) {res += ", " + String.format("%.4f", ftrData[d]);		}
 		res +="\n";
-		msgObj.dispMessage("SOMDataLoader","dbgDispFtrAra",res, MsgCodes.warning1);
+		msgObj.dispMessage("SOM_DataLoader","dbgDispFtrAra",res, MsgCodes.warning1);
 	}//dbgDispFtrAra	
 	
 	//load the u-matrix data used to build the node distance visualization
 	private boolean loadSOM_UMatrixDists() {
 		String uMtxBMUFname =  projConfigData.getSOMResFName(SOM_ProjConfigData.umtxIDX);
-		if(uMtxBMUFname.length() < 1){msgObj.dispMessage("SOMDataLoader","loadSOM_UMatrixDists","getSOMResFName call failed for umatrix file : "+uMtxBMUFname, MsgCodes.info5);return false;}
-		msgObj.dispMessage("SOMDataLoader","loadSOM_UMatrixDists","Start Loading U-Matrix File : "+uMtxBMUFname, MsgCodes.info5);
+		if(uMtxBMUFname.length() < 1){msgObj.dispMessage("SOM_DataLoader","loadSOM_UMatrixDists","getSOMResFName call failed for umatrix file : "+uMtxBMUFname, MsgCodes.info5);return false;}
+		msgObj.dispMessage("SOM_DataLoader","loadSOM_UMatrixDists","Start Loading U-Matrix File : "+uMtxBMUFname, MsgCodes.info5);
 		if(uMtxBMUFname.length() < 1){return false;}
 		String [] strs= fileIO.loadFileIntoStringAra(uMtxBMUFname, "Loaded U Matrix data file : "+uMtxBMUFname, "Error reading U Matrix data file : "+uMtxBMUFname);
 		if(strs==null){return false;}
@@ -194,7 +194,7 @@ public class SOM_DataLoader{
 		mapMgr.buildAllMapNodeNeighborhood_UMatrixDists((maxUMatDist - minUMatDist), minUMatDist);//for(SOMMapNode ex : mapMgr.MapNodes.values()) {	ex.buildNeighborWtVals();	}
 		//calculate segments of nodes
 		mapMgr.buildUMatrixSegmentsOnMap();
-		msgObj.dispMessage("SOMDataLoader","loadSOM_UMatrixDists","Finished loading and processing U-Matrix File : "+uMtxBMUFname, MsgCodes.info5);		
+		msgObj.dispMessage("SOM_DataLoader","loadSOM_UMatrixDists","Finished loading and processing U-Matrix File : "+uMtxBMUFname, MsgCodes.info5);		
 		return true;
 	}//loadSOM_UMatrixDists
 	
@@ -205,7 +205,7 @@ public class SOM_DataLoader{
 		tkns = hdrStrAra[1].replace('%', ' ').trim().split(SOM_MapManager.SOM_FileToken);
 		int tNumTDat = Integer.parseInt(tkns[0]);
 		if(tNumTDat != mapMgr.numTrainData) { //don't forget added emtpy vector
-			msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","!!Best Matching Units file " + getFName(bmFileName) + " # of training examples : " + tNumTDat +" does not match # of training examples in training data " + mapMgr.numTrainData+". Loading aborted.", MsgCodes.error2 ); 
+			msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","!!Best Matching Units file " + getFName(bmFileName) + " # of training examples : " + tNumTDat +" does not match # of training examples in training data " + mapMgr.numTrainData+". Loading aborted.", MsgCodes.error2 ); 
 			return false;}					
 		return true;
 	}//checkBMUHeader
@@ -213,10 +213,10 @@ public class SOM_DataLoader{
 	//load best matching units for each training example - has values : idx, mapy, mapx.  Uses file built by som code.  can be verified by comparing actual example distance from each node
 	private boolean loadSOM_BMUs(){//modifies existing nodes and datapoints only
 		String bmFileName = projConfigData.getSOMResFName(SOM_ProjConfigData.bmuIDX);
-		if(bmFileName.length() < 1){msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","getSOMResFName call failed : "+bmFileName, MsgCodes.info5);return false;}
+		if(bmFileName.length() < 1){msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","getSOMResFName call failed : "+bmFileName, MsgCodes.info5);return false;}
 		//clear out listing of bmus that have training examples already
 		mapMgr.clearBMUNodesWithExs(SOM_ExDataType.Training);
-		msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","Start Loading BMU File : "+bmFileName, MsgCodes.info5);
+		msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","Start Loading BMU File : "+bmFileName, MsgCodes.info5);
 		String[] tkns;			
 		String[] strs= fileIO.loadFileIntoStringAra(bmFileName, "Loaded best matching unit data file : "+bmFileName, "Error reading best matching unit file : "+bmFileName);			
 		if((strs==null) || (strs.length == 0)){return false;}
@@ -245,15 +245,15 @@ public class SOM_DataLoader{
 			Tuple<Integer,Integer> mapLoc = new Tuple<Integer, Integer>(mapNodeX,mapNodeY);
 			SOM_MapNode tmpMapNode = mapMgr.getMapNodeByCoords(mapLoc);
 				//should never happen, if map was built with specified configuration - this would mean trying to load data from different maps
-			if(null==tmpMapNode){ msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","!!!!!!!!!Map node stated as best matching unit for training example " + tkns[0] + " not found in map ... somehow. ", MsgCodes.error2); return false;}//catastrophic error shouldn't be possible
+			if(null==tmpMapNode){ msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","!!!!!!!!!Map node stated as best matching unit for training example " + tkns[0] + " not found in map ... somehow. ", MsgCodes.error2); return false;}//catastrophic error shouldn't be possible
 			
 			//get data point at dpIdx - this is node for which tmpMapNode is BMU
 			SOM_Example tmpDataPt = _trainData[dpIdx];
 				//should never happen, if map was built with this data 
-			if(null==tmpDataPt){ msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","!!Training Datapoint given by idx in BMU file str tok : " + tkns[0] + " of string : --" + strs[i] + "-- not found in training data. ", MsgCodes.error2); return false;}//catastrophic error shouldn't happen
+			if(null==tmpDataPt){ msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","!!Training Datapoint given by idx in BMU file str tok : " + tkns[0] + " of string : --" + strs[i] + "-- not found in training data. ", MsgCodes.error2); return false;}//catastrophic error shouldn't happen
 			
 			//this is for spot verification - check if 0 0 bmus match what is expected, and look like each other
-			//if((mapNodeX==0) &&(mapNodeY==0)) {				msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","------------- > Map Node 0 0 is BMU for data point IDX : " + dpIdx + " : "+ tmpDataPt.toSVMString(ftrTypeUsedToTrain), MsgCodes.info3);}
+			//if((mapNodeX==0) &&(mapNodeY==0)) {				msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","------------- > Map Node 0 0 is BMU for data point IDX : " + dpIdx + " : "+ tmpDataPt.toSVMString(ftrTypeUsedToTrain), MsgCodes.info3);}
 			
 			//for multi-threading : partition bmu and its subsequent child examples to a different list depending on location of bmu
 			//will always result in any particular map node only appearing within a single partition
@@ -267,7 +267,7 @@ public class SOM_DataLoader{
 			//mapMgr.nodesWithNoEx.remove(tmpMapNode);
 			//msgObj.dispMessage("DataLoader : Tuple "  + mapLoc + " from str @ i-2 = " + (i-2) + " node : " + tmpMapNode.toString());
 		}//for each training data point			
-		msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","Built bmus map, now calc dists for examples", MsgCodes.info1);
+		msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","Built bmus map, now calc dists for examples", MsgCodes.info1);
 		boolean doMT = mapMgr.isMTCapable();
 		//mapping bmus to training examples
 		mapMgr.setTrainDataBMUsMapped(false);
@@ -297,13 +297,13 @@ public class SOM_DataLoader{
 			}
 		}//if mt else single thd
 		mapMgr.setTrainDataBMUsMapped(true);
-		msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","Start Pruning No-Example list", MsgCodes.info5);
+		msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","Start Pruning No-Example list", MsgCodes.info5);
 		//finalize nodes that were trained by normalized features - take all mapped bmus and find average distance weighted magnitude,and use this magnitude to build map node raw ftrs and std features
-		mapMgr._finalizeInitBMUForNormTrainedFtrs();
+		mapMgr._finalizeInitTrainingDataBMUAssignments();
 		
 		mapMgr._finalizeBMUProcessing(SOM_ExDataType.Training);
 		
-		msgObj.dispMessage("SOMDataLoader","loadSOM_BMUs","Finished Loading SOM BMUs from file : " + getFName(bmFileName) + "| Found "+mapMgr.getNumNodesWithBMUExs(SOM_ExDataType.Training)+" nodes with training example mappings.", MsgCodes.info5);
+		msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","Finished Loading SOM BMUs from file : " + getFName(bmFileName) + "| Found "+mapMgr.getNumNodesWithBMUExs(SOM_ExDataType.Training)+" nodes with training example mappings.", MsgCodes.info5);
 		return true;
 	}//loadSOM_BMs
 	

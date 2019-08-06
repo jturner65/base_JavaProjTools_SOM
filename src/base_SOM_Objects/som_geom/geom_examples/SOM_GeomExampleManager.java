@@ -10,7 +10,6 @@ import base_SOM_Objects.som_examples.SOM_ExDataType;
 import base_SOM_Objects.som_examples.SOM_Example;
 import base_SOM_Objects.som_examples.SOM_ExampleManager;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSamplePointf;
-import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSmplDataForEx;
 import base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen.SOM_GeomObjBldrRunner;
 import base_Utils_Objects.io.MsgCodes;
 /**
@@ -26,7 +25,7 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	/**
 	 * all the constituent samples from the geometric objects this example manager manages
 	 */
-	protected SOM_GeomSmplDataForEx[] allSamples;
+	protected SOM_GeomSamplePointf[] allSamples;
 
 	/**
 	 * set this to data type being managed by this example manager (training, validation, etc) 
@@ -43,7 +42,7 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	@Override
 	protected final void reset_Priv() {
 		msgObj.dispInfoMessage("SOM_GeomExampleManager::"+exampleName, "reset_Priv", "Example manager : " + exMgrName + " reset called.");
-		allSamples = new SOM_GeomSmplDataForEx[0];
+		allSamples = new SOM_GeomSamplePointf[0];
 	}
 
 	
@@ -70,11 +69,11 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 		//all geomgetric objects from geometry example manager
 		SOM_GeomObj[] geomEx = (SOM_GeomObj[]) geomExMgr.buildExampleArray();
 		int numSamplesTTL = geomEx.length * geomEx[0].getNumSamples();
-		allSamples = new SOM_GeomSmplDataForEx[numSamplesTTL];
+		allSamples = new SOM_GeomSamplePointf[numSamplesTTL];
 		int idx = 0;
 		for(SOM_GeomObj ex : geomEx) {
 			SOM_GeomSamplePointf[] smpls = ex.getAllSamplePts();
-			for(int i=0;i<smpls.length;++i) {	allSamples[idx++]=new SOM_GeomSmplDataForEx(ex,smpls[i]);}			
+			for(int i=0;i<smpls.length;++i) {	allSamples[idx++]=new SOM_GeomSamplePointf(smpls[i],smpls[i].name);}			
 		}
 		SOM_GeomTrainingExUniqueID[] _idxsToUse = null;
 		//if desired to have unique samples build every training example
@@ -107,14 +106,14 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	 * @param rnd the current thread's rng engine
 	 * @return sorted list of idxs
 	 */
-	protected abstract Integer[] genUniqueObjIDXs(SOM_GeomSmplDataForEx[] allSamples, ThreadLocalRandom rnd);
+	protected abstract Integer[] genUniqueObjIDXs(SOM_GeomSamplePointf[] allSamples, ThreadLocalRandom rnd);
 	
 	/**
 	 * build ttlNumTrainEx x <# objs for object type> 2 d array of unique, appropriate idxs for training data
 	 * @param ttlNumTrainEx
 	 * @return
 	 */	
-	protected final SOM_GeomTrainingExUniqueID[] buildUniqueIDXsForObjType(SOM_GeomSmplDataForEx[] allSamples, int ttlNumTrainEx) {
+	protected final SOM_GeomTrainingExUniqueID[] buildUniqueIDXsForObjType(SOM_GeomSamplePointf[] allSamples, int ttlNumTrainEx) {
 		ThreadLocalRandom rnd = ThreadLocalRandom.current();
 		HashMap<SOM_GeomTrainingExUniqueID, Integer> res = new HashMap<SOM_GeomTrainingExUniqueID, Integer>();
 		SOM_GeomTrainingExUniqueID ex;
@@ -131,7 +130,7 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	 * @param ttlNumTrainEx
 	 * @param _idxsToUse precalculated idxs for each object to use - null if allowing for duplication, otherwise ttlNumTrainEx long
 	 */
-	protected abstract void buildAllEx_MT(SOM_GeomSmplDataForEx[] allSamples, int numThdCallables, int ttlNumTrainEx, SOM_GeomTrainingExUniqueID[] _idxsToUse);
+	protected abstract void buildAllEx_MT(SOM_GeomSamplePointf[] allSamples, int numThdCallables, int ttlNumTrainEx, SOM_GeomTrainingExUniqueID[] _idxsToUse);
 
 	/**
 	 * code to execute after examples have had ftrs calculated - this will calculate std features and any alternate ftr mappings if used

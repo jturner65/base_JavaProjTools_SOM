@@ -355,7 +355,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		// values
 		TreeMap<Integer, String[]> tmpListObjVals = new TreeMap<Integer, String[]>();
 
-		ArrayList<Object[]> tmpUIObjArray = new ArrayList<Object[]>();
+		TreeMap<Integer, Object[]> tmpUIObjArray = new TreeMap<Integer, Object[]>();
 		// tmpBtnNamesArray.add(new Object[]{"Building SOM","Build SOM ",buildSOMExe});
 		// object array of elements of following format :
 		// the first element double array of min/max/mod values
@@ -363,34 +363,20 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		// the 3rd elem is label for object
 		// the 4th element is boolean array of {treat as int, has list values, value is
 		// sent to owning window}
-		int minNumObjs = getMinNumObjs(), maxNumObjs = getMaxNumObjs(),
-				diffNumObjs = (maxNumObjs - minNumObjs > 100 ? 10 : 1);
+		int minNumObjs = getMinNumObjs(), maxNumObjs = getMaxNumObjs(),	diffNumObjs = (maxNumObjs - minNumObjs > 100 ? 10 : 1);
 		numGeomObjs = minNumObjs;
-		tmpUIObjArray
-				.add(new Object[] { new double[] { minNumObjs, maxNumObjs, diffNumObjs }, (double) (numGeomObjs * 1.0),
-						"# of " + geomObjType + " Objects", new boolean[] { true, false, true } }); // gIDX_NumUIObjs
-		int minNumSmplsPerObj = getMinNumSmplsPerObj(), maxNumSmplsPerObj = getMaxNumSmplsPerObj(),
-				diffNumSmplsPerObj = (maxNumSmplsPerObj - minNumSmplsPerObj > 100 ? 10 : 1);
+		tmpUIObjArray.put(gIDX_NumUIObjs,new Object[] { new double[] { minNumObjs, maxNumObjs, diffNumObjs }, (double) (numGeomObjs * 1.0),"# of " + geomObjType + " Objects", new boolean[] { true, false, true } }); // gIDX_NumUIObjs
+		int minNumSmplsPerObj = getMinNumSmplsPerObj(), maxNumSmplsPerObj = getMaxNumSmplsPerObj(),	diffNumSmplsPerObj = (maxNumSmplsPerObj - minNumSmplsPerObj > 100 ? 10 : 1);
 		numSmplPointsPerObj = minNumSmplsPerObj;
-		tmpUIObjArray.add(new Object[] { new double[] { minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj },
-				(double) (numSmplPointsPerObj), "# of samples per Object", new boolean[] { true, false, true } }); // gIDX_NumUISamplesPerObj
+		tmpUIObjArray.put(gIDX_NumUISamplesPerObj, new Object[] { new double[] { minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj },(double) (numSmplPointsPerObj), "# of samples per Object", new boolean[] { true, false, true } }); // gIDX_NumUISamplesPerObj
 		// gIDX_FractNumTrainEx fractOfBinomialForBaseNumTrainEx
-		tmpUIObjArray.add(new Object[] { new double[] { 0.00001, 1.000, 0.00001 }, fractOfBinomialForBaseNumTrainEx,
-				"Fract of Binomial for Train Ex", new boolean[] { false, false, true } }); // gIDX_FractNumTrainEx
+		tmpUIObjArray.put(gIDX_FractNumTrainEx, new Object[] { new double[] { 0.00001, 1.000, 0.00001 }, fractOfBinomialForBaseNumTrainEx,"Fract of Binomial for Train Ex", new boolean[] { false, false, true } }); // gIDX_FractNumTrainEx
 
 		// gIDX_NumTraingEx
-		long minNumTrainingExamples = getNumTrainingExamples(minNumObjs, minNumSmplsPerObj),
-				maxNumTrainingExamples = 10 * minNumTrainingExamples,
-				diffNumTrainingEx = (maxNumTrainingExamples - minNumTrainingExamples) > 1000 ? 1000 : 10;
+		long minNumTrainingExamples = getNumTrainingExamples(minNumObjs, minNumSmplsPerObj),maxNumTrainingExamples = 10 * minNumTrainingExamples,diffNumTrainingEx = (maxNumTrainingExamples - minNumTrainingExamples) > 1000 ? 1000 : 10;
 		numTrainingExamples = (int) minNumTrainingExamples;
-		tmpUIObjArray
-				.add(new Object[] { new double[] { minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx },
-						(double) (numTrainingExamples),
-						"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]",
-						new boolean[] { true, false, true } }); // gIDX_NumUISamplesPerObj
-
-		tmpUIObjArray.add(new Object[] { new double[] { 0, numGeomObjs - 1, 1 }, (double) (curSelGeomObjIDX),
-				"ID of Object to Select", new boolean[] { true, false, true } }); // gIDX_SelDispUIObj
+		tmpUIObjArray.put(gIDX_NumTrainingEx, new Object[] { new double[] { minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx },(double) (numTrainingExamples),	"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]",new boolean[] { true, false, true } }); // gIDX_NumUISamplesPerObj
+		tmpUIObjArray.put(gIDX_SelDispUIObj, new Object[] { new double[] { 0, numGeomObjs - 1, 1 }, (double) (curSelGeomObjIDX),"ID of Object to Select", new boolean[] { true, false, true } }); // gIDX_SelDispUIObj
 
 		// populate instancing application objects
 		setupGUIObjsAras_Indiv(tmpUIObjArray, tmpListObjVals);
@@ -433,20 +419,16 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	/**
 	 * Instancing class-specific (application driven) UI objects should be defined
-	 * in this function. Add an entry to tmpBtnNamesArray for each button, in the
-	 * order they are to be displayed
-	 * 
-	 * @param tmpUIObjArray  array list of Object arrays, where in each object array
-	 *                       : the first element double array of min/max/mod values
-	 *                       the 2nd element is starting value the 3rd elem is label
-	 *                       for object the 4th element is boolean array of {treat
-	 *                       as int, has list values, value is sent to owning
-	 *                       window}
-	 * @param tmpListObjVals treemap keyed by object IDX and value is list of
-	 *                       strings of values for all UI list select objects
+	 * in this function.  Add an entry to tmpBtnNamesArray for each button, in the order 
+	 * they are to be displayed
+	 * @param tmpUIObjArray map keyed by uiIDX of object, value is list of Object arrays, where in each object array : 
+	 * 			the first element double array of min/max/mod values
+	 * 			the 2nd element is starting value
+	 * 			the 3rd elem is label for object
+	 * 			the 4th element is boolean array of {treat as int, has list values, value is sent to owning window}
+	 * @param tmpListObjVals treemap keyed by object IDX and value is list of strings of values for all UI list select objects
 	 */
-	protected abstract void setupGUIObjsAras_Indiv(ArrayList<Object[]> tmpUIObjArray,
-			TreeMap<Integer, String[]> tmpListObjVals);
+	protected abstract void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals);
 
 	/**
 	 * update # of max training examples based on updated number of desired objects
@@ -507,9 +489,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 			break;
 		}
 		case gIDX_NumTrainingEx: {
-			if (ival != numTrainingExamples) {
-				numTrainingExamples = ival;
-			}
+			if (ival != numTrainingExamples) {		numTrainingExamples = ival;		}
 			setMapMgrGeomObjVals();
 			break;
 		}

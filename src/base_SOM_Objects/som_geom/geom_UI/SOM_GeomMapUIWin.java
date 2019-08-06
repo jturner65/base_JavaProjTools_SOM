@@ -119,7 +119,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * Instancing class-specific (application driven) UI objects should be defined
 	 * in this function.  Add an entry to tmpBtnNamesArray for each button, in the order 
 	 * they are to be displayed
-	 * @param tmpUIObjArray array list of Object arrays, where in each object array : 
+	 * @param tmpUIObjArray map keyed by uiIDX of object, value is list of Object arrays, where in each object array : 
 	 * 			the first element double array of min/max/mod values
 	 * 			the 2nd element is starting value
 	 * 			the 3rd elem is label for object
@@ -127,7 +127,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * @param tmpListObjVals treemap keyed by object IDX and value is list of strings of values for all UI list select objects
 	 */
 	@Override
-	protected final void setupGUIObjsArasIndiv(ArrayList<Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals) {		
+	protected final void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals) {		
 	}
 	@Override
 	protected final void setVisScreenDimsPriv_Indiv() {
