@@ -1265,7 +1265,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	protected final String[] getSaveFileDirNamesPriv() {
 		// TODO Auto-generated method stub
-		return null;
+		return new String[0];
 	}
 
 	@Override
@@ -1277,7 +1277,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	public final ArrayList<String> hndlFileSave(File file) {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<String>();
 	}
 
 }// SOM_AnimWorldWin

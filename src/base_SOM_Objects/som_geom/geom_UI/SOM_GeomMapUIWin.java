@@ -174,12 +174,6 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	protected void stopMe() {}	
 
 	@Override
-	protected String[] getSaveFileDirNamesPriv() {
-		// TODO Auto-generated method stub
-		return new String[] {};
-	}
-
-	@Override
 	protected void setCustMenuBtnNames() {
 		// TODO Auto-generated method stub
 		
@@ -291,17 +285,6 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 
 	@Override
 	protected final void launchMenuBtnHndlr(int funcRow, int btn) {	}
-	
-	@Override
-	public void hndlFileLoad(File file, String[] vals, int[] stIdx) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public ArrayList<String> hndlFileSave(File file) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 }//myTrajEditWin

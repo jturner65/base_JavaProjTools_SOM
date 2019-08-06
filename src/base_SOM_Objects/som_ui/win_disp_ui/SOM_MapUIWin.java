@@ -949,22 +949,21 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	//first index is directory suffix - should have identifying tags based on major/archtypical component of sim run
 	//2nd index is file name, should have parameters encoded
 	@Override
-	protected String[] getSaveFileDirNamesPriv() {
-		String dirString="", fileString ="";
-		//for(int i=0;i<uiAbbrevList.length;++i) {fileString += uiAbbrevList[i]+"_"+ (uiVals[i] > 1 ? ((int)uiVals[i]) : uiVals[i] < .0001 ? String.format("%6.3e", uiVals[i]) : String.format("%3.3f", uiVals[i]))+"_";}
-		return new String[]{dirString,fileString};	
+	protected final String[] getSaveFileDirNamesPriv() {
+		// TODO Auto-generated method stub
+		return new String[0];
 	}
+
 	@Override
-	public void hndlFileLoad(File file, String[] vals, int[] stIdx) {
-		//if wanting to load/save UI values, uncomment this call and similar in hndlFileSave 
-		//hndlFileLoad_GUI(vals, stIdx);
+	public final void hndlFileLoad(File file, String[] vals, int[] stIdx) {
+		// TODO Auto-generated method stub
+
 	}
+
 	@Override
-	public ArrayList<String> hndlFileSave(File file) {
-		ArrayList<String> res = new ArrayList<String>();
-		//if wanting to load/save UI values, uncomment this call and similar in hndlFileLoad 
-		//res = hndlFileSave_GUI();
-		return res;
+	public final ArrayList<String> hndlFileSave(File file) {
+		// TODO Auto-generated method stub
+		return new ArrayList<String>();
 	}
 	@Override
 	protected final myPoint getMsePtAs3DPt(myPoint mseLoc){return new myPoint(mseLoc.x,mseLoc.y,0);}
