@@ -23,7 +23,7 @@ public class SOM_GeomSideBarMenu extends BaseBarMenu {
 		/**
 		 * set row names for each row of ui action buttons getMouseOverSelBtnNames()
 		 * @param _funcRowNames array of names for each row of functional buttons 
-		 * @param _numBtnsPerFuncRow array of # of buttons per row of functional buttons
+		 * @param _numBtnsPerFuncRow array of # of buttons per row of functional buttons - size must match # of entries in _funcRowNames array
 		 * @param _numDbgBtns # of debug buttons
 		 * @param _inclWinNames include the names of all the instanced windows
 		 * @param _inclMseOvValues include a row for possible mouse over values

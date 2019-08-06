@@ -69,9 +69,10 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 */
 	public static final int 
 		srcGeomObjsAllBuiltIDX 		= numBaseFlags + 0,
-		trainDatObjsAllBuiltIDX 	= numBaseFlags + 1;
+		trainDatObjsAllBuiltIDX 	= numBaseFlags + 1,
+		allTrainExUniqueIDX			= numBaseFlags + 2;							//all training data examples should be unique - this might not be possible if more samples are asked for than are possible to be unique for object type
 	
-	public static final int numGeomBaseFlags = numBaseFlags + 2;
+	public static final int numGeomBaseFlags = numBaseFlags + 3;
 	
 
 	/**
@@ -419,7 +420,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 		if(!getFlag(trainDatObjsAllBuiltIDX)) {
 			resetTrainDataObjs();		
 				//synthesize training data using current configuration from UI with loaded data
-			trainExDataManager.buildTrainingDataFromGeomObjs(geomSrcToTrainExDataManager, ttlNumTrainExamples);
+			trainExDataManager.buildTrainingDataFromGeomObjs(geomSrcToTrainExDataManager, getFlag(allTrainExUniqueIDX), ttlNumTrainExamples);
 			trainDatGeomObjects = (SOM_GeomObj[]) trainExDataManager.buildExampleArray();
 			setFlag(trainDatObjsAllBuiltIDX,true);
 				//finalize and calc ftr vecs on geometry if we have loaded new data 
@@ -496,8 +497,6 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 		// TODO Auto-generated method stub
 		return "";
 	}
-
-	
 	
 	@Override
 	//return appropriately pathed file name for map image of specified ftr idx
@@ -593,6 +592,11 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	public final void setTrainDataObjsBuilt(boolean val) {setFlag(trainDatObjsAllBuiltIDX, val);}
 	public final boolean getTrainDataObjsBuilt() {return getFlag(trainDatObjsAllBuiltIDX);}	
 	
+	public final void setTrainExShouldBeUnqiue(boolean val) {setFlag(allTrainExUniqueIDX, val);}
+	public final boolean getTrainExShouldBeUnqiue() {return getFlag(allTrainExUniqueIDX);}	
+	
+	
+	
 	@Override
 	protected final int getNumFlags() {	return getNumGeomFlags_Indiv();}
 	protected abstract int getNumGeomFlags_Indiv();
@@ -601,6 +605,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 		switch (idx) {//special actions for each flag
 			case srcGeomObjsAllBuiltIDX 		: {break;}
 			case trainDatObjsAllBuiltIDX 		: {break;}
+			case allTrainExUniqueIDX			: {break;}
 			default : {setGeomFlag_Indiv(idx, val); break;}
 		}
 	}

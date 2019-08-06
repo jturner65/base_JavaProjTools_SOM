@@ -137,9 +137,11 @@ public abstract class SOM_MapManager {
 			map_ftrsMean, 				
 			map_ftrsVar,
 			map_ftrsDiffs, 
-			map_ftrsMin;				//per feature mean, variance, difference, mins, in -map features- data
-	
-	private float 						//min and diff umat dist seen from SOM calc
+			map_ftrsMin;				
+	/**
+	 * min and diff umat dist seen from SOM calc
+	 */
+	private float 						
 		uMatDist_Min,
 		uMatDist_Diff;
 	
@@ -192,20 +194,20 @@ public abstract class SOM_MapManager {
 	////////////////////		
 	//data type to use to describe/train map
 	//public static final int useUnmoddedDat = 0, useScaledDat = 1, Normalized = 2;
-	public static final String[] uiMapTrainFtrTypeList = SOM_FtrDataType.getListOfTypes();//new String[] {"Unmodified","Standardized (0->1 per ftr)","Normalized (vector mag==1)"};
+	public static final String[] uiMapTrainFtrTypeList = SOM_FtrDataType.getListOfTypes();
 	/**
 	 * types of possible mappings to particular map node as bmu
 	 *  corresponds to these values : all ExDataTypes except last 2
 	 */
-	private static String[] nodeBMUMapTypes;// = new String[] {"Training", "Testing", "Products"};
+	private static String[] nodeBMUMapTypes;
 	/**
 	 * feature type used for training currently trained/loaded map
 	 */
 	protected SOM_FtrDataType curMapTrainFtrType;	
-//	/**
-//	 * feature type used for testing/finding proposals currently - comparing features to map
-//	 */
-//	protected SOM_FtrDataType curMapTestFtrType;
+	/**
+	 * feature type used for testing/finding proposals currently - comparing features to map
+	 */
+	protected SOM_FtrDataType BMU_DispFtrType;
 	/**
 	 * distance to use :  1: chisq features or 0 : regular feature dists
 	 */
@@ -296,7 +298,7 @@ public abstract class SOM_MapManager {
 	/**
 	 * which ftr map is currently being shown
 	 */
-	protected int curMapImgIDX;
+	protected int curFtrMapImgIDX;
 	/**
 	 * which category idx is currently selected
 	 */
@@ -484,12 +486,12 @@ public abstract class SOM_MapManager {
 	}//resetTrainDataAras()
 	//
 	//curMapTrainFtrType.getBrfName();public String getDataTypeNameFromCurFtrTrainType_Brf() {return curMapTrainFtrType.getBrfName();}	
-	//public String getDataTypeNameFromCurFtrTestType_Brf() {return curMapTestFtrType.getBrfName();}	
+	public String getDataTypeNameFromBMU_DispFtrType_Brf() {return BMU_DispFtrType.getBrfName();}	
 	//Unmodified = 0, Standardized = 1, Normalized
 	public String getDataTypeNameFromInt_Brf(SOM_FtrDataType dataFrmt) { return dataFrmt.getBrfName();}//getDataTypeNameFromInt
 	
 	public String getDataDescFromCurFtrTrainType()  {return curMapTrainFtrType.getExplanation();}
-	//public String getDataDescFromCurFtrTestType()  {return curMapTestFtrType.getExplanation();}
+	public String getDataDescFromBMU_DispFtrType()  {return BMU_DispFtrType.getExplanation();}
 	public String getDataDescFromInt(SOM_FtrDataType dataFrmt) {return dataFrmt.getExplanation();}//getDataTypeNameFromInt
 	
 	public String getDataDescFromInt_Short(SOM_FtrDataType dataFrmt) {
@@ -796,9 +798,9 @@ public abstract class SOM_MapManager {
 	
 	///////////////////////////////////////////
 	// map image init	
-	public final void initFromUIWinInitMe(int _trainDatFrmt, float _mapNodeWtDispThresh, float _mapNodePopDispThresh, int _mapNodeDispType) {
+	public final void initFromUIWinInitMe(int _trainDatFrmt,int _BMUDispDatFrmt, float _mapNodeWtDispThresh, float _mapNodePopDispThresh, int _mapNodeDispType) {
 		setCurrentTrainDataFormat(SOM_FtrDataType.getVal(_trainDatFrmt));
-		//setCurrentTestDataFormat(SOM_FtrDataType.getVal(_testDatFrmt));
+		setBMU_DispFtrTypeFormat(SOM_FtrDataType.getVal(_BMUDispDatFrmt));
 		mapNodeWtDispThresh = _mapNodeWtDispThresh;
 		mapNodeDispType = SOM_ExDataType.getVal(_mapNodeDispType);
 		mapNodePopDispThresh = _mapNodePopDispThresh;
@@ -810,7 +812,7 @@ public abstract class SOM_MapManager {
 	public final void initMapAras(int numFtrVals, int num2ndryMaps) {
 		if (win != null) {	
 			msgObj.dispMessage("SOM_MapManager::"+name,"initMapAras","Start Initializing per-feature map display to hold : "+ numFtrVals +" primary feature and " +num2ndryMaps + " secondary feature map images.", MsgCodes.info1);
-			curMapImgIDX = 0;
+			curFtrMapImgIDX = 0;
 			int format = PConstants.RGB; 
 			//int w = (int) (SOM_mapDims[0]/mapScaleVal), h = (int) (SOM_mapDims[1]/mapScaleVal);
 			int w = (int) (mapDims[0]/mapScaleVal), h = (int) (mapDims[1]/mapScaleVal);
@@ -1913,7 +1915,7 @@ public abstract class SOM_MapManager {
 				setMseDataExampleNodePop(locPt,nearestNode,sensitivity);
 				break;}
 			case mseOvrFtrIDX : {			//feature values
-				TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y},curMapTrainFtrType, 1.0f, 1.0f);
+				TreeMap<Integer, Float> ftrs = getInterpFtrs(new float[] {x, y},BMU_DispFtrType, 1.0f, 1.0f);
 				if(ftrs == null) {setMseDataExampleNone();return ;} 
 				setMseDataExampleFtrs(locPt, ftrs, sensitivity);				
 				break;}
@@ -2005,46 +2007,47 @@ public abstract class SOM_MapManager {
 	}
 	protected abstract void checkMouseRelease_Indiv();
 	
-	
 	//draw map rectangle and map nodes
-	public final void drawMapRectangle(my_procApplet pa) {
+	public final void drawSOMMapData(my_procApplet pa) {
+		PImage tmpImg;
+		int curImgNum;
+		if(win.getPrivFlags(SOM_MapUIWin.mapDrawUMatrixIDX)) {				
+			tmpImg =  mapCubicUMatrixImg;
+			curImgNum = -1;
+		} else {
+			tmpImg = mapPerFtrWtImgs[curFtrMapImgIDX];		
+			curImgNum = curFtrMapImgIDX;
+		}
 		pa.pushMatrix();pa.pushStyle();
 			pa.noLights();
 			pa.scale(mapScaleVal);
-			PImage tmpImg;
-			int curImgNum;
-			if(win.getPrivFlags(SOM_MapUIWin.mapDrawUMatrixIDX)) {				
-				tmpImg =  mapCubicUMatrixImg;
-				curImgNum = -1;
-			} else {
-				tmpImg = mapPerFtrWtImgs[curMapImgIDX];		
-				curImgNum = curMapImgIDX;
-			}
 			//doing this in separate matrix stack frame because map is built small and scaled up
 			pa.image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.getPrivFlags(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.setPrivFlags(SOM_MapUIWin.saveLocClrImgIDX,false);}			
-			if(win.getPrivFlags(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {pa.image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}//image synthesized (smoother)
+			if(win.getPrivFlags(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {pa.image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
 			pa.lights();
 		pa.popStyle();pa.popMatrix(); 
 		pa.pushMatrix();pa.pushStyle();
 			pa.noLights();
 			boolean drawLbl = win.getPrivFlags(SOM_MapUIWin.mapDrawNodeLblIDX);
+			boolean draw0PopNodes = win.getPrivFlags(SOM_MapUIWin.mapDrawNodesWith0MapExIDX);
 			pa.translate(SOM_mapLoc[0],SOM_mapLoc[1],0);	
 			if(win.getPrivFlags(SOM_MapUIWin.mapDrawTrainDatIDX)){			drawTrainData(pa);}	
 			if(win.getPrivFlags(SOM_MapUIWin.mapDrawTestDatIDX)) {			drawTestData(pa);}
-			//draw nodes by population
-			if(win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {	if(drawLbl) {drawPopMapNodes(pa, mapNodeDispType);} else {drawPopMapNodesNoLbl(pa, mapNodeDispType);}}
+			if(win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {	if(drawLbl) {drawPopMapNodes(pa, draw0PopNodes, mapNodeDispType);} else {drawPopMapNodesNoLbl(pa, draw0PopNodes, mapNodeDispType);}}
+		
 			if (curImgNum > -1) {
-				if(win.getPrivFlags(SOM_MapUIWin.mapDrawWtMapNodesIDX)){		drawNodesWithWt(pa, mapNodeWtDispThresh, curMapImgIDX);} 
+				if(win.getPrivFlags(SOM_MapUIWin.mapDrawWtMapNodesIDX)){			drawNodesWithWt(pa, mapNodeWtDispThresh, curFtrMapImgIDX);} 
 				//display ftr-wt, class and category images, if enabled
-				if(win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawFtrWtSegments(pa, mapNodeWtDispThresh, curMapImgIDX);}
-				if(win.getPrivFlags(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 		drawClassSegments(pa,curClassLabel);	}		
-				if(win.getPrivFlags(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 		drawCategorySegments(pa,curCategoryLabel);	}				
+				if(win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawFtrWtSegments(pa, mapNodeWtDispThresh, curFtrMapImgIDX);}
+				if(win.getPrivFlags(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawClassSegments(pa,curClassLabel);	}		
+				if(win.getPrivFlags(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawCategorySegments(pa,curCategoryLabel);	}				
 				drawPerFtrMap_Indiv(pa);
 			} else {			
 				if(win.getPrivFlags(SOM_MapUIWin.mapDrawUMatSegMembersIDX)) {		drawUMatrixSegments(pa);}
+				
 				if(win.getPrivFlags(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawAllFtrWtSegments(pa, mapNodeWtDispThresh);}	//draw all segments - will overlap here, might look like garbage		
-				if(win.getPrivFlags(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 		drawAllClassSegments(pa);}
-				if(win.getPrivFlags(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 		drawAllCategorySegments(pa);}
+				if(win.getPrivFlags(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawAllClassSegments(pa);}
+				if(win.getPrivFlags(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawAllCategorySegments(pa);}
 
 				drawSegmentsUMatrixDispIndiv(pa);
 			}
@@ -2211,19 +2214,25 @@ public abstract class SOM_MapManager {
 		pa.popStyle();pa.popMatrix();
 	}//drawNodesWithWt
 	
-	public void drawPopMapNodes(my_procApplet pa, SOM_ExDataType _type) {
+	public void drawPopMapNodes(my_procApplet pa, boolean draw0PopNodes, SOM_ExDataType _type) {
 		pa.pushMatrix();pa.pushStyle();
 		int _typeIDX = _type.getVal();
-		for(SOM_MapNode node : MapNodes.values()){	
-			if(node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) {	node.drawMePopLbl(pa, _typeIDX);}
+		if(draw0PopNodes) {			
+			for(SOM_MapNode node : MapNodes.values()){	if(node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) {	node.drawMePopLbl(pa, _typeIDX);}	}
+		} else {
+			for(SOM_MapNode node : MapNodes.values()){	if((node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopLbl(pa, _typeIDX);}	}
+			
 		}
 		pa.popStyle();pa.popMatrix();		
 	}	
-	public void drawPopMapNodesNoLbl(my_procApplet pa, SOM_ExDataType _type) {
+	public void drawPopMapNodesNoLbl(my_procApplet pa, boolean draw0PopNodes, SOM_ExDataType _type) {
 		pa.pushMatrix();pa.pushStyle();
 		int _typeIDX = _type.getVal();
-		for(SOM_MapNode node : MapNodes.values()){
-			if(node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) {	node.drawMePopNoLbl(pa, _typeIDX);}
+		if(draw0PopNodes) {			
+			for(SOM_MapNode node : MapNodes.values()){	if(node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) {	node.drawMePopNoLbl(pa, _typeIDX);}	}
+		} else {
+			for(SOM_MapNode node : MapNodes.values()){	if((node.getPopNodeSize(_typeIDX) > this.mapNodePopDispThresh) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopNoLbl(pa, _typeIDX);}	}
+			
 		}
 		pa.popStyle();pa.popMatrix();		
 	}
@@ -2395,8 +2404,8 @@ public abstract class SOM_MapManager {
 	public float getStdFtr_destMin() {return stdFtr_destMin;}
 	public float getStdFtr_destDiff() {return stdFtr_destDiff;}
 	
-//	public void setCurrentTestDataFormat(SOM_FtrDataType _frmt) {	curMapTestFtrType = _frmt; }//setCurrentDataFormat
-//	public SOM_FtrDataType getCurrentTestDataFormat() {	return curMapTestFtrType;}
+	public void setBMU_DispFtrTypeFormat(SOM_FtrDataType _frmt) {	BMU_DispFtrType = _frmt; }//setCurrentDataFormat
+	public SOM_FtrDataType getBMU_DispFtrTypeFormat() {	return BMU_DispFtrType;}
 	public MessageObject getMsgObj(){	return msgObj;}
 	public void setMsgObj(MessageObject msgObj) {	this.msgObj = msgObj;}
 	
@@ -2460,8 +2469,8 @@ public abstract class SOM_MapManager {
 	public abstract String getCategorySegmentTitleString(int catID);
 
 	//win UI-driven values
-	public int getCurMapImgIDX() {	return curMapImgIDX;}
-	public void setCurMapImgIDX(int curMapImgIDX) {	this.curMapImgIDX = curMapImgIDX;}
+	public int getCurFtrMapImgIDX() {	return curFtrMapImgIDX;}
+	public void setCurFtrMapImgIDX(int curMapImgIDX) {	this.curFtrMapImgIDX = curMapImgIDX;}
 	public int getCurCategoryIDX() {	return curCategoryIDX;}
 	public void setCurCategoryIDX(int curCategoryIDX) {	this.curCategoryIDX = curCategoryIDX;}
 	public int getCurCategoryLabel() {	return curCategoryLabel;}
@@ -2583,7 +2592,7 @@ public abstract class SOM_MapManager {
 			case Validation : { 	return new int[] {my_procApplet.gui_Magenta,my_procApplet.gui_Magenta,my_procApplet.gui_Red};}		//corresponds to examples to be mapped
 			case Product : {		return new int[] {my_procApplet.gui_Yellow,my_procApplet.gui_Yellow,my_procApplet.gui_White};}		//corresponds to product example
 			case MapNode : {		return new int[] {my_procApplet.gui_Green,my_procApplet.gui_Green,my_procApplet.gui_Cyan};}			//corresponds to map node example
-			case MouseOver : {		return new int[] {my_procApplet.gui_White,my_procApplet.gui_White,my_procApplet.gui_White};}			//corresponds to mouse example
+			case MouseOver : {		return new int[] {my_procApplet.gui_White,my_procApplet.gui_White,my_procApplet.gui_Black};}		//corresponds to mouse example
 		}
 		return new int[] {my_procApplet.gui_White,my_procApplet.gui_White,my_procApplet.gui_White};
 	}//getClrVal

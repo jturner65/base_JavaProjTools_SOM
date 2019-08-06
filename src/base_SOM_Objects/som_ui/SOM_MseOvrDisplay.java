@@ -24,11 +24,8 @@ public abstract class SOM_MseOvrDisplay {
 
 	public SOM_MseOvrDisplay(SOM_MapManager _mapMgr, float _dispThesh) {
 		mapMgr=_mapMgr;
-		initAllCtor(_dispThesh);
-		mapLoc = new myPointf(0,0,0);
-		nodeClrs = setNodeColors(); 
-		dpFillClr =  new int[] {255,255,255,255}; 
-		dpStkClr = new int[] {255,255,255,255}; 
+		clearMseDat();
+		dispThesh =_dispThesh;
 	}//ctor
 
 	protected abstract int[] setNodeColors(); 
@@ -115,14 +112,16 @@ public abstract class SOM_MseOvrDisplay {
 		}	
 		return longestLine;		
 	}//buildDispArrayList
-
 	
 	//final setup for mouse label and label dimensions
 	private final void finalizeMseLblDatCtor(ArrayList<String> _mseLblDat, int longestLine) {
 		mseLabelAra = _mseLblDat.toArray(new String[1]);
 		mseLabelDims = new float[] {10, -10.0f,longestLine*6.0f+10, mseLabelAra.length*10.0f + 15.0f};	
 		display = true;
+		finalizeMseLblDatCtor_Indiv(_mseLblDat,longestLine);
 	}//finalizeMseLblDatCtor	
+	
+	protected abstract void finalizeMseLblDatCtor_Indiv(ArrayList<String> _mseLblDat, int longestLine);
 	
 	public final void initMseDatFtrs_WtSorted(myPointf ptrLoc, TreeMap<Integer, Float> _ftrs, float _thresh) {
 		initAllCtor(_thresh);
@@ -258,11 +257,15 @@ public abstract class SOM_MseOvrDisplay {
 		initAllCtor(0.0f);
 		mapLoc = new myPointf(0,0,0);
 		nodeClrs = setNodeColors(); 
-		dpFillClr =  new int[] {255,255,255,255}; 
-		dpStkClr = new int[] {255,255,255,255}; 
-
+		dpFillClr =  new int[] {0,0,0,255}; 
+		dpStkClr = new int[] {0,0,0,255}; 
 		display = false;
+		clearMseDat_Indiv();
 	}
+	/**
+	 * instancing-specific clear used for mouse object
+	 */
+	protected abstract void clearMseDat_Indiv();
 		
 
 	protected abstract String getClassProbTitleString(SOM_MapNode nearestMapNode, int ttlNumClasses);

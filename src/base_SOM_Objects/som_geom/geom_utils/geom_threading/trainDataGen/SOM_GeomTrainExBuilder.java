@@ -7,6 +7,7 @@ import base_SOM_Objects.som_examples.SOM_ExDataType;
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomExampleManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
+import base_SOM_Objects.som_geom.geom_examples.SOM_GeomTrainingExUniqueID;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSmplDataForEx;
 import base_SOM_Objects.som_geom.geom_utils.geom_threading.base.SOM_GeomCallable;
 /**
@@ -25,7 +26,7 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	protected final SOM_GeomExampleManager exMgr;
 	
 	/**
-	 * ref to array of all example objects
+	 * ref to array of all example samples from which to build geometric objects
 	 */
 	protected final SOM_GeomSmplDataForEx[] allExamples;
 	
@@ -33,14 +34,19 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	 * the number of samples required to build an object
 	 */
 	protected final int numExPerObj;	
-
+	/**
+	 * idxs to use to build the objects - these are known to be unique and to satisfy the requirements of the object
+	 * This array is the same for all builders
+	 */
+	protected final SOM_GeomTrainingExUniqueID[] idxsToUse;
 	
-	public SOM_GeomTrainExBuilder(SOM_GeomMapManager _mapMgr, SOM_GeomExampleManager _exMgr, SOM_GeomSmplDataForEx[] _allExs, int[] _intVals) {
+	public SOM_GeomTrainExBuilder(SOM_GeomMapManager _mapMgr, SOM_GeomExampleManager _exMgr, SOM_GeomSmplDataForEx[] _allExs, int[] _intVals, SOM_GeomTrainingExUniqueID[] _idxsToUse) {
 		super(_mapMgr, _intVals[0],_intVals[1],_intVals[2]);
 		//idxs 0,1,2 are st,end,thrdIDX
 		numExToBuildThisThread = endIdx -stIdx;//calcNumPerThd(_intVals[3], _intVals[4]);
 		this.msgObj.dispInfoMessage("SOM_GeomTrainExBuilder::"+ dataType,"ctor","Thd IDX : " + thdIDX + " Building total : " + _intVals[3] + " over "+ _intVals[4] + " threads : " + numExToBuildThisThread + " this thread");
 		exMgr = _exMgr;
+		idxsToUse = _idxsToUse;
 		allExamples = _allExs;
 		numExPerObj = mapMgr.getGeomObjType().getVal();
 		progressBnd = (int) (numExToBuildThisThread * progAmt);
@@ -54,6 +60,19 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 			SOM_GeomObj obj = _buildSingleObjectFromSamples(SOM_ExDataType.Training,exAra, i); incrProgress(i,"Building Training Data");
 			exMgr.addExampleToMap(obj);		
 		}	
+	}//buildTrainExData
+	
+	private void buildTrainExData_UniqueIDXs() {
+		//ThreadLocalRandom rnd = ThreadLocalRandom.current();
+		SOM_GeomSmplDataForEx[] exAra = new SOM_GeomSmplDataForEx[numExPerObj];
+		for(int i=this.stIdx; i<this.endIdx;++i) {
+			Integer[] objIDXs = idxsToUse[i].idxs;
+			exAra = new SOM_GeomSmplDataForEx[objIDXs.length];
+			for(int j=0;j<exAra.length;++j) {		exAra[j] = allExamples[objIDXs[j]];		}
+			SOM_GeomObj obj = _buildSingleObjectFromSamples(SOM_ExDataType.Training,exAra, i); incrProgress(i,"Building Training Data");
+			exMgr.addExampleToMap(obj);		
+		}			
+		
 	}//buildTrainExData
 	
 	protected String getObjID(int idx) {return String.format("%05d", stIdx + idx);}
@@ -83,7 +102,11 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	@Override
 	public Boolean call() throws Exception {
 		msgObj.dispInfoMessage("SOM_GeomTrainExBuilder::"+this.dataType, "call::thdIDX="+this.thdIDX, "Start building " + numExToBuildThisThread + " " +dataType +" training example objects from geom obj samples.");
-		buildTrainExData();
+		if((idxsToUse == null) || (idxsToUse.length == 0)){	//if no idxs specified then allowing for duplicate training data examples
+			buildTrainExData();
+		} else {
+			buildTrainExData_UniqueIDXs();
+		}
 		msgObj.dispInfoMessage("SOM_GeomTrainExBuilder::"+this.dataType, "call::thdIDX="+this.thdIDX, "Finished building " + numExToBuildThisThread + " " +dataType +" training example objects from geom obj samples.");
 		
 		return true;

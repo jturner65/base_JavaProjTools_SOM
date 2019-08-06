@@ -95,7 +95,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * category should be locked to allow selection through within-category classes
 	 */
 	@Override
-	protected String[] getClassCatLockBtnTFLabels() {return new String[] {"Category Changes with Class","Lock Category; restrict Class to Cat"};}
+	protected String[] getClassCatLockBtnTFLabels() {return new String[] {"Cat Changes with Class","Lock Cat; Class only in Cat"};}
 	/**
 	 * Instance class determines the true and false labels the class buttons use - if empty then no classes used
 	 * @return array holding true(idx0) and false(idx1) labels for buttons to control display of class-based segment
@@ -114,7 +114,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * @return array holding true(idx0) and false(idx1) labels for buttons to control saving of segment data
 	 */
 	@Override
-	protected final String[] getSegmentSaveBtnTFLabels() {return new String[] {"Saving Class, Category and Feature weight segment BMUs", "Save Class, Category and Feature weight segment BMUs" };}
+	protected final String[] getSegmentSaveBtnTFLabels() {return new String[] {"Saving Cls, Cat, Ftr seg BMUs", "Save Cls, Cat, Ftr seg BMUs" };}
 	/**
 	 * Instancing class-specific (application driven) UI objects should be defined
 	 * in this function.  Add an entry to tmpBtnNamesArray for each button, in the order 
@@ -130,7 +130,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	protected final void setupGUIObjsArasIndiv(ArrayList<Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals) {		
 	}
 	@Override
-	protected void setVisScreenDimsPriv_Indiv() {
+	protected final void setVisScreenDimsPriv_Indiv() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -142,17 +142,6 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 				break;}						
 		}
 	}
-	
-	
-	@Override
-	//draw 2d constructs over 3d area on screen - draws behind left menu section
-	//modAmtMillis is in milliseconds
-	protected void drawRightSideInfoBarPriv(float modAmtMillis) {
-		pa.pushMatrix();pa.pushStyle();
-		//display current simulation variables - call sim world through sim exec
-		mapMgr.drawResultBar(pa, yOff);
-		pa.popStyle();pa.popMatrix();					
-	}//drawOnScreenStuff
 	
 	
 	@Override

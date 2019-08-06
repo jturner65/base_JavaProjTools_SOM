@@ -1,7 +1,9 @@
 package base_SOM_Objects.som_geom.geom_examples;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_ExDataType;
@@ -62,7 +64,7 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	 * this will build the training data in this example manager based on the geometric data passed in geomExMgr
 	 * @param geomExMgr
 	 */
-	public final void buildTrainingDataFromGeomObjs(SOM_GeomExampleManager geomExMgr, int ttlNumTrainEx) {
+	public final void buildTrainingDataFromGeomObjs(SOM_GeomExampleManager geomExMgr, boolean setUniqueIDXs, int ttlNumTrainEx) {
 		msgObj.dispInfoMessage("SOM_GeomExampleManager::"+exampleName, "buildTrainingDataFromGeomObjs", "Start building example data in " + exampleName +"'s "+exMgrName + " ex mgr using geometric data from " + geomExMgr.exampleName +"'s " + geomExMgr.exMgrName+ " examples present.");
 		reset();
 		//all geomgetric objects from geometry example manager
@@ -74,18 +76,62 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 			SOM_GeomSamplePointf[] smpls = ex.getAllSamplePts();
 			for(int i=0;i<smpls.length;++i) {	allSamples[idx++]=new SOM_GeomSmplDataForEx(ex,smpls[i]);}			
 		}
+		SOM_GeomTrainingExUniqueID[] _idxsToUse = null;
+		//if desired to have unique samples build every training example
+		if(setUniqueIDXs) {
+			long maxExPossible = getMaxNumUniqueTrainingEx(allSamples.length);
+			if(maxExPossible < ttlNumTrainEx) {			//not setting unique due to too many being requested
+				msgObj.dispInfoMessage("SOM_GeomExampleManager::"+exampleName, "buildTrainingDataFromGeomObjs", "In " + exampleName +"'s "+exMgrName + " ex mgr : Unable to build requisted # " +ttlNumTrainEx + " of UNIQUE training examples given : " + allSamples.length+" Samples to choose from due to not enough possible combinations :  " +maxExPossible+ ", so allowing for duplication.");
+			} else {
+				msgObj.dispInfoMessage("SOM_GeomExampleManager::"+exampleName, "buildTrainingDataFromGeomObjs", "Start building " +ttlNumTrainEx + " UNIQUE training " + exampleName +" examples from " + allSamples.length+" samples; Max unique possible combinations :  " +maxExPossible);
+				_idxsToUse = buildUniqueIDXsForObjType(allSamples,ttlNumTrainEx);
+				msgObj.dispInfoMessage("SOM_GeomExampleManager::"+exampleName, "buildTrainingDataFromGeomObjs", "Finished building " +ttlNumTrainEx + " UNIQUE training " + exampleName +" examples from " + allSamples.length+" samples; Max unique possible combinations :  " +maxExPossible);
+			}			
+		}//if requested unique
 		//now need to build # of training examples - need to do this in multi-threaded environment
-		buildAllEx_MT(allSamples, mapMgr.getNumUsableThreads(),ttlNumTrainEx);
+		buildAllEx_MT(allSamples, mapMgr.getNumUsableThreads(),ttlNumTrainEx,_idxsToUse); 
 		
 		setAllDataLoaded();
 		setAllDataPreProcced();
 		msgObj.dispInfoMessage("SOM_GeomExampleManager::"+exampleName, "buildTrainingDataFromGeomObjs", "Finished building example data in " + exampleName +"'s "+exMgrName + " ex mgr using geometric data from " + geomExMgr.exampleName +"'s " + geomExMgr.exMgrName+ " examples present.");
 	}//	buildTrainingDataFromGeom
+
+	/**
+	 * determine max # of unique training examples able to be built for object type given # of samples
+	 */
+	protected abstract long getMaxNumUniqueTrainingEx(long ttlNumSamples);
+
+	/**
+	 * build a single list of sorted, unique idxs in allSamples that satisfy object creation constraints
+	 * @param allSamples list of all object samples available
+	 * @param rnd the current thread's rng engine
+	 * @return sorted list of idxs
+	 */
+	protected abstract Integer[] genUniqueObjIDXs(SOM_GeomSmplDataForEx[] allSamples, ThreadLocalRandom rnd);
 	
 	/**
-	 * build all training examples 
+	 * build ttlNumTrainEx x <# objs for object type> 2 d array of unique, appropriate idxs for training data
+	 * @param ttlNumTrainEx
+	 * @return
+	 */	
+	protected final SOM_GeomTrainingExUniqueID[] buildUniqueIDXsForObjType(SOM_GeomSmplDataForEx[] allSamples, int ttlNumTrainEx) {
+		ThreadLocalRandom rnd = ThreadLocalRandom.current();
+		HashMap<SOM_GeomTrainingExUniqueID, Integer> res = new HashMap<SOM_GeomTrainingExUniqueID, Integer>();
+		SOM_GeomTrainingExUniqueID ex;
+		while (res.size() < ttlNumTrainEx) {
+			ex = new SOM_GeomTrainingExUniqueID(genUniqueObjIDXs(allSamples, rnd));	
+			res.put(ex, 2);	
+		}		
+		return res.keySet().toArray(new SOM_GeomTrainingExUniqueID[0]);
+	}//buildUniqueIDXsForObjType	
+	/**
+	 * build all training examples for objed type
+	 * @param allSamples
+	 * @param numThdCallables
+	 * @param ttlNumTrainEx
+	 * @param _idxsToUse precalculated idxs for each object to use - null if allowing for duplication, otherwise ttlNumTrainEx long
 	 */
-	protected abstract void buildAllEx_MT(SOM_GeomSmplDataForEx[] allSamples, int numThdCallables, int ttlNumTrainEx);
+	protected abstract void buildAllEx_MT(SOM_GeomSmplDataForEx[] allSamples, int numThdCallables, int ttlNumTrainEx, SOM_GeomTrainingExUniqueID[] _idxsToUse);
 
 	/**
 	 * code to execute after examples have had ftrs calculated - this will calculate std features and any alternate ftr mappings if used
