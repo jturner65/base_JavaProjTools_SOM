@@ -56,7 +56,7 @@ public abstract class SOM_GeomObjBldrRunner extends myThreadRunner {
 		mapMgr = _mapMgr;
 		numSmplsPerObj = _numVals[1];
 		taskType = _taskType;
-		dataTypeName = mapMgr.getGeomObjType().toString();
+		dataTypeName = mapMgr.getGeomObjTypeName();
 		objArray = _objArray;
 	}
 	

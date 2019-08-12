@@ -103,16 +103,16 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _worldBounds : bounds in world for valid values for this object
 	 * @param _GeoType : geometric object type
 	 */	
-	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _id, SOM_GeomSamplePointf[] _geomSrcSmpls, SOM_GeomObjTypes _GeoType, boolean _shouldBuildSamples) {
+	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _id, SOM_GeomSamplePointf[] _geomSrcSmpls, SOM_GeomObjTypes _GeoType, boolean _is3D, boolean _shouldBuildSamples) {
 		super(_mapMgr, _exType,_id);
-		_ctorInit(_mapMgr,incrID(), _GeoType, _shouldBuildSamples);
+		_ctorInit(_mapMgr,incrID(), _GeoType, _is3D, _shouldBuildSamples);
 		
 		geomSrcSamples = _geomSrcSmpls;		
 		labelClrAra = getGeomFlag(is3dIDX)? new int[] {0,0,0,255} : new int[] {255,255,255,255};
 		
 		srcPts = initAndBuildSourcePoints(geomSrcSamples);
 		
-		objSamples = (_shouldBuildSamples ? new SOM_GeomObjSamples(this, objGeomType, rndClrAra, labelClrAra) : null);		
+		objSamples = (_shouldBuildSamples ? new SOM_GeomObjSamples(this, geomSrcSamples.length, rndClrAra, labelClrAra) : null);		
 	}//ctor
 	
 	/**
@@ -125,18 +125,18 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _worldBounds
 	 * @param _GeoType
 	 */
-	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _oid, String _csvDat, SOM_GeomObjTypes _GeoType) {
+	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _oid, String _csvDat, SOM_GeomObjTypes _GeoType, int _numSrcPts, boolean _is3D) {
 		super(_mapMgr, _exType, _oid);
-		_ctorInit(_mapMgr,Integer.parseInt(_csvDat.trim().split(",")[1].trim()),_GeoType, true);
+		_ctorInit(_mapMgr,Integer.parseInt(_csvDat.trim().split(",")[1].trim()),_GeoType, _is3D, true);
 		
 		//only data needed to be saved
-		srcPts = buildSrcPtsFromCSVString(objGeomType.getVal(), _csvDat);
+		srcPts = buildSrcPtsFromCSVString(_numSrcPts, _csvDat);
 		
 		//build geomSrcSamples from srcPts 
 		geomSrcSamples = new SOM_GeomSamplePointf[getSrcPts().length];
 		for(int i=0;i<geomSrcSamples.length;++i) {geomSrcSamples[i] =  new SOM_GeomSamplePointf(getSrcPts()[i], dispLabel+"_gen_pt_"+i, this);}
 
-		objSamples = new SOM_GeomObjSamples(this, objGeomType, rndClrAra, labelClrAra);
+		objSamples = new SOM_GeomObjSamples(this, geomSrcSamples.length, rndClrAra, labelClrAra);
 	}
 	
 	/**
@@ -144,18 +144,18 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _mapMgr
 	 * @param _mapNode
 	 */	
-	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_GeomMapNode _mapNode, SOM_GeomObjTypes _GeoType) {
+	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_GeomMapNode _mapNode, SOM_GeomObjTypes _GeoType, int _numSrcPts,boolean _is3D) {
 		super(_mapMgr, SOM_ExDataType.MapNode,_GeoType.toString()+"_"+_mapNode.OID);
-		_ctorInit(_mapMgr,incrID(), _GeoType, true);
+		_ctorInit(_mapMgr,incrID(), _GeoType, _is3D, true);
 
 		float[] mapFtrsAra = _mapNode.getRawFtrs();	
-		srcPts = buildSrcPtsFromBMUMapNodeFtrs(mapFtrsAra,  objGeomType.getVal(), dispLabel);
+		srcPts = buildSrcPtsFromBMUMapNodeFtrs(mapFtrsAra,  _numSrcPts, dispLabel);
 		//_DBG_DispObjStats(mapFtrsAra,"map node ctor", "Map Node:  "+ _mapNode.OID);
 		//build geomSrcSamples from srcPts 
 		geomSrcSamples = new SOM_GeomSamplePointf[getSrcPts().length];
 		for(int i=0;i<geomSrcSamples.length;++i) {geomSrcSamples[i] =  new SOM_GeomSamplePointf(getSrcPts()[i], dispLabel+"_gen_pt_"+i, this);}
 		
-		objSamples = new SOM_GeomObjSamples(this, objGeomType, rndClrAra, labelClrAra);
+		objSamples = new SOM_GeomObjSamples(this, geomSrcSamples.length, rndClrAra, labelClrAra);
 	}
 	
 	protected final void _DBG_DispObjStats(float[] mapFtrsAra, String _callingMethod, String _nodeIdDispt) {
@@ -172,7 +172,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		GeomObj_ID = _otr.GeomObj_ID;
 		dispLabel = _otr.dispLabel;
 		//animWin = _otr.animWin;
-		objGeomType = _otr.objGeomType;
+		//objGeomType = _otr.objGeomType;
 		classIDs = _otr.classIDs;
 		categoryIDs = _otr.categoryIDs;
 		geomSrcSamples = _otr.geomSrcSamples;
@@ -185,7 +185,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		objSamples = _otr.objSamples;
 	}//copy ctor
 
-	private void _ctorInit(SOM_GeomMapManager _mapMgr, int _geoObj_ID, SOM_GeomObjTypes _GeoType, boolean _shouldBuildSamples) {
+	private void _ctorInit(SOM_GeomMapManager _mapMgr, int _geoObj_ID, SOM_GeomObjTypes _GeoType, boolean _is3D, boolean _shouldBuildSamples) {
 		setWorldBounds(_mapMgr.getWorldBounds());	
 		objGeomType = _GeoType;		
 		GeomObj_ID = _geoObj_ID;		//sets GeomObj_ID to be count of instancing class objs
@@ -195,7 +195,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		categoryIDs = new HashSet<Integer>();
 		
 		initGeomFlags();
-		setGeomFlag(is3dIDX, objGeomType.getVal()>2);
+		setGeomFlag(is3dIDX, _is3D);
 		setGeomFlag(buildSampleObjIDX, _shouldBuildSamples);
 		labelClrAra = getGeomFlag(is3dIDX)? new int[] {0,0,0,255} : new int[] {255,255,255,255};
 		rndClrAra = getRandClr();		

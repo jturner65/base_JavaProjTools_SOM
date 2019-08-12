@@ -44,7 +44,7 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 	
 	public SOM_GeomCallable(SOM_GeomMapManager _mapMgr, int _stIdx, int _endIdx, int _thdIdx) {
 		mapMgr=_mapMgr;
-		dataType=mapMgr.getGeomObjType().toString();
+		dataType=mapMgr.getGeomObjTypeName();
 		msgObj = mapMgr.buildMsgObj();
 		worldBounds = mapMgr.getWorldBounds();		
 		

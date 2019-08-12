@@ -47,9 +47,9 @@ public class SOM_GeomObjSamples {
 	 */
 	private static final String samplPtTag = "SMPLPT,";
 	
-	public SOM_GeomObjSamples(SOM_GeomObj _ownr, SOM_GeomObjTypes _objGeomType, int[] _rndClrAra, int[] _lblClrAra) {
+	public SOM_GeomObjSamples(SOM_GeomObj _ownr, int _numSamples, int[] _rndClrAra, int[] _lblClrAra) {
 		ownr = _ownr;
-		ptRad = (float)Math.pow(_objGeomType.getVal(), 1.4);
+		ptRad = (float)Math.pow(_numSamples, 1.4);
 		objTypeStrAndID = ownr.getDispLabel();
 		rndClrAra = new int[_rndClrAra.length];
 		System.arraycopy(_rndClrAra, 0, rndClrAra, 0, _rndClrAra.length);

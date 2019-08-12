@@ -48,7 +48,7 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 		exMgr = _exMgr;
 		idxsToUse = _idxsToUse;
 		allExamples = _allExs;
-		numExPerObj = mapMgr.getGeomObjType().getVal();
+		numExPerObj = mapMgr.getNumSamplesToBuildObject();
 		progressBnd = (int) (numExToBuildThisThread * progAmt);
 	}
 
