@@ -163,28 +163,21 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		tmpBtnNamesArray.add(new Object[] { "Debugging", "Debug", debugAnimIDX });
 		// tmpBtnNamesArray.add(new Object[] {"Showing SOM Map UI","Show SOM Map
 		// UI",drawSOM_MapUIVis});
-		tmpBtnNamesArray.add(new Object[] { "Regenerating " + geomObjType + " Objs",
-				"Regenerate " + geomObjType + " Objs", regenUIObjsIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType + " Objects", "Show " + geomObjType + " Objects",
-				showFullSourceObjIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType + " Sample Points",
-				"Show " + geomObjType + " Sample Points", showSamplePntsIDX });
+		tmpBtnNamesArray.add(new Object[] { "Regenerating " + geomObjType + " Objs","Regenerate " + geomObjType + " Objs", regenUIObjsIDX });
+		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType + " Objects", "Show " + geomObjType + " Objects",	showFullSourceObjIDX });
+		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType + " Sample Points","Show " + geomObjType + " Sample Points", showSamplePntsIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing Labels", "Show Labels", showUIObjLabelIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing Sample Labels", "Show Sample Labels", showUIObjSmplsLabelIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing Loc-based Color", "Showing Random Color", useUIObjLocAsClrIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType + " Training Exs",
-				"Show " + geomObjType + " Training Exs", showFullTrainingObjIDX });
+		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType + " Training Exs",	"Show " + geomObjType + " Training Exs", showFullTrainingObjIDX });
 
-		tmpBtnNamesArray.add(new Object[] { "Hi-Light Sel " + geomObjType + " ", "Enable " + geomObjType + " Hi-Light",
-				showSelUIObjIDX });
+		tmpBtnNamesArray.add(new Object[] { "Hi-Light Sel " + geomObjType + " ", "Enable " + geomObjType + " Hi-Light",	showSelUIObjIDX });
 		// tmpBtnNamesArray.add(new Object[]{"Train From " +geomObjType + " Samples",
 		// "Train From " +geomObjType + " Centers/Bases", useSmplsForTrainIDX});
 		// tmpBtnNamesArray.add(new Object[]{"Save Data", "Save Data",
 		// saveUIObjDataIDX});
-		tmpBtnNamesArray.add(new Object[] { "Gen Unique " + geomObjType + " Train Exs",
-				"Allow dupe " + geomObjType + " Train Exs", allTrainExUniqueIDX });
-		tmpBtnNamesArray
-				.add(new Object[] { "Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX });
+		tmpBtnNamesArray.add(new Object[] { "Gen Unique " + geomObjType + " Train Exs",	"Allow dupe " + geomObjType + " Train Exs", allTrainExUniqueIDX });
+		tmpBtnNamesArray.add(new Object[] { "Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing BMU-derived Locs", "Showing Actual Locs", showMapBasedLocsIDX });
 
 		String[] showWFObjsTFLabels = getShowWireFrameBtnTFLabels();
@@ -235,12 +228,10 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 * call to build or rebuild source geometric objects
 	 */
 	public final void rebuildSourceGeomObjs() {
-		msgObj.dispInfoMessage("SOM_AnimWorldWin", "rebuildSourceGeomObjs",
-				"Start (re)building all objects of type " + this.geomObjType);
+		msgObj.dispInfoMessage("SOM_AnimWorldWin", "rebuildSourceGeomObjs",	"Start (re)building all objects of type " + this.geomObjType);
 		setMapMgrGeomObjVals();
 		((SOM_GeomMapManager) mapMgr).buildGeomExampleObjs();
-		msgObj.dispInfoMessage("SOM_AnimWorldWin", "rebuildSourceGeomObjs",
-				"Finished (re)building all objects of type " + this.geomObjType);
+		msgObj.dispInfoMessage("SOM_AnimWorldWin", "rebuildSourceGeomObjs",	"Finished (re)building all objects of type " + this.geomObjType);
 	}
 
 	/**
@@ -260,12 +251,10 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 * regenerate samples for current set of base objects
 	 */
 	public final void regenBaseGeomObjSamples() {
-		msgObj.dispInfoMessage("SOM_AnimWorldWin", "regenBaseGeomObjSamples", "Start regenerating "
-				+ numSmplPointsPerObj + " samples for all base objects of type " + this.geomObjType);
+		msgObj.dispInfoMessage("SOM_AnimWorldWin", "regenBaseGeomObjSamples", "Start regenerating "	+ numSmplPointsPerObj + " samples for all base objects of type " + this.geomObjType);
 		setMapMgrGeomObjVals();
 		((SOM_GeomMapManager) mapMgr).rebuildGeomExObjSamples();
-		msgObj.dispInfoMessage("SOM_AnimWorldWin", "regenBaseGeomObjSamples", "Finished regenerating "
-				+ numSmplPointsPerObj + " samples for all base objects of type " + this.geomObjType);
+		msgObj.dispInfoMessage("SOM_AnimWorldWin", "regenBaseGeomObjSamples", "Finished regenerating "	+ numSmplPointsPerObj + " samples for all base objects of type " + this.geomObjType);
 	}
 
 	@Override
@@ -273,51 +262,29 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		int flIDX = idx / 32, mask = 1 << (idx % 32);
 		privFlags[flIDX] = (val ? privFlags[flIDX] | mask : privFlags[flIDX] & ~mask);
 		switch (idx) {// special actions for each flag
-		case debugAnimIDX: {
-			break;
-		}
-		case showSamplePntsIDX: {
-			break;
-		} // show/hide object's sample points
-		case showFullSourceObjIDX: {
-			break;
-		} // show/hide full object
-		case showFullTrainingObjIDX: {
-			break;
-		}
+		case debugAnimIDX: {			break;		}
+		case showSamplePntsIDX: {		break;		} // show/hide object's sample points
+		case showFullSourceObjIDX: {	break;		} // show/hide full object
+		case showFullTrainingObjIDX: {	break;		}
 		// case saveUIObjDataIDX : {
 		// if(val){saveGeomObjInfo();addPrivBtnToClear(saveUIObjDataIDX);}break;} //save
 		// all object data
-		case showUIObjLabelIDX: {
-			break;
-		} // show labels for objects
-		case showUIObjSmplsLabelIDX: {
-			break;
-		}
+		case showUIObjLabelIDX: {		break;		} // show labels for objects
+		case showUIObjSmplsLabelIDX: {	break;		}
 		case useUIObjLocAsClrIDX: {
 			msgObj.dispInfoMessage("SOM_AnimWorldWin", "setPrivFlags :: useUIObjLocAsClrIDX", "Val :  " + val);
 			break;
 		} // color of objects is location or is random
-		case showSelUIObjIDX: {
-			break;
-		}
+		case showSelUIObjIDX: {			break;		}
 		// case useSmplsForTrainIDX : { break;} //use surface samples for train and
 		// centers for test, or vice versa
 		case allTrainExUniqueIDX: {
-			if (mapMgr != null) {
-				mapMgr.setTrainExShouldBeUnqiue(val);
-			}
+			if (mapMgr != null) {	mapMgr.setTrainExShouldBeUnqiue(val);}
 			break;
 		}
-		case showMapBasedLocsIDX: {
-			break;
-		}
-		case uiObjBMUsSetIDX: {
-			break;
-		}
-		case mapBuiltToCurUIObjsIDX: {
-			break;
-		} // whether map has been built and loaded for current config of spheres
+		case showMapBasedLocsIDX: {		break;		}
+		case uiObjBMUsSetIDX: {			break;		}
+		case mapBuiltToCurUIObjsIDX: {	break;		} // whether map has been built and loaded for current config of spheres
 		case regenUIObjsIDX: {
 			if (val) {
 				rebuildSourceGeomObjs();
@@ -325,19 +292,13 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 			}
 			break;
 		} // remake all objects, turn off flag
-		case showObjByWireFrmIDX: {
-			break;
-		}
-		case drawMapNodeGeomObjsIDX: {
-			break;
-		}
+		case showObjByWireFrmIDX: {		break;		}
+		case drawMapNodeGeomObjsIDX: {	break;		}
 		case drawSOM_MapUIVis: {
 			this.setSOM_MapUIWinState(val);
 			break;
 		}
-		default: {
-			setPrivFlags_Indiv(idx, val);
-		}
+		default: {			setPrivFlags_Indiv(idx, val);}
 		}
 	}// setPrivFlags
 
@@ -671,139 +632,70 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 			boolean showSmpls, boolean showObjs, boolean useLocClr, boolean showSel, boolean showWireFrame,
 			boolean showLabel, boolean showSmplsLabel) {
 		if (mapBuiltAndUseMapLoc) { // show bmus for objs
-			if (showSel) {// if selected, show object filled with chosen color and show all other objects
-							// wireframe
-				if (useLocClr) {
-					objs[curSelObjIDX].drawMeSelected_ClrLoc_BMU(pa, animTimeMod, showSmpls);
-				} else {
-					objs[curSelObjIDX].drawMeSelected_ClrRnd_BMU(pa, animTimeMod, showSmpls);
-				}
-				if (showLabel) {
-					objs[curSelObjIDX].drawMyLabel_BMU(pa, this);
-				}
+			if (showSel) {// if selected, show object filled with chosen color and show all other objects wireframe
+				if (useLocClr) {	objs[curSelObjIDX].drawMeSelected_ClrLoc_BMU(pa, animTimeMod, showSmpls);} 
+				else {				objs[curSelObjIDX].drawMeSelected_ClrRnd_BMU(pa, animTimeMod, showSmpls);}
+				if (showLabel) {	objs[curSelObjIDX].drawMyLabel_BMU(pa, this);}
 
 				if (showObjs) {
 					if (useLocClr) {
-						for (int i = 0; i < curSelObjIDX; ++i) {
-							objs[i].drawMeClrLoc_WF_BMU(pa);
-						}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {
-							objs[i].drawMeClrLoc_WF_BMU(pa);
-						}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrLoc_WF_BMU(pa);}
+						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeClrLoc_WF_BMU(pa);}
 					} // loc color
 					else {
-						for (int i = 0; i < curSelObjIDX; ++i) {
-							objs[i].drawMeClrRnd_WF_BMU(pa);
-						}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {
-							objs[i].drawMeClrRnd_WF_BMU(pa);
-						}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrRnd_WF_BMU(pa);}
+						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeClrRnd_WF_BMU(pa);}
 					} // rand color
 				}
 				if (showSmpls) {
-					if (useLocClr) {
-						for (int i = 0; i < curSelObjIDX; ++i) {
-							objs[i].drawMeSmpls_ClrLoc_BMU(pa);
-						}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {
-							objs[i].drawMeSmpls_ClrLoc_BMU(pa);
-						}
+					if (useLocClr) {for (int i = 0; i < curSelObjIDX; ++i) {	objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}
+						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}
 					} // loc color
 					else {
-						for (int i = 0; i < curSelObjIDX; ++i) {
-							objs[i].drawMeSmpls_ClrRnd_BMU(pa);
-						}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {
-							objs[i].drawMeSmpls_ClrRnd_BMU(pa);
-						}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}
+						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}
 					} // rand color
 				}
 			} else {
-				if (showObjs) {
-					_drawObjs_UseBMUs(objs, useLocClr, showWireFrame, showLabel);
-				}
+				if (showObjs) {		_drawObjs_UseBMUs(objs, useLocClr, showWireFrame, showLabel);}
 				if (showSmpls) {
-					if (useLocClr) {
-						for (int i = 0; i < objs.length; ++i) {
-							objs[i].drawMeSmpls_ClrLoc_BMU(pa);
-						}
-					} // loc color
-					else {
-						for (int i = 0; i < objs.length; ++i) {
-							objs[i].drawMeSmpls_ClrRnd_BMU(pa);
-						}
-					} // rand color
+					if (useLocClr) {	for (int i = 0; i < objs.length; ++i) {					objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}} // loc color
+					else {				for (int i = 0; i < objs.length; ++i) {					objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}} // rand color
 				}
 			}
 		} else {
-			if (showSel) {// if selected, show selected object filled with chosen color and show all other
-							// objects wireframe with or without samples and no labels
-				if (useLocClr) {
-					objs[curSelObjIDX].drawMeSelected_ClrLoc(pa, animTimeMod, showSmpls);
-				} else {
-					objs[curSelObjIDX].drawMeSelected_ClrRnd(pa, animTimeMod, showSmpls);
-				}
-				if (showLabel) {
-					objs[curSelObjIDX].drawMyLabel(pa, this);
-				}
+			if (showSel) {// if selected, show selected object filled with chosen color and show all other objects wireframe with or without samples and no labels
+				if (useLocClr) {			objs[curSelObjIDX].drawMeSelected_ClrLoc(pa, animTimeMod, showSmpls);} 
+				else {						objs[curSelObjIDX].drawMeSelected_ClrRnd(pa, animTimeMod, showSmpls);}
+				if (showLabel) {			objs[curSelObjIDX].drawMyLabel(pa, this);}
 				// all other objects default to wireframe display
 				if (showObjs) {
 					if (useLocClr) {
-						for (int i = 0; i < curSelObjIDX; ++i) {
-							objs[i].drawMeClrLoc_WF(pa);
-						}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {
-							objs[i].drawMeClrLoc_WF(pa);
-						}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrLoc_WF(pa);}
+						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeClrLoc_WF(pa);}
 					} // loc color
 					else {
-						for (int i = 0; i < curSelObjIDX; ++i) {
-							objs[i].drawMeClrRnd_WF(pa);
-						}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {
-							objs[i].drawMeClrRnd_WF(pa);
-						}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrRnd_WF(pa);}
+						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeClrRnd_WF(pa);}
 					} // rand color
 				}
 				if (showSmpls) {
 					if (useLocClr) {
-						for (int i = 0; i < curSelObjIDX; ++i) {
-							objs[i].drawMeSmpls_ClrLoc(pa);
-						}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {
-							objs[i].drawMeSmpls_ClrLoc(pa);
-						}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrLoc(pa);	}
+						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeSmpls_ClrLoc(pa);	}
 					} // loc color
 					else {
-						for (int i = 0; i < curSelObjIDX; ++i) {
-							objs[i].drawMeSmpls_ClrRnd(pa);
-						}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {
-							objs[i].drawMeSmpls_ClrRnd(pa);
-						}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrRnd(pa);	}
+						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeSmpls_ClrRnd(pa);	}
 					} // rand color
 				}
 
 			} else {
-				if (showObjs) {
-					_drawObjs_UseActual(objs, animTimeMod, useLocClr, showSmpls, showWireFrame, showLabel);
-				}
+				if (showObjs) {				_drawObjs_UseActual(objs, animTimeMod, useLocClr, showSmpls, showWireFrame, showLabel);}
 				if (showSmpls) {
-					if (useLocClr) {
-						for (int i = 0; i < objs.length; ++i) {
-							objs[i].drawMeSmpls_ClrLoc(pa);
-						}
-					} // loc color
-					else {
-						for (int i = 0; i < objs.length; ++i) {
-							objs[i].drawMeSmpls_ClrRnd(pa);
-						}
-					} // rand color
-					if (showSmplsLabel) {
-						for (int i = 0; i < objs.length; ++i) {
-							objs[i].drawMySmplsLabel(pa, this);
-						}
-					}
+					if (useLocClr) {		for (int i = 0; i < objs.length; ++i) {					objs[i].drawMeSmpls_ClrLoc(pa);	}} // loc color
+					else {					for (int i = 0; i < objs.length; ++i) {					objs[i].drawMeSmpls_ClrRnd(pa);	}} // rand color
+					if (showSmplsLabel) {	for (int i = 0; i < objs.length; ++i) {					objs[i].drawMySmplsLabel(pa, this);}}
 				}
 			}
 		}
@@ -812,64 +704,24 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	private void _drawObjs_UseActual(SOM_GeomObj[] objs, float animTimeMod, boolean useLocClr, boolean showSmpls,
 			boolean showWireFrame, boolean showLabel) {
 		if (showWireFrame) { // draw objects with wire frames
-			if (useLocClr) {
-				for (int i = 0; i < objs.length; ++i) {
-					objs[i].drawMeClrLoc_WF(pa);
-				}
-			} // loc color
-			else {
-				for (int i = 0; i < objs.length; ++i) {
-					objs[i].drawMeClrRnd_WF(pa);
-				}
-			} // rand color
+			if (useLocClr) {	for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrLoc_WF(pa);}} // loc color
+			else {				for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrRnd_WF(pa);}} // rand color
 		} else {
-			if (useLocClr) {
-				for (int i = 0; i < objs.length; ++i) {
-					objs[i].drawMeClrLoc(pa);
-				}
-			} // loc color
-			else {
-				for (int i = 0; i < objs.length; ++i) {
-					objs[i].drawMeClrRnd(pa);
-				}
-			} // rand color
+			if (useLocClr) {	for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrLoc(pa);}} // loc color
+			else {				for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrRnd(pa);}} // rand color
 		}
-		if (showLabel) {
-			for (int i = 0; i < objs.length; ++i) {
-				objs[i].drawMyLabel(pa, this);
-			}
-		}
+		if (showLabel) {		for (int i = 0; i < objs.length; ++i) {		objs[i].drawMyLabel(pa, this);}}
 	}// _drawObjs_UseActual
 
 	private void _drawObjs_UseBMUs(SOM_GeomObj[] objs, boolean useLocClr, boolean showWireFrame, boolean showLabel) {
 		if (showWireFrame) { // draw objects with wire frames
-			if (useLocClr) {
-				for (int i = 0; i < objs.length; ++i) {
-					objs[i].drawMeClrLoc_WF_BMU(pa);
-				}
-			} // loc color
-			else {
-				for (int i = 0; i < objs.length; ++i) {
-					objs[i].drawMeClrRnd_WF_BMU(pa);
-				}
-			} // rand color
+			if (useLocClr) {	for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrLoc_WF_BMU(pa);}} // loc color
+			else {				for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrRnd_WF_BMU(pa);}} // rand color
 		} else {
-			if (useLocClr) {
-				for (int i = 0; i < objs.length; ++i) {
-					objs[i].drawMeClrLoc_BMU(pa);
-				}
-			} // loc color
-			else {
-				for (int i = 0; i < objs.length; ++i) {
-					objs[i].drawMeClrRnd_BMU(pa);
-				}
-			} // rand color
+			if (useLocClr) {	for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrLoc_BMU(pa);}} // loc color
+			else {				for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrRnd_BMU(pa);}} // rand color
 		}
-		if (showLabel) {
-			for (int i = 0; i < objs.length; ++i) {
-				objs[i].drawMyLabel_BMU(pa, this);
-			}
-		}
+		if (showLabel) {		for (int i = 0; i < objs.length; ++i) {	objs[i].drawMyLabel_BMU(pa, this);}}
 	}// _drawObjs_UseBMUs
 
 	/**
@@ -924,13 +776,10 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	/////////////////////////////
 	// sim routines
 	@Override
-	protected final boolean simMe(float modAmtSec) {
-		return false;
-	}
+	protected final boolean simMe(float modAmtSec) {return false;}
 
 	@Override
-	protected final void stopMe() {
-	}
+	protected final void stopMe() {}
 	/////////////////////////////
 	// end sim routines
 
@@ -939,172 +788,151 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Begin requested action", MsgCodes.info4);
 
 		switch (funcRow) {
-		case 0: {// row 1 of menu side bar buttons
-			// {"Gen Training Data", "Save Training data","Load Training Data"}, //row 1
-			msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr",
-					"Click Functions 1 in " + name + " : btn : " + btn, MsgCodes.info4);
-			switch (btn) {
-			case 0: {
-				mapMgr.loadPreProcTrainData(mapMgr.projConfigData.getPreProcDataDesiredSubDirName(), true);
-				resetButtonState();
+			case 0: {// row 1 of menu side bar buttons
+				// {"Gen Training Data", "Save Training data","Load Training Data"}, //row 1
+				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr","Click Functions 1 in " + name + " : btn : " + btn, MsgCodes.info4);
+				switch (btn) {
+					case 0: {
+						mapMgr.loadPreProcTrainData(mapMgr.projConfigData.getPreProcDataDesiredSubDirName(), true);
+						resetButtonState();
+						break;
+					}
+					case 1: {
+						mapMgr.saveAllPreProcExamples();
+						resetButtonState();
+						break;
+					}
+					case 2: {
+						mapMgr.generateTrainingData();
+						resetButtonState();
+						break;
+					}
+					default: {
+						msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 1 btn : " + btn,
+								MsgCodes.warning2);
+						break;
+					}
+				}
 				break;
-			}
-			case 1: {
-				mapMgr.saveAllPreProcExamples();
-				resetButtonState();
+			} // row 1 of menu side bar buttons
+	
+			case 1: {// row 2 of menu side bar buttons
+				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr","Click Functions 2 in " + name + " : btn : " + btn, MsgCodes.info4);
+				switch (btn) {
+					case 0: {
+						mapMgr.saveCurrentTrainData();
+						resetButtonState();
+						break;
+					}
+					case 1: {
+						resetButtonState();
+						break;
+					}
+					case 2: {
+						resetButtonState();
+						break;
+					}
+					case 3: {// show/hide som Map UI
+						setPrivFlags(drawSOM_MapUIVis, !getPrivFlags(drawSOM_MapUIVis));
+						resetButtonState();
+						break;
+					}
+					default: {
+						msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 2 btn : " + btn,
+								MsgCodes.warning2);
+						resetButtonState();
+						break;
+					}
+				}
 				break;
-			}
-			case 2: {
-				mapMgr.generateTrainingData();
-				resetButtonState();
+			} // row 2 of menu side bar buttons
+			case 2: {// row 3 of menu side bar buttons
+				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr","Click Functions 3 in " + name + " : btn : " + btn, MsgCodes.info4);
+				switch (btn) {
+					case 0: {
+						mapMgr.loadTrainDataMapConfigAndBuildMap(false);
+						resetButtonState();
+						break;
+					}
+					case 1: {
+						mapMgr.loadSOMConfig();// pass fraction of data to use for training
+						resetButtonState();
+						break;
+					}
+					case 2: {
+						resetButtonState();
+						break;
+					}
+					case 3: {
+						resetButtonState();
+						break;
+					}
+					default: {
+						msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 3 btn : " + btn,
+								MsgCodes.warning2);
+						resetButtonState();
+						break;
+					}
+				}
 				break;
-			}
-			default: {
-				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 1 btn : " + btn,
-						MsgCodes.warning2);
+			} // row 3 of menu side bar buttons
+			case 3: {// row 3 of menu side bar buttons
+				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr","Click Functions 3 in " + name + " : btn : " + btn, MsgCodes.info4);
+				switch (btn) {
+					case 0:
+					case 1:
+					case 2:
+					case 3: {// load all training data, default map config, and build map
+						mapMgr.loadPretrainedExistingMap(btn, true);// runs in thread, button state reset there
+						resetButtonState();
+						break;
+					}
+					default: {
+						msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 3 btn : " + btn, MsgCodes.warning2);
+						resetButtonState();
+						break;
+					}
+				}
 				break;
-			}
-			}
-			break;
-		} // row 1 of menu side bar buttons
-
-		case 1: {// row 2 of menu side bar buttons
-			msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr",
-					"Click Functions 2 in " + name + " : btn : " + btn, MsgCodes.info4);// {"Ld&Bld SOM Data", "Load SOM
-																						// Config", "Ld & Make Map", "Ld
-																						// Prebuilt Map"}, //row 2
-			// {"Train Data","True Prspcts", "Prods", "SOM Cfg", "Func 14"}, //row 2
-
-			switch (btn) {
-			case 0: {
-				mapMgr.saveCurrentTrainData();
-				resetButtonState();
-				break;
-			}
-			case 1: {
-				resetButtonState();
-				break;
-			}
-			case 2: {
-				resetButtonState();
-				break;
-			}
-			case 3: {// show/hide som Map UI
-				setPrivFlags(drawSOM_MapUIVis, !getPrivFlags(drawSOM_MapUIVis));
-				resetButtonState();
-				break;
-			}
-			default: {
-				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 2 btn : " + btn,
-						MsgCodes.warning2);
-				resetButtonState();
-				break;
-			}
-			}
-			break;
-		} // row 2 of menu side bar buttons
-		case 2: {// row 3 of menu side bar buttons
-			msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr",
-					"Click Functions 3 in " + name + " : btn : " + btn, MsgCodes.info4);// {"Ld&Bld SOM Data", "Load SOM
-																						// Config", "Ld & Make Map", "Ld
-																						// Prebuilt Map"}, //row 2
-			switch (btn) {
-			case 0: {
-				mapMgr.loadTrainDataMapConfigAndBuildMap(false);
-				resetButtonState();
-				break;
-			}
-			case 1: {
-				mapMgr.loadSOMConfig();// pass fraction of data to use for training
-				resetButtonState();
-				break;
-			}
-			case 2: {
-				resetButtonState();
-				break;
-			}
-			case 3: {
-				resetButtonState();
-				break;
-			}
-			default: {
-				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 3 btn : " + btn,
-						MsgCodes.warning2);
-				resetButtonState();
-				break;
-			}
-			}
-			break;
-		} // row 3 of menu side bar buttons
-		case 3: {// row 3 of menu side bar buttons
-			msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr",
-					"Click Functions 3 in " + name + " : btn : " + btn, MsgCodes.info4);// {"Ld&Bld SOM Data", "Load SOM
-																						// Config", "Ld & Make Map", "Ld
-																						// Prebuilt Map"}, //row 2
-			switch (btn) {
-			case 0:
-			case 1:
-			case 2:
-			case 3: {// load all training data, default map config, and build map
-				mapMgr.loadPretrainedExistingMap(btn, true);// runs in thread, button state reset there
-				resetButtonState();
-				break;
-			}
-			default: {
-				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 3 btn : " + btn,
-						MsgCodes.warning2);
-				resetButtonState();
-				break;
-			}
-			}
-			break;
-		} // row 3 of menu side bar buttons
+			} // row 3 of menu side bar buttons
 		}
-		msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr",
-				"End requested action (multithreaded actions may still be working).", MsgCodes.info4);
+		msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "End requested action (multithreaded actions may still be working).", MsgCodes.info4);
 	}
 
 	@Override
-	public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {
-		somUIWin.handleSideMenuMseOvrDispSel(btn, val);
-
-	}
+	public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {somUIWin.handleSideMenuMseOvrDispSel(btn, val);}
 
 	@Override
 	public final void handleSideMenuDebugSel(int btn, int val) {
-		msgObj.dispMessage("SOM_AnimWorldWin", "handleSideMenuDebugSel",
-				"Click Debug functionality in " + name + " : btn : " + btn, MsgCodes.info4);
-		// {"All->Bld Map","All Dat To Map", "Func 22", "Func 23", "Prblt Map"}, //row 3
+		msgObj.dispMessage("SOM_AnimWorldWin", "handleSideMenuDebugSel","Click Debug functionality in " + name + " : btn : " + btn, MsgCodes.info4);
 		switch (btn) {
-		case 0: {
-			resetButtonState();
-			break;
+			case 0: {
+				resetButtonState();
+				break;
+			}
+			case 1: {
+				resetButtonState();
+				break;
+			}
+			case 2: {
+				resetButtonState();
+				break;
+			}
+			case 3: {// show current mapdat status
+				resetButtonState();
+				break;
+			}
+			case 4: {
+				resetButtonState();
+				break;
+			}
+			default: {
+				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Debug btn : " + btn,MsgCodes.warning2);
+				resetButtonState();
+				break;
+			}
 		}
-		case 1: {
-			resetButtonState();
-			break;
-		}
-		case 2: {
-			resetButtonState();
-			break;
-		}
-		case 3: {// show current mapdat status
-			resetButtonState();
-			break;
-		}
-		case 4: {
-			resetButtonState();
-			break;
-		}
-		default: {
-			msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Debug btn : " + btn,
-					MsgCodes.warning2);
-			resetButtonState();
-			break;
-		}
-		}
-		msgObj.dispMessage("SOM_AnimWorldWin", "handleSideMenuDebugSel", "End Debug functionality selection.",
-				MsgCodes.info4);
+		msgObj.dispMessage("SOM_AnimWorldWin", "handleSideMenuDebugSel", "End Debug functionality selection.",MsgCodes.info4);
 	}
 
 	/**
@@ -1124,11 +952,8 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		// if(res) {return res;}
 		if ((this.somUIWin != null) && (getPrivFlags(drawSOM_MapUIVis))) {
 			res = somUIWin.handleMouseMove(mouseX, mouseY);
-			if (res) {
-				return true;
-			}
+			if (res) {		return true;	}
 		}
-
 		return hndlMseMove_Priv(mouseX, mouseY, mseClckInWorld);
 	}
 
@@ -1152,12 +977,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		}
 		if ((this.somUIWin != null) && (getPrivFlags(drawSOM_MapUIVis))) {
 			res = somUIWin.handleMouseClick(mouseX, mouseY, mseBtn);
-			if (res) {
-				return true;
-			}
-		}
-		if (res) {
-			return res;
+			if (res) {			return true;	}
 		}
 		return hndlMseClick_Priv(mouseX, mouseY, mseClckInWorld, mseBtn);
 	}// hndlMouseClickIndiv
@@ -1173,8 +993,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	protected abstract boolean hndlMseClick_Priv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn);
 
 	@Override
-	protected final boolean hndlMouseDragIndiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D,
-			myVector mseDragInWorld, int mseBtn) {
+	protected final boolean hndlMouseDragIndiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
 		boolean res = false;
 		// pa.outStr2Scr("hndlMouseDragIndiv sphere ui drag in world mouseClickIn3D : "
 		// + mouseClickIn3D.toStrBrf() + " mseDragInWorld : " +
@@ -1183,20 +1002,14 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 //			//pa.outStr2Scr("sphere ui drag in world mouseClickIn3D : " + mouseClickIn3D.toStrBrf() + " mseDragInWorld : " + mseDragInWorld.toStrBrf());
 //			res = sphereCntls.get(curSelSphere).hndlMouseDragIndiv(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D,curMseLookVec, mseDragInWorld);
 //		}
-		if (res) {
-			return res;
-		}
+		if (res) {			return res;		}
 		// handleMouseDrag(int mouseX, int mouseY,int pmouseX, int pmouseY, myVector
 		// mseDragInWorld, int mseBtn)
 		if ((this.somUIWin != null) && (getPrivFlags(drawSOM_MapUIVis))) {
 			res = somUIWin.handleMouseDrag(mouseX, mouseY, pmouseX, pmouseY, mseDragInWorld, mseBtn);
-			if (res) {
-				return true;
-			}
+			if (res) {				return true;			}
 		}
-		if (res) {
-			return res;
-		}
+		
 		return hndlMseDrag_Priv(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
 	}
 
@@ -1227,57 +1040,28 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 * instance-specific functionality for mouse release
 	 */
 	protected abstract void hndlMseRelease_Priv();
-
 	@Override
-	protected final void processTrajIndiv(myDrawnSmplTraj drawnNoteTraj) {
-	}
-
+	protected final void processTrajIndiv(myDrawnSmplTraj drawnNoteTraj) {	}
 	@Override
-	protected final void addSScrToWinIndiv(int newWinKey) {
-	}
-
+	protected final void addSScrToWinIndiv(int newWinKey) {	}
 	@Override
-	protected final void addTrajToScrIndiv(int subScrKey, String newTrajKey) {
-	}
-
+	protected final void addTrajToScrIndiv(int subScrKey, String newTrajKey) {	}
 	@Override
-	protected final void delSScrToWinIndiv(int idx) {
-	}
-
+	protected final void delSScrToWinIndiv(int idx) {	}
 	@Override
-	protected final void delTrajToScrIndiv(int subScrKey, String newTrajKey) {
-	}
-
+	protected final void delTrajToScrIndiv(int subScrKey, String newTrajKey) {	}
 	// resize drawn all trajectories
 	@Override
-	protected final void resizeMe(float scale) {
-	}
-
+	protected final void resizeMe(float scale) {	}
 	@Override
-	protected final void closeMe() {
-	}
-
+	protected final void closeMe() {	}
 	@Override
-	protected final void showMe() {
-		setCustMenuBtnNames();
-	}
-
+	protected final void showMe() {		setCustMenuBtnNames();	}
 	@Override
-	protected final String[] getSaveFileDirNamesPriv() {
-		// TODO Auto-generated method stub
-		return new String[0];
-	}
-
+	protected final String[] getSaveFileDirNamesPriv() {		return new String[0];	}
 	@Override
-	public final void hndlFileLoad(File file, String[] vals, int[] stIdx) {
-		// TODO Auto-generated method stub
-
-	}
-
+	public final void hndlFileLoad(File file, String[] vals, int[] stIdx) {	}
 	@Override
-	public final ArrayList<String> hndlFileSave(File file) {
-		// TODO Auto-generated method stub
-		return new ArrayList<String>();
-	}
+	public final ArrayList<String> hndlFileSave(File file) {	return new ArrayList<String>();	}
 
 }// SOM_AnimWorldWin

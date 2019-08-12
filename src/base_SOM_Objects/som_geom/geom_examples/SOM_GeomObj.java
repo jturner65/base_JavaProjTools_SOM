@@ -548,6 +548,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		int r = ThreadLocalRandom.current().nextInt(rndBnd)+lBnd, g = ThreadLocalRandom.current().nextInt(rndBnd)+lBnd, b =ThreadLocalRandom.current().nextInt(rndBnd)+lBnd;
 		return new int[] {r,g,b};
 	}
+	
 
 	/**
 	 * draw entire object this class represents, using location as color or using randomly assigned color
@@ -606,6 +607,36 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		pa.text(label, _off,-_off,0); 
 		pa.popStyle();pa.popMatrix();
 	}
+	protected final void _drawPointAtLoc_3D(my_procApplet pa, myPointf pt, float r) {
+		pa.pushMatrix(); pa.pushStyle(); 
+		pa.translate(pt.x,pt.y,pt.z); 
+		pa.sphereDetail(4);
+		pa.sphere(r);					
+		pa.popStyle(); pa.popMatrix();
+	} // render sphere of radius r and center P)	
+	
+	/**
+	 * show a point in 2d
+	 * @param pa
+	 * @param P
+	 * @param r
+	 * @param s
+	 * @param _off
+	 */
+	protected final void _drawLabelAtLoc_2D(my_procApplet pa, myPointf pt, float r, String label, float _off) {
+		pa.pushMatrix(); pa.pushStyle(); 
+		pa.translate(pt.x,pt.y,0); 
+		pa.circle(0,0,r,r);				
+		pa.text(label, _off, _off);
+		pa.popStyle(); pa.popMatrix();
+	} // render sphere of radius r and center P)	
+	
+	protected final void _drawPointAtLoc_2D(my_procApplet pa, myPointf pt, float r) {
+		pa.pushMatrix(); pa.pushStyle(); 
+		pa.translate(pt.x,pt.y,0); 
+		pa.circle(0,0,r,r);						
+		pa.popStyle(); pa.popMatrix();
+	} // render sphere of radius r and center P)	
 	
 	/**
 	 * draw this object

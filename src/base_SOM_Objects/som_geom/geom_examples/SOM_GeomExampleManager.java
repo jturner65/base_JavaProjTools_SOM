@@ -153,7 +153,11 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	 * after example array has been built, add specific funcitonality for these types of examples, especially if validation should occur
 	 */
 	protected final void buildExampleArrayEnd_Priv(boolean validate) {}
-	
+	/**
+	 * no need to validate examples for this kind of project
+	 */
+	@Override
+	protected final void validateAndAddExToArray(ArrayList<SOM_Example> tmpList, SOM_Example ex) {tmpList.add(ex);	}	
 	/**
 	 * 
 	 */
