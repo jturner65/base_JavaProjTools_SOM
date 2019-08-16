@@ -187,18 +187,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		// add instancing-class specific buttons - returns total # of private flags in
 		// instancing class
 		numPrivFlags = initAllAnimWorldPrivBtns_Indiv(tmpBtnNamesArray);
-		// finalize setup for UI toggle buttons - convert to arrays
-		truePrivFlagNames = new String[tmpBtnNamesArray.size()];
-		falsePrivFlagNames = new String[truePrivFlagNames.length];
-		privModFlgIdxs = new int[truePrivFlagNames.length];
-		for (int i = 0; i < truePrivFlagNames.length; ++i) {
-			Object[] tmpAra = tmpBtnNamesArray.get(i);
-			truePrivFlagNames[i] = (String) tmpAra[0];
-			falsePrivFlagNames[i] = (String) tmpAra[1];
-			privModFlgIdxs[i] = (int) tmpAra[2];
-		}
-		numClickBools = truePrivFlagNames.length;
-		initPrivBtnRects(0, numClickBools);
+		_initAllPrivButtons(tmpBtnNamesArray);
 	}
 
 	/**
@@ -784,12 +773,10 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	@Override
 	protected final void launchMenuBtnHndlr(int funcRow, int btn) {
-		msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Begin requested action", MsgCodes.info4);
-
+		msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Begin requested action : Click Functions "+(funcRow+1)+" in " + name + " : btn : " + btn, MsgCodes.info4);
 		switch (funcRow) {
 			case 0: {// row 1 of menu side bar buttons
 				// {"Gen Training Data", "Save Training data","Load Training Data"}, //row 1
-				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr","Click Functions 1 in " + name + " : btn : " + btn, MsgCodes.info4);
 				switch (btn) {
 					case 0: {
 						mapMgr.loadPreProcTrainData(mapMgr.projConfigData.getPreProcDataDesiredSubDirName(), true);
@@ -816,7 +803,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 			} // row 1 of menu side bar buttons
 	
 			case 1: {// row 2 of menu side bar buttons
-				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr","Click Functions 2 in " + name + " : btn : " + btn, MsgCodes.info4);
 				switch (btn) {
 					case 0: {
 						mapMgr.saveCurrentTrainData();
@@ -824,6 +810,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 						break;
 					}
 					case 1: {
+						mapMgr.calcOptNumObjsForDesiredProb(10, .95f);
 						resetButtonState();
 						break;
 					}
@@ -846,7 +833,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 				break;
 			} // row 2 of menu side bar buttons
 			case 2: {// row 3 of menu side bar buttons
-				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr","Click Functions 3 in " + name + " : btn : " + btn, MsgCodes.info4);
 				switch (btn) {
 					case 0: {
 						mapMgr.loadTrainDataMapConfigAndBuildMap(false);
@@ -876,7 +862,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 				break;
 			} // row 3 of menu side bar buttons
 			case 3: {// row 3 of menu side bar buttons
-				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr","Click Functions 3 in " + name + " : btn : " + btn, MsgCodes.info4);
 				switch (btn) {
 					case 0:
 					case 1:
@@ -887,7 +872,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 						break;
 					}
 					default: {
-						msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 3 btn : " + btn, MsgCodes.warning2);
+						msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 4 btn : " + btn, MsgCodes.warning2);
 						resetButtonState();
 						break;
 					}
@@ -895,7 +880,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 				break;
 			} // row 3 of menu side bar buttons
 		}
-		msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "End requested action (multithreaded actions may still be working).", MsgCodes.info4);
+		msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "End requested action (multithreaded actions may still be working) : Click Functions "+(funcRow+1)+" in " + name + " : btn : " + btn, MsgCodes.info4);
 	}
 
 	@Override
@@ -926,7 +911,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 				break;
 			}
 			default: {
-				msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Debug btn : " + btn,MsgCodes.warning2);
+				msgObj.dispMessage("SOM_AnimWorldWin", "handleSideMenuDebugSel", "Unknown Debug btn : " + btn,MsgCodes.warning2);
 				resetButtonState();
 				break;
 			}

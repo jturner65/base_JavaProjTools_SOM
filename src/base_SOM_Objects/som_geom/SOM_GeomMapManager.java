@@ -1,5 +1,7 @@
 package base_SOM_Objects.som_geom;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -22,6 +24,7 @@ import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_UI_Objects.my_procApplet;
+import base_Utils_Objects.MyMathUtils;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.myPoint;
 import base_Utils_Objects.vectorObjs.myPointf;
@@ -89,6 +92,11 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 * # of samples per object
 	 */
 	protected int numSamplesPerObj;
+	
+	/**
+	 * total # of samples in world
+	 */
+	protected int ttlNumSamples;
 	/**
 	 * total # of training examples to build
 	 */
@@ -201,11 +209,69 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 			resetGeomAndTrainDataObjs();
 		}
 		numSamplesPerObj=_numSamples;	
+		ttlNumSamples = numObjsToBuild * numSamplesPerObj;
 		if(ttlNumTrainExamples != _numTrainExamples) {
 			ttlNumTrainExamples = _numTrainExamples;
 			resetTrainDataObjs();
 		}
 	}
+	
+	/**
+	 * Find the number of training examples that are necessary so that every base object has been sampled with the given probability.
+	 * Naively provides solution to Multivariate Hypergeometric distribution (balls of more than 2 colors in urn)
+	 * @param numObjsEstimate estimate to # of underlying objects
+	 * @param prob desired probability
+	 * @return
+	 */
+	public final long calcOptNumObjsForDesiredProb(int numObjsEst, float probDes) {
+		//T is # of choices to give desired probability
+		//min T is numObjest 
+		long T = numObjsEst*2;
+		//have # of samples per obj
+		Long numSmplsToBuildObj = (long) getNumSamplesToBuildObject();
+		//total ways to build an example with all points coming from a single object
+		Long K = MyMathUtils.choose(numSamplesPerObj, numSmplsToBuildObj);
+		Long mK = K * numObjsEst;		
+		Long mKm1 = mK - numObjsEst - 1;
+		//total ways to build an example from all samples
+		BigInteger N = MyMathUtils.choose_BigInt(ttlNumSamples, numSmplsToBuildObj);
+		
+		BigDecimal KtoMPwrOvNtoM = BigDecimal.ONE;
+		for(int i =0; i<numObjsEst;++i) {KtoMPwrOvNtoM = KtoMPwrOvNtoM.multiply(BigDecimal.valueOf(K).divide(new BigDecimal(N)));}
+		
+		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"calcOptNumObjsForDesiredProb", " (mK-1) : " +(mK-1) + " | N : " + N.toString() + " | KtoMPwrOvNtoM : " + KtoMPwrOvNtoM.toString(), MsgCodes.info1);
+		double prob = 0.0;
+		BigDecimal probBD = new BigDecimal(0.0);
+		//BigDecimal constVal = KtoMPwr.divide(Nmi_denom);
+		//double divis = KtoMPwr.doubleValue() / Nmi_denom.doubleValue();
+		//BigDecimal constVal = new BigDecimal( divis);
+		int incr = numSamplesPerObj;
+		boolean done = false;
+		BigDecimal TmIProd, NTiProdBD;
+		BigInteger NTiProd;
+		int iter = 0;
+		while(!done) {
+			TmIProd = BigDecimal.ONE;
+			for(int i=0;i<(numObjsEst-1);++i) {	TmIProd = TmIProd.multiply(BigDecimal.valueOf(T-i));}
+			NTiProd = BigInteger.ONE;
+			for(long i=0L;i<mKm1;++i) {			NTiProd = NTiProd.multiply(N.subtract(BigInteger.valueOf(T+i)));	}
+			NTiProdBD = new BigDecimal(NTiProd);
+			probBD = KtoMPwrOvNtoM.multiply(TmIProd).multiply(NTiProdBD);
+			prob = probBD.doubleValue();
+			getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"calcOptNumObjsForDesiredProb", "iter : " + iter + " KtoMPwrOvNtoM : " + KtoMPwrOvNtoM+  " | K : " + K + " | T Value : " + T +" | Calced prob : " + probBD.toString() + " | TmIProd : " + TmIProd.toString() + " | NTiProd : " + NTiProd.toString(),MsgCodes.info1);
+			
+			done = (prob >= probDes);
+			if(!done) {T+=incr; ++iter;}
+		}
+		
+
+		
+		
+		return T;
+	}
+			
+	
+
 	
 	/**
 	 * actually configre and execute objRunner task for specified objects, task to perform

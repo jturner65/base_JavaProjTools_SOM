@@ -267,17 +267,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		//add instancing-class specific buttons - returns total # of private flags in instancing class
 		numPrivFlags = initAllSOMPrivBtns_Indiv(tmpBtnNamesArray);
 		//finalize setup for UI toggle buttons - convert to arrays
-		truePrivFlagNames = new String[tmpBtnNamesArray.size()];
-		falsePrivFlagNames = new String[truePrivFlagNames.length];
-		privModFlgIdxs = new int[truePrivFlagNames.length];
-		for(int i=0;i<truePrivFlagNames.length;++i) {
-			Object[] tmpAra = tmpBtnNamesArray.get(i);
-			truePrivFlagNames[i] = (String) tmpAra[0];
-			falsePrivFlagNames[i] = (String) tmpAra[1];
-			privModFlgIdxs[i] = (int) tmpAra[2];
-		}		
-		numClickBools = truePrivFlagNames.length;	
-		initPrivBtnRects(0,numClickBools);		
+		_initAllPrivButtons(tmpBtnNamesArray);
 		
 	}//initAllPrivBtns
 

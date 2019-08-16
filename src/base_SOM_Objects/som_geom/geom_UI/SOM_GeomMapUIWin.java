@@ -152,9 +152,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		
 	}
 	@Override
-	protected void drawMapIndiv() {
-		
-		
+	protected void drawMapIndiv() {		
 	}
 
 	@Override
@@ -174,8 +172,6 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 
 	@Override
 	protected void setCustMenuBtnNames() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	/**

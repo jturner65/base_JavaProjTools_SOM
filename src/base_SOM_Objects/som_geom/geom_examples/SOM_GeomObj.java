@@ -144,12 +144,12 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _mapMgr
 	 * @param _mapNode
 	 */	
-	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_GeomMapNode _mapNode, SOM_GeomObjTypes _GeoType, int _numSrcPts,boolean _is3D) {
+	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_GeomMapNode _mapNode, SOM_GeomObjTypes _GeoType, boolean _is3D) {
 		super(_mapMgr, SOM_ExDataType.MapNode,_GeoType.toString()+"_"+_mapNode.OID);
 		_ctorInit(_mapMgr,incrID(), _GeoType, _is3D, true);
 
 		float[] mapFtrsAra = _mapNode.getRawFtrs();	
-		srcPts = buildSrcPtsFromBMUMapNodeFtrs(mapFtrsAra,  _numSrcPts, dispLabel);
+		srcPts = buildSrcPtsFromBMUMapNodeFtrs(mapFtrsAra, dispLabel);
 		//_DBG_DispObjStats(mapFtrsAra,"map node ctor", "Map Node:  "+ _mapNode.OID);
 		//build geomSrcSamples from srcPts 
 		geomSrcSamples = new SOM_GeomSamplePointf[getSrcPts().length];
@@ -301,7 +301,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	/**
 	 * build an array of source points from the characteristic features of the source map node
 	 */
-	protected abstract SOM_GeomSamplePointf[] buildSrcPtsFromBMUMapNodeFtrs(float[] mapFtrs, int _numSrcSmpls, String _dispLabel);
+	protected abstract SOM_GeomSamplePointf[] buildSrcPtsFromBMUMapNodeFtrs(float[] mapFtrs, String _dispLabel);
 	
 	
 	/**
