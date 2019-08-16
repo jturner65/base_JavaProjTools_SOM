@@ -9,7 +9,6 @@ import base_SOM_Objects.som_examples.*;
 import base_UI_Objects.*;
 import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
 import base_UI_Objects.windowUI.myDispWindow;
-import base_UI_Objects.windowUI.myGUIObj;
 import base_Utils_Objects.*;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.myPoint;
@@ -106,8 +105,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		uiClassSelectIDX			= 24;			//pick the class to display, if class mapping is available/enabled
 	
 	public static final int numSOMBaseGUIObjs = 25;
-	//instancing class will specify numGUIObjs	
-	protected double[] uiVals;				//raw values from ui components
 	//
 	//match descriptor string to index and index to string, to facilitate access
 	public TreeMap<String, Integer> mapDatDescrToUIIdx;
@@ -235,9 +232,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	/**
 	 * initialize all private-flag based UI buttons here - called by base class before initMe
 	 */
-	public final void initAllPrivBtns(){	
+	public final void initAllPrivBtns(ArrayList<Object[]> tmpBtnNamesArray){	
 		//add an entry for each button, in the order they are wished to be displayed		
-		ArrayList<Object[]> tmpBtnNamesArray = new ArrayList<Object[]>();
 		tmpBtnNamesArray.add(new Object[]{"Building SOM","Build SOM ",buildSOMExe});
 		tmpBtnNamesArray.add(new Object[]{"Reset Dflt UI Vals","Reset Dflt UI Vals",resetMapDefsIDX});
 		tmpBtnNamesArray.add(new Object[]{"Using ChiSq for Ftr Dist", "Not Using ChiSq Distance", mapUseChiSqDistIDX});       
@@ -266,8 +262,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1],mapLockClassCatSegmentsIDX});}	
 		//add instancing-class specific buttons - returns total # of private flags in instancing class
 		numPrivFlags = initAllSOMPrivBtns_Indiv(tmpBtnNamesArray);
-		//finalize setup for UI toggle buttons - convert to arrays
-		_initAllPrivButtons(tmpBtnNamesArray);
 		
 	}//initAllPrivBtns
 
@@ -311,9 +305,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	private boolean _classExistsAndIsShown = false;
 	//initialize structure to hold modifiable menu regions
 	@Override
-	protected final void setupGUIObjsAras(){		
+	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals){		
 		//keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects
-		TreeMap<Integer, String[]> tmpListObjVals = new TreeMap<Integer, String[]>();
 		tmpListObjVals.put(uiMapShapeIDX, new String[] {"rectangular","hexagonal"});
 		tmpListObjVals.put(uiMapBndsIDX, new String[] {"planar","toroid"});
 		tmpListObjVals.put(uiMapKTypIDX, new String[] {"Dense CPU", "Dense GPU", "Sparse CPU"});		
@@ -326,7 +319,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		tmpListObjVals.put(uiMapNodeBMUTypeToDispIDX, SOM_MapManager.getNodeBMUMapTypes());
 		tmpListObjVals.put(uiFtrSelectIDX, new String[] {"None"});		
 		
-		TreeMap<Integer, Object[]> tmpUIObjArray = new TreeMap<Integer, Object[]>();
 		//tmpBtnNamesArray.add(new Object[]{"Building SOM","Build SOM ",buildSOMExe});
 		//object array of elements of following format  : 
 		//	the first element double array of min/max/mod values
@@ -374,25 +366,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		
 		//populate instancing application objects
 		setupGUIObjsAras_Indiv(tmpUIObjArray,tmpListObjVals);
-		
-		int numGUIObjs = tmpUIObjArray.size();		
-		guiMinMaxModVals = new double [numGUIObjs][3];
-		guiStVals = new double[numGUIObjs];
-		guiObjNames = new String[numGUIObjs];
-		guiBoolVals = new boolean [numGUIObjs][4];
-		uiVals = new double[numGUIObjs];//raw values
-		for(int i =0;i<numGUIObjs; ++i) {
-			guiMinMaxModVals[i] = (double[])tmpUIObjArray.get(i)[0];
-			guiStVals[i] = (Double)tmpUIObjArray.get(i)[1];
-			guiObjNames[i] = (String)tmpUIObjArray.get(i)[2];
-			guiBoolVals[i] = (boolean[])tmpUIObjArray.get(i)[3];
-			uiVals[i] = guiStVals[i];
-		}
-		
-		//since horizontal row of UI comps, uiClkCoords[2] will be set in buildGUIObjs		
-		guiObjs = new myGUIObj[numGUIObjs];			//list of modifiable gui objects
-
-		buildGUIObjs(guiObjNames,guiStVals,guiMinMaxModVals,guiBoolVals,new double[]{xOff,yOff},tmpListObjVals);			//builds a horizontal list of UI comps	
 		
 	}//setupGUIObjsAras
 	/**

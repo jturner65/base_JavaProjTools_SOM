@@ -210,8 +210,9 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 			//msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseClickIndiv", "In Mouse Click mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
 			mod = this.checkMouseClick(mouseX, mouseY, mseClckInWorld, mseBtn);
 		}
-		if(mod) {return mod;}
-		else {return checkUIButtons(mouseX, mouseY);}
+//		if(mod) {return mod;}
+//		else {return checkUIButtons(mouseX, mouseY);}
+		return mod;
 	}
 	@Override
 	protected boolean hndlMouseDragIndiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {

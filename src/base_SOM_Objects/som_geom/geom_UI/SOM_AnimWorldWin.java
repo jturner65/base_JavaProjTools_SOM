@@ -11,7 +11,6 @@ import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_UI_Objects.my_procApplet;
 import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
 import base_UI_Objects.windowUI.myDispWindow;
-import base_UI_Objects.windowUI.myGUIObj;
 import base_Utils_Objects.MyMathUtils;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.myPoint;
@@ -45,8 +44,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		gIDX_SelDispUIObj		= 4;	//ID of a ui obj to be selected and highlighted					
 
 	protected static final int numBaseAnimWinUIObjs = 5;
-	// instancing class will specify numGUIObjs
-	protected double[] uiVals;
 
 	// raw values from ui components
 	/**
@@ -94,8 +91,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	// - need to set in window
 	protected float[] SOMMapDims = new float[] { 834.8f, 834.8f };
 
-	public String[][] menuBtnNames = new String[][] { // each must have literals for every button defined in side bar
-														// menu, or ignored
+	public String[][] menuBtnNames = new String[][] { // each must have literals for every button defined in side bar menu, or ignored
 			{ "Load Geometry Data", "Save Geometry Data", "Build Training Data" }, // row 1
 			{ "Save Train Data", "---", "---", "Show SOM Win" }, // row 3
 			{ "Build Map", "LD SOM Config", "---", "---" }, // row 2
@@ -107,8 +103,36 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt, _canDrawTraj);
 		initAndSetAnimWorldVals();
 		geomObjType = _type;
-
 	}
+	
+
+	@Override
+	protected final void initMe() {
+		// build map associated with this geometric experiment
+		// perform in this window since SOM window is subordinate to this one
+
+		mapMgr = buildGeom_SOMMapManager();
+
+		// capable of using right side menu
+		setFlags(drawRightSideMenu, true);
+		// init specific sim flags
+		initPrivFlags(numPrivFlags);
+		// default setting is to show the geometric objects
+		setPrivFlags(showFullSourceObjIDX, true);
+		// default to show location as color
+		setPrivFlags(useUIObjLocAsClrIDX, true);
+		// set default to use unique training examples
+		setPrivFlags(allTrainExUniqueIDX, true);
+
+		pa.setAllMenuBtnNames(menuBtnNames);
+
+		// instance-specific init
+		initMe_Indiv();
+		// build default objects in screen
+		rebuildSourceGeomObjs();
+	}
+
+	
 
 	public void setGeomMapUIWin(SOM_GeomMapUIWin _somUIWin) {
 		somUIWin = _somUIWin;
@@ -154,13 +178,12 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	}
 
 	@Override
-	public final void initAllPrivBtns() {
+	public final void initAllPrivBtns(ArrayList<Object[]> tmpBtnNamesArray) {
 
 		// add an entry for each button, in the order they are wished to be displayed
 		// true tag, false tag, btn IDX
-		ArrayList<Object[]> tmpBtnNamesArray = new ArrayList<Object[]>();
+
 		tmpBtnNamesArray.add(new Object[] { "Debugging", "Debug", debugAnimIDX });
-		// tmpBtnNamesArray.add(new Object[] {"Showing SOM Map UI","Show SOM Map
 		// UI",drawSOM_MapUIVis});
 		tmpBtnNamesArray.add(new Object[] { "Regenerating " + geomObjType + " Objs","Regenerate " + geomObjType + " Objs", regenUIObjsIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType + " Objects", "Show " + geomObjType + " Objects",	showFullSourceObjIDX });
@@ -187,7 +210,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		// add instancing-class specific buttons - returns total # of private flags in
 		// instancing class
 		numPrivFlags = initAllAnimWorldPrivBtns_Indiv(tmpBtnNamesArray);
-		_initAllPrivButtons(tmpBtnNamesArray);
+		
 	}
 
 	/**
@@ -299,19 +322,13 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	protected abstract void setPrivFlags_Indiv(int idx, boolean val);
 
 	@Override
-	protected final void setupGUIObjsAras() {
-		// list box values - keyed by list obj IDX, value is string array of list obj
-		// values
-		TreeMap<Integer, String[]> tmpListObjVals = new TreeMap<Integer, String[]>();
-
-		TreeMap<Integer, Object[]> tmpUIObjArray = new TreeMap<Integer, Object[]>();
-		// tmpBtnNamesArray.add(new Object[]{"Building SOM","Build SOM ",buildSOMExe});
+	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals) {
+		
 		// object array of elements of following format :
 		// the first element double array of min/max/mod values
 		// the 2nd element is starting value
 		// the 3rd elem is label for object
-		// the 4th element is boolean array of {treat as int, has list values, value is
-		// sent to owning window}
+		// the 4th element is boolean array of {treat as int, has list values, value is sent to owning window}
 		int minNumObjs = getMinNumObjs(), maxNumObjs = getMaxNumObjs(),	diffNumObjs = (maxNumObjs - minNumObjs > 100 ? 10 : 1);
 		numGeomObjs = minNumObjs;
 		tmpUIObjArray.put(gIDX_NumUIObjs,new Object[] { new double[] { minNumObjs, maxNumObjs, diffNumObjs }, (double) (numGeomObjs * 1.0),"# of " + geomObjType + " Objects", new boolean[] { true, false, true } }); // gIDX_NumUIObjs
@@ -329,26 +346,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 		// populate instancing application objects
 		setupGUIObjsAras_Indiv(tmpUIObjArray, tmpListObjVals);
-
-		int numGUIObjs = tmpUIObjArray.size();
-		guiMinMaxModVals = new double[numGUIObjs][3];
-		guiStVals = new double[numGUIObjs];
-		guiObjNames = new String[numGUIObjs];
-		guiBoolVals = new boolean[numGUIObjs][4];
-		uiVals = new double[numGUIObjs];// raw values
-		for (int i = 0; i < numGUIObjs; ++i) {
-			guiMinMaxModVals[i] = (double[]) tmpUIObjArray.get(i)[0];
-			guiStVals[i] = (Double) tmpUIObjArray.get(i)[1];
-			guiObjNames[i] = (String) tmpUIObjArray.get(i)[2];
-			guiBoolVals[i] = (boolean[]) tmpUIObjArray.get(i)[3];
-			uiVals[i] = guiStVals[i];
-		}
-
-		// since horizontal row of UI comps, uiClkCoords[2] will be set in buildGUIObjs
-		guiObjs = new myGUIObj[numGUIObjs]; // list of modifiable gui objects
-
-		buildGUIObjs(guiObjNames, guiStVals, guiMinMaxModVals, guiBoolVals, new double[] { xOff, yOff },
-				tmpListObjVals); // builds a horizontal list of UI comps
 
 	}// setupGUIObjsAras
 
@@ -461,32 +458,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 */
 	protected abstract void setUIWinVals_Indiv(int UIidx, float val);
 
-	@Override
-	protected final void initMe() {
-		// build map associated with this geometric experiment
-		// perform in this window since SOM window is subordinate to this one
-
-		mapMgr = buildGeom_SOMMapManager();
-
-		// capable of using right side menu
-		setFlags(drawRightSideMenu, true);
-		// init specific sim flags
-		initPrivFlags(numPrivFlags);
-		// default setting is to show the geometric objects
-		setPrivFlags(showFullSourceObjIDX, true);
-		// default to show location as color
-		setPrivFlags(useUIObjLocAsClrIDX, true);
-		// set default to use unique training examples
-		setPrivFlags(allTrainExUniqueIDX, true);
-
-		pa.setAllMenuBtnNames(menuBtnNames);
-
-		// instance-specific init
-		initMe_Indiv();
-		// build default objects in screen
-		rebuildSourceGeomObjs();
-	}
-
 	/**
 	 * override this since no close box support
 	 */
@@ -552,10 +523,8 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	protected final void setCameraIndiv(float[] camVals) {
 		// , float rx, float ry, float dz are now member variables of every window
-		pa.camera(camVals[0], camVals[1], camVals[2], camVals[3], camVals[4], camVals[5], camVals[6], camVals[7],
-				camVals[8]);
-		// puts origin of all drawn objects at screen center and moves forward/away by
-		// dz
+		pa.camera(camVals[0], camVals[1], camVals[2], camVals[3], camVals[4], camVals[5], camVals[6], camVals[7], camVals[8]);
+		// puts origin of all drawn objects at screen center and moves forward/away by dz
 		pa.translate(camVals[0], camVals[1], (float) dz);
 		setCamOrient();
 	}
@@ -955,12 +924,8 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	// cntl key pressed handles unfocus of spherey
 	@Override
 	protected final boolean hndlMouseClickIndiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
-		boolean res = checkUIButtons(mouseX, mouseY);
-		if (res) {
-			return res;
-		}
 		if ((this.somUIWin != null) && (getPrivFlags(drawSOM_MapUIVis))) {
-			res = somUIWin.handleMouseClick(mouseX, mouseY, mseBtn);
+			boolean res = somUIWin.handleMouseClick(mouseX, mouseY, mseBtn);
 			if (res) {			return true;	}
 		}
 		return hndlMseClick_Priv(mouseX, mouseY, mseClckInWorld, mseBtn);
@@ -1009,14 +974,11 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 * @param mseBtn
 	 * @return
 	 */
-	protected abstract boolean hndlMseDrag_Priv(int mouseX, int mouseY, int pmouseX, int pmouseY,
-			myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn);
+	protected abstract boolean hndlMseDrag_Priv(int mouseX, int mouseY, int pmouseX, int pmouseY,myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn);
 
 	@Override
 	protected final void hndlMouseRelIndiv() {
-		if ((this.somUIWin != null) && (getPrivFlags(drawSOM_MapUIVis))) {
-			somUIWin.handleMouseRelease();
-		}
+		if ((this.somUIWin != null) && (getPrivFlags(drawSOM_MapUIVis))) {			somUIWin.handleMouseRelease();		}
 		hndlMseRelease_Priv();
 	}
 
