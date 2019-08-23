@@ -99,8 +99,8 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	public static final String[] MseOvrLblsAra = new String[] { "Loc", "Dist", "Pop", "Ftr", "Class", "Cat", "None" };
 
-	public SOM_AnimWorldWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed,String _winTxt, boolean _canDrawTraj, SOM_GeomObjTypes _type) {
-		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt, _canDrawTraj);
+	public SOM_AnimWorldWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed,String _winTxt, SOM_GeomObjTypes _type) {
+		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
 		initAndSetAnimWorldVals();
 		geomObjType = _type;
 	}

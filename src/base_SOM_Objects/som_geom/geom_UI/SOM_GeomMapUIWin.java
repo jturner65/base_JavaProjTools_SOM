@@ -31,11 +31,11 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 */
 	protected TreeMap<String, Object> argsMap;
 	
-	public SOM_GeomMapUIWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, boolean _canDrawTraj, TreeMap<String, Object> _argsMap, SOM_AnimWorldWin _animWin) {
-		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt, _canDrawTraj);
+	public SOM_GeomMapUIWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, TreeMap<String, Object> _argsMap, SOM_AnimWorldWin _animWin) {
+		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
 		argsMap = _argsMap;
 		animWin = _animWin;
-		super.initThisWin(_canDrawTraj, true, false);
+		super.initThisWin(false);
 	}
 
 	/**
