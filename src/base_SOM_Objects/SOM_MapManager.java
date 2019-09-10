@@ -2430,7 +2430,6 @@ public abstract class SOM_MapManager {
 	protected final float drawLoadedPreBuiltMaps(my_procApplet pa,float yOff, int curDefaultMap) {
 		if(getFlag(dispLdPreBuitMapsIDX)) {	
 			String[][] loadedPreBuiltMapData = projConfigData.getPreBuiltMapInfoAra();		
-			pa.translate(0.0f, 0.0f, 0.0f);
 			//float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;	
 			if(loadedPreBuiltMapData.length==0) {				
 				pa.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
