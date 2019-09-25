@@ -784,10 +784,12 @@ public abstract class SOM_MapManager {
 		
 		String //resultIn = "",
 				resultErr = "";
+		Process process = null;
 		try {
-			final Process process=pb.start();			
+			process = pb.start();			
 			myProcConsoleMsgMgr inMsgs = new mySOMProcConsoleMgr(process,new InputStreamReader(process.getInputStream()), "Input" );
 			myProcConsoleMsgMgr errMsgs = new mySOMProcConsoleMgr(process,new InputStreamReader(process.getErrorStream()), "Error" );
+		
 			procMsgMgrs.add(inMsgs);
 			procMsgMgrs.add(errMsgs);			
 			procMsgMgrsFtrs = th_exec.invokeAll(procMsgMgrs);for(Future<Boolean> f: procMsgMgrsFtrs) { f.get(); }
@@ -796,10 +798,20 @@ public abstract class SOM_MapManager {
 			resultErr = errMsgs.getResults() ;//results of running map TODO save to log?	
 			if(resultErr.toLowerCase().contains("error:")) {throw new InterruptedException("SOM Executable aborted");}
 		} 
+		catch (SecurityException e) {		msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with SecurityException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;} 
 		catch (IOException e) {				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with IOException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;} 
 		catch (InterruptedException e) {	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with InterruptedException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}
 		catch (ExecutionException e) {    	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with ExecutionException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}		
-		
+		finally {				
+			if(process != null) {
+				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Shutting down process.", MsgCodes.info5);
+				process.destroy();
+				if (process.isAlive()) {
+				    process.destroyForcibly();
+				}
+				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Finished Shutting down process", MsgCodes.info5);
+			}			
+		}
 		msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Finished", MsgCodes.info5);			
 		//} catch (IOException e){	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Error running map defined by : " + mapExeDat.toString() + " :\n " + e.getMessage(), MsgCodes.error1);	return false;}		
 		return success;
@@ -1400,7 +1412,7 @@ public abstract class SOM_MapManager {
 	 */
 	public void setMapNodePopGraphImage() {
 		if(win!=null) {
-			msgObj.dispMessage("SOM_MapManager::"+name,"setMapNodePopGraphImage","Start building map nod population graph for all examples.", MsgCodes.info5);		
+			//msgObj.dispMessage("SOM_MapManager::"+name,"setMapNodePopGraphImage","Start building map node population graph for all examples.", MsgCodes.info5);		
 			//all map nodes of som map, sorted by mapped population of training data		
 			for(int i=0;i<MapNodesByPopulation.length;++i) {		MapNodesByPopulation[i].clear();}
 			int lstTypeIDX = MapNodesByPopulation.length-1;
@@ -1423,7 +1435,7 @@ public abstract class SOM_MapManager {
 		
 			//use MapNodesByPopulation to build PShape
 			buildMapNodePopGraphImage();
-			msgObj.dispMessage("SOM_MapManager::"+name,"setMapNodePopGraphImage","Finished building map nod population graph for all examples.", MsgCodes.info5);		
+			//msgObj.dispMessage("SOM_MapManager::"+name,"setMapNodePopGraphImage","Finished building map node population graph for all examples.", MsgCodes.info5);		
 		} else {			msgObj.dispMessage("SOM_MapManager::"+name,"setMapNodePopGraphImage","No UI To display Map Node Population Graph, so Aborting.", MsgCodes.info5);			}
 	}//setMapNodePopGraphImage
 	/**
@@ -1432,7 +1444,7 @@ public abstract class SOM_MapManager {
 	protected void buildMapNodePopGraphImage() {
 		if(MapNodesByPopulation == null) {return;}
 		if(win!=null) {
-			msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","Started building map nod population graph image for all examples.", MsgCodes.info5);	
+			//msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","Started building map nod population graph image for all examples.", MsgCodes.info5);	
 			TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>> tmpMapNodesByPopForType;
 			int whiteClr = 0xFFFFFFFF, greyClr = 0xFF888888;
 			int clrToUse;			
@@ -1461,7 +1473,7 @@ public abstract class SOM_MapManager {
 				mapNodePopGraph[i].updatePixels();		
 			}
 	//			
-			msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","Finished building map nod population graph image for all examples.", MsgCodes.info5);		
+			//msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","Finished building map nod population graph image for all examples.", MsgCodes.info5);		
 		} else {			msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","No UI To display Map Node Population Graph, so Aborting.", MsgCodes.info5);			}
 	}//buildMapNodePopGraphImage
 	
@@ -2174,7 +2186,7 @@ public abstract class SOM_MapManager {
 			if(SelectedMapNodes.size() > 0) {drawNodesIfSelected(pa);}
 			//instance-specific stuff to draw on map, after nodes are drawn
 			drawMapRectangle_Indiv(pa, curImgNum);
-			//if selected, draw map
+			//if selected, draw graph describing population of each map node
 			if(win.getPrivFlags(SOM_MapUIWin.drawMapNodePopGraphIDX)) {drawMapNodePopGraph(pa, mapNodeDispType.getVal());}
 			pa.lights();
 		pa.popStyle();pa.popMatrix();	
@@ -2430,6 +2442,7 @@ public abstract class SOM_MapManager {
 	protected final float drawLoadedPreBuiltMaps(my_procApplet pa,float yOff, int curDefaultMap) {
 		if(getFlag(dispLdPreBuitMapsIDX)) {	
 			String[][] loadedPreBuiltMapData = projConfigData.getPreBuiltMapInfoAra();		
+			pa.translate(0.0f, 0.0f, 0.0f);
 			//float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;	
 			if(loadedPreBuiltMapData.length==0) {				
 				pa.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");

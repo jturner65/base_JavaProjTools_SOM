@@ -30,8 +30,8 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 	/**
 	 * monitor progress
 	 */
-	protected int progressBnd;
-	protected static final float progAmt = .2f;
+	private final int progressBnd;
+	private static final float progAmt = .2f;
 	protected double progress = -progAmt;
 
 	/**
@@ -51,7 +51,8 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 		stIdx = _stIdx;
 		endIdx = _endIdx;
 		thdIDX= _thdIdx;
-		progressBnd = (int) ((endIdx-stIdx) * progAmt);
+		int diff = (int) ((endIdx-stIdx) * progAmt);
+		progressBnd = diff < 1 ? 1 : diff;
 	}
 
 	
@@ -71,25 +72,6 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 	 * @return number of work elements per thread to assign
 	 */
 	public final int calcNumPerThd(int numVals, int numThds) {	return (int) ((numVals -1)/(1.0*numThds)) + 1;	}//calcNumPerThd
-	
-	
-//	/**
-//	 * build array of SOM_GeomSmplForSOMExample objects, which each holds a sample 
-//	 * point in anim space and the object it came from, or null if new 
-//	 * @param objs the array of source objects, or null if creating new source objects
-//	 * @param pts the array of points
-//	 * @return
-//	 */
-//	protected SOM_GeomSamplePointf[] buildSrcGeomSmplAra(SOM_GeomObj[] objs, SOM_GeomSamplePointf[] pts) {
-//		SOM_GeomSamplePointf[] srcGeomData = new SOM_GeomSamplePointf[pts.length];
-//		if(null==objs) {//creation
-//			for(int i=0;i<pts.length;++i) {	srcGeomData[i] = new SOM_GeomSamplePointf( pts[i],pts[i].name, null);}
-//		} else {
-//			for(int i=0;i<pts.length;++i) {	srcGeomData[i] = new SOM_GeomSamplePointf(pts[i],pts[i].name,objs[i]);}
-//		}
-//		return srcGeomData;
-//	}
-	
 	
 	protected myPointf getRandPointInBounds_2D() {
 		myPointf x = new myPointf( 

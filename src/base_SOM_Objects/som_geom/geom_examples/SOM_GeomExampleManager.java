@@ -23,7 +23,7 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	  */
 	protected SOM_GeomObjBldrRunner objRunner;
 	/**
-	 * all the constituent samples from the geometric objects this example manager manages
+	 * all the constituent samples from the geometric objects this example manager manages - all the points in space
 	 */
 	protected SOM_GeomSamplePointf[] allSamples;
 
@@ -88,7 +88,10 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 			}			
 		}//if requested unique
 		//now need to build # of training examples - need to do this in multi-threaded environment
-		buildAllEx_MT(allSamples, mapMgr.getNumUsableThreads(),ttlNumTrainEx,_idxsToUse); 
+		int numThreadsCallable = mapMgr.getNumUsableThreads();
+		if(ttlNumTrainEx < 5*numThreadsCallable) {numThreadsCallable = 1;}			
+		buildAllEx_MT(allSamples,numThreadsCallable,ttlNumTrainEx,_idxsToUse); 
+		
 		
 		setAllDataLoaded();
 		setAllDataPreProcced();
@@ -124,7 +127,7 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 		return res.keySet().toArray(new SOM_GeomTrainingExUniqueID[0]);
 	}//buildUniqueIDXsForObjType	
 	/**
-	 * build all training examples for objed type
+	 * build all training examples for obj type in MT environment.  if # of examples are low, should do in single threaded environment
 	 * @param allSamples
 	 * @param numThdCallables
 	 * @param ttlNumTrainEx
