@@ -88,6 +88,10 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		mapMgr.initMapAras(1, 1);
 	}
 
+	@Override
+	protected void setInitValsForPrivFlags_Indiv() {		
+	}
+
 	/**
 	 * Instance class determines the true and false labels the class-category locking should use
 	 * @return array holding true(idx0) and false(idx1) labels for buttons to control display of whether 
@@ -281,6 +285,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 
 	@Override
 	protected final void launchMenuBtnHndlr(int funcRow, int btn) {	}
+
 
 
 }//myTrajEditWin

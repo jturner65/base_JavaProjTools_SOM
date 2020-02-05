@@ -8,7 +8,8 @@ import base_SOM_Objects.*;
 import base_SOM_Objects.som_examples.*;
 import base_UI_Objects.*;
 import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
-import base_UI_Objects.windowUI.myDispWindow;
+import base_UI_Objects.windowUI.base.base_UpdateFromUIData;
+import base_UI_Objects.windowUI.base.myDispWindow;
 import base_Utils_Objects.*;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.vectorObjs.myPoint;
@@ -71,7 +72,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	/**
 	 * # of priv flags from base class and instancing class
 	 */
-	private int numPrivFlags;
+	//private int numPrivFlags;
 	
 	//	//GUI Objects	
 	public final static int 
@@ -188,7 +189,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		setFlags(drawRightSideMenu, true);		//may need some re-scaling to keep things in the middle and visible
 		
 		//init specific sim flags
-		initPrivFlags(numPrivFlags);
+		//initPrivFlags(numPrivFlags);
 		/**
 		 * set these values from when UI was created 
 		 */
@@ -206,6 +207,22 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		initMeIndiv();
 	}
 	
+	@Override
+	protected int[] getFlagIDXsToInitToTrue() {		return null;}
+
+	@Override
+	protected base_UpdateFromUIData buildUIDataUpdateObject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void buildUIUpdateStruct_Indiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
+			TreeMap<Integer, Boolean> boolValues) {
+		
+	}
+	
+	protected abstract void setInitValsForPrivFlags_Indiv();
 	/**
 	 * build instancing app's map manager
 	 * @param _mapDims : dimensions of visible rep of map calculated based on visible size of window
@@ -232,7 +249,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	/**
 	 * initialize all private-flag based UI buttons here - called by base class before initMe
 	 */
-	public final void initAllPrivBtns(ArrayList<Object[]> tmpBtnNamesArray){	
+	public final int initAllPrivBtns(ArrayList<Object[]> tmpBtnNamesArray){	
 		//add an entry for each button, in the order they are wished to be displayed		
 		tmpBtnNamesArray.add(new Object[]{"Building SOM","Build SOM ",buildSOMExe});
 		tmpBtnNamesArray.add(new Object[]{"Reset Dflt UI Vals","Reset Dflt UI Vals",resetMapDefsIDX});
@@ -261,7 +278,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		String[] catClassLockBtnTFLabels = getClassCatLockBtnTFLabels();
 		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1],mapLockClassCatSegmentsIDX});}	
 		//add instancing-class specific buttons - returns total # of private flags in instancing class
-		numPrivFlags = initAllSOMPrivBtns_Indiv(tmpBtnNamesArray);
+		return initAllSOMPrivBtns_Indiv(tmpBtnNamesArray);
 		
 	}//initAllPrivBtns
 
@@ -934,7 +951,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	@Override
 	protected void snapMouseLocs(int oldMouseX, int oldMouseY, int[] newMouseLoc){}//not a snap-to window
 	@Override
-	protected void processTrajIndiv(myDrawnSmplTraj drawnNoteTraj){		}
+	public void processTrajIndiv(myDrawnSmplTraj drawnNoteTraj){		}
 	@Override
 	protected void endShiftKeyI() {}
 	@Override
