@@ -8,7 +8,7 @@ import base_SOM_Objects.som_examples.SOM_Example;
 import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_UI_Objects.my_procApplet;
-import base_Utils_Objects.vectorObjs.Tuple;
+import base_Utils_Objects.vectorObjs.tuples.Tuple;
 
 public abstract class SOM_GeomMapNode extends SOM_MapNode {
 	/**

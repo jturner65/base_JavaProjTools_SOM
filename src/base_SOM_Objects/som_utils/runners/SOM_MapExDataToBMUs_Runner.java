@@ -12,7 +12,7 @@ import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.*;
 import base_SOM_Objects.som_utils.SOM_MapDataToBMUs;
 import base_Utils_Objects.io.MsgCodes;
-import base_Utils_Objects.vectorObjs.Tuple;
+import base_Utils_Objects.vectorObjs.tuples.Tuple;
 
 /**
  * this will build a runnable to perform mapping in its own thread, to find bmus for passed examples

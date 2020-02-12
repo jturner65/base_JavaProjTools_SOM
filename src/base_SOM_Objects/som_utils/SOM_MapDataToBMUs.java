@@ -7,7 +7,7 @@ import base_SOM_Objects.*;
 import base_SOM_Objects.som_examples.*;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
 import base_Utils_Objects.io.MessageObject;
-import base_Utils_Objects.vectorObjs.Tuple;
+import base_Utils_Objects.vectorObjs.tuples.Tuple;
 
 //class to manage mapping of examples to bmus
 public abstract class SOM_MapDataToBMUs implements Callable<Boolean>{

@@ -10,7 +10,7 @@ import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
-import base_Utils_Objects.vectorObjs.Tuple;
+import base_Utils_Objects.vectorObjs.tuples.Tuple;
 
 /**
  * This class describes the hierarchy of functionality required for analysing a trained SOM's results

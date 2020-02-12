@@ -9,7 +9,7 @@ import base_SOM_Objects.*;
 import base_SOM_Objects.som_examples.base.baseDataPtVis;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
 import base_Utils_Objects.io.MsgCodes;
-import base_Utils_Objects.vectorObjs.Tuple;
+import base_Utils_Objects.vectorObjs.tuples.Tuple;
 import base_Utils_Objects.vectorObjs.myPointf;
 
 
