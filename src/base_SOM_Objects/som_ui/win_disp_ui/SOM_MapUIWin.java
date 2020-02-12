@@ -6,7 +6,7 @@ import java.util.*;
 
 import base_SOM_Objects.*;
 import base_SOM_Objects.som_examples.*;
-import base_UI_Objects.*;
+import base_UI_Objects.my_procApplet;
 import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
 import base_UI_Objects.windowUI.base.base_UpdateFromUIData;
 import base_UI_Objects.windowUI.base.myDispWindow;

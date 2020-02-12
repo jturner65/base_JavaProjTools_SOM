@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
 import base_SOM_Objects.som_examples.*;
 import base_SOM_Objects.som_fileIO.*;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
@@ -20,7 +21,7 @@ import base_SOM_Objects.som_utils.*;
 import base_SOM_Objects.som_utils.runners.SOM_CalcExFtrs_Runner;
 import base_SOM_Objects.som_utils.runners.SOM_MapExDataToBMUs_Runner;
 import base_SOM_Objects.som_utils.runners.SOM_SaveExToBMUs_Runner;
-import base_UI_Objects.*;
+import base_UI_Objects.my_procApplet;
 import base_UI_Objects.windowUI.base.myDispWindow;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
@@ -426,7 +427,7 @@ public abstract class SOM_MapManager {
 	 * @param _win
 	 * @param _pa
 	 */
-	public void setPADispWinData(SOM_MapUIWin _win, my_procApplet _pa) {
+	public void setPADispWinData(SOM_MapUIWin _win, IRenderInterface _pa) {
 		setWinAndWinData(_win);//win=_win;
 		//if(win != null) {setName(win.name);} else {setName("No_Win");}
 		MessageObject.pa = _pa;
