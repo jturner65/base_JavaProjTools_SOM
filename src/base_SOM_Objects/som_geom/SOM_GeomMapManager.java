@@ -24,11 +24,11 @@ import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_UI_Objects.my_procApplet;
-import base_Utils_Objects.MyMathUtils;
+import base_Math_Objects.MyMathUtils;
 import base_Utils_Objects.io.MsgCodes;
-import base_Utils_Objects.vectorObjs.myPoint;
-import base_Utils_Objects.vectorObjs.myPointf;
-import base_Utils_Objects.vectorObjs.myVector;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.floats.myPointf;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * extension of SOM_MapManager intended for geometric/graphical objects

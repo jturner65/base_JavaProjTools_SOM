@@ -14,7 +14,7 @@ import base_SOM_Objects.som_segments.segments.SOM_FtrWtSegment;
 import base_SOM_Objects.som_segments.segments.SOM_UMatrixSegment;
 import base_UI_Objects.*;
 import base_Utils_Objects.io.MsgCodes;
-import base_Utils_Objects.vectorObjs.tuples.Tuple;
+import base_Math_Objects.vectorObjs.tuples.Tuple;
 
 /**
 * objects of inheritors to this abstract class represent nodes in the SOM.  

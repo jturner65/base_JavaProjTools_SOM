@@ -1,6 +1,6 @@
 package base_SOM_Objects.som_geom.geom_examples;
 
-import base_Utils_Objects.MyHashCodeUtils;
+import base_Math_Objects.MyHashCodeUtils;
 
 /**
  * this class is a struct that will hold the idxs of the sample array that make up a single training example

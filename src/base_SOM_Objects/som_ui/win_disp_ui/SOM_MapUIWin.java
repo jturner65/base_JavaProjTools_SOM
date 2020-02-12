@@ -10,10 +10,10 @@ import base_UI_Objects.*;
 import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
 import base_UI_Objects.windowUI.base.base_UpdateFromUIData;
 import base_UI_Objects.windowUI.base.myDispWindow;
-import base_Utils_Objects.*;
 import base_Utils_Objects.io.MsgCodes;
-import base_Utils_Objects.vectorObjs.myPoint;
-import base_Utils_Objects.vectorObjs.myVector;
+import base_Math_Objects.MyMathUtils;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * base UI window functionality to be used for any SOM-based projects

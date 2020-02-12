@@ -26,10 +26,10 @@ import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.threading.myProcConsoleMsgMgr;
-import base_Utils_Objects.vectorObjs.tuples.Tuple;
-import base_Utils_Objects.vectorObjs.myPoint;
-import base_Utils_Objects.vectorObjs.myPointf;
-import base_Utils_Objects.vectorObjs.myVector;
+import base_Math_Objects.vectorObjs.tuples.Tuple;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.floats.myPointf;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import processing.core.PConstants;
 import processing.core.PImage;
 

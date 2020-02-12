@@ -4,12 +4,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
-import base_Utils_Objects.MyMathUtils;
+import base_Math_Objects.MyMathUtils;
 import base_Utils_Objects.io.MessageObject;
-import base_Utils_Objects.vectorObjs.myPoint;
-import base_Utils_Objects.vectorObjs.myPointf;
-import base_Utils_Objects.vectorObjs.myVector;
-import base_Utils_Objects.vectorObjs.myVectorf;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.floats.myPointf;
+import base_Math_Objects.vectorObjs.doubles.myVector;
+import base_Math_Objects.vectorObjs.floats.myVectorf;
 
 public abstract class SOM_GeomCallable implements Callable<Boolean> {
 	/**

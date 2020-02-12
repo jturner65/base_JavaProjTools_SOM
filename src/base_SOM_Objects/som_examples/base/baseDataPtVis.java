@@ -4,7 +4,7 @@ import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_ExDataType;
 import base_UI_Objects.my_procApplet;
 import base_Utils_Objects.io.MessageObject;
-import base_Utils_Objects.vectorObjs.myPointf;
+import base_Math_Objects.vectorObjs.floats.myPointf;
 
 /**
  * This class holds functionality for rendering on the map.

@@ -3,7 +3,7 @@ package base_SOM_Objects.som_geom.geom_utils.geom_objs;
 import base_SOM_Objects.som_geom.geom_UI.SOM_AnimWorldWin;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_UI_Objects.my_procApplet;
-import base_Utils_Objects.vectorObjs.myPointf;
+import base_Math_Objects.vectorObjs.floats.myPointf;
 import processing.core.PConstants;
 import processing.core.PShape;
 
