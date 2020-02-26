@@ -1,11 +1,15 @@
 package base_SOM_Objects.som_segments.segments;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import base_SOM_Objects.*;
-import base_SOM_Objects.som_examples.*;
 import base_Math_Objects.vectorObjs.tuples.Tuple;
+import base_SOM_Objects.SOM_MapManager;
+import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_examples.SOM_MapNode;
 
 /**
  * this class will be used to describe a segment/cluster of the SOM containing  

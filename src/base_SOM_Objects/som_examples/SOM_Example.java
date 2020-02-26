@@ -1,16 +1,19 @@
 package base_SOM_Objects.som_examples;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.BiFunction;
 
-import base_SOM_Objects.*;
+import base_Math_Objects.vectorObjs.floats.myPointf;
+import base_Math_Objects.vectorObjs.tuples.Tuple;
+import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.base.baseDataPtVis;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
 import base_Utils_Objects.io.MsgCodes;
-import base_Math_Objects.vectorObjs.tuples.Tuple;
-import base_Math_Objects.vectorObjs.floats.myPointf;
 
 
 /**

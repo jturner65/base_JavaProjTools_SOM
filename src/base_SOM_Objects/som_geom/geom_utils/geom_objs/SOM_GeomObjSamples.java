@@ -1,9 +1,10 @@
 package base_SOM_Objects.som_geom.geom_utils.geom_objs;
 
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_SOM_Objects.som_geom.geom_UI.SOM_AnimWorldWin;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_UI_Objects.my_procApplet;
-import base_Math_Objects.vectorObjs.floats.myPointf;
 import processing.core.PConstants;
 import processing.core.PShape;
 
@@ -62,7 +63,7 @@ public class SOM_GeomObjSamples {
 	 * @param _locForClr
 	 * @param _csvStr
 	 */
-	public final void buildSampleSetAndPShapesFromCSVStr(my_procApplet pa, String _csvStr) {
+	public final void buildSampleSetAndPShapesFromCSVStr(IRenderInterface pa, String _csvStr) {
 		String[] tmpDatAra = _csvStr.split("ST_"+samplPtTag);
 		String[] onlySamplesAra = tmpDatAra[1].trim().split("END_"+samplPtTag);
 		String[] samplePtAra = onlySamplesAra[0].trim().split(samplPtTag);
@@ -84,7 +85,7 @@ public class SOM_GeomObjSamples {
 	 * build pshape to hold samples, to speed up rendering
 	 * @param _numSmplPts
 	 */
-	public final void buildSampleSetAndPShapes(my_procApplet pa, int _numSmplPts) {
+	public final void buildSampleSetAndPShapes(IRenderInterface pa, int _numSmplPts) {
 		objSamplePts = buildSamplesOfThisObject(0,_numSmplPts);
 		buildSamplePShapeObjs(pa);		
 	}//buildSampleSet
@@ -110,7 +111,7 @@ public class SOM_GeomObjSamples {
 		}		
 		return tmpSmplAra;
 	}
-	private void buildSamplePShapeObjs(my_procApplet pa) {
+	private void buildSamplePShapeObjs(IRenderInterface pa) {
 		//update colors - these will be set in owner by here
 		locClrAra = new int[ownr.locClrAra.length];
 		System.arraycopy(ownr.locClrAra, 0, locClrAra, 0, ownr.locClrAra.length);
@@ -123,8 +124,8 @@ public class SOM_GeomObjSamples {
 
 	}
 	
-	private PShape buildSampleCloud(my_procApplet pa, int[] clrs) {
-		PShape poly = pa.createShape(); 
+	private PShape buildSampleCloud(IRenderInterface pa, int[] clrs) {
+		PShape poly = ((my_procApplet)pa).createShape(); 
 		poly.beginShape(PConstants.POINTS);
 		poly.fill(clrs[0],clrs[1],clrs[2],255);
 		poly.stroke(clrs[0],clrs[1],clrs[2],255);
@@ -166,51 +167,51 @@ public class SOM_GeomObjSamples {
 	 * draw this object's samples, using the random color
 	 * @param pa
 	 */
-	public final void drawMeSmpls_ClrRnd(my_procApplet pa){		pa.shape(sampleObjPShapes[SOM_GeomObjDrawType.rndClr.getVal()]);}//
+	public final void drawMeSmpls_ClrRnd(IRenderInterface pa){		((my_procApplet)pa).shape(sampleObjPShapes[SOM_GeomObjDrawType.rndClr.getVal()]);}//
 	
 	/**
 	 * draw this object's samples, using the location-based color
 	 * @param pa
 	 */
-	public final void drawMeSmpls_ClrLoc(my_procApplet pa){		pa.shape(sampleObjPShapes[SOM_GeomObjDrawType.locClr.getVal()]);}//		
+	public final void drawMeSmpls_ClrLoc(IRenderInterface pa){		((my_procApplet)pa).shape(sampleObjPShapes[SOM_GeomObjDrawType.locClr.getVal()]);}//		
 	
-	public final void drawMeSmplsSelected(my_procApplet pa) {	pa.shape(sampleObjPShapes[2]);}
+	public final void drawMeSmplsSelected(IRenderInterface pa) {	((my_procApplet)pa).shape(sampleObjPShapes[2]);}
 	
 	/**
 	 * draw this object's samples, using the random color
 	 * @param pa
 	 */
-	public final void drawMySmplsLabel_2D(my_procApplet pa){
-		pa.pushMatrix();pa.pushStyle();
+	public final void drawMySmplsLabel_2D(IRenderInterface pa){
+		pa.pushMatState();
 		pa.setFill(labelClrAra,255); 
 		pa.setStroke(labelClrAra,255);
 		for(int i=0;i<objSamplePts.length;++i){
 			SOM_GeomSamplePointf pt = objSamplePts[i];
-			pa.pushMatrix(); pa.pushStyle();
+			pa.pushMatState();
 			pa.translate(pt); 
-			pa.text(""+pt.name, SOM_GeomObj.lblDist,-SOM_GeomObj.lblDist,0); 
-			pa.popStyle();pa.popMatrix();
+			pa.showText(""+pt.name, SOM_GeomObj.lblDist,-SOM_GeomObj.lblDist,0); 
+			pa.popMatState();
 		}
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//
 
 	/**
 	 * draw this object's samples, using the random color
 	 * @param pa
 	 */
-	public final void drawMySmplsLabel_3D(my_procApplet pa,SOM_AnimWorldWin animWin){
-		pa.pushMatrix();pa.pushStyle();
+	public final void drawMySmplsLabel_3D(IRenderInterface pa,SOM_AnimWorldWin animWin){
+		pa.pushMatState();
 		pa.setFill(labelClrAra,255); 
 		pa.setStroke(labelClrAra,255);
 		for(int i=0;i<objSamplePts.length;++i){
 			SOM_GeomSamplePointf pt = objSamplePts[i];
-			pa.pushMatrix(); pa.pushStyle();
+			pa.pushMatState();
 			pa.translate(pt); 
 			animWin.unSetCamOrient();
-			pa.text(""+pt.name, SOM_GeomObj.lblDist,-SOM_GeomObj.lblDist,0); 
-			pa.popStyle();pa.popMatrix();
+			pa.showText(""+pt.name, SOM_GeomObj.lblDist,-SOM_GeomObj.lblDist,0); 
+			pa.popMatState();
 		}
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//
 
 

@@ -4,7 +4,9 @@ package base_SOM_Objects.som_segments.segments;
 import java.util.TreeMap;
 
 import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.*;
+import base_SOM_Objects.som_examples.SOM_ExDataType;
+import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_examples.SOM_MapNode;
 
 /**
  * this class corresponds to a segment built from orders orders being present in map nodes used to train map being present with specific JP - this jp must be a valid product jp

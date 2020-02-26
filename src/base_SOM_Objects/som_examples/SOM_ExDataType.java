@@ -1,6 +1,7 @@
 package base_SOM_Objects.som_examples;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * enum used to specify each kind of example data point, primarily for visualization purposes

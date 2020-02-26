@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeMap;
 
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
 import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_SOM_Objects.som_segments.segmentData.SOM_MapNodeSegmentData;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
-import base_UI_Objects.my_procApplet;
 import base_Utils_Objects.io.MessageObject;
 
 /**
@@ -115,7 +115,7 @@ public abstract class SOM_MapNodeSegMgr {
 	
 	
 	//draw class pop segment contribution 
-	public void drawMeSegClr(my_procApplet p, Integer cls) {
+	public void drawMeSegClr(IRenderInterface p, Integer cls) {
 		SOM_MapNodeSegmentData classMgrAtIdx = segData.get(cls);
 		if(null==classMgrAtIdx) {
 			System.out.println("drawMeSegClr : Error seg is null!");

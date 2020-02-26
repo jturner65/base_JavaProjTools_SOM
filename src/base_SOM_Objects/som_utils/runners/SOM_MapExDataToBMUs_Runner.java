@@ -8,11 +8,14 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiFunction;
 
+import base_Math_Objects.vectorObjs.tuples.Tuple;
 import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.*;
+import base_SOM_Objects.som_examples.SOM_ExDataType;
+import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_examples.SOM_FtrDataType;
+import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_SOM_Objects.som_utils.SOM_MapDataToBMUs;
 import base_Utils_Objects.io.MsgCodes;
-import base_Math_Objects.vectorObjs.tuples.Tuple;
 
 /**
  * this will build a runnable to perform mapping in its own thread, to find bmus for passed examples

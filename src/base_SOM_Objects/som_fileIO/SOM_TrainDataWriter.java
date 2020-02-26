@@ -2,8 +2,9 @@ package base_SOM_Objects.som_fileIO;
 
 import java.util.concurrent.Callable;
 
-import base_SOM_Objects.*;
-import base_SOM_Objects.som_examples.*;
+import base_SOM_Objects.SOM_MapManager;
+import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;

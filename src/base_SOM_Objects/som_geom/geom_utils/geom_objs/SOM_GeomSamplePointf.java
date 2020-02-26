@@ -1,8 +1,8 @@
 package base_SOM_Objects.som_geom.geom_utils.geom_objs;
 
-import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Math_Objects.vectorObjs.floats.myVectorf;
+import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 
 /**
  * this struct just expands on a myPointf object to add a unique ID and some owning object references

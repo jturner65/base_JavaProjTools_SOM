@@ -9,7 +9,8 @@ package base_SOM_Objects;
  */
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_Utils_Objects.io.MessageObject;

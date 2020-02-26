@@ -1,20 +1,25 @@
 package base_SOM_Objects.som_examples;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeMap;
 
-import base_SOM_Objects.*;
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Math_Objects.vectorObjs.tuples.Tuple;
+import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_segments.SOM_MapNodeCategorySegMgr;
 import base_SOM_Objects.som_segments.SOM_MapNodeClassSegMgr;
 import base_SOM_Objects.som_segments.SOM_MapNodeSegMgr;
 import base_SOM_Objects.som_segments.segmentData.SOM_MapNodeSegmentData;
-import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
 import base_SOM_Objects.som_segments.segments.SOM_CategorySegment;
 import base_SOM_Objects.som_segments.segments.SOM_ClassSegment;
 import base_SOM_Objects.som_segments.segments.SOM_FtrWtSegment;
+import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
 import base_SOM_Objects.som_segments.segments.SOM_UMatrixSegment;
-import base_UI_Objects.*;
 import base_Utils_Objects.io.MsgCodes;
-import base_Math_Objects.vectorObjs.tuples.Tuple;
 
 /**
 * objects of inheritors to this abstract class represent nodes in the SOM.  
@@ -693,61 +698,61 @@ public abstract class SOM_MapNode extends SOM_Example{
 	// UI Interaction and draw routines
 
 	public float getPopNodeSize(int _typeIDX) {return BMUExampleNodes[_typeIDX].getPopNodeSize();}
-	public void drawMePopLbl(my_procApplet p, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeWithLabel(p);	}	
-	public void drawMePopNoLbl(my_procApplet p, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeNoLabel(p);	}	
-//	public void drawMeSmallWt(my_procApplet p, int ftrIDX){
-//		p.pushMatrix();p.pushStyle();
+	public void drawMePopLbl(IRenderInterface p, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeWithLabel(p);	}	
+	public void drawMePopNoLbl(IRenderInterface p, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeNoLabel(p);	}	
+//	public void drawMeSmallWt(IRenderInterface p, int ftrIDX){
+//		p.pushMatState();
 //		Float wt = ftrMaps[normFtrMapTypeKey].get(ftrIDX);
 //		if (wt==null) {wt=0.0f;}
 //		p.show(mapLoc, 2, 2, nodeClrs, new String[] {this.OID+":",String.format("%.4f", wt)}); 
-//		p.popStyle();p.popMatrix();		
+//		p.popMatState();		
 //	}	
-	public void drawMeSmall(my_procApplet p){
-		p.pushMatrix();p.pushStyle();
-		p.show(mapLoc, 2, 2, getMapNodeClrs(), new String[] {this.OID}); 
-		p.popStyle();p.popMatrix();		
+	public void drawMeSmall(IRenderInterface p){
+		p.pushMatState();
+		p.showTxtAra(mapLoc, 2, 2, getMapNodeClrs(), new String[] {this.OID}); 
+		p.popMatState();		
 	}		
-	public void drawMeWithWt(my_procApplet p, float wt, String[] disp){
-		p.pushMatrix();p.pushStyle();	
-		p.show(mapLoc, wt, (int)wt+1, getMapNodeClrs(),  disp); 
-		p.popStyle();p.popMatrix();		
+	public void drawMeWithWt(IRenderInterface p, float wt, String[] disp){
+		p.pushMatState();	
+		p.showTxtAra(mapLoc, wt, (int)wt+1, getMapNodeClrs(),  disp); 
+		p.popMatState();		
 	}//drawMeWithWt
 
 	//draw segment contribution
-	public final void drawMeUMatSegClr(my_procApplet p){uMatrixSegData.drawMe(p);}
+	public final void drawMeUMatSegClr(IRenderInterface p){uMatrixSegData.drawMe(p);}
 	
 	//draw ftr weight segment contribution - use std ftr as alpha
-	public final void drawMeFtrWtSegClr(my_procApplet p, Integer idx, float wt) {
+	public final void drawMeFtrWtSegClr(IRenderInterface p, Integer idx, float wt) {
 		SOM_MapNodeSegmentData ftrWtMgrAtIdx = ftrWtSegData.get(idx);
 		if(null==ftrWtMgrAtIdx) {return;}			//does not have weight at this feature index
 		ftrWtMgrAtIdx.drawMe(p,(int) (255*wt));
 	}//drawMeFtrWtSegClr
 	
-	public final void drawMeSelected(my_procApplet p) {
-		p.pushMatrix();p.pushStyle();
+	public final void drawMeSelected(IRenderInterface p) {
+		p.pushMatState();
 		p.noFill();
 		p.setStroke(new int[] {255,255,0}, 255);
 		p.setStrokeWt(3.0f);
 		p.drawRect(dispBoxDims);		
-		p.popStyle();p.popMatrix();	
+		p.popMatState();	
 	}
 	
 	//draw class pop segment contribution 
-	public final void drawMeClassClr(my_procApplet p, Integer cls) {classSegManager.drawMeSegClr(p,  cls);	}//drawMeFtrWtSegClr
+	public final void drawMeClassClr(IRenderInterface p, Integer cls) {classSegManager.drawMeSegClr(p,  cls);	}//drawMeFtrWtSegClr
 	
 	//draw category segment contribution - collection of classes
-	public final void drawMeCategorySegClr(my_procApplet p, Integer category) { categorySegManager.drawMeSegClr(p, category);}//drawMeFtrWtSegClr
+	public final void drawMeCategorySegClr(IRenderInterface p, Integer category) { categorySegManager.drawMeSegClr(p, category);}//drawMeFtrWtSegClr
 	
 	//draw a box around this node of uMatD color
-	public void drawMeUMatDist(my_procApplet p){drawMeClrRect(p,uMatClr, 255);}
-	public void drawMeProdBoxClr(my_procApplet p, int[] clr) {drawMeClrRect(p,clr, clr[3]);}
+	public void drawMeUMatDist(IRenderInterface p){drawMeClrRect(p,uMatClr, 255);}
+	public void drawMeProdBoxClr(IRenderInterface p, int[] clr) {drawMeClrRect(p,clr, clr[3]);}
 	//clr is 3 vals
-	private void drawMeClrRect(my_procApplet p, int[] fclr, int alpha) {
-		p.pushMatrix();p.pushStyle();
+	private void drawMeClrRect(IRenderInterface p, int[] fclr, int alpha) {
+		p.pushMatState();
 		p.setFill(fclr, alpha);
 		p.noStroke();
 		p.drawRect(dispBoxDims);		
-		p.popStyle();p.popMatrix();	
+		p.popMatState();	
 	}//drawMeClrRect
 	
 	//map nodes are never going to be training examples

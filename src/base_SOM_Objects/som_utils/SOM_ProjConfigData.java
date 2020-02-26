@@ -1,14 +1,23 @@
 package base_SOM_Objects.som_utils;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
-import base_SOM_Objects.*;
-import base_SOM_Objects.som_examples.*;
-import base_SOM_Objects.som_fileIO.*;
-
+import base_SOM_Objects.SOM_MapDat;
+import base_SOM_Objects.SOM_MapManager;
+import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_examples.SOM_FtrDataType;
+import base_SOM_Objects.som_fileIO.SOM_TrainDataWriter;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;

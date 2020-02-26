@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.TreeMap;
 
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_ExDataType;
 import base_SOM_Objects.som_examples.SOM_MapNode;
-import base_UI_Objects.my_procApplet;
-import base_Math_Objects.vectorObjs.floats.myPointf;
 
 public abstract class SOM_MseOvrDisplay {
 	protected SOM_MapManager mapMgr;
@@ -289,20 +289,20 @@ public abstract class SOM_MseOvrDisplay {
 	 * draw current mouse label data at current position
 	 * @param p
 	 */	
-	public void drawMeLblMap(my_procApplet p){drawMseLbl_Info(p,mapLoc);}
+	public void drawMeLblMap(IRenderInterface pa){drawMseLbl_Info(pa,mapLoc);}
 	/**
 	 * draw current mouse label data at passed position
 	 * @param p
 	 */
-	public void drawMseLbl_Info(my_procApplet p, myPointf drawLoc) {
+	public void drawMseLbl_Info(IRenderInterface pa, myPointf drawLoc) {
 		if(!display) {return;}
-		p.pushMatrix();p.pushStyle();
-		p.setFill(dpFillClr, dpFillClr[3]);p.setStroke(dpStkClr,dpStkClr[3]);
+		pa.pushMatState();
+		pa.setFill(dpFillClr, dpFillClr[3]);pa.setStroke(dpStkClr,dpStkClr[3]);
 		//draw point of radius rad at maploc with label	
-		//p.showBox(mapLoc, rad, 5, clrVal,clrVal, my_procApplet.gui_LightGreen, mseLabelDat);
+		//p.showBox(mapLoc, rad, 5, clrVal,clrVal, IRenderInterface.gui_LightGreen, mseLabelDat);
 		//(myPointf P, float rad, int det, int[] clrs, String[] txtAra, float[] rectDims)
-		p.showBox(drawLoc, 5, 5, nodeClrs, mseLabelAra, mseLabelDims);
-		p.popStyle();p.popMatrix();		
+		pa.showBoxTxtAra(drawLoc, 5, 5, nodeClrs, mseLabelAra, mseLabelDims);
+		pa.popMatState();
 	}
 	public void setMapLoc(myPointf _pt) {mapLoc.set(_pt);}
 	

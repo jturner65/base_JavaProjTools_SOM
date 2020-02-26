@@ -2,18 +2,23 @@ package base_SOM_Objects.som_ui.win_disp_ui;
 
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeMap;
 
-import base_SOM_Objects.*;
-import base_SOM_Objects.som_examples.*;
-import base_UI_Objects.my_procApplet;
-import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
-import base_UI_Objects.windowUI.base.base_UpdateFromUIData;
-import base_UI_Objects.windowUI.base.myDispWindow;
-import base_Utils_Objects.io.MsgCodes;
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
+import base_SOM_Objects.SOM_MapDat;
+import base_SOM_Objects.SOM_MapManager;
+import base_SOM_Objects.som_examples.SOM_ExDataType;
+import base_SOM_Objects.som_examples.SOM_FtrDataType;
+import base_UI_Objects.GUI_AppManager;
+import base_UI_Objects.windowUI.base.base_UpdateFromUIData;
+import base_UI_Objects.windowUI.base.myDispWindow;
+import base_UI_Objects.windowUI.drawnObjs.myDrawnSmplTraj;
+import base_Utils_Objects.io.MsgCodes;
 
 /**
  * base UI window functionality to be used for any SOM-based projects
@@ -132,8 +137,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * @param _winTxt
 	 * @param _canDrawTraj
 	 */	
-	public SOM_MapUIWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt) {
-		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
+	public SOM_MapUIWin(IRenderInterface _p, GUI_AppManager _AppMgr, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt) {
+		super(_p, _AppMgr, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
 		initAndSetSOMDatUIMaps();
 	}//ctor
 	
@@ -824,10 +829,10 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	//draw 2d constructs over 3d area on screen - draws behind left menu section
 	//modAmtMillis is in milliseconds
 	protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
-		pa.pushMatrix();pa.pushStyle();
+		pa.pushMatState();
 		//display current simulation variables - call sim world through sim exec
 		mapMgr.drawResultBar(pa, yOff);
-		pa.popStyle();pa.popMatrix();					
+		pa.popMatState();					
 	}//drawOnScreenStuff
 	
 	
@@ -845,11 +850,11 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	
 	private void drawMap(boolean mapDataLoaded){		
 		//draw map rectangle
-		pa.pushMatrix();pa.pushStyle();
+		pa.pushMatState();
 		//instance-specific drawing
 		drawMapIndiv();
 		if(mapDataLoaded){mapMgr.drawSOMMapData(pa);}	
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//drawMap()	
 	protected abstract void drawMapIndiv();
 	

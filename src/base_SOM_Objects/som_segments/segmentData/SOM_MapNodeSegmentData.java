@@ -1,8 +1,8 @@
 package base_SOM_Objects.som_segments.segmentData;
 
-import base_SOM_Objects.som_examples.*;
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
-import base_UI_Objects.my_procApplet;
 
 /**
  * this object manages the segment handling for a single map node for a single segment. 
@@ -43,13 +43,13 @@ public class SOM_MapNodeSegmentData {
 	public int getSegClrAsInt() {return segClrAsInt;}
 	
 	//draw owning node's contribution to this segment - alpha is built off map node's value
-	public void drawMe(my_procApplet p) {	drawMe(p,segClr[3]);}
-	public void drawMe(my_procApplet p, int _alpha) {
-		p.pushMatrix();p.pushStyle();
+	public void drawMe(IRenderInterface p) {	drawMe(p,segClr[3]);}
+	public void drawMe(IRenderInterface p, int _alpha) {
+		p.pushMatState();
 		p.setFill(segClr, _alpha);
 		p.noStroke();
 		p.drawRect(dispBoxDims);		
-		p.popStyle();p.popMatrix();	
+		p.popMatState();
 	}//drawMeClrRect
 	
 }//class SOM_MapNodeSegmentData

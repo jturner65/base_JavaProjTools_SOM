@@ -3,12 +3,13 @@ package base_SOM_Objects.som_geom.geom_UI;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MseOvrDispTypeVals;
-import base_UI_Objects.my_procApplet;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
+import base_UI_Objects.GUI_AppManager;
 
 /**
  * window to manage mapMgr interaction - acts like a pop-up window, so is subordinate to a SOM_AnimWorldWin instance
@@ -31,8 +32,8 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 */
 	protected TreeMap<String, Object> argsMap;
 	
-	public SOM_GeomMapUIWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, TreeMap<String, Object> _argsMap, SOM_AnimWorldWin _animWin) {
-		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
+	public SOM_GeomMapUIWin(IRenderInterface _p, GUI_AppManager _AppMgr, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, TreeMap<String, Object> _argsMap, SOM_AnimWorldWin _animWin) {
+		super(_p, _AppMgr, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
 		argsMap = _argsMap;
 		animWin = _animWin;
 		super.initThisWin(false);
@@ -73,7 +74,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		if(this.mapMgr != null) {return mapMgr;}
 		//no need to set win here - this is set in SOM Win UI Base class
 		//this is just a place holder - windows will set proper map manager when this window is selected to be active
-		return ((SOM_AnimWorldWin)pa.getCurrentWindow()).getMapMgr();
+		return ((SOM_AnimWorldWin)AppMgr.getCurrentWindow()).getMapMgr();
 	}
 
 	/**

@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeMap;
 
-import base_UI_Objects.my_procApplet;
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Math_Objects.vectorObjs.floats.myPointf;
+
 
 //this class will hold a structure to aggregate and process the examples of a particular type that consider the owning node a BMU
 public class SOM_MapNodeBMUExamples{
@@ -121,34 +123,32 @@ public class SOM_MapNodeBMUExamples{
 	
 	/////////////////////
 	// drawing routines for owning node
-	public void drawMapNodeWithLabel(my_procApplet p) {
-		p.pushMatrix();p.pushStyle();	
-			p.show(node.mapLoc, logExSize, nodeSphrDet, dispClrs,  visLabel); 		
-		p.popStyle();p.popMatrix();		
+	public void drawMapNodeWithLabel(IRenderInterface p) {
+		p.pushMatState();	
+			p.showTxtAra(node.mapLoc, logExSize, nodeSphrDet, dispClrs,  visLabel); 		
+		p.popMatState();		
 	}
 
-	public void drawMapNodeNoLabel(my_procApplet p) {
-		p.pushMatrix();p.pushStyle();	
-			p.show(node.mapLoc, logExSize, nodeSphrDet, dispClrs); 		
-		p.popStyle();p.popMatrix();		
+	public void drawMapNodeNoLabel(IRenderInterface p) {
+		p.pushMatState();	
+			p.showPtAsSphere(node.mapLoc, logExSize, nodeSphrDet, dispClrs[0], dispClrs[1]); 		
+		p.popMatState();		
 	}
-	public void drawMapNodeWithLabel_Clr(my_procApplet p, int[] _dispClrs) {
-		p.pushMatrix();p.pushStyle();			 
-			p.translate(node.mapLoc.x,node.mapLoc.y,node.mapLoc.z); 
-			p.setFill(_dispClrs,255); p.setStroke(_dispClrs,255);			
-			p.sphereDetail(nodeSphrDet);
-			p.sphere(logExSize); 
-			p.showOffsetTextAra(1.2f * logExSize,my_procApplet.gui_Cyan, visLabel);		
-		p.popStyle();p.popMatrix();		
+	public void drawMapNodeWithLabel_Clr(IRenderInterface p, int[] _dispClrs) {
+		p.pushMatState();		
+			p.translate(node.mapLoc.x,node.mapLoc.y,node.mapLoc.z); 	
+			p.setFill(_dispClrs,255); p.setStroke(_dispClrs,255);		
+			p.drawSphere(myPointf.ZEROPT, logExSize, nodeSphrDet);
+
+			p.showOffsetTextAra(1.2f * logExSize,IRenderInterface.gui_Cyan, visLabel);		
+		p.popMatState();		
 	}
 
-	public void drawMapNodeNoLabel_Clr(my_procApplet p, int[] _dispClrs) {
-		p.pushMatrix();p.pushStyle();			 
-			p.translate(node.mapLoc.x,node.mapLoc.y,node.mapLoc.z); 
-			p.setFill(_dispClrs,255); p.setStroke(_dispClrs,255);			
-			p.sphereDetail(nodeSphrDet);
-			p.sphere(logExSize); 	
-		p.popStyle();p.popMatrix();		
+	public void drawMapNodeNoLabel_Clr(IRenderInterface p, int[] _dispClrs) {
+		p.pushMatState();			 			
+			p.setFill(_dispClrs,255); p.setStroke(_dispClrs,255);	
+			p.drawSphere(node.mapLoc, logExSize, nodeSphrDet);
+		p.popMatState();		
 	}
 	
 

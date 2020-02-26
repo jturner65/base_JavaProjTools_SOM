@@ -1,16 +1,21 @@
 package base_SOM_Objects.som_fileIO;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.Future;
 
-import base_SOM_Objects.*;
-import base_SOM_Objects.som_examples.*;
+import base_Math_Objects.vectorObjs.tuples.Tuple;
+import base_SOM_Objects.SOM_MapManager;
+import base_SOM_Objects.som_examples.SOM_ExDataType;
+import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_examples.SOM_FtrDataType;
+import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
-import base_Math_Objects.vectorObjs.tuples.Tuple;
 
 /**
  * This class describes the hierarchy of functionality required for analysing a trained SOM's results

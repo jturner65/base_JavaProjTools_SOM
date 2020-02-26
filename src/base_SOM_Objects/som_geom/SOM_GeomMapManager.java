@@ -5,7 +5,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-
+import base_Math_Objects.MyMathUtils;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
+import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;
 import base_SOM_Objects.som_examples.SOM_ExampleManager;
@@ -23,12 +26,9 @@ import base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen.SOM_GeomObjBl
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
-import base_UI_Objects.my_procApplet;
-import base_Math_Objects.MyMathUtils;
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+
 import base_Utils_Objects.io.MsgCodes;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.floats.myPointf;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * extension of SOM_MapManager intended for geometric/graphical objects
@@ -695,11 +695,11 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 
 
 	@Override
-	protected void drawSegmentsUMatrixDispIndiv(my_procApplet pa) {
+	protected void drawSegmentsUMatrixDispIndiv(IRenderInterface pa) {
 			
 	}
 	
-	public final void drawSelectedMapNodeGeomObjs(my_procApplet pa, float animTimeMod, boolean showLabels, boolean useLocAsClr) {
+	public final void drawSelectedMapNodeGeomObjs(IRenderInterface pa, float animTimeMod, boolean showLabels, boolean useLocAsClr) {
 		if((SelectedMapNodes!= null) && (SelectedMapNodes.size() > 0)) {
 			if(useLocAsClr) {
 				for(SOM_MapNode node : SelectedMapNodes.values()) {	((SOM_GeomMapNode) node).getVisObj().drawMeSelected_ClrLoc(pa, animTimeMod, false);}
@@ -711,36 +711,36 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	}
 	
 	@Override
-	protected void drawMapRectangle_Indiv(my_procApplet pa, int curImgNum) {	
+	protected void drawMapRectangle_Indiv(IRenderInterface pa, int curImgNum) {	
 		drawMseOverData(pa);			
 
 	}
 
 	@Override
-	protected void drawPerFtrMap_Indiv(my_procApplet pa) {		
+	protected void drawPerFtrMap_Indiv(IRenderInterface pa) {		
 	}
 
 
 	@Override
-	protected final float getPreBuiltMapInfoDetail(my_procApplet pa, String[] str, int i, float yOff, boolean isLoaded) {
+	protected final float getPreBuiltMapInfoDetail(IRenderInterface pa, String[] str, int i, float yOff, boolean isLoaded) {
 		// TODO Auto-generated method stub
 		return yOff;
 	}
 	
 	@Override
-	protected final float drawResultBarPriv1(my_procApplet pa, float yOff) {
+	protected final float drawResultBarPriv1(IRenderInterface pa, float yOff) {
 		// TODO Auto-generated method stub
 		return yOff;
 	}
 
 	@Override
-	protected final float drawResultBarPriv2(my_procApplet pa, float yOff) {
+	protected final float drawResultBarPriv2(IRenderInterface pa, float yOff) {
 		// TODO Auto-generated method stub
 		return yOff;
 	}
 
 	@Override
-	protected final float drawResultBarPriv3(my_procApplet pa, float yOff) {
+	protected final float drawResultBarPriv3(IRenderInterface pa, float yOff) {
 		// TODO Auto-generated method stub
 		return yOff;
 	}

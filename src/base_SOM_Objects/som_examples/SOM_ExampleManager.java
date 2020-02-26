@@ -1,6 +1,7 @@
 package base_SOM_Objects.som_examples;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
 

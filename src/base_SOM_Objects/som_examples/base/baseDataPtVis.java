@@ -1,10 +1,11 @@
 package base_SOM_Objects.som_examples.base;
 
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_ExDataType;
-import base_UI_Objects.my_procApplet;
+import base_UI_Objects.GUI_AppManager;
 import base_Utils_Objects.io.MessageObject;
-import base_Math_Objects.vectorObjs.floats.myPointf;
 
 /**
  * This class holds functionality for rendering on the map.
@@ -72,46 +73,49 @@ public abstract class baseDataPtVis{
 	
 	//set map location for this example
 	public final void setMapLoc(myPointf _pt){mapLoc.set(_pt.x,_pt.y,_pt.z);}
-	
+
 	//draw this example with a line linking it to its best matching unit
-	public final void drawMeLinkedToBMU(my_procApplet p, float _rad, String ID){
-		p.pushMatrix();p.pushStyle();
+	public final void drawMeLinkedToBMU(IRenderInterface p, float _rad, String ID){
+		p.pushMatState();
 		//draw point of radius rad at mapLoc - actual location on map
 		//show(myPointf P, float rad, int det, int[] clrs, String[] txtAra)
-		p.show(mapLoc, _rad, drawDet, getMapNodeClrs(), new String[] {ID});
+		int[] clrAra = getMapNodeClrs();
+		p.showTxtAra(mapLoc, _rad, drawDet, clrAra, new String[] {ID});
 		//draw line to bmu location
-		p.setColorValStroke(getMapNodeClrs()[1],255);
-		p.strokeWeight(1.0f);
-		p.line(mapLoc, mapNodeLoc);
-		p.popStyle();p.popMatrix();		
+		p.setColorValStroke(clrAra[1],255);
+		p.setStrokeWt(1.0f);
+		p.drawLine(mapLoc, mapNodeLoc);
+		p.popMatState();		
 	}//drawMeLinkedToBMU
 	
-	public void drawMeSmallNoLbl(my_procApplet p){
-		p.pushMatrix();p.pushStyle();
-		p.show(mapLoc, 2, 2, getMapNodeClrs()); 
-		p.popStyle();p.popMatrix();		
+	public void drawMeSmallNoLbl(IRenderInterface p){
+		p.pushMatState();
+		int[] clrAra = getMapNodeClrs();
+		p.showPtAsSphere(mapLoc, 2, 2, clrAra[0],clrAra[1]); 
+		p.popMatState();		
 	}	
 		
 	//override drawing in map nodes
-	public final void drawMeMap(my_procApplet p){
-		p.pushMatrix();p.pushStyle();	
-		p.show(mapLoc, getRad(), drawDet, getMapNodeClrs());		
-		p.popStyle();p.popMatrix();		
+	public final void drawMeMap(IRenderInterface p){
+		p.pushMatState();	
+		int[] clrAra = getMapNodeClrs();
+		p.showPtAsSphere(mapLoc, getRad(), drawDet, clrAra[0],clrAra[1]);		
+		p.popMatState();		
 	}//drawMeMap
 	
 	//override drawing in map nodes
-	public final void drawMeMapClr(my_procApplet p, int[] clr){
-		p.pushMatrix();p.pushStyle();
+	public final void drawMeMapClr(GUI_AppManager AppMgr, IRenderInterface p, int[] clr){
+		p.pushMatState();
 		//draw point of radius rad at mapLoc
-		p.show_ClrAra(mapLoc, mapDrawRad,drawDet, clr, clr);
-		p.popStyle();p.popMatrix();		
+		AppMgr.show_ClrAra(mapLoc, mapDrawRad,drawDet, clr, clr);
+		p.popMatState();		
 	}//drawMeMapClr
 	
-	public void drawMeRanked(my_procApplet p, String lbl, int[] clr, float rad, int rank){
-		p.pushMatrix();p.pushStyle();
+	public final void drawMeRanked(GUI_AppManager AppMgr, IRenderInterface p, String lbl, int[] clr, float rad, int rank){
+		p.pushMatState();
 		//draw point of radius rad at maploc with label and no background box	
-		p.showNoBox_ClrAra(mapLoc, rad, drawDet, clr, clr, my_procApplet.gui_White, lbl);
-		p.popStyle();p.popMatrix();
+		AppMgr.showNoBox_ClrAra(mapLoc, rad, drawDet, clr, clr, IRenderInterface.gui_White, lbl);
+		p.popMatState();
 	}
 
 }//baseDataPtVis

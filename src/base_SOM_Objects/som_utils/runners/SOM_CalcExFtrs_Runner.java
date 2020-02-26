@@ -1,7 +1,8 @@
 package base_SOM_Objects.som_utils.runners;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;

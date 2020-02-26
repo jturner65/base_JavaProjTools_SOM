@@ -4,18 +4,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Math_Objects.MyMathUtils;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
-import base_UI_Objects.my_procApplet;
-import base_UI_Objects.drawnObjs.myDrawnSmplTraj;
+import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.base_UpdateFromUIData;
 import base_UI_Objects.windowUI.base.myDispWindow;
-import base_Math_Objects.MyMathUtils;
+import base_UI_Objects.windowUI.drawnObjs.myDrawnSmplTraj;
 import base_Utils_Objects.io.MsgCodes;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * this class will instance a combined window to hold an animation world and a
@@ -100,8 +101,8 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	public static final String[] MseOvrLblsAra = new String[] { "Loc", "Dist", "Pop", "Ftr", "Class", "Cat", "None" };
 
-	public SOM_AnimWorldWin(my_procApplet _p, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed,String _winTxt, SOM_GeomObjTypes _type) {
-		super(_p, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
+	public SOM_AnimWorldWin(IRenderInterface _p, GUI_AppManager _AppMgr, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed,String _winTxt, SOM_GeomObjTypes _type) {
+		super(_p, _AppMgr, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
 		initAndSetAnimWorldVals();
 		geomObjType = _type;
 	}
@@ -125,7 +126,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 //		// set default to use unique training examples
 //		setPrivFlags(allTrainExUniqueIDX, true);
 
-		pa.setAllMenuBtnNames(menuBtnNames);
+		AppMgr.setAllMenuBtnNames(menuBtnNames);
 
 		// instance-specific init
 		initMe_Indiv();
@@ -542,7 +543,8 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	protected final void setCameraIndiv(float[] camVals) {
 		// , float rx, float ry, float dz are now member variables of every window
-		pa.camera(camVals[0], camVals[1], camVals[2], camVals[3], camVals[4], camVals[5], camVals[6], camVals[7], camVals[8]);
+		//pa.camera(camVals[0], camVals[1], camVals[2], camVals[3], camVals[4], camVals[5], camVals[6], camVals[7], camVals[8]);
+		pa.setCameraWinVals(camVals);
 		// puts origin of all drawn objects at screen center and moves forward/away by dz
 		pa.translate(camVals[0], camVals[1], (float) dz);
 		setCamOrient();
@@ -562,8 +564,8 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	@Override
 	protected final void drawMe(float animTimeMod) {
-		pa.pushMatrix();
-		pa.pushStyle();// nested ifthen shenannigans to get rid of if checks in each individual draw
+		pa.pushMatState();
+		// nested ifthen shenannigans to get rid of if checks in each individual draw
 		drawMeFirst_Indiv();
 		// check if geom objs are built in mapMgr
 		// mapMgr.drawSrcObjsInUIWindow(pa, animTimeMod, curSelGeomObjIDX,
@@ -599,8 +601,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 					getPrivFlags(useUIObjLocAsClrIDX));
 		}
 		drawMeLast_Indiv();
-		pa.popStyle();
-		pa.popMatrix();
+		pa.popMatState();
 
 	}// drawMe
 
@@ -718,12 +719,10 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		// ((SOM_GeometryMain) pa).drawSOMUIObjs();
 		// if(this.getPrivFlags(drawSOM_MapUIVis)) {
 		if (somUIWin != null) {
-			pa.pushMatrix();
-			pa.pushStyle();
+			pa.pushMatState();
 			somUIWin.drawGUIObjs(); // draw what user-modifiable fields are currently available
 			somUIWin.drawClickableBooleans(); // draw what user-modifiable boolean buttons
-			pa.popStyle();
-			pa.popMatrix();
+			pa.popMatState();
 		}
 	}
 
@@ -731,12 +730,12 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	// draw 2d constructs over 3d area on screen - draws behind left menu section
 	// modAmtMillis is in milliseconds
 	protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
-		pa.pushMatrix();		pa.pushStyle();
+		pa.pushMatState();
 		//instance-specific
 		float newYOff = drawRightSideInfoBar_Indiv(modAmtMillis, yOff);
 		// display current simulation variables - call sim world through sim exec
 		mapMgr.drawResultBar(pa, newYOff);
-		pa.popStyle();		pa.popMatrix();
+		pa.popMatState();
 	}// drawOnScreenStuff
 
 	/**

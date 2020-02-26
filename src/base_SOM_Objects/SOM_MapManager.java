@@ -1,40 +1,64 @@
 package base_SOM_Objects;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.*;
+import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadLocalRandom;
 
-import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
-import base_SOM_Objects.som_examples.*;
-import base_SOM_Objects.som_fileIO.*;
-import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
+import base_Math_Objects.vectorObjs.floats.myPointf;
+import base_Math_Objects.vectorObjs.tuples.Tuple;
+import base_SOM_Objects.som_examples.SOM_ExDataType;
+import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_examples.SOM_ExampleManager;
+import base_SOM_Objects.som_examples.SOM_FtrDataType;
+import base_SOM_Objects.som_examples.SOM_MapNode;
+import base_SOM_Objects.som_fileIO.SOM_DataLoader;
 import base_SOM_Objects.som_segments.segments.SOM_CategorySegment;
 import base_SOM_Objects.som_segments.segments.SOM_ClassSegment;
 import base_SOM_Objects.som_segments.segments.SOM_FtrWtSegment;
+import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
 import base_SOM_Objects.som_segments.segments.SOM_UMatrixSegment;
-import base_SOM_Objects.som_ui.*;
+import base_SOM_Objects.som_ui.SOM_FtrMapVisImgBldr;
+import base_SOM_Objects.som_ui.SOM_MseOvrDisplay;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MseOvrDispTypeVals;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
-import base_SOM_Objects.som_utils.*;
+import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_SOM_Objects.som_utils.runners.SOM_CalcExFtrs_Runner;
 import base_SOM_Objects.som_utils.runners.SOM_MapExDataToBMUs_Runner;
 import base_SOM_Objects.som_utils.runners.SOM_SaveExToBMUs_Runner;
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
 import base_UI_Objects.my_procApplet;
+//import base_UI_Objects.IRenderInterface;
 import base_UI_Objects.windowUI.base.myDispWindow;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.threading.myProcConsoleMsgMgr;
-import base_Math_Objects.vectorObjs.tuples.Tuple;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.floats.myPointf;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 import processing.core.PConstants;
 import processing.core.PImage;
 
 public abstract class SOM_MapManager {
+	
 	/**
 	 * name to reference this map manager
 	 */
@@ -846,11 +870,11 @@ public abstract class SOM_MapManager {
 			//int w = (int) (SOM_mapDims[0]/mapScaleVal), h = (int) (SOM_mapDims[1]/mapScaleVal);
 			int w = (int) (mapDims[0]/mapScaleVal), h = (int) (mapDims[1]/mapScaleVal);
 			mapPerFtrWtImgs = new PImage[numFtrVals];
-			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = myDispWindow.pa.createImage(w, h, format);	}	
+			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = ((my_procApplet)myDispWindow.pa).createImage(w, h, format);	}	
 			
-			mapCubicUMatrixImg = myDispWindow.pa.createImage(w, h, format);			
+			mapCubicUMatrixImg = ((my_procApplet)myDispWindow.pa).createImage(w, h, format);			
 			//reInit MapCubicSegments 
-			mapUMatrixCubicSegmentsImg = myDispWindow.pa.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
+			mapUMatrixCubicSegmentsImg = ((my_procApplet)myDispWindow.pa).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
 			//instancing-window specific initializations
 			initMapArasIndiv(w,h, format,num2ndryMaps);
 		}
@@ -918,7 +942,7 @@ public abstract class SOM_MapManager {
 		if(win!=null) {
 			msgObj.dispInfoMessage("SOM_MapManager::"+name, "setMapSegmentImgClrs_UMatrix", "Start building mapUMatrixCubicSegmentsImg for UMatrix Display.");
 			//reinitialize map array
-			mapUMatrixCubicSegmentsImg = myDispWindow.pa.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
+			mapUMatrixCubicSegmentsImg = ((my_procApplet)myDispWindow.pa).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
 			mapUMatrixCubicSegmentsImg.loadPixels();
 			//float[] c;	
 			//single threaded exec
@@ -1457,7 +1481,7 @@ public abstract class SOM_MapManager {
 				Integer largestCount = tmpMapNodesByPopForType.firstKey();		
 				mapNodePopDispThreshVals[i]=largestCount*mapNodePopDispThreshPct;
 
-				mapNodePopGraph[i] = myDispWindow.pa.createImage(largestCount, numMapNodes, PConstants.ARGB);
+				mapNodePopGraph[i] = ((my_procApplet)myDispWindow.pa).createImage(largestCount, numMapNodes, PConstants.ARGB);
 				mapNodePopGraph[i].loadPixels();
 				int row = 0, pxlIDX = 0;
 				for(Integer count : tmpMapNodesByPopForType.keySet()) {
@@ -2138,7 +2162,7 @@ public abstract class SOM_MapManager {
 	protected abstract void checkMouseRelease_Indiv();
 	
 	//draw map rectangle and map nodes
-	public final void drawSOMMapData(my_procApplet pa) {
+	public final void drawSOMMapData(IRenderInterface pa) {
 		PImage tmpImg;
 		int curImgNum;
 		if(win.getPrivFlags(SOM_MapUIWin.mapDrawUMatrixIDX)) {				
@@ -2148,16 +2172,16 @@ public abstract class SOM_MapManager {
 			tmpImg = mapPerFtrWtImgs[curFtrMapImgIDX];		
 			curImgNum = curFtrMapImgIDX;
 		}
-		pa.pushMatrix();pa.pushStyle();
-			pa.noLights();
+		pa.pushMatState();
+			pa.disableLights();
 			pa.scale(mapScaleVal);
 			//doing this in separate matrix stack frame because map is built small and scaled up
-			pa.image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.getPrivFlags(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.setPrivFlags(SOM_MapUIWin.saveLocClrImgIDX,false);}			
-			if(win.getPrivFlags(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {pa.image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
-			pa.lights();
-		pa.popStyle();pa.popMatrix(); 
-		pa.pushMatrix();pa.pushStyle();
-			pa.noLights();
+			((my_procApplet)myDispWindow.pa).image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.getPrivFlags(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.setPrivFlags(SOM_MapUIWin.saveLocClrImgIDX,false);}			
+			if(win.getPrivFlags(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {((my_procApplet)myDispWindow.pa).image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
+			pa.enableLights();
+		pa.popMatState(); 
+		pa.pushMatState();
+			pa.disableLights();
 			boolean drawLbl = win.getPrivFlags(SOM_MapUIWin.mapDrawNodeLblIDX);
 			boolean draw0PopNodes = win.getPrivFlags(SOM_MapUIWin.mapDrawNodesWith0MapExIDX);
 			pa.translate(SOM_mapLoc[0],SOM_mapLoc[1],0);	
@@ -2189,90 +2213,90 @@ public abstract class SOM_MapManager {
 			drawMapRectangle_Indiv(pa, curImgNum);
 			//if selected, draw graph describing population of each map node
 			if(win.getPrivFlags(SOM_MapUIWin.drawMapNodePopGraphIDX)) {drawMapNodePopGraph(pa, mapNodeDispType.getVal());}
-			pa.lights();
-		pa.popStyle();pa.popMatrix();	
+			pa.enableLights();
+		pa.popMatState();	
 		
 	}//drawMapRectangle
 	
-	protected final void drawMapNodePopGraph(my_procApplet pa, int typIDX) {
-		pa.pushMatrix();pa.pushStyle();
+	protected final void drawMapNodePopGraph(IRenderInterface pa, int typIDX) {
+		pa.pushMatState();
 		pa.translate(mapDims[0],0.0f,0.0f);
 		pa.scale(200.0f/(1.0f*mapNodePopGraph[typIDX].width),mapDims[1]/(1.0f*mapNodePopGraph[typIDX].height));
-		pa.image(mapNodePopGraph[typIDX], 0.0f, 0.0f);
+		((my_procApplet)myDispWindow.pa).image(mapNodePopGraph[typIDX], 0.0f, 0.0f);
 		
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//drawMapNodePopGraph
 	
 	
-	protected abstract void drawMapRectangle_Indiv(my_procApplet pa, int curImgNum);
+	protected abstract void drawMapRectangle_Indiv(IRenderInterface pa, int curImgNum);
 	/**
 	 * draw instance-specific per-ftr map data display
 	 */
-	protected abstract void drawPerFtrMap_Indiv(my_procApplet pa);
+	protected abstract void drawPerFtrMap_Indiv(IRenderInterface pa);
 	/**
 	 * Instancing class-specific segments and other data to render during UMatrix display
 	 */
-	protected abstract void drawSegmentsUMatrixDispIndiv(my_procApplet pa);
+	protected abstract void drawSegmentsUMatrixDispIndiv(IRenderInterface pa);
 
 		
 	private static int dispTrainDataFrame = 0, numDispTrainDataFrames = 20;
 	//if connected to UI, draw data - only called from window
-	public final void drawTrainData(my_procApplet pa) {
-		pa.pushMatrix();pa.pushStyle();
+	public final void drawTrainData(IRenderInterface pa) {
+		pa.pushMatState();
 		if (trainData.length < numDispTrainDataFrames) {	for(int i=0;i<trainData.length;++i){		trainData[i].drawMeMap(pa);	}	} 
 		else {
 			for(int i=dispTrainDataFrame;i<trainData.length-numDispTrainDataFrames;i+=numDispTrainDataFrames){		trainData[i].drawMeMap(pa);	}
 			for(int i=(trainData.length-numDispTrainDataFrames);i<trainData.length;++i){		trainData[i].drawMeMap(pa);	}				//always draw these (small count < numDispDataFrames
 			dispTrainDataFrame = (dispTrainDataFrame + 1) % numDispTrainDataFrames;
 		}
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//drawTrainData
 	private static int dispTestDataFrame = 0, numDispTestDataFrames = 20;
 	//if connected to UI, draw data - only called from window
-	public final void drawTestData(my_procApplet pa) {
-		pa.pushMatrix();pa.pushStyle();
+	public final void drawTestData(IRenderInterface pa) {
+		pa.pushMatState();
 		if (testData.length < numDispTestDataFrames) {	for(int i=0;i<testData.length;++i){		testData[i].drawMeMap(pa);	}	} 
 		else {
 			for(int i=dispTestDataFrame;i<testData.length-numDispTestDataFrames;i+=numDispTestDataFrames){		testData[i].drawMeMap(pa);	}
 			for(int i=(testData.length-numDispTestDataFrames);i<testData.length;++i){		testData[i].drawMeMap(pa);	}				//always draw these (small count < numDispDataFrames
 			dispTestDataFrame = (dispTestDataFrame + 1) % numDispTestDataFrames;
 		}
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//drawTrainData
 	private static int dispValidationDataFrame = 0, numDispValidationDataFrames = 100;
-	public final void drawValidationData(my_procApplet pa) {
-		pa.pushMatrix();pa.pushStyle();
+	public final void drawValidationData(IRenderInterface pa) {
+		pa.pushMatState();
 		if (validationData.length < numDispValidationDataFrames) {	for(int i=0;i<validationData.length;++i){		validationData[i].drawMeMap(pa);	}	} 
 		else {
 			for(int i=dispValidationDataFrame;i<validationData.length-numDispValidationDataFrames;i+=numDispValidationDataFrames){		validationData[i].drawMeMap(pa);	}
 			for(int i=(validationData.length-numDispValidationDataFrames);i<validationData.length;++i){		validationData[i].drawMeMap(pa);	}				//always draw these (small count < numDispDataFrames
 			dispValidationDataFrame = (dispValidationDataFrame + 1) % numDispValidationDataFrames;
 		}
-		pa.popStyle();pa.popMatrix();		
+		pa.popMatState();		
 	}//drawValidationData
 	
-	public final void drawNodesIfSelected(my_procApplet pa) {
-		pa.pushMatrix();pa.pushStyle();
+	public final void drawNodesIfSelected(IRenderInterface pa) {
+		pa.pushMatState();
 		for(SOM_MapNode node : SelectedMapNodes.values()){	node.drawMeSelected(pa);	}		
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}
 	
 	//draw boxes around each node representing umtrx values derived in SOM code - deprecated, now drawing image
-	public final void drawUMatrixVals(my_procApplet pa) {
-		pa.pushMatrix();pa.pushStyle();
+	public final void drawUMatrixVals(IRenderInterface pa) {
+		pa.pushMatState();
 		for(SOM_MapNode node : MapNodes.values()){	node.drawMeUMatDist(pa);	}		
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//drawUMatrix
 	//draw boxes around each node representing UMatrix-distance-based segments these nodes belong to
-	public final void drawUMatrixSegments(my_procApplet pa) {
-		pa.pushMatrix();pa.pushStyle();
+	public final void drawUMatrixSegments(IRenderInterface pa) {
+		pa.pushMatState();
 		for(SOM_MapNode node : MapNodes.values()){	node.drawMeUMatSegClr(pa);	}		
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//drawUMatrix
 	
 	//draw boxes around each node representing ftrwt-based segments that nodes belong to, so long as their ftr values are higher than threshold amount
-	public final void drawFtrWtSegments(my_procApplet pa, float valThresh, int curFtrIdx) { 
-		pa.pushMatrix();pa.pushStyle();
+	public final void drawFtrWtSegments(IRenderInterface pa, float valThresh, int curFtrIdx) { 
+		pa.pushMatState();
 		TreeMap<Float,ArrayList<SOM_MapNode>> map = PerFtrHiWtMapNodes[curFtrIdx];
 		//map holds map nodes keyed by wt of nodes that actually have curFtrIdx presence
 		SortedMap<Float,ArrayList<SOM_MapNode>> headMap = map.headMap(valThresh);
@@ -2287,11 +2311,11 @@ public abstract class SOM_MapManager {
 				for (SOM_MapNode node : ara) {		node.drawMeFtrWtSegClr(pa, curFtrIdx, wt);}
 			}	
 		}
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//drawFtrWtSegments
 	
 	//draw boxes around every node representing ftrwt-based segments that node belongs to, with color strength proportional to ftr val and different colors for each segment
-	public final void drawAllFtrWtSegments(my_procApplet pa, float valThresh) {		
+	public final void drawAllFtrWtSegments(IRenderInterface pa, float valThresh) {		
 		for(int curFtrIdx=0;curFtrIdx<PerFtrHiWtMapNodes.length;++curFtrIdx) {		drawFtrWtSegments(pa, valThresh, curFtrIdx);	}		
 	}//drawFtrWtSegments
 
@@ -2304,15 +2328,15 @@ public abstract class SOM_MapManager {
 	 * @param pa
 	 * @param classLabel - label corresponding to class to be displayed
 	 */
-	public final void drawClassSegments(my_procApplet pa, int classLabel) {
+	public final void drawClassSegments(IRenderInterface pa, int classLabel) {
 		Collection<SOM_MapNode> mapNodesWithClasses = MapNodesWithMappedClasses.get(classLabel);
 		if(null==mapNodesWithClasses) {		return;}
-		pa.pushMatrix();pa.pushStyle();
+		pa.pushMatState();
 		for (SOM_MapNode node : mapNodesWithClasses) {		node.drawMeClassClr(pa, classLabel);}		
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//drawClassSegments	
 	
-	public final void drawAllClassSegments(my_procApplet pa) {	for(Integer key : Class_Segments.keySet()) {	drawClassSegments(pa,key);}	}
+	public final void drawAllClassSegments(IRenderInterface pa) {	for(Integer key : Class_Segments.keySet()) {	drawClassSegments(pa,key);}	}
 
 	/**
 	 * draw filled boxes around each node representing category-based segments 
@@ -2322,31 +2346,31 @@ public abstract class SOM_MapManager {
 	 * @param pa
 	 * @param categoryLabel - label corresponding to category to be displayed
 	 */
-	public final void drawCategorySegments(my_procApplet pa, int categoryLabel) {
+	public final void drawCategorySegments(IRenderInterface pa, int categoryLabel) {
 		Collection<SOM_MapNode> mapNodes = MapNodesWithMappedCategories.get(categoryLabel);
 		if(null==mapNodes) {return;}
-		pa.pushMatrix();pa.pushStyle();
+		pa.pushMatState();
 		for (SOM_MapNode node : mapNodes) {		node.drawMeCategorySegClr(pa, categoryLabel);}				
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//drawCategorySegments
-	public final void drawAllCategorySegments(my_procApplet pa) {	for(Integer key : Category_Segments.keySet()) {	drawCategorySegments(pa,key);}	}
+	public final void drawAllCategorySegments(IRenderInterface pa) {	for(Integer key : Category_Segments.keySet()) {	drawCategorySegments(pa,key);}	}
 		
-	public void drawAllNodesWithLbl (my_procApplet pa) {//, int[] dpFillClr, int[] dpStkClr) {
-		pa.pushMatrix();pa.pushStyle();
+	public void drawAllNodesWithLbl (IRenderInterface pa) {//, int[] dpFillClr, int[] dpStkClr) {
+		pa.pushMatState();
 		//pa.setFill(dpFillClr);pa.setStroke(dpStkClr);
 		for(SOM_MapNode node : MapNodes.values()){	node.drawMeSmall(pa);	}
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	} 
 	
-	public void drawAllNodesNoLbl(my_procApplet pa) {//, int[] dpFillClr, int[] dpStkClr) {
-		pa.pushMatrix();pa.pushStyle();
+	public void drawAllNodesNoLbl(IRenderInterface pa) {//, int[] dpFillClr, int[] dpStkClr) {
+		pa.pushMatState();
 		//pa.setFill(dpFillClr);pa.setStroke(dpStkClr);
 		for(SOM_MapNode node : MapNodes.values()){	node.drawMeSmallNoLbl(pa);	}
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	} 
 	
-	public void drawNodesWithWt(my_procApplet pa, float valThresh, int curFtrIdx) {//, int[] dpFillClr, int[] dpStkClr) {
-		pa.pushMatrix();pa.pushStyle();
+	public void drawNodesWithWt(IRenderInterface pa, float valThresh, int curFtrIdx) {//, int[] dpFillClr, int[] dpStkClr) {
+		pa.pushMatState();
 		//pa.setFill(dpFillClr);pa.setStroke(dpStkClr);
 		TreeMap<Float,ArrayList<SOM_MapNode>> map = PerFtrHiWtMapNodes[curFtrIdx];
 		SortedMap<Float,ArrayList<SOM_MapNode>> headMap = map.headMap(valThresh);
@@ -2354,11 +2378,11 @@ public abstract class SOM_MapManager {
 			ArrayList<SOM_MapNode> ara = headMap.get(key);
 			for (SOM_MapNode node : ara) {		node.drawMeWithWt(pa, 10.0f*key, new String[] {""+node.OID+" : ",String.format("%.4f",key)});}
 		}
-		pa.popStyle();pa.popMatrix();
+		pa.popMatState();
 	}//drawNodesWithWt
 	
-	public void drawPopMapNodes(my_procApplet pa, boolean draw0PopNodes, int _typeIDX) {
-		pa.pushMatrix();pa.pushStyle();
+	public void drawPopMapNodes(IRenderInterface pa, boolean draw0PopNodes, int _typeIDX) {
+		pa.pushMatState();
 		numMapNodeByPopNowShown = 0;
 		if(draw0PopNodes) {			
 			for(SOM_MapNode node : MapNodes.values()){	if(node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) {	node.drawMePopLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
@@ -2366,10 +2390,10 @@ public abstract class SOM_MapManager {
 			for(SOM_MapNode node : MapNodes.values()){	if((node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
 			
 		}
-		pa.popStyle();pa.popMatrix();		
+		pa.popMatState();		
 	}	
-	public void drawPopMapNodesNoLbl(my_procApplet pa, boolean draw0PopNodes, int _typeIDX) {
-		pa.pushMatrix();pa.pushStyle();
+	public void drawPopMapNodesNoLbl(IRenderInterface pa, boolean draw0PopNodes, int _typeIDX) {
+		pa.pushMatState();
 		numMapNodeByPopNowShown = 0;
 		if(draw0PopNodes) {			
 			for(SOM_MapNode node : MapNodes.values()){	if(node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) {	node.drawMePopNoLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
@@ -2377,11 +2401,11 @@ public abstract class SOM_MapManager {
 			for(SOM_MapNode node : MapNodes.values()){	if((node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopNoLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
 			
 		}
-		pa.popStyle();pa.popMatrix();		
+		pa.popMatState();		
 	}
-	//public final void drawMseOverData(my_procApplet pa) {	mseOvrData.drawMeLblMap(pa);}
+	//public final void drawMseOverData(IRenderInterface pa) {	mseOvrData.drawMeLblMap(pa);}
 
-	public final void drawMseOverData(my_procApplet pa) {	mseOverExample.drawMeLblMap(pa);}
+	public final void drawMseOverData(IRenderInterface pa) {	mseOverExample.drawMeLblMap(pa);}
 	
 	//get ftr name/idx/instance-specific value based to save an image of current map
 	public abstract String getSOMLocClrImgForFtrFName(int ftrIDX);
@@ -2390,30 +2414,30 @@ public abstract class SOM_MapManager {
 	protected float sideBarYDisp = 10.0f;
 
 	//draw right sidebar data
-	public void drawResultBar(my_procApplet pa, float yOff) {
+	public void drawResultBar(IRenderInterface pa, float yOff) {
 		yOff-=4;
 		//float sbrMult = 1.2f, lbrMult = 1.5f;//offsets multiplier for barriers between contextual ui elements
-		pa.pushMatrix();pa.pushStyle();
+		pa.pushMatState();
 		//display preloaded maps
 		yOff=drawLoadedPreBuiltMaps(pa,yOff,curPreBuiltMapIDX);
 		//display # of map nodes currently shown if showing by population
 		yOff=drawNumMapNodesShownByPop(pa, yOff);
 		//display mouse-over results in side bar
 		yOff= drawMseRes(pa,yOff);
-		pa.sphere(3.0f);
+		pa.drawSphere(3.0f);
 		yOff = drawResultBarPriv1(pa, yOff);
 		
 		yOff = drawResultBarPriv2(pa, yOff);
 
 		yOff = drawResultBarPriv3(pa, yOff);
 
-		pa.popStyle();pa.popMatrix();	
+		pa.popMatState();	
 	}//drawResultBar
 	
-	private final float drawNumMapNodesShownByPop(my_procApplet pa,float yOff) {
+	private final float drawNumMapNodesShownByPop(IRenderInterface pa,float yOff) {
 		if(win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {
 			pa.translate(10.0f, 0.0f, 0.0f);
-			pa.showOffsetText(0,IRenderInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
+			myDispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
 			yOff += sideBarYDisp;
 			pa.translate(-10.0f,sideBarYDisp, 0.0f);
 			
@@ -2426,10 +2450,10 @@ public abstract class SOM_MapManager {
 	 * @param yOff
 	 * @return
 	 */
-	private final float drawMseRes(my_procApplet pa,float yOff) {
+	private final float drawMseRes(IRenderInterface pa,float yOff) {
 		if((getFlag(dispMseDataSideBarIDX)) && mseOverExample.canDisplayMseLabel()) {
 			pa.translate(10.0f, 0.0f, 0.0f);
-			pa.showOffsetText(0,IRenderInterface.gui_White,"Mouse Values : ");
+			myDispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Mouse Values : ");
 			yOff += sideBarYDisp;
 			pa.translate(0.0f,sideBarYDisp, 0.0f);
 			mseOverExample.drawMseLbl_Info(pa, new myPointf(0,0,0));
@@ -2440,17 +2464,17 @@ public abstract class SOM_MapManager {
 		return yOff;
 	}//drawMseRes
 	
-	protected final float drawLoadedPreBuiltMaps(my_procApplet pa,float yOff, int curDefaultMap) {
+	protected final float drawLoadedPreBuiltMaps(IRenderInterface pa,float yOff, int curDefaultMap) {
 		if(getFlag(dispLdPreBuitMapsIDX)) {	
 			String[][] loadedPreBuiltMapData = projConfigData.getPreBuiltMapInfoAra();		
 			pa.translate(0.0f, 0.0f, 0.0f);
 			//float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;	
 			if(loadedPreBuiltMapData.length==0) {				
-				pa.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
+				myDispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
 				yOff += sideBarYDisp;
 				pa.translate(10.0f, sideBarYDisp, 0.0f);
 			} else {	
-				pa.showOffsetText(0,IRenderInterface.gui_White,"Pre-build Map Directories specified in config : ");
+				myDispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Pre-build Map Directories specified in config : ");
 				yOff += sideBarYDisp;
 				pa.translate(10.0f, sideBarYDisp, 0.0f);
 				
@@ -2458,27 +2482,27 @@ public abstract class SOM_MapManager {
 					boolean isDefault = i==curDefaultMap;
 					boolean isLoaded = i==pretrainedMapIDX;
 					int clrIDX = (isLoaded ? IRenderInterface.gui_Yellow : IRenderInterface.gui_White);
-					pa.showOffsetText(0,clrIDX,""+String.format("%02d", i+1)+" | "+loadedPreBuiltMapData[i][0]);
+					myDispWindow.AppMgr.showOffsetText(0,clrIDX,""+String.format("%02d", i+1)+" | "+loadedPreBuiltMapData[i][0]);
 					yOff += sideBarYDisp;
 					pa.translate(10.0f,sideBarYDisp,0.0f);
-					pa.showOffsetText(0,clrIDX,"Detail : ");
+					myDispWindow.AppMgr.showOffsetText(0,clrIDX,"Detail : ");
 					if(isDefault) {
-						pa.pushMatrix();pa.pushStyle();
+						pa.pushMatState();
 						pa.translate(-10.0f,20.0f,0.0f);
 						pa.setFill(new int[] {255, 200,200,255}, 255);
 						pa.setStroke(new int[] {255, 200,200,255}, 255);
-						pa.star(myPointf.ZEROPT, 5.0f);
-						pa.popStyle();pa.popMatrix();
+						pa.drawStar2D(myPointf.ZEROPT, 5.0f);
+						pa.popMatState();
 					}
 					yOff += sideBarYDisp;
 					pa.translate(10.0f, sideBarYDisp, 0.0f);
-					pa.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][1]);		
+					myDispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][1]);		
 					yOff += sideBarYDisp;
 					pa.translate(0.0f, sideBarYDisp, 0.0f);			
-					pa.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][2]);		
+					myDispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][2]);		
 					yOff += sideBarYDisp;
 					pa.translate(0.0f, sideBarYDisp, 0.0f);			
-					pa.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][3]);		
+					myDispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][3]);		
 					yOff += sideBarYDisp;
 					pa.translate(0.0f, sideBarYDisp, 0.0f);			
 					
@@ -2490,15 +2514,15 @@ public abstract class SOM_MapManager {
 		}
 		return yOff;
 	}//drawLoadedPreBuiltMaps
-	protected abstract float getPreBuiltMapInfoDetail(my_procApplet pa, String[] str, int i, float yOff, boolean isLoaded);
+	protected abstract float getPreBuiltMapInfoDetail(IRenderInterface pa, String[] str, int i, float yOff, boolean isLoaded);
 	
 	//draw app-specific sidebar data
-	protected abstract float drawResultBarPriv1(my_procApplet pa, float yOff);
-	protected abstract float drawResultBarPriv2(my_procApplet pa, float yOff);
-	protected abstract float drawResultBarPriv3(my_procApplet pa, float yOff);
+	protected abstract float drawResultBarPriv1(IRenderInterface pa, float yOff);
+	protected abstract float drawResultBarPriv2(IRenderInterface pa, float yOff);
+	protected abstract float drawResultBarPriv3(IRenderInterface pa, float yOff);
 
-	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return myDispWindow.pa.getRndClr2();}
-	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return myDispWindow.pa.getRndClr2(alpha);}
+	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return ((my_procApplet) myDispWindow.pa).getRndClrBright();}
+	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return ((my_procApplet) myDispWindow.pa).getRndClrBright(alpha);}
 
 	//////////////////////////////
 	// getters/setters
@@ -2749,18 +2773,18 @@ public abstract class SOM_MapManager {
 	public int[] getClrFillStrkTxtAra(SOM_ExDataType _type) {
 		if (win==null) {return new int[] {0,0,0};}															//if null then not going to be displaying anything
 		switch(_type) {
-			case Training : {		return new int[] {my_procApplet.gui_Cyan,my_procApplet.gui_Cyan,my_procApplet.gui_Blue};}			//corresponds to training example
-			case Testing : {		return new int[] {my_procApplet.gui_Magenta,my_procApplet.gui_Magenta,my_procApplet.gui_Red};}		//corresponds to testing/held-out example
-			case Validation : { 	return new int[] {my_procApplet.gui_Magenta,my_procApplet.gui_Magenta,my_procApplet.gui_Red};}		//corresponds to examples to be mapped
-			case Product : {		return new int[] {my_procApplet.gui_Yellow,my_procApplet.gui_Yellow,my_procApplet.gui_White};}		//corresponds to product example
-			case MapNode : {		return new int[] {my_procApplet.gui_Green,my_procApplet.gui_Green,my_procApplet.gui_Cyan};}			//corresponds to map node example
-			case MouseOver : {		return new int[] {my_procApplet.gui_White,my_procApplet.gui_White,my_procApplet.gui_Black};}		//corresponds to mouse example
+			case Training : {		return new int[] {IRenderInterface.gui_Cyan,IRenderInterface.gui_Cyan,IRenderInterface.gui_Blue};}			//corresponds to training example
+			case Testing : {		return new int[] {IRenderInterface.gui_Magenta,IRenderInterface.gui_Magenta,IRenderInterface.gui_Red};}		//corresponds to testing/held-out example
+			case Validation : { 	return new int[] {IRenderInterface.gui_Magenta,IRenderInterface.gui_Magenta,IRenderInterface.gui_Red};}		//corresponds to examples to be mapped
+			case Product : {		return new int[] {IRenderInterface.gui_Yellow,IRenderInterface.gui_Yellow,IRenderInterface.gui_White};}		//corresponds to product example
+			case MapNode : {		return new int[] {IRenderInterface.gui_Green,IRenderInterface.gui_Green,IRenderInterface.gui_Cyan};}			//corresponds to map node example
+			case MouseOver : {		return new int[] {IRenderInterface.gui_White,IRenderInterface.gui_White,IRenderInterface.gui_Black};}		//corresponds to mouse example
 		}
-		return new int[] {my_procApplet.gui_White,my_procApplet.gui_White,my_procApplet.gui_White};
+		return new int[] {IRenderInterface.gui_White,IRenderInterface.gui_White,IRenderInterface.gui_White};
 	}//getClrVal
 	public int[] getAltClrFillStrkTxtAra() {
 		if (win==null) {return new int[] {0,0,0};}		
-		return new int[] {my_procApplet.gui_Red,my_procApplet.gui_Red,my_procApplet.gui_White};
+		return new int[] {IRenderInterface.gui_Red,IRenderInterface.gui_Red,IRenderInterface.gui_White};
 	}
 	
 	
