@@ -10,6 +10,7 @@ import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MseOvrDispTypeVals;
 import base_UI_Objects.GUI_AppManager;
+import base_Utils_Objects.io.MsgCodes;
 
 /**
  * window to manage mapMgr interaction - acts like a pop-up window, so is subordinate to a SOM_AnimWorldWin instance
@@ -45,7 +46,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	protected final void initUIBox(){		
 		float [] menuUIClkCoords = animWin.uiClkCoords;
-		msgObj.dispInfoMessage("SOM_GeomMapUIWin", "initUIBox", "Using animWin.uiClkCoords : y == "+ menuUIClkCoords[3] + " | height ==  "+menuUIClkCoords[3]);
+		msgObj.dispInfoMessage(className, "initUIBox", "Using animWin.uiClkCoords : y == "+ menuUIClkCoords[3] + " | height ==  "+menuUIClkCoords[3]);
 		initUIClickCoords(menuUIClkCoords[0],menuUIClkCoords[3],menuUIClkCoords[2],menuUIClkCoords[3]);			
 	}
 
@@ -70,7 +71,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 */
 	@Override
 	protected SOM_MapManager buildMapMgr() { 
-		msgObj.dispInfoMessage("SOM_GeomMapUIWin", "buildMapMgr", "Entering buildMapMgr : magMgr is currently :"+ (null==mapMgr ? " null" : " not null"));
+		msgObj.dispInfoMessage(className, "buildMapMgr", "Entering buildMapMgr : magMgr is currently :"+ (null==mapMgr ? " null" : " not null"));
 		if(this.mapMgr != null) {return mapMgr;}
 		//no need to set win here - this is set in SOM Win UI Base class
 		//this is just a place holder - windows will set proper map manager when this window is selected to be active
@@ -199,8 +200,60 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	}
 
 	@Override
-	public final void handleSideMenuDebugSel(int btn, int val) {	}
+	public final void handleSideMenuDebugSelEnable(int btn) {
+		msgObj.dispMessage(className, "handleSideMenuDebugSelEnable","Click Debug functionality on in " + name + " : btn : " + btn, MsgCodes.info4);
+		switch (btn) {
+			case 0: {
+				break;
+			}
+			case 1: {
+				break;
+			}
+			case 2: {
+				break;
+			}
+			case 3: {
+				break;
+			}
+			case 4: {
+				break;
+			}
+			default: {
+				msgObj.dispMessage(className, "handleSideMenuDebugSelEnable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
+				break;
+			}
+		}
+		msgObj.dispMessage(className, "handleSideMenuDebugSel", "End Debug functionality on selection.",MsgCodes.info4);
+	}
 	
+	@Override
+	public final void handleSideMenuDebugSelDisable(int btn) {
+		msgObj.dispMessage(className, "handleSideMenuDebugSelDisable","Click Debug functionality off in " + name + " : btn : " + btn, MsgCodes.info4);
+		switch (btn) {
+		case 0: {
+			break;
+		}
+		case 1: {
+			break;
+		}
+		case 2: {
+			break;
+		}
+		case 3: {
+			break;
+		}
+		case 4: {
+			break;
+		}
+		default: {
+			msgObj.dispMessage(className, "handleSideMenuDebugSelDisable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
+			resetButtonState();
+			break;
+		}
+		}
+		msgObj.dispMessage(className, "handleSideMenuDebugSelDisable", "End Debug functionality off selection.",MsgCodes.info4);
+	}
+
 	//handle mouseover 
 	@Override
 	protected boolean hndlMouseMoveIndiv(int mouseX, int mouseY, myPoint mseClckInWorld){
@@ -212,7 +265,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	protected boolean hndlMouseClickIndiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
 		boolean mod = false;	
 		if(getPrivFlags(mapDataLoadedIDX)){ 
-			//msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseClickIndiv", "In Mouse Click mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
+			//msgObj.dispInfoMessage(className, "hndlMouseClickIndiv", "In Mouse Click mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
 			mod = this.checkMouseClick(mouseX, mouseY, mseClckInWorld, mseBtn);
 		}
 //		if(mod) {return mod;}
@@ -223,7 +276,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	protected boolean hndlMouseDragIndiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
 		boolean mod = false;
 		if(getPrivFlags(mapDataLoadedIDX)){ 
-			//msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseDragIndiv", "In Mouse Drag mx : " +mouseX+ " | my : " + mouseY+" | pmx : " +pmouseX+ " | pmy : " + pmouseY+" | mouseClickIn3D : " + mouseClickIn3D.toStrBrf()+" | mseDragInWorld : " + mseDragInWorld.toStrBrf()+ " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
+			//msgObj.dispInfoMessage(className, "hndlMouseDragIndiv", "In Mouse Drag mx : " +mouseX+ " | my : " + mouseY+" | pmx : " +pmouseX+ " | pmy : " + pmouseY+" | mouseClickIn3D : " + mouseClickIn3D.toStrBrf()+" | mseDragInWorld : " + mseDragInWorld.toStrBrf()+ " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
 			mod = this.checkMouseDragMove(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
 		}		
 		return mod;
@@ -231,7 +284,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	protected void hndlMouseRelIndiv() {			
 		if(getPrivFlags(mapDataLoadedIDX)){ 
-			//msgObj.dispInfoMessage("SOM_GeomMapUIWin", "hndlMouseRelIndiv", "In Mouse Release");
+			//msgObj.dispInfoMessage(className, "hndlMouseRelIndiv", "In Mouse Release");
 			this.checkMouseRelease();
 		}		
 	}	

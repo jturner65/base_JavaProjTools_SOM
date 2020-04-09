@@ -33,7 +33,7 @@ public class SOM_DataLoader{
 	
 	public final static float nodeDistThresh = 100000.0f;
 	
-	//type of data used to train - 0 : unmodded, 1:std'ized, 2:normalized 
+	//type of data used to train - 0 : unmodded, 1:feature-based normalizing, 2:example-based normalizing 
 	public SOM_FtrDataType ftrTypeUsedToTrain;
 	public boolean useChiSqDist;
 		
@@ -143,7 +143,7 @@ public class SOM_DataLoader{
 			//mapMgr.addToMapNodes(mapLoc, dpt, tmpMapMaxs, numTrainFtrs);			
 			mapMgr.addToMapNodes(mapLoc, dpt);			
 		}
-		//make sure both unmoddified features and std'ized features are built before determining map mean/var
+		//make sure both unmoddified features and feature-based-normalized features are built before determining map mean/var
 		mapMgr.finalizeMapNodeFtrWts(numTrainFtrs, numEx);		
 		msgObj.dispMessage("SOM_DataLoader","loadSOMWts","Finished Loading SOM weight data from file : " + getFName(wtsFileName), MsgCodes.info5 );		
 		return true;
@@ -303,7 +303,7 @@ public class SOM_DataLoader{
 		}//if mt else single thd
 		mapMgr.setTrainDataBMUsMapped(true);
 		msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","Start Pruning No-Example list", MsgCodes.info5);
-		//finalize nodes that were trained by normalized features - take all mapped bmus and find average distance weighted magnitude,and use this magnitude to build map node raw ftrs and std features
+		//finalize nodes that were trained by normalized features - take all mapped bmus and find average distance weighted magnitude,and use this magnitude to build map node raw ftrs and per-feature-normalized features
 		mapMgr._finalizeInitTrainingDataBMUAssignments();
 		
 		mapMgr._finalizeBMUProcessing(SOM_ExDataType.Training);

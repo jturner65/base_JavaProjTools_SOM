@@ -24,7 +24,7 @@ public class SOM_ExBMULoader implements Callable<Boolean>{
 	int thdIDX;
 	//whether or not we are using chi sq distance (normalized by variance per ftr)
 	boolean useChiSqDist;
-	//what kind of features used to train map (umodded, normalized, std'ized)
+	//what kind of features used to train map (unnormalized, normed per feature across all data, normed per example)
 	int ftrTypeUsedToTrainIDX;
 	//should always be training, not necessary
 	int typeOfEx;	

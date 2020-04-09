@@ -158,7 +158,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		somUIWin = _somUIWin;
 		somUIWin.setUI_FeatureListVals(setUI_GeomObjFeatureListVals());
 		somUIWin.setMapMgr(mapMgr);
-		msgObj.dispInfoMessage("SOM_AnimWorldWin", "setGeomMapUIWin", "Setting somUIWin in " + name + " to be  : "
+		msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "setGeomMapUIWin", "Setting somUIWin in " + name + " to be  : "
 				+ somUIWin.name + " and somUIWin's mapMgr to one belonging to win : " + mapMgr.win.name);
 	}
 
@@ -259,10 +259,10 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 * call to build or rebuild source geometric objects
 	 */
 	public final void rebuildSourceGeomObjs() {
-		msgObj.dispInfoMessage("SOM_AnimWorldWin", "rebuildSourceGeomObjs",	"Start (re)building all objects of type " + this.geomObjType);
+		msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "rebuildSourceGeomObjs",	"Start (re)building all objects of type " + this.geomObjType);
 		setMapMgrGeomObjVals();
 		((SOM_GeomMapManager) mapMgr).buildGeomExampleObjs();
-		msgObj.dispInfoMessage("SOM_AnimWorldWin", "rebuildSourceGeomObjs",	"Finished (re)building all objects of type " + this.geomObjType);
+		msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "rebuildSourceGeomObjs",	"Finished (re)building all objects of type " + this.geomObjType);
 	}
 
 	/**
@@ -282,10 +282,10 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 * regenerate samples for current set of base objects
 	 */
 	public final void regenBaseGeomObjSamples() {
-		msgObj.dispInfoMessage("SOM_AnimWorldWin", "regenBaseGeomObjSamples", "Start regenerating "	+ numSmplPointsPerObj + " samples for all base objects of type " + this.geomObjType);
+		msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "regenBaseGeomObjSamples", "Start regenerating "	+ numSmplPointsPerObj + " samples for all base objects of type " + this.geomObjType);
 		setMapMgrGeomObjVals();
 		((SOM_GeomMapManager) mapMgr).rebuildGeomExObjSamples();
-		msgObj.dispInfoMessage("SOM_AnimWorldWin", "regenBaseGeomObjSamples", "Finished regenerating "	+ numSmplPointsPerObj + " samples for all base objects of type " + this.geomObjType);
+		msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "regenBaseGeomObjSamples", "Finished regenerating "	+ numSmplPointsPerObj + " samples for all base objects of type " + this.geomObjType);
 	}
 
 	@Override
@@ -303,7 +303,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		case showUIObjLabelIDX: {		break;		} // show labels for objects
 		case showUIObjSmplsLabelIDX: {	break;		}
 		case useUIObjLocAsClrIDX: {
-			msgObj.dispInfoMessage("SOM_AnimWorldWin", "setPrivFlags :: useUIObjLocAsClrIDX", "Val :  " + val);
+			msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "setPrivFlags :: useUIObjLocAsClrIDX", "Val :  " + val);
 			break;
 		} // color of objects is location or is random
 		case showSelUIObjIDX: {			break;		}
@@ -593,7 +593,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		} else {
 			setPrivFlags(showFullTrainingObjIDX, false);
 		}
-		// else { msgObj.dispInfoMessage("SOM_AnimWorldWin", "drawMe", "ui obj data
+		// else { msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "drawMe", "ui obj data
 		// loaded is false");}
 		// draw geom objects for selected map node objects
 		if (getPrivFlags(drawMapNodeGeomObjsIDX)) {
@@ -760,7 +760,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	@Override
 	protected final void launchMenuBtnHndlr(int funcRow, int btn) {
-		msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Begin requested action : Click Functions "+(funcRow+1)+" in " + name + " : btn : " + btn, MsgCodes.info4);
+		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "Begin requested action : Click Functions "+(funcRow+1)+" in " + name + " : btn : " + btn, MsgCodes.info4);
 		switch (funcRow) {
 			case 0: {// row 1 of menu side bar buttons
 				// {"Gen Training Data", "Save Training data","Load Training Data"}, //row 1
@@ -781,7 +781,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 						break;
 					}
 					default: {
-						msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 1 btn : " + btn,
+						msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "Unknown Functions 1 btn : " + btn,
 								MsgCodes.warning2);
 						break;
 					}
@@ -811,7 +811,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 						break;
 					}
 					default: {
-						msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 2 btn : " + btn,
+						msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "Unknown Functions 2 btn : " + btn,
 								MsgCodes.warning2);
 						resetButtonState();
 						break;
@@ -840,7 +840,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 						break;
 					}
 					default: {
-						msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 3 btn : " + btn,
+						msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "Unknown Functions 3 btn : " + btn,
 								MsgCodes.warning2);
 						resetButtonState();
 						break;
@@ -859,7 +859,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 						break;
 					}
 					default: {
-						msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "Unknown Functions 4 btn : " + btn, MsgCodes.warning2);
+						msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "Unknown Functions 4 btn : " + btn, MsgCodes.warning2);
 						resetButtonState();
 						break;
 					}
@@ -867,43 +867,65 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 				break;
 			} // row 3 of menu side bar buttons
 		}
-		msgObj.dispMessage("SOM_AnimWorldWin", "launchMenuBtnHndlr", "End requested action (multithreaded actions may still be working) : Click Functions "+(funcRow+1)+" in " + name + " : btn : " + btn, MsgCodes.info4);
+		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "End requested action (multithreaded actions may still be working) : Click Functions "+(funcRow+1)+" in " + name + " : btn : " + btn, MsgCodes.info4);
 	}
 
 	@Override
 	public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {somUIWin.handleSideMenuMseOvrDispSel(btn, val);}
 
 	@Override
-	public final void handleSideMenuDebugSel(int btn, int val) {
-		msgObj.dispMessage("SOM_AnimWorldWin", "handleSideMenuDebugSel","Click Debug functionality in " + name + " : btn : " + btn, MsgCodes.info4);
+	public final void handleSideMenuDebugSelEnable(int btn) {
+		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSelEnable","Click Debug functionality on in " + name + " : btn : " + btn, MsgCodes.info4);
 		switch (btn) {
 			case 0: {
-				resetButtonState();
 				break;
 			}
 			case 1: {
-				resetButtonState();
 				break;
 			}
 			case 2: {
-				resetButtonState();
 				break;
 			}
-			case 3: {// show current mapdat status
-				resetButtonState();
+			case 3: {
 				break;
 			}
 			case 4: {
-				resetButtonState();
 				break;
 			}
 			default: {
-				msgObj.dispMessage("SOM_AnimWorldWin", "handleSideMenuDebugSel", "Unknown Debug btn : " + btn,MsgCodes.warning2);
-				resetButtonState();
+				msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSelEnable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
 				break;
 			}
 		}
-		msgObj.dispMessage("SOM_AnimWorldWin", "handleSideMenuDebugSel", "End Debug functionality selection.",MsgCodes.info4);
+		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSel", "End Debug functionality on selection.",MsgCodes.info4);
+	}
+	
+	@Override
+	public final void handleSideMenuDebugSelDisable(int btn) {
+		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSelDisable","Click Debug functionality off in " + name + " : btn : " + btn, MsgCodes.info4);
+		switch (btn) {
+		case 0: {
+			break;
+		}
+		case 1: {
+			break;
+		}
+		case 2: {
+			break;
+		}
+		case 3: {
+			break;
+		}
+		case 4: {
+			break;
+		}
+		default: {
+			msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSelDisable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
+			resetButtonState();
+			break;
+		}
+		}
+		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSelDisable", "End Debug functionality off selection.",MsgCodes.info4);
 	}
 
 	/**

@@ -459,8 +459,8 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 			//now get mins and diffs from calc object
 		setMinsAndDiffs(getMinBndsAra(), getDiffsBndsAra());  
 
-		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"finishSOMExampleBuild","Finished calculating diffs and mins | Begin building post-feature calc structs for " + exampleMapperDesc +"s (i.e. std ftrs) dependent on diffs and mins", MsgCodes.info1);	
-			//now finalize post feature calc -this will do std features			
+		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"finishSOMExampleBuild","Finished calculating diffs and mins | Begin building post-feature calc structs for " + exampleMapperDesc +"s (i.e. per-ftr-normed ftrs) dependent on diffs and mins", MsgCodes.info1);	
+			//now finalize post feature calc -this will do per-feature-normed features			
 		dataManager.buildAfterAllFtrVecsBuiltStructs();		
 		
 		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"finishSOMExampleBuild","Finished finalize mappers, calculate feature data, diffs, mins, and calculate post-global-ftr-data calcs.", MsgCodes.info5);						

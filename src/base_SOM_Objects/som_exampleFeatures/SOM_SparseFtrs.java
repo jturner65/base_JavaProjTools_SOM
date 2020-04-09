@@ -89,7 +89,7 @@ public class SOM_SparseFtrs extends SOM_Features {
 	@Override
 	public void buildAllNonZeroFtrIDXs() {
 		allNonZeroFtrIDXs = new ArrayList<Integer>();
-		for(Integer idx : ftrMaps[ftrMapTypeKey].keySet()) {		allNonZeroFtrIDXs.add(idx);	}
+		for(Integer idx : ftrMaps[unNormFtrMapTypeKey].keySet()) {		allNonZeroFtrIDXs.add(idx);	}
 	}//buildAllNonZeroFtrIDXs
 	
 	@Override

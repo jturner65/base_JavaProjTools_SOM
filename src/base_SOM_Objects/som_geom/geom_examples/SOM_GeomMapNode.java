@@ -122,7 +122,7 @@ public abstract class SOM_GeomMapNode extends SOM_MapNode {
 	@Override
 	protected void buildAllNonZeroFtrIDXs() {
 		allNonZeroFtrIDXs = new ArrayList<Integer>();
-		for(Integer idx : ftrMaps[rawftrMapTypeKey].keySet()) {		allNonZeroFtrIDXs.add(idx);	}
+		for(Integer idx : ftrMaps[unNormFtrMapTypeKey].keySet()) {		allNonZeroFtrIDXs.add(idx);	}
 	}//buildAllNonZeroFtrIDXs
 	/**
 	 * called after features for this map node were built, but before another map node is built

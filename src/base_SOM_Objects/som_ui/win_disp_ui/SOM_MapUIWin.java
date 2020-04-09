@@ -81,7 +81,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	
 	//	//GUI Objects	
 	public final static int 
-		uiTrainDataFrmtIDX			= 0,			//format that training data should take : unmodified, normalized or standardized
+		uiTrainDataNormIDX			= 0,			//normalization that feature data should have: unnormalized, norm per feature across all data, normalize each example
 		uiBMU_DispDataFrmtIDX			= 1,			//format of vectors to use when comparing examples to nodes on map
 		uiTrainDatPartIDX			= 2,			//partition % of training data out of total data (rest is testing)
 		
@@ -206,8 +206,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		setPrivFlags(mapDrawUMatrixIDX, flagsToSet[0]);
 		setPrivFlags(mapExclProdZeroFtrIDX, flagsToSet[1]);
 		//set initial values for UI
-		mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()), (int)(this.guiObjs[uiBMU_DispDataFrmtIDX].getVal()),(float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),(float)(this.guiObjs[uiNodePopDispThreshIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
-		//mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal()), (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),(float)(this.guiObjs[uiPopMapNodeDispSizeIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
+		mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataNormIDX].getVal()), (int)(this.guiObjs[uiBMU_DispDataFrmtIDX].getVal()),(float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),(float)(this.guiObjs[uiNodePopDispThreshIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
+		//mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataNormIDX].getVal()), (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),(float)(this.guiObjs[uiPopMapNodeDispSizeIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
 
 		initMeIndiv();
 	}
@@ -335,7 +335,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		tmpListObjVals.put(uiMapNHdFuncIDX, new String[]{"gaussian","bubble"});		
 		tmpListObjVals.put(uiMapRadCoolIDX, new String[]{"linear","exponential"});
 		tmpListObjVals.put(uiMapLrnCoolIDX, new String[]{"linear","exponential"});		
-		tmpListObjVals.put(uiTrainDataFrmtIDX, SOM_FtrDataType.getListOfTypes());
+		tmpListObjVals.put(uiTrainDataNormIDX, SOM_FtrDataType.getListOfTypes());
 		tmpListObjVals.put(uiBMU_DispDataFrmtIDX, SOM_FtrDataType.getListOfTypes());		
 		tmpListObjVals.put(uiMapPreBuiltDirIDX, new String[] {"None"});
 		tmpListObjVals.put(uiMapNodeBMUTypeToDispIDX, SOM_MapManager.getNodeBMUMapTypes());
@@ -348,8 +348,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		//	the 3rd elem is label for object
 		//	the 4th element is boolean array of {treat as int, has list values, value is sent to owning window}
 		
-		tmpUIObjArray.put(uiTrainDataFrmtIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiTrainDataFrmtIDX).length-1, 1.0}, 1.0*SOM_FtrDataType.Standardized.getVal(), "Train Data Frmt", new boolean[]{true, true, true}});   				//uiTrainDataFrmtIDX                                                                        
-		tmpUIObjArray.put(uiBMU_DispDataFrmtIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiBMU_DispDataFrmtIDX).length-1, 1.0}, 1.0*SOM_FtrDataType.Unmodified.getVal(), "Map Node Ftr Disp Frmt", new boolean[]{true, true, true}});  				//uiBMU_DispDataFrmtIDX                                                                         
+		tmpUIObjArray.put(uiTrainDataNormIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiTrainDataNormIDX).length-1, 1.0}, 1.0*SOM_FtrDataType.FTR_NORM.getVal(), "Data Normalizing", new boolean[]{true, true, true}});   				//uiTrainDataFrmtIDX                                                                        
+		tmpUIObjArray.put(uiBMU_DispDataFrmtIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiBMU_DispDataFrmtIDX).length-1, 1.0}, 1.0*SOM_FtrDataType.UNNORMALIZED.getVal(), "Map Node Ftr Disp Frmt", new boolean[]{true, true, true}});  				//uiBMU_DispDataFrmtIDX                                                                         
 		tmpUIObjArray.put(uiTrainDatPartIDX, new Object[] {new double[]{1.0, 100.0, 1.0}, 100.0,	"Data % To Train", new boolean[]{true, false, true}});   													//uiTrainDatPartIDX                                                                         
 		tmpUIObjArray.put(uiMapRowsIDX, new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Rows", new boolean[]{true, false, true}});   															//uiMapRowsIDX 	 		                                                                    
 		tmpUIObjArray.put(uiMapColsIDX, new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Columns", new boolean[]{true, false, true}});   															//uiMapColsIDX	 		                                                                    
@@ -669,8 +669,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 			case uiMapBndsIDX	    : {setMapDataVal_String(UIidx,val); break;}
 			//end map arg-related string/list values
 			
-			case uiTrainDataFrmtIDX 		: {//format of training data
-				mapMgr.setCurrentTrainDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTrainDataFrmtIDX].getVal())));
+			case uiTrainDataNormIDX 		: {//format of training data
+				mapMgr.setCurrentTrainDataFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiTrainDataNormIDX].getVal())));
 				break;}
 			case uiBMU_DispDataFrmtIDX 			: {
 				mapMgr.setBMU_DispFtrTypeFormat(SOM_FtrDataType.getVal((int)(this.guiObjs[uiBMU_DispDataFrmtIDX].getVal())));
@@ -714,8 +714,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * @param _ftrToTrain
 	 */
 	public void setFtrTrainTypeFromConfig(int _ftrTypeUsedToTrain) {
-		this.guiObjs[uiTrainDataFrmtIDX].setVal(_ftrTypeUsedToTrain);
-		uiVals[uiTrainDataFrmtIDX] = this.guiObjs[uiTrainDataFrmtIDX].getVal();
+		this.guiObjs[uiTrainDataNormIDX].setVal(_ftrTypeUsedToTrain);
+		uiVals[uiTrainDataNormIDX] = this.guiObjs[uiTrainDataNormIDX].getVal();
 	}
 	
 	protected void setCategory_UIObj(boolean settingCategoryFromClass) {

@@ -9,15 +9,15 @@ import java.util.Map;
  *
  */
 public enum SOM_FtrDataType {
-	Unmodified(0), Standardized(1), Normalized(2);
+	UNNORMALIZED(0), FTR_NORM(1), EXMPL_NORM(2);
 	private int value; 
 	private static final String[] 
-			_typeExplanation = new String[] {"Unmodified","Standardized (0->1 per ftr across all training data)","Normalized (vector mag==1)"};
+			_typeExplanation = new String[] {"Unnormalized","Feature (0->1 per ftr across all training data)","Example (vector mag==1)"};
 	private static final String[] 
-			_typeName = new String[] {"Unmodified","Standardized (0->1 per ftr)","Normalized (vector mag==1)"};
+			_typeName = new String[] {"Unnormalized","Feature (0->1 per ftr)","Example (vector mag==1)"};
 	//used for file names
 	private static final String[] 
-			_typeBrfName = new String[] {"unModFtrs","stdFtrs","normFtrs"};
+			_typeBrfName = new String[] {"unNormFtrs","perFtrNorm","perExNorm"};
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, SOM_FtrDataType> map = new HashMap<Integer, SOM_FtrDataType>(); 
 		static { for (SOM_FtrDataType enumV : SOM_FtrDataType.values()) { map.put(enumV.value, enumV);}}

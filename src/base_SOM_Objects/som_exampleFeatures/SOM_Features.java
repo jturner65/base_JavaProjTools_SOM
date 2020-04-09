@@ -33,16 +33,16 @@ public abstract class SOM_Features {
 	 * 	keys for ftr map arrays
 	 */
 	protected static final int 
-		ftrMapTypeKey = SOM_FtrDataType.Unmodified.getVal(), 
-		normFtrMapTypeKey = SOM_FtrDataType.Normalized.getVal(), 
-		stdFtrMapTypeKey = SOM_FtrDataType.Standardized.getVal();	
-	protected static final Integer[] ftrMapTypeKeysAra = new Integer[] {ftrMapTypeKey, normFtrMapTypeKey, stdFtrMapTypeKey};
+		unNormFtrMapTypeKey = SOM_FtrDataType.UNNORMALIZED.getVal(), 
+		perFtrNormMapTypeKey = SOM_FtrDataType.FTR_NORM.getVal(), 
+		perExNormMapTypeKey = SOM_FtrDataType.EXMPL_NORM.getVal();	
+	protected static final Integer[] ftrMapTypeKeysAra = new Integer[] {unNormFtrMapTypeKey, perFtrNormMapTypeKey, perExNormMapTypeKey};
 	
 	//idx's in feature vector that have non-zero values
 	public ArrayList<Integer> allNonZeroFtrIDXs;	
 	
 	//these objects are for reporting on individual examples.  
-	//use a map per feature type : unmodified, normalized, standardized,to hold the features sorted by weight as key, value is array of ftrs at a particular weight -submap needs to be instanced in descending key order
+	//use a map per feature type : (unnormalized, normed per feature across all data, normed per example),to hold the features sorted by weight as key, value is array of ftrs at a particular weight -submap needs to be instanced in descending key order
 	protected TreeMap<Float, ArrayList<Integer>>[] mapOfWtsToFtrIDXs;	
 	//a map per feature type : unmodified, normalized, standardized, of ftr IDXs and their relative "rank" in this particular example, as determined by the weight calc
 	protected TreeMap<Integer,Integer>[] mapOfFtrIDXVsWtRank;		
