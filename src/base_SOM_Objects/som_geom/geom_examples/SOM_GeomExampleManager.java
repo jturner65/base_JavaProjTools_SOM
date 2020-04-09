@@ -136,7 +136,7 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	protected abstract void buildAllEx_MT(SOM_GeomSamplePointf[] allSamples, int numThdCallables, int ttlNumTrainEx, SOM_GeomTrainingExUniqueID[] _idxsToUse);
 
 	/**
-	 * code to execute after examples have had ftrs calculated - this will calculate std features and any alternate ftr mappings if used
+	 * code to execute after examples have had ftrs calculated - this will calculate per-feature-normed features and any alternate ftr mappings if used
 	 */
 	@Override
 	protected void buildAfterAllFtrVecsBuiltStructs_Priv() {

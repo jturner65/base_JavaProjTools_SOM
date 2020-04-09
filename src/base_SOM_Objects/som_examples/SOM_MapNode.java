@@ -103,41 +103,41 @@ public abstract class SOM_MapNode extends SOM_Example{
 		//ArrayList<Integer> nonZeroIDXList = new ArrayList<Integer>();
 		//	Unmodified(0), Standardized(1), Normalized(2);
 		switch(ftrTypeUsedToTrain) {
-			case Unmodified : {												//unmodified data used to build features
-				float ftrVecSqMag = _buildInitFtrMap(_ftrs, rawftrMapTypeKey);
+			case UNNORMALIZED : {												//unmodified data used to build features
+				float ftrVecSqMag = _buildInitFtrMap(_ftrs, unNormFtrMapTypeKey);
 				ftrVecMag = (float) Math.sqrt(ftrVecSqMag);		
 				setFlag(ftrsBuiltIDX, true);
 				buildNormFtrData();	
 				//build standardized ftr maps - use mins and diffs of training data
-				buildStdFtrsMapFromFtrData_MapNode(mapMgr.getTrainFtrMins(), mapMgr.getTrainFtrDiffs());
+				buildPerFtrNormMapFromUnNormFtrData_MapNode(mapMgr.getTrainFtrMins(), mapMgr.getTrainFtrDiffs());
 				mapNodeFtrsHaveBeenSet = true;
 				break;}
-			case Standardized : {											//standardized data used to build features - multiply by mins/diffs to find ftr data, and then normalize
+			case FTR_NORM : {											//standardized data used to build features - multiply by mins/diffs to find ftr data, and then normalize
 				//float dmy = 
-				_buildInitFtrMap(_ftrs, stdFtrMapTypeKey);
-				setFlag(stdFtrsBuiltIDX,true);	
+				_buildInitFtrMap(_ftrs, perFtrNormMapTypeKey);
+				setFlag(perFtrNormBuiltIDX,true);	
 				//get mins/diffs
-				buildRawFtrsMapFromStdFtrData_MapNode(mapMgr.getTrainFtrMins(), mapMgr.getTrainFtrDiffs());
+				buildRawFtrsMapFromPerFtrNormData_MapNode(mapMgr.getTrainFtrMins(), mapMgr.getTrainFtrDiffs());
 				setFlag(ftrsBuiltIDX,true);	
 				//with raw features built, can build normalized features
 				buildNormFtrData();
 				mapNodeFtrsHaveBeenSet = true;
 				break;}
-			case Normalized : {												//built with normalized data - feature vector might not be normalized from MAP, although it should be.  Want to renormalize all ftrs just to be safe
-				float normFtrSqMag = _buildInitFtrMap(_ftrs, normFtrMapTypeKey);
+			case EXMPL_NORM : {												//built with normalized data - feature vector might not be normalized from MAP, although it should be.  Want to renormalize all ftrs just to be safe
+				float normFtrSqMag = _buildInitFtrMap(_ftrs, perExNormMapTypeKey);
 				if(normFtrSqMag != 0) {
 					float normFtrMag = (float) Math.sqrt(normFtrSqMag);		
-					for(Integer idx : ftrMaps[normFtrMapTypeKey].keySet()) {	
-						ftrMaps[normFtrMapTypeKey].put(idx, ftrMaps[normFtrMapTypeKey].get(idx)/normFtrMag);
+					for(Integer idx : ftrMaps[perExNormMapTypeKey].keySet()) {	
+						ftrMaps[perExNormMapTypeKey].put(idx, ftrMaps[perExNormMapTypeKey].get(idx)/normFtrMag);
 					}
 				}
-				setFlag(normFtrsBuiltIDX,true);
+				setFlag(perExmplNormBuiltIDX,true);
 				//only norm has been set by here
 				setFlag(ftrsBuiltIDX, false);
-				setFlag(stdFtrsBuiltIDX,false);	
+				setFlag(perFtrNormBuiltIDX,false);	
 				break;}
 		}
-		nonZeroIDXs = ftrMaps[normFtrMapTypeKey].keySet().toArray(new Integer[0]);//	normFtrMapTypeKey features will always be built by here
+		nonZeroIDXs = ftrMaps[perExNormMapTypeKey].keySet().toArray(new Integer[0]);//	normFtrMapTypeKey features will always be built by here
 		//called after features are built because that's when we have all ftrs for this example determined
 		//ftrVecMag = (float) Math.sqrt(ftrVecSqMag);		
 		//nonZeroIDXs = ftrMaps[rawftrMapTypeKey].keySet().toArray(new Integer[0]);//	nonZeroIDXList.toArray(new Integer[0]);
@@ -152,17 +152,17 @@ public abstract class SOM_MapNode extends SOM_Example{
 		//ArrayList<Integer> nonZeroIDXList = new ArrayList<Integer>();
 		//	Unmodified(0), Standardized(1), Normalized(2);
 		switch(ftrTypeUsedToTrain) {
-			case Unmodified : {			break;}									//unmodified data used to build features - nothing to do here			
-			case Standardized : {		break;}									//standardized data used to build features - nothing to do here			
-			case Normalized : {												//built with normalized data - feature vector might not be normalized from MAP, although it should be.  Want to renormalize all ftrs just to be safe
+			case UNNORMALIZED : {			break;}									//unmodified data used to build features - nothing to do here			
+			case FTR_NORM : {		break;}									//standardized data used to build features - nothing to do here			
+			case EXMPL_NORM : {												//built with normalized data - feature vector might not be normalized from MAP, although it should be.  Want to renormalize all ftrs just to be safe
 				SOM_MapNodeBMUExamples trainExMapToMe = BMUExampleNodes[SOM_ExDataType.Training.getVal()];
 				ftrVecMag = trainExMapToMe.getAvgWtMagOfAllMappedExs();			
 				//now use _avgTrainingFtrMag to build rawFtrVector  
-				for(Integer idx : ftrMaps[normFtrMapTypeKey].keySet()) {
-					ftrMaps[rawftrMapTypeKey].put(idx, ftrMaps[normFtrMapTypeKey].get(idx) * ftrVecMag);				
+				for(Integer idx : ftrMaps[perExNormMapTypeKey].keySet()) {
+					ftrMaps[unNormFtrMapTypeKey].put(idx, ftrMaps[perExNormMapTypeKey].get(idx) * ftrVecMag);				
 				}
 				setFlag(ftrsBuiltIDX, true);
-				buildStdFtrsMapFromFtrData_MapNode(mapMgr.getTrainFtrMins(), mapMgr.getTrainFtrDiffs());
+				buildPerFtrNormMapFromUnNormFtrData_MapNode(mapMgr.getTrainFtrMins(), mapMgr.getTrainFtrDiffs());
 				mapNodeFtrsHaveBeenSet = true;
 				break;}
 		}
@@ -206,16 +206,16 @@ public abstract class SOM_MapNode extends SOM_Example{
 		return ftrVecSqMag;
 	}//
 	/**
-	 * build raw ftrs from std features by using
+	 * build raw ftrs from per feature normalized examples mins and diffs
 	 */
-	private void buildRawFtrsMapFromStdFtrData_MapNode(Float[] minsAra, Float[] diffsAra) {
+	private void buildRawFtrsMapFromPerFtrNormData_MapNode(Float[] minsAra, Float[] diffsAra) {
 		ftrVecMag = 0.0f;
-		if (ftrMaps[stdFtrMapTypeKey].size() > 0) {		
-			float destDiff = mapMgr.getStdFtr_destDiff(), destMin =  mapMgr.getStdFtr_destMin();
-			for(Integer destIDX : ftrMaps[stdFtrMapTypeKey].keySet()) {
-				float stdVal = ftrMaps[stdFtrMapTypeKey].get(destIDX);
-				float val = (((stdVal - destMin)/destDiff)*diffsAra[destIDX])+minsAra[destIDX];				
-				ftrMaps[rawftrMapTypeKey].put(destIDX,val);
+		if (ftrMaps[perFtrNormMapTypeKey].size() > 0) {		
+			float destDiff = mapMgr.getPerFtrNorm_destDiff(), destMin =  mapMgr.getPerFtrNorm_destMin();
+			for(Integer destIDX : ftrMaps[perFtrNormMapTypeKey].keySet()) {
+				float perFtrNormVal = ftrMaps[perFtrNormMapTypeKey].get(destIDX);
+				float val = (((perFtrNormVal - destMin)/destDiff)*diffsAra[destIDX])+minsAra[destIDX];				
+				ftrMaps[unNormFtrMapTypeKey].put(destIDX,val);
 				ftrVecMag += val * val;
 			}//for each non-zero feature
 		}
@@ -228,23 +228,23 @@ public abstract class SOM_MapNode extends SOM_Example{
 	 * @param minsAra array of per-ftr mins across all features in training data
 	 * @param diffsAra array of per-ftr diffs across all features in training data
 	 */
-	protected final void buildStdFtrsMapFromFtrData_MapNode(Float[] minsAra, Float[] diffsAra) {
-//		clearFtrMap(stdFtrMapTypeKey);
-		if (ftrMaps[rawftrMapTypeKey].size() > 0) {
-			float destDiff = mapMgr.getStdFtr_destDiff(), destMin =  mapMgr.getStdFtr_destMin();
-			for(Integer destIDX : ftrMaps[rawftrMapTypeKey].keySet()) {
+	protected final void buildPerFtrNormMapFromUnNormFtrData_MapNode(Float[] minsAra, Float[] diffsAra) {
+//		clearFtrMap(perFtrNormMapTypeKey);
+		if (ftrMaps[unNormFtrMapTypeKey].size() > 0) {
+			float destDiff = mapMgr.getPerFtrNorm_destDiff(), destMin =  mapMgr.getPerFtrNorm_destMin();
+			for(Integer destIDX : ftrMaps[unNormFtrMapTypeKey].keySet()) {
 				Float lb = minsAra[destIDX], diff = diffsAra[destIDX];
 				float val = 0.0f;
 				if (diff==0) {//same min and max
 					if (lb > 0) {	val = 1.0f;}//only a single value same min and max-> set feature value to 1.0
 					else {val= 0.0f;}
-				} else {				val = (ftrMaps[rawftrMapTypeKey].get(destIDX)-lb)/diff;				}				
-				float stdVal = (val * destDiff) + destMin;
-				ftrMaps[stdFtrMapTypeKey].put(destIDX,stdVal);
+				} else {				val = (ftrMaps[unNormFtrMapTypeKey].get(destIDX)-lb)/diff;				}				
+				float perFtrNormVal = (val * destDiff) + destMin;
+				ftrMaps[perFtrNormMapTypeKey].put(destIDX,perFtrNormVal);
 			}//for each non-zero feature
 		}
-		setFlag(stdFtrsBuiltIDX,true);
-	}//buildStdFtrsMap_MapNode
+		setFlag(perFtrNormBuiltIDX,true);
+	}//buildPerFtrNormMapFromUnNormFtrData_MapNode
 	
 	public final Integer[] getNonZeroIDXs() {return nonZeroIDXs;}
 
@@ -280,7 +280,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	 */
 	private void initFtrWtSegs() {
 		ftrWtSegData = new TreeMap<Integer, SOM_MapNodeSegmentData>();
-		for(Integer idx : ftrMaps[rawftrMapTypeKey].keySet()) {
+		for(Integer idx : ftrMaps[unNormFtrMapTypeKey].keySet()) {
 			//build feature weight segment data object for every non-zero weight present in this map node - this should NEVER CHANGE without reconstructing map nodes
 			ftrWtSegData.put(idx, new SOM_MapNodeSegmentData(this, this.OID+"_FtrWtData_IDX_"+idx, "Feature Weight For Ftr IDX :"+idx));
 		}
@@ -355,8 +355,8 @@ public abstract class SOM_MapNode extends SOM_Example{
 		TreeMap<Float, ArrayList<String>> mapNodeProbs = new TreeMap<Float, ArrayList<String>>(Collections.reverseOrder());
 		//use ftr data so that the ftr vector provides probabilities
 		//even though ftr type used to train may be any type of featues, normFtrMap will always be normalized features for map nodes
-		for(Integer segID : ftrMaps[normFtrMapTypeKey].keySet()) {
-			float prob = ftrMaps[normFtrMapTypeKey].get(segID);
+		for(Integer segID : ftrMaps[perExNormMapTypeKey].keySet()) {
+			float prob = ftrMaps[perExNormMapTypeKey].get(segID);
 			ArrayList<String> valsAtProb = mapNodeProbs.get(prob);
 			if(null==valsAtProb) {valsAtProb = new ArrayList<String>();}
 			valsAtProb.add(""+segID);
@@ -721,7 +721,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	//draw segment contribution
 	public final void drawMeUMatSegClr(IRenderInterface p){uMatrixSegData.drawMe(p);}
 	
-	//draw ftr weight segment contribution - use std ftr as alpha
+	//draw ftr weight segment contribution - use per-ftr norm ftr as alpha
 	public final void drawMeFtrWtSegClr(IRenderInterface p, Integer idx, float wt) {
 		SOM_MapNodeSegmentData ftrWtMgrAtIdx = ftrWtSegData.get(idx);
 		if(null==ftrWtMgrAtIdx) {return;}			//does not have weight at this feature index
@@ -731,7 +731,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	public final void drawMeSelected(IRenderInterface p) {
 		p.pushMatState();
 		p.noFill();
-		p.setStroke(new int[] {255,255,0}, 255);
+		p.setStroke(255,255,0, 255);
 		p.setStrokeWt(3.0f);
 		p.drawRect(dispBoxDims);		
 		p.popMatState();	
@@ -771,7 +771,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	public void finalizeBuildBeforeFtrCalc() {	}
 	//this should not be used - should build stdFtrsmap based on ranges of each ftr value in trained map
 	@Override
-	protected void buildStdFtrsMap() {
+	protected void buildPerFtrNormMap() {
 		mapMgr.getMsgObj().dispMessage("SOMMapNode","buildStdFtrsMap","Calling inappropriate buildStdFtrsMap for SOMMapNode : should call buildStdFtrsMap_MapNode from SOMDataLoader using trained map w/arrays of per feature mins and diffs", MsgCodes.warning2);		
 	}
 	

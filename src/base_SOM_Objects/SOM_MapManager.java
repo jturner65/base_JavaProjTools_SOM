@@ -175,11 +175,11 @@ public abstract class SOM_MapManager {
 		uMatDist_Diff;
 	
 	/**
-	 * min and diff target span for standardizing/scaling features - populated by project config
+	 * min and diff target span for per-feature normalizing - populated by project config
 	 */
 	private float
-		stdFtr_destMin,
-		stdFtr_destDiff;
+		perFtrNorm_destMin,
+		perFrtNorm_destDiff;
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//data descriptions
@@ -525,7 +525,7 @@ public abstract class SOM_MapManager {
 	//
 	//curMapTrainFtrType.getBrfName();public String getDataTypeNameFromCurFtrTrainType_Brf() {return curMapTrainFtrType.getBrfName();}	
 	public String getDataTypeNameFromBMU_DispFtrType_Brf() {return BMU_DispFtrType.getBrfName();}	
-	//Unmodified = 0, Standardized = 1, Normalized
+	//Unnormalized = 0, Feature Normalized = 1, Example Normalized = 2
 	public String getDataTypeNameFromInt_Brf(SOM_FtrDataType dataFrmt) { return dataFrmt.getBrfName();}//getDataTypeNameFromInt
 	
 	public String getDataDescFromCurFtrTrainType()  {return curMapTrainFtrType.getExplanation();}
@@ -534,9 +534,9 @@ public abstract class SOM_MapManager {
 	
 	public String getDataDescFromInt_Short(SOM_FtrDataType dataFrmt) {
 		switch(dataFrmt) {
-		case Unmodified : {return "Unmodified";}
-		case Standardized : {return "Standardized";}
-		case Normalized : {return "Normalized";}
+		case UNNORMALIZED : {return "Unnormalized";}
+		case FTR_NORM : {return "Feature-based";}
+		case EXMPL_NORM : {return "Example-based";}
 		default : {return null;}		//unknown data frmt type
 		}
 	}//getDataTypeNameFromInt
@@ -545,10 +545,16 @@ public abstract class SOM_MapManager {
 	public SOM_FtrDataType getDataFrmtTypeFromName(String dataFrmtName) {
 		String comp = dataFrmtName.toLowerCase();
 		switch(comp) {
-		case "unmodftrs": {return SOM_FtrDataType.Unmodified;}
-		case "stdftrs"	: {return SOM_FtrDataType.Standardized;}
-		case "normftrs"	: {return SOM_FtrDataType.Normalized;}
-		default : {return SOM_FtrDataType.Unmodified;}		//unknown data frmt type
+		//old strings
+		case "unmodftrs": {return SOM_FtrDataType.UNNORMALIZED;}
+		case "stdftrs"	: {return SOM_FtrDataType.FTR_NORM;}
+		case "normftrs"	: {return SOM_FtrDataType.EXMPL_NORM;}
+		//new string brief keys : {"unNormFtrs","perFtrNorm","perExNorm"}
+		case "unnormftrs": {return SOM_FtrDataType.UNNORMALIZED;}
+		case "perftrnorm"	: {return SOM_FtrDataType.FTR_NORM;}
+		case "perexnorm"	: {return SOM_FtrDataType.EXMPL_NORM;}
+		
+		default : {return SOM_FtrDataType.UNNORMALIZED;}		//unknown data frmt type
 		}		
 	}//getDataFrmtTypeFromName
 	//load raw data and preprocess, partitioning into different data types as appropriate
@@ -1357,7 +1363,7 @@ public abstract class SOM_MapManager {
 		//for each map node without training example bmus...
 		for(SOM_MapNode emptyNode : withOutMap){//node has no label mappings, so need to determine label		
 			//find list of closest nodes based on ftr similarity
-			closestList = emptyNode.findClosestMapNodes(MapNodesWithExByFtrIDX, emptyNode::getSqDistFromFtrType, SOM_FtrDataType.Unmodified);			
+			closestList = emptyNode.findClosestMapNodes(MapNodesWithExByFtrIDX, emptyNode::getSqDistFromFtrType, SOM_FtrDataType.UNNORMALIZED);			
 			minSqDist = closestList.getKey();	
 			closestNodeList = closestList.getValue();	
 			
@@ -1671,9 +1677,9 @@ public abstract class SOM_MapManager {
 	 * @param mapNode node to put in array
 	 */
 	public void setNodesArrayOfMapNodeByFtr(SOM_MapNode mapNode) {
-		TreeMap<Integer, Float> stdFtrMap = mapNode.getCurrentFtrMap(SOM_FtrDataType.Standardized);		//using standardized values, these should always be between 0 and 1 for all features
-		for (Integer ftrIDX : stdFtrMap.keySet()) {
-			Float ftrVal = stdFtrMap.get(ftrIDX);
+		TreeMap<Integer, Float> ftrNormMap = mapNode.getCurrentFtrMap(SOM_FtrDataType.FTR_NORM);		//using feature-based normalized values, these should always be between 0 and 1 for all features
+		for (Integer ftrIDX : ftrNormMap.keySet()) {
+			Float ftrVal = ftrNormMap.get(ftrIDX);
 			ArrayList<SOM_MapNode> nodeList = PerFtrHiWtMapNodes[ftrIDX].get(ftrVal);
 			if (nodeList== null) {			nodeList = new ArrayList<SOM_MapNode>();		}
 			nodeList.add(mapNode);
@@ -2489,8 +2495,8 @@ public abstract class SOM_MapManager {
 					if(isDefault) {
 						pa.pushMatState();
 						pa.translate(-10.0f,20.0f,0.0f);
-						pa.setFill(new int[] {255, 200,200,255}, 255);
-						pa.setStroke(new int[] {255, 200,200,255}, 255);
+						pa.setFill(255, 200,200, 255);
+						pa.setStroke(255, 200,200, 255);
 						pa.drawStar2D(myPointf.ZEROPT, 5.0f);
 						pa.popMatState();
 					}
@@ -2577,13 +2583,13 @@ public abstract class SOM_MapManager {
 	}//setCurrentDataFormat
 	public SOM_FtrDataType getCurrentTrainDataFormat() {	return curMapTrainFtrType;}
 	
-	public void setStdMinAndDiffValsFromConfig(float _stdFtr_destMin,float _stdFtr_destDiff) {
-		stdFtr_destMin = _stdFtr_destMin;
-		stdFtr_destDiff =_stdFtr_destDiff;		
-		msgObj.dispInfoMessage("SOM_MapManager::"+name,"setStdMinAndDiffValsFromConfig","stdFtr_destMin set to : " +stdFtr_destMin + " and stdFtr_destDiff set to : " + stdFtr_destDiff+" from Config."); 	
+	public void setPerFtrMinAndDiffValsFromConfig(float _stdFtr_destMin,float _stdFtr_destDiff) {
+		perFtrNorm_destMin = _stdFtr_destMin;
+		perFrtNorm_destDiff =_stdFtr_destDiff;		
+		msgObj.dispInfoMessage("SOM_MapManager::"+name,"setStdMinAndDiffValsFromConfig","stdFtr_destMin set to : " +perFtrNorm_destMin + " and stdFtr_destDiff set to : " + perFrtNorm_destDiff+" from Config."); 	
 	};
-	public float getStdFtr_destMin() {return stdFtr_destMin;}
-	public float getStdFtr_destDiff() {return stdFtr_destDiff;}
+	public float getPerFtrNorm_destMin() {return perFtrNorm_destMin;}
+	public float getPerFtrNorm_destDiff() {return perFrtNorm_destDiff;}
 	
 	public void setBMU_DispFtrTypeFormat(SOM_FtrDataType _frmt) {	BMU_DispFtrType = _frmt; }//setCurrentDataFormat
 	public SOM_FtrDataType getBMU_DispFtrTypeFormat() {	return BMU_DispFtrType;}

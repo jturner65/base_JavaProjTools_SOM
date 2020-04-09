@@ -43,7 +43,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	/**
 	 * this map is what is used by examples to compare for mappings - this may 
 	 * include combinations of other features or values when all ftrs are calculated 
-	 * (unmodded, normalized and stdizd) they need to be mapped to this structure, 
+	 * (unnormalized, normed per feature across all data, normed per example) they need to be mapped to this structure, 
 	 * possibly in combination with an alternate set of features or other calculations
 	 *                                                        
 	 */
@@ -60,10 +60,10 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * 	keys for ftr map arrays
 	 */
 	protected static final int 
-		rawftrMapTypeKey = SOM_FtrDataType.Unmodified.getVal(), 
-		stdFtrMapTypeKey = SOM_FtrDataType.Standardized.getVal(), 
-		normFtrMapTypeKey = SOM_FtrDataType.Normalized.getVal();	
-	protected static final Integer[] ftrMapTypeKeysAra = new Integer[] {rawftrMapTypeKey, stdFtrMapTypeKey, normFtrMapTypeKey};
+		unNormFtrMapTypeKey = SOM_FtrDataType.UNNORMALIZED.getVal(), 
+		perFtrNormMapTypeKey = SOM_FtrDataType.FTR_NORM.getVal(), 
+		perExNormMapTypeKey = SOM_FtrDataType.EXMPL_NORM.getVal();	
+	protected static final Integer[] ftrMapTypeKeysAra = new Integer[] {unNormFtrMapTypeKey, perFtrNormMapTypeKey, perExNormMapTypeKey};
 	
 	/**
 	 * probability structure for this example - probability of every map node for each 
@@ -90,12 +90,12 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 */
 	private int[] stFlags;						
 	public static final int
-			debugIDX 			= 0,
-			ftrsBuiltIDX		= 1,			//whether particular kind of feature was built or not
-			stdFtrsBuiltIDX		= 2,			//..standardized (Across all examples per feature)
-			normFtrsBuiltIDX	= 3,			//..normalized (feature vector scaled to have magnitude 1
-			isBadTrainExIDX		= 4,			//whether this example is a good one or not - if all feature values == 0 then this is a useless example for training. only set upon feature vector calc
-			ftrWtRptBuiltIDX	= 5;			//whether or not the structures used to calculate feature-based reports for this example have been calculated
+			debugIDX 				= 0,
+			ftrsBuiltIDX			= 1,			//whether particular kind of feature was built or not
+			perFtrNormBuiltIDX		= 2,			//..per feature normalized examples (Across all examples per feature)
+			perExmplNormBuiltIDX	= 3,			//..per example normalized (feature vector scaled to have magnitude 1
+			isBadTrainExIDX			= 4,			//whether this example is a good one or not - if all feature values == 0 then this is a useless example for training. only set upon feature vector calc
+			ftrWtRptBuiltIDX		= 5;			//whether or not the structures used to calculate feature-based reports for this example have been calculated
 		
 	public static final int numFlags = 6;	
 	
@@ -284,7 +284,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * @param Category_Segments keyed by category ID, value is category segment
 	 */
 	public synchronized void setSegmentsAndProbsFromAllMapNodes(TreeMap<Integer, SOM_MappedSegment> Class_Segments, TreeMap<Integer, SOM_MappedSegment> Category_Segments) {
-		//set all jp(class)-based map node probabilities
+		//set all class-based map node probabilities
 		perClassMapNodeProbMap.clear();		
 		ConcurrentSkipListMap<Tuple<Integer,Integer>,Float> clsPerMapNodes, tmpClsMapNodes;
 		HashSet<Integer> allClassIDs = getAllClassIDsForClsSegmentCalc();
@@ -295,7 +295,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 			perClassMapNodeProbMap.put(cls, tmpClsMapNodes);
 			addClassSegment(cls, Class_Segments.get(cls));
 		}
-		//set all jpgroup(category)-based map node probabilities
+		//set all category-based map node probabilities
 		perCategoryMapNodeProbMap.clear();
 		ConcurrentSkipListMap<Tuple<Integer,Integer>,Float> catPerMapNodes, tmpCatMapNodes;	
 		HashSet<Integer> allCatIDs = getAllCategoryIDsForCatSegmentCalc();
@@ -359,9 +359,9 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 */
 	protected abstract void buildFeaturesMap();	
 	/**
-	 * standardize this feature vector stdFtrData - scale each feature value by min and max feature value seen across all data
+	 * normalize this feature vector per feature vector across all examples - scale each feature value by min and max feature value seen across all data
 	 */
-	protected abstract void buildStdFtrsMap();
+	protected abstract void buildPerFtrNormMap();
 	/**
 	 * required info for this example to build feature data - use this so we don't have to reload and rebuilt from data every time
 	 * @return
@@ -496,7 +496,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * 
 	 * this also adds this data point to the map's node with a key of the distance 
 	 * @param _n bmu for this example
-	 * @param _ftrType type of features used for comparison (unmod, norm, std)
+	 * @param _ftrType type of features used for comparison (unnormalized, normed per feature across all data, normed per example)
 	 */
 	public final void setTrainingExBMU(SOM_MapNode _n, int _ftrType){
 		_setBMUAddToNeighborhood(_n,getSqDistFromFtrType(_n.ftrMaps[_ftrType],  ftrMaps[_ftrType]));
@@ -513,7 +513,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * 
 	 * this also adds this data point to the map's node with a key of the distance 
 	 * @param _n bmu for this example
-	 * @param _ftrType type of features used for comparison (unmod, norm, std)
+	 * @param _ftrType type of features used for comparison (unnormalized, normed per feature across all data, normed per example)
 	 */
 	public final void setTrainingExBMU_ChiSq(SOM_MapNode _n, int _ftrType){
 		_setBMUAddToNeighborhood(_n,getSqDistFromFtrType_ChiSq(_n.ftrMaps[_ftrType],  ftrMaps[_ftrType]));
@@ -527,7 +527,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * average of mapNodeLocs of neighbor nodes, where the weight is the inverse feature 
 	 * distance mapNodeNghbrs (9 node neighborood) must be set before this is called, 
 	 * and has bmu set as closest, with key being distance                                                     
-	 * @param _ftrType type of feature used for calculations (unmod, norm, std)
+	 * @param _ftrType type of feature used for calculations (unnormalized, normed per feature across all data, normed per example)
 	 * @param _distFunc function used to calculate distance (euclidean or chi-squared (scaled by variance))
 	 */
 	protected final void buildNghbrhdMapNodes(int _ftrType, BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc){
@@ -625,7 +625,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	
 	//build structures that require that the feature vector be built before hand
 	public final void buildAfterAllFtrVecsBuiltStructs() {
-		buildStdFtrsMap();
+		buildPerFtrNormMap();
 		//default comparison vector setup - can be overridden
 		buildCompFtrVector(0.0f);
 	}//buildPostFeatureVectorStructs
@@ -633,14 +633,14 @@ public abstract class SOM_Example extends baseDataPtVis{
 	//build normalized vector of data - only after features have been set
 	protected final void buildNormFtrData() {
 		if(!getFlag(ftrsBuiltIDX)) {mapMgr.getMsgObj().dispMessage("SOMExample","buildNormFtrData","OID : " + OID + " : Features not built, cannot normalize feature data since marked as not built!", MsgCodes.warning2);return;}
-		clearFtrMap(normFtrMapTypeKey);//ftrMaps[normFtrMapTypeKey].clear();
+		clearFtrMap(perExNormMapTypeKey);//ftrMaps[normFtrMapTypeKey].clear();
 		if(this.ftrVecMag == 0) {return;}
-		for (Integer IDX : ftrMaps[rawftrMapTypeKey].keySet()) {
-			Float val  = ftrMaps[rawftrMapTypeKey].get(IDX)/this.ftrVecMag;
-			ftrMaps[normFtrMapTypeKey].put(IDX,val);
+		for (Integer IDX : ftrMaps[unNormFtrMapTypeKey].keySet()) {
+			Float val  = ftrMaps[unNormFtrMapTypeKey].get(IDX)/this.ftrVecMag;
+			ftrMaps[perExNormMapTypeKey].put(IDX,val);
 			//setMapOfSrcWts(IDX, val, normFtrMapTypeKey);			
 		}	
-		setFlag(normFtrsBuiltIDX,true);
+		setFlag(perExmplNormBuiltIDX,true);
 	}//buildNormFtrData
 
 	/**
@@ -655,7 +655,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * @param mins mins found per feature across all examples, used to scale
 	 * @param diffs diffs found per feature across all examples, used to scale
 	 */
-//	protected final void calcStdFtrVector(TreeMap<Integer, Float> from_ftrs, TreeMap<Integer, Float> to_sclFtrs, Float[] mins, Float[] diffs) {
+//	protected final void calcPerFtrNormVector(TreeMap<Integer, Float> from_ftrs, TreeMap<Integer, Float> to_sclFtrs, Float[] mins, Float[] diffs) {
 //		to_sclFtrs.clear();
 //		for (Integer destIDX : from_ftrs.keySet()) {
 //			Float lb = mins[destIDX], 	diff = diffs[destIDX];
@@ -667,11 +667,11 @@ public abstract class SOM_Example extends baseDataPtVis{
 //			to_sclFtrs.put(destIDX,val);
 //			
 //		}//for each non-zero ftr
-//	}//standardizeFeatureVector		getSqDistFromFtrType
+//	}//calcPerFtrNormVector		getSqDistFromFtrType
 		
-	protected final void calcStdFtrVector(TreeMap<Integer, Float> from_ftrs, TreeMap<Integer, Float> to_sclFtrs, Float[] mins, Float[] diffs) {
+	protected final void calcPerFtrNormVector(TreeMap<Integer, Float> from_ftrs, TreeMap<Integer, Float> to_sclFtrs, Float[] mins, Float[] diffs) {
 		to_sclFtrs.clear();
-		float destDiff = mapMgr.getStdFtr_destDiff(), destMin =  mapMgr.getStdFtr_destMin();
+		float destDiff = mapMgr.getPerFtrNorm_destDiff(), destMin =  mapMgr.getPerFtrNorm_destMin();
 		for (Integer destIDX : from_ftrs.keySet()) {
 			Float lb = mins[destIDX], 	diff = diffs[destIDX];
 			Float val = 0.0f;
@@ -682,7 +682,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 			to_sclFtrs.put(destIDX,val);
 			
 		}//for each non-zero ftr
-	}//standardizeFeatureVector		getSqDistFromFtrType
+	}//calcPerFtrNormVector		getSqDistFromFtrType
 		
 //	//called to report on this example's feature weight rankings 
 //	public final void buildFtrRprtStructs() {features.buildFtrRprtStructs();}//buildFtrReports
@@ -844,8 +844,8 @@ public abstract class SOM_Example extends baseDataPtVis{
 //	 * two methods to minimize if calls for chisq dist vs regular euclidean dist                                                                            
 //	 * Passing map of nodes keyed by non-zero ftr idx. 
 //	 * 
-//	 * @param _MapNodesByFtr : map of all mapnodes keyed by feature idx with non-zero features
-//	 * @param _ftrtype : kind of features (unmod, normed, stdized) to be used for comparison/distance calc
+//	 * @param _MapNodesByFtr : map of all mapnodes keyed by feature idx with non-zero features 
+//	 * @param _ftrtype : kind of features (un-normed, norm per feature, norm per example) to be used for comparison/distance calc
 //	 * @return
 //	 */
 //	public final TreeMap<Double, ArrayList<SOMMapNode>> findBMUFromFtrNodes_ftrMaps(TreeMap<Integer, HashSet<SOMMapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, int _ftrType) {
@@ -889,7 +889,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * returns a map keyed by distance with values being a list of nodes at key distance
 	 * @param _MapNodesByFtr : map of all mapnodes keyed by feature idx with non-zero features
 	 * @param _distFunc : function to use to calculate distance
-	 * @param _ftrType : kind of features (unmod, normed, stdized) used to train map
+	 * @param _ftrType : kind of features (unnormalized, normed per feature across all data, normed per example) used to train map
 	 * @return
 	 */	
 	public final TreeMap<Double, ArrayList<SOM_MapNode>> findMapNodesByDist(TreeMap<Integer, HashSet<SOM_MapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, SOM_FtrDataType _ftrType){
@@ -911,7 +911,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * Should not be called in a multi-threaded context
 	 * @param _MapNodesByFtr : map of all mapnodes keyed by feature idx with non-zero features
 	 * @param _distFunc : function to use to calculate distance
-	 * @param _ftrType : kind of features (unmod, normed, stdized) to be used for comparison/distance calc
+	 * @param _ftrType : kind of features (unnormalized, normed per feature across all data, normed per example) to be used for comparison/distance calc
 	 * @return
 	 */
 	public final Entry<Double, ArrayList<SOM_MapNode>> findClosestMapNodes(TreeMap<Integer, HashSet<SOM_MapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, SOM_FtrDataType _ftrType){
@@ -927,7 +927,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 * 
 	 * @param _MapNodesByFtr : map of all mapnodes keyed by feature idx with non-zero features
 	 * @param _distFunc : function to use to calculate distance
-	 * @param _ftrType : kind of features (unmod, normed, stdized) to be used for comparison/distance calc
+	 * @param _ftrType : kind of features (unnormalized, normed per feature across all data, normed per example) to be used for comparison/distance calc
 	 * @return
 	 */
 	public synchronized final TreeMap<Double, ArrayList<SOM_MapNode>> findBMUFromFtrNodes(TreeMap<Integer, HashSet<SOM_MapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, SOM_FtrDataType _ftrType) {
@@ -953,10 +953,10 @@ public abstract class SOM_Example extends baseDataPtVis{
 	////useUnmoddedDat = 0, useScaledDat = 1, useNormedDat
 	public final String toCSVString(SOM_FtrDataType _type) {
 		switch(_type){
-			case Unmodified 	: {return _toCSVString(ftrMaps[rawftrMapTypeKey]); }
-			case Normalized 	: {return _toCSVString(getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[rawftrMapTypeKey]);}
-			case Standardized  	: {return _toCSVString(getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[rawftrMapTypeKey]); }
-			default : {return _toCSVString(ftrMaps[rawftrMapTypeKey]); }
+			case UNNORMALIZED 	: {return _toCSVString(ftrMaps[unNormFtrMapTypeKey]); }
+			case EXMPL_NORM 	: {return _toCSVString(getFlag(perExmplNormBuiltIDX) ? ftrMaps[perExNormMapTypeKey] : ftrMaps[unNormFtrMapTypeKey]);}
+			case FTR_NORM  	: {return _toCSVString(getFlag(perFtrNormBuiltIDX) ? ftrMaps[perFtrNormMapTypeKey] : ftrMaps[unNormFtrMapTypeKey]); }
+			default : {return _toCSVString(ftrMaps[unNormFtrMapTypeKey]); }
 		}
 	}//toCSVString
 
@@ -977,10 +977,10 @@ public abstract class SOM_Example extends baseDataPtVis{
 	//return LRN-format (dense) string of this object's features, depending on which type is selected - check to make sure 2ndary features exist before attempting to build data strings
 	public final String toLRNString(SOM_FtrDataType _type, String sep) {
 		switch(_type){
-			case Unmodified 	: {return _toLRNString(ftrMaps[rawftrMapTypeKey], sep); }
-			case Normalized  	: {return _toLRNString(getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[rawftrMapTypeKey], sep);}
-			case Standardized   : {return _toLRNString(getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[rawftrMapTypeKey], sep); }
-			default : {return _toLRNString(ftrMaps[rawftrMapTypeKey], sep); }
+			case UNNORMALIZED 	: {return _toLRNString(ftrMaps[unNormFtrMapTypeKey], sep); }
+			case EXMPL_NORM  	: {return _toLRNString(getFlag(perExmplNormBuiltIDX) ? ftrMaps[perExNormMapTypeKey] : ftrMaps[unNormFtrMapTypeKey], sep);}
+			case FTR_NORM   : {return _toLRNString(getFlag(perFtrNormBuiltIDX) ? ftrMaps[perFtrNormMapTypeKey] : ftrMaps[unNormFtrMapTypeKey], sep); }
+			default : {return _toLRNString(ftrMaps[unNormFtrMapTypeKey], sep); }
 		}		
 	}//toLRNString
 	
@@ -992,10 +992,10 @@ public abstract class SOM_Example extends baseDataPtVis{
 	//return SVM-format (sparse) string of this object's features, depending on which type is selected - check to make sure 2ndary features exist before attempting to build data strings
 	public final String toSVMString(SOM_FtrDataType _type) {
 		switch(_type){
-			case Unmodified 	: {return _toSVMString(ftrMaps[rawftrMapTypeKey]); }
-			case Normalized  	: {return _toSVMString(getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[rawftrMapTypeKey]);}
-			case Standardized   : {return _toSVMString(getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[rawftrMapTypeKey]); }
-			default : {return _toSVMString(ftrMaps[rawftrMapTypeKey]); }
+			case UNNORMALIZED 	: {return _toSVMString(ftrMaps[unNormFtrMapTypeKey]); }
+			case EXMPL_NORM  	: {return _toSVMString(getFlag(perExmplNormBuiltIDX) ? ftrMaps[perExNormMapTypeKey] : ftrMaps[unNormFtrMapTypeKey]);}
+			case FTR_NORM   : {return _toSVMString(getFlag(perFtrNormBuiltIDX) ? ftrMaps[perFtrNormMapTypeKey] : ftrMaps[unNormFtrMapTypeKey]); }
+			default : {return _toSVMString(ftrMaps[unNormFtrMapTypeKey]); }
 		}		
 	}//toLRNString
 	
@@ -1009,28 +1009,26 @@ public abstract class SOM_Example extends baseDataPtVis{
 	//build feature vector on demand
 	public final float[] getFtrs(SOM_FtrDataType _type) {
 		switch(_type){
-		case Unmodified 	: {return getRawFtrs(); }
-		case Normalized  	: {return (getFlag(normFtrsBuiltIDX) ? getNormFtrs() : getRawFtrs());}
-		case Standardized   : {return (getFlag(stdFtrsBuiltIDX) ? getStdFtrs() : getRawFtrs()); }
-		default : {return getRawFtrs(); }
-	}		
-
-	
+			case UNNORMALIZED 	: {return getRawFtrs(); }
+			case EXMPL_NORM  	: {return (getFlag(perExmplNormBuiltIDX) ? getPerExNormFtrs() : getRawFtrs());}
+			case FTR_NORM   : {return (getFlag(perFtrNormBuiltIDX) ? getPerFtrNormFtrs() : getRawFtrs()); }
+			default : {return getRawFtrs(); }
+		}		
 	}
 
 	//build feature vector on demand
-	public final float[] getRawFtrs() {return _getFtrsFromMap(ftrMaps[rawftrMapTypeKey]);}
-	//build stdfeature vector on demand
-	public final float[] getStdFtrs() {return _getFtrsFromMap(ftrMaps[stdFtrMapTypeKey]);}
-	//build normfeature vector on demand
-	public final float[] getNormFtrs() {return _getFtrsFromMap(ftrMaps[normFtrMapTypeKey]);}	
+	public final float[] getRawFtrs() {return _getFtrsFromMap(ftrMaps[unNormFtrMapTypeKey]);}
+	//build per feature normalized vector on demand
+	public final float[] getPerFtrNormFtrs() {return _getFtrsFromMap(ftrMaps[perFtrNormMapTypeKey]);}
+	//build per example normalized vector on demand
+	public final float[] getPerExNormFtrs() {return _getFtrsFromMap(ftrMaps[perExNormMapTypeKey]);}	
 	
 	public final TreeMap<Integer, Float> getCurrentFtrMap(SOM_FtrDataType _type){
 		switch(_type){
-			case Unmodified : {return ftrMaps[rawftrMapTypeKey]; }
-			case Normalized  : {return (getFlag(normFtrsBuiltIDX) ? ftrMaps[normFtrMapTypeKey] : ftrMaps[rawftrMapTypeKey]);}
-			case Standardized   : {return (getFlag(stdFtrsBuiltIDX) ? ftrMaps[stdFtrMapTypeKey] : ftrMaps[rawftrMapTypeKey]); }
-			default : {return ftrMaps[rawftrMapTypeKey]; }
+			case UNNORMALIZED : {return ftrMaps[unNormFtrMapTypeKey]; }
+			case EXMPL_NORM  : {return (getFlag(perExmplNormBuiltIDX) ? ftrMaps[perExNormMapTypeKey] : ftrMaps[unNormFtrMapTypeKey]);}
+			case FTR_NORM   : {return (getFlag(perFtrNormBuiltIDX) ? ftrMaps[perFtrNormMapTypeKey] : ftrMaps[unNormFtrMapTypeKey]); }
+			default : {return ftrMaps[unNormFtrMapTypeKey]; }
 		}		
 	}
 
@@ -1083,8 +1081,8 @@ public abstract class SOM_Example extends baseDataPtVis{
 		switch (idx) {//special actions for each flag
 			case debugIDX			: {break;}	
 			case ftrsBuiltIDX		: {break;}
-			case stdFtrsBuiltIDX	: {break;}
-			case normFtrsBuiltIDX	: {break;}
+			case perFtrNormBuiltIDX	: {break;}
+			case perExmplNormBuiltIDX	: {break;}
 			case isBadTrainExIDX	: {break;}
 		}
 	}//setFlag		
@@ -1132,11 +1130,11 @@ public abstract class SOM_Example extends baseDataPtVis{
 		int numTrnFtrs = mapMgr.getNumTrainFtrs();
 		if (numTrnFtrs > 0) {
 			res += "\nUnscaled Features (" +numTrnFtrs+ " ) :";
-			res += dispFtrs(rawftrMapTypeKey);
+			res += dispFtrs(unNormFtrMapTypeKey);
 			res +="\nScaled Features : ";
-			res += dispFtrs(stdFtrMapTypeKey);
+			res += dispFtrs(perFtrNormMapTypeKey);
 			res +="\nNormed Features : ";
-			res += dispFtrs(normFtrMapTypeKey);
+			res += dispFtrs(perExNormMapTypeKey);
 		}
 		return res;
 	}

@@ -67,11 +67,11 @@ public abstract class SOM_ProjConfigData {
 	 */
 	protected String ftrTypeUsedToTrainStr;
 	/**
-	 * min and diff target span for standardizing/scaling features - populated by project config
+	 * min and diff target span for per-feature-normalized/scaled features - populated by project config
 	 */
 	protected float
-		stdFtr_destMin = 0.0f,
-		stdFtr_destDiff = 1.0f;
+		perFtrNorm_destMin = 0.0f,
+		perFrtNorm_destDiff = 1.0f;
 
 	
 	//calendar object to be used to query instancing time
@@ -282,9 +282,13 @@ public abstract class SOM_ProjConfigData {
 				case "SOMProjName" 				: {	setSOMProjName(val); break;}
 				case "useSparseTrainingData" 	: {	useSparseTrainingData = Boolean.parseBoolean(val.toLowerCase());  break;}
 				case "useSparseTestingData" 	: {	useSparseTestingData = Boolean.parseBoolean(val.toLowerCase());  break;}
-				case "ftrTypeUsedToTrainStr" 	: { ftrTypeUsedToTrainStr = val;break;}			//set default
-				case "stdFtr_destMin" 			: { stdFtr_destMin = Float.parseFloat(val); break;}
-				case "stdFtr_destDiff" 			: { stdFtr_destDiff = Float.parseFloat(val); break;}				
+				case "ftrTypeUsedToTrainStr" 	: { ftrTypeUsedToTrainStr = val;break;}			//set default	
+				case "perFtrNorm_destMin" 			: { perFtrNorm_destMin = Float.parseFloat(val); break;}
+				case "perFtrNorm_destDiff" 			: { perFrtNorm_destDiff = Float.parseFloat(val); break;}				
+				//these are old, and should be eventually removed
+				case "stdFtr_destMin" 			: { perFtrNorm_destMin = Float.parseFloat(val); break;}
+				case "stdFtr_destDiff" 			: { perFrtNorm_destDiff = Float.parseFloat(val); break;}	
+				//end old
 				//add more variables here in instancing class - use string rep of name in config file, followed by a comma, followed by the string value (may include 2xquotes (") around string;) then can add more cases here
 				default	 						: {_loadIndivConfigVarsPriv(varName,val);}
 			}	
@@ -320,7 +324,7 @@ public abstract class SOM_ProjConfigData {
 			TreeMap<String,String> somExecConfigMap = getSOMExpConfigData(SOMExecConfigFileName,"project config data for SOM Execution");
 			//for(String s : somExecConfigMap.keySet()) {	System.out.println("key : " + s +" | value :  " + somExecConfigMap.get(s));}
 			res.add("# Training Examples : "+ String.format("%02d", Integer.parseInt(somExecConfigMap.get("expNumTrain"))));
-			res.add("Feature Type used to train : " + mapMgr.getDataDescFromInt_Short(mapMgr.getDataFrmtTypeFromName(somExecConfigMap.get("ftrTypeUsedToTrainStr"))));
+			res.add("Feature normalizing used to train : " + mapMgr.getDataDescFromInt_Short(mapMgr.getDataFrmtTypeFromName(somExecConfigMap.get("ftrTypeUsedToTrainStr"))));
 			
 			String SOMMapConfigFileName = fullQualPreBuiltMapDir + somExecConfigMap.get("SOMFileNamesAra[7]");
 			TreeMap<String,String> somMapConfigMap = getSOMExpConfigData(SOMMapConfigFileName,"project config data for SOM Execution");
@@ -500,8 +504,8 @@ public abstract class SOM_ProjConfigData {
 		res.add("expNumTrain,"+expNumTrain);
 		res.add("expNumTest,"+expNumTest);
 		res.add("ftrTypeUsedToTrainStr,"+ftrTypeUsedToTrainStr);
-		res.add("stdFtr_destMin,"+String.format("%.6f",stdFtr_destMin));
-		res.add("stdFtr_destDiff,"+String.format("%.6f",stdFtr_destDiff));
+		res.add("perFtrNorm_destMin,"+String.format("%.6f",perFtrNorm_destMin));
+		res.add("perFtrNorm_destDiff,"+String.format("%.6f",perFrtNorm_destDiff));
 		res.add("dateTimeStrAra[0],"+dateTimeStrAra[0]);
 		res.add("dateTimeStrAra[1],"+dateTimeStrAra[1]);
 		for(int i =0; i<SOMFileNamesAra.length;++i) {res.add("SOMFileNamesAra["+i+"],"+SOMFileNamesAra[i]);		}
@@ -531,7 +535,7 @@ public abstract class SOM_ProjConfigData {
 	public void setUIValsFromLoad(){
 		mapMgr.setUIValsFromLoad(SOMExeDat);
 		mapMgr.setCurrentTrainDataFormatFromConfig(mapMgr.getDataFrmtTypeFromName(ftrTypeUsedToTrainStr).getVal());
-		mapMgr.setStdMinAndDiffValsFromConfig(stdFtr_destMin,stdFtr_destDiff);
+		mapMgr.setPerFtrMinAndDiffValsFromConfig(perFtrNorm_destMin,perFrtNorm_destDiff);
 		if((preBuiltMapDirAra == null) || (preBuiltMapDirAra.length == 0)){
 			msgObj.dispWarningMessage("SOM_ProjConfigData","setUIValsFromLoad","Attempting to pass a null or empty prebuiltmap dir ara. Aborting");
 		} else {
@@ -539,9 +543,9 @@ public abstract class SOM_ProjConfigData {
 		}
 	}
 	
-	public float getStdFtr_destMin() {return stdFtr_destMin;}
-	public float getStdFtr_destDiff() {return stdFtr_destDiff;}
-	
+	public float getPerFtrNorm_destMin() {return perFtrNorm_destMin;}
+	public float getPerFtrNorm_destDiff() {return perFrtNorm_destDiff;}
+
 	
 	//load a specific configuration based on a previously run experiment
 	public void loadProjConfigForSOMExe() {	loadProjConfigForSOMExe( getProjConfigForSOMExeFileName());}
@@ -573,8 +577,12 @@ public abstract class SOM_ProjConfigData {
 					case "trainTestPartition" : 	{trainTestPartition = Float.parseFloat(strToks[1].trim());break;}
 					case "dataType" : 				{ftrTypeUsedToTrainStr = strToks[1].trim();break;}		//changed, but still wish to support old configs
 					case "ftrTypeUsedToTrainStr" : 	{ftrTypeUsedToTrainStr = strToks[1].trim();break;}
-					case "stdFtr_destMin" 		: 	{stdFtr_destMin = Float.parseFloat(strToks[1].trim()); break;}
-					case "stdFtr_destDiff" 		: 	{stdFtr_destDiff = Float.parseFloat(strToks[1].trim()); break;}				
+					case "perFtrNorm_destMin" 		: 	{perFtrNorm_destMin = Float.parseFloat(strToks[1].trim()); break;}
+					case "perFtrNorm_destDiff" 		: 	{perFrtNorm_destDiff = Float.parseFloat(strToks[1].trim()); break;}	
+					//these are old, and should be eventually removed
+					case "stdFtr_destMin" 		: 	{perFtrNorm_destMin = Float.parseFloat(strToks[1].trim()); break;}
+					case "stdFtr_destDiff" 		: 	{perFrtNorm_destDiff = Float.parseFloat(strToks[1].trim()); break;}	
+					//end old
 					case "expNumSmpls" : 			{expNumSmpls = Integer.parseInt(strToks[1].trim());	break;}
 					case "expNumTrain" : 			{expNumTrain = Integer.parseInt(strToks[1].trim());	break;}
 					case "expNumTest" : 			{expNumTest = Integer.parseInt(strToks[1].trim());	break;}

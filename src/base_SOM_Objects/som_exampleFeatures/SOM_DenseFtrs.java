@@ -17,7 +17,7 @@ public class SOM_DenseFtrs extends SOM_Features {
 	//use a 2d array to hold features - 1st idx is type of feature, 2nd idx is actual feature idx
 	private Float[][] ftrMaps;	
 	//this 2d array is what is used by examples to compare for mappings - this may include combinations of other features or values
-	//when all ftrs are calculated (unmodded, normalized and stdizd) they need to be mapped to this structure, possibly in
+	//when all ftrs are calculated (unnormalized, normed per feature across all data, normed per example) they need to be mapped to this structure, possibly in
 	//combination with an alternate set of features or other calculations
 	private Float[][] compFtrMaps;
 
@@ -85,7 +85,7 @@ public class SOM_DenseFtrs extends SOM_Features {
 	@Override
 	public void buildAllNonZeroFtrIDXs() {
 		allNonZeroFtrIDXs = new ArrayList<Integer>();
-		for(int idx=0;idx<ftrMaps[ftrMapTypeKey].length;++idx) {	allNonZeroFtrIDXs.add(idx);}
+		for(int idx=0;idx<ftrMaps[unNormFtrMapTypeKey].length;++idx) {	allNonZeroFtrIDXs.add(idx);}
 	}//buildAllNonZeroFtrIDXs
 	
 	@Override

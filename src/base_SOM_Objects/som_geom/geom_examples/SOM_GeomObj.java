@@ -416,14 +416,14 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	
 	@Override
 	protected final void buildFeaturesMap() {
-		clearFtrMap(rawftrMapTypeKey);//
+		clearFtrMap(unNormFtrMapTypeKey);//
 		buildFeaturesMap_Indiv();
 		//find magnitude of features
 		ftrVecMag = 0;
 		Float ftrSqrMag = 0.0f;
-		int ftrSize = ftrMaps[rawftrMapTypeKey].size();
+		int ftrSize = ftrMaps[unNormFtrMapTypeKey].size();
 		for(int i=0;i<ftrSize;++i) {
-			Float val = ftrMaps[rawftrMapTypeKey].get(i);
+			Float val = ftrMaps[unNormFtrMapTypeKey].get(i);
 			ftrSqrMag += val * val;
 			((SOM_GeomMapManager)mapMgr).trainDatObjBnds.checkValInBnds(i, val);			
 		}
@@ -450,9 +450,9 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	protected final HashSet<Integer> getAllCategoryIDsForCatSegmentCalc() {		return categoryIDs;}
 	
 	@Override
-	protected final void buildStdFtrsMap() {	//build standardized features
-		calcStdFtrVector(ftrMaps[rawftrMapTypeKey], ftrMaps[stdFtrMapTypeKey], mapMgr.getTrainFtrMins(),mapMgr.getTrainFtrDiffs());
-		setFlag(stdFtrsBuiltIDX, true);
+	protected final void buildPerFtrNormMap() {	//build standardized features
+		calcPerFtrNormVector(ftrMaps[unNormFtrMapTypeKey], ftrMaps[perFtrNormMapTypeKey], mapMgr.getTrainFtrMins(),mapMgr.getTrainFtrDiffs());
+		setFlag(perFtrNormBuiltIDX, true);
 	}	
 	
 	@Override

@@ -38,9 +38,8 @@ public abstract class SOM_ExCSVDataLoader implements Callable<Boolean>{
 			String str = csvLoadRes[j];
 			int pos = str.indexOf(',');
 			String oid = str.substring(0, pos);
-			SOM_Example ex = buildExample(oid, str);//new custProspectExample(mapMgr, oid, str);
-			//ProspectExample oldEx = mapMgr.putInProspectMap(ex);//mapMgr.prospectMap.put(ex.OID, ex);	
-			SOM_Example oldEx = mapToAddTo.put(ex.OID, ex);	//mapMgr.prospectMap.put(ex.OID, ex);	
+			SOM_Example ex = buildExample(oid, str);
+			SOM_Example oldEx = mapToAddTo.put(ex.OID, ex);	
 			if(oldEx != null) {msgObj.dispMessage("SOMExCSVDataLoader", type+": call thd : " +String.format("%02d", thdIDX), "ERROR : "+thdIDX+" : Attempt to add duplicate record to prospectMap w/OID : " + oid, MsgCodes.error2);	}
 		}		
 		msgObj.dispMessage("SOMExCSVDataLoader", type+": call thd : " +String.format("%02d", thdIDX),"Finished loading file :"+fileName, MsgCodes.info1);	
