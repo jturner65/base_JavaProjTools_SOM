@@ -44,17 +44,19 @@ public class SOM_ExBMULoader implements Callable<Boolean>{
 			ArrayList<SOM_Example> exs = bmusToExmpl.get(tmpMapNode);
 			numExs += exs.size();
 		}		
-		msgObj.dispMessage("SOMExBMULoader","ctor : thd_idx : "+thdIDX, "# of bmus to proc : " +  bmusToExmpl.size() + " # exs : " + numExs, MsgCodes.info2);
+		msgObj.dispMessage("SOM_ExBMULoader","ctor : thd_idx : "+thdIDX, "# of bmus to proc : " +  bmusToExmpl.size() + " # exs : " + numExs, MsgCodes.info2);
 	}//ctor
 
 	@Override
 	public Boolean call() throws Exception {
 		if (useChiSqDist) {		
+			msgObj.dispMessage("SOM_ExBMULoader","ctor : thd_idx : "+thdIDX, "Using Chi Sq dist", MsgCodes.info2);
 			for (SOM_MapNode tmpMapNode : bmusToExmpl.keySet()) {
 				ArrayList<SOM_Example> exs = bmusToExmpl.get(tmpMapNode);
 				for(SOM_Example ex : exs) {ex.setTrainingExBMU_ChiSq(tmpMapNode, ftrTypeUsedToTrainIDX);tmpMapNode.addTrainingExToBMUs(ex,typeOfEx);	}
 			}		
 		} else {		
+			msgObj.dispMessage("SOM_ExBMULoader","ctor : thd_idx : "+thdIDX, "Not using Chi Sq dist", MsgCodes.info2);
 			for (SOM_MapNode tmpMapNode : bmusToExmpl.keySet()) {
 				ArrayList<SOM_Example> exs = bmusToExmpl.get(tmpMapNode);
 				for(SOM_Example ex : exs) {ex.setTrainingExBMU(tmpMapNode, ftrTypeUsedToTrainIDX); tmpMapNode.addTrainingExToBMUs(ex,typeOfEx);	}

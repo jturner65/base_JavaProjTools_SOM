@@ -43,19 +43,19 @@ public interface ISOM_UIWinMapDat {
 	int getUIidxFromMapKeyString(String mapKey);
 
 	/**
-	 * send UI values for a particular UI object index to appropriate. This function is responsible for converting val to an integer
+	 * send UI values for a particular UI object index to appropriate destination. This function is responsible for converting val to an integer
 	 * @param UIidx : idx of gui object - will be mapped to string name from mapDatNames above
 	 * @param val : value from UI 
 	 */	
 	void setMapDataVal_Integer(int UIidx, double val);	
 	/**
-	 * send UI values for a particular UI object index to appropriate. This function is responsible for converting val to a float
+	 * send UI values for a particular UI object index to appropriate destination. This function is responsible for converting val to a float
 	 * @param UIidx : idx of gui object - will be mapped to string name from mapDatNames above
 	 * @param val : value from UI 
 	 */	
 	void setMapDataVal_Float(int UIidx, double val);
 	/**
-	 * send UI values for a particular UI object index to appropriate. This function is intended to be used by a dropdown list and 
+	 * send UI values for a particular UI object index to appropriate destination. This function is intended to be used by a dropdown list and 
 	 * is responsible for converting val to the appropriate string (by list lookup for example)
 	 * @param UIidx : idx of gui object - will be mapped to string name from mapDatNames above
 	 * @param val : value from UI : integer index of a list

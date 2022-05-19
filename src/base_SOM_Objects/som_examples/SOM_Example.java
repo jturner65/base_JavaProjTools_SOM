@@ -916,6 +916,9 @@ public abstract class SOM_Example extends baseDataPtVis{
 	 */
 	public final Entry<Double, ArrayList<SOM_MapNode>> findClosestMapNodes(TreeMap<Integer, HashSet<SOM_MapNode>> _MapNodesByFtr,  BiFunction<TreeMap<Integer, Float>, TreeMap<Integer, Float>, Double> _distFunc, SOM_FtrDataType _ftrType){
 		TreeMap<Double, ArrayList<SOM_MapNode>> mapNodesByDist = findMapNodesByDist(_MapNodesByFtr,_distFunc, _ftrType );
+		if (mapNodesByDist.size() == 0) {
+			mapMgr.getMsgObj().dispMessage("SOMExample", "findClosestMapNodes","ERROR!! Empty map of closest map nodes by dist.", MsgCodes.error1);	
+		}
 		return mapNodesByDist.firstEntry();	
 	}
 	

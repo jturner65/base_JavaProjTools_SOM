@@ -51,7 +51,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	/**
 	 * # of priv flags from base class and instancing class
 	 */
-	//private int numPrivFlags;
 
 	public static final int 
 		debugAnimIDX 			= 0,				//debug
@@ -144,9 +143,22 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	protected void buildUIUpdateStruct_Indiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
 			TreeMap<Integer, Boolean> boolValues) {
-		// TODO Auto-generated method stub
+		//int values 
+		intValues.put(gIDX_NumUIObjs, (int) guiObjs[gIDX_NumUIObjs].getVal());
+		intValues.put(gIDX_NumUISamplesPerObj, (int) guiObjs[gIDX_NumUISamplesPerObj].getVal());
+		intValues.put(gIDX_NumTrainingEx, (int) guiObjs[gIDX_NumTrainingEx].getVal());
+		intValues.put(gIDX_SelDispUIObj, (int) guiObjs[gIDX_SelDispUIObj].getVal());		
 		
+		//float values
+		floatValues.put(gIDX_FractNumTrainEx, (float) guiObjs[gIDX_FractNumTrainEx].getVal());	
+		//no boolean values
+		
+		//individual window values
+		buildUIUpdateStruct_SubwindowIndiv(intValues, floatValues, boolValues);
 	}
+	
+	protected abstract void buildUIUpdateStruct_SubwindowIndiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
+			TreeMap<Integer, Boolean> boolValues);
 
 	@Override
 	protected int[] getFlagIDXsToInitToTrue() {
@@ -543,7 +555,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	protected final void setCameraIndiv(float[] camVals) {
 		// , float rx, float ry, float dz are now member variables of every window
-		//pa.camera(camVals[0], camVals[1], camVals[2], camVals[3], camVals[4], camVals[5], camVals[6], camVals[7], camVals[8]);
 		pa.setCameraWinVals(camVals);
 		// puts origin of all drawn objects at screen center and moves forward/away by dz
 		pa.translate(camVals[0], camVals[1], (float) dz);
@@ -984,11 +995,9 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	protected final boolean hndlMouseDragIndiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
 		boolean res = false;
-		// pa.outStr2Scr("hndlMouseDragIndiv sphere ui drag in world mouseClickIn3D : "
-		// + mouseClickIn3D.toStrBrf() + " mseDragInWorld : " +
-		// mseDragInWorld.toStrBrf());
+		//msgObj.dispInfoMessage(className,"hndlMouseDragIndiv","sphere ui drag in world mouseClickIn3D : " + mouseClickIn3D.toStrBrf() + " mseDragInWorld : " +mseDragInWorld.toStrBrf());
 //		if((privFlags[sphereSelIDX]) && (curSelSphere!="")){//pass drag through to selected sphere
-//			//pa.outStr2Scr("sphere ui drag in world mouseClickIn3D : " + mouseClickIn3D.toStrBrf() + " mseDragInWorld : " + mseDragInWorld.toStrBrf());
+//			//msgObj.dispInfoMessage(className,"hndlMouseDragIndiv","sphere ui drag in world mouseClickIn3D : " + mouseClickIn3D.toStrBrf() + " mseDragInWorld : " + mseDragInWorld.toStrBrf());
 //			res = sphereCntls.get(curSelSphere).hndlMouseDragIndiv(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D,curMseLookVec, mseDragInWorld);
 //		}
 		if (res) {			return res;		}

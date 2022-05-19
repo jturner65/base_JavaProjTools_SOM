@@ -188,7 +188,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		mapUIAPI = mapMgr.mapUIAPI;
 		setVisScreenWidth(rectDim[2]);
 		//only set for visualization - needs to reset static refs in msgObj
-		mapMgr.setPADispWinData(this, pa);
+		mapMgr.setPADispWinData(this, true);
 		
 		//this window uses right side info window
 		setFlags(drawRightSideMenu, true);		//may need some re-scaling to keep things in the middle and visible
@@ -640,14 +640,13 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	protected final void setUIWinVals(int UIidx) {
 		double val = guiObjs[UIidx].getVal(); 
 		if(uiVals[UIidx] != val){uiVals[UIidx] = val;} else {return;}//set values in raw array and only proceed if values have changed
-		//int intVal = (int)val;
+		//Special handling for UI vals that have changed
 		switch(UIidx){
 			//integer values
 			case uiMapRowsIDX 	    : {setMapDataVal_Integer(UIidx,val);guiObjs[uiMapRadStIDX].setVal(.5*MyMathUtils.min(val, guiObjs[uiMapColsIDX].getVal()));	break;}	//also set rad start to have a value == to 1/2 the max of rows or columns
 			case uiMapColsIDX	    : {setMapDataVal_Integer(UIidx,val);guiObjs[uiMapRadStIDX].setVal(.5*MyMathUtils.min(guiObjs[uiMapRowsIDX].getVal(), val));break;}
 			case uiMapEpochsIDX	    : {setMapDataVal_Integer(UIidx,val);break;}
-			case uiMapKTypIDX	    : {
-				setMapDataVal_Integer(UIidx,val);break;}
+			case uiMapKTypIDX	    : {setMapDataVal_Integer(UIidx,val);break;}
 			case uiMapRadStIDX	    : {
 				if(val <= guiObjs[uiMapRadEndIDX].getVal()+guiMinMaxModVals[UIidx][2]) {val = guiObjs[UIidx].setVal(guiObjs[uiMapRadEndIDX].getVal()+guiMinMaxModVals[UIidx][2]);uiVals[UIidx] = val;}
 				setMapDataVal_Integer(UIidx,val);		break;}

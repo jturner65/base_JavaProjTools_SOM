@@ -144,12 +144,12 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 		mapMgr._ftrVecBuild(exampleMap.values(),2,exampleName, true);	
 	}
 	/**
-	 * determine how many work elements should be assigned per thread 
+	 * determine how many work elements should be assigned per thread.  Overflow will be handled by final entry
 	 * @param numVals total number of work elements to execute
 	 * @param numThds total number of threads available
 	 * @return number of work elements per thread to assign
 	 */
-	protected final int calcNumPerThd(int numVals, int numThds) {	return (int) ((numVals -1)/(1.0*numThds)) + 1;	}//calcNumPerThd
+	protected final int calcNumPerThd(int numVals, int numThds) {	return numVals/numThds;	}//calcNumPerThd
 	
 	@Override
 	/**

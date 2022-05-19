@@ -239,6 +239,7 @@ public class SOM_DataLoader{
 		SOM_Example[] _trainData = mapMgr.getTrainingData();
 		//this should always be training data
 		int typeOfData = _trainData[0].getTypeVal();
+		//skip first 2 lines of strs
 		for (int i=2;i<strs.length;++i){//load in data on all bmu's
 			tkns = strs[i].split(SOM_MapManager.SOM_FileToken);
 			if(tkns.length < 2){continue;}//shouldn't happen	
@@ -252,7 +253,7 @@ public class SOM_DataLoader{
 				//should never happen, if map was built with specified configuration - this would mean trying to load data from different maps
 			if(null==tmpMapNode){ msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","!!!!!!!!!Map node stated as best matching unit for training example " + tkns[0] + " not found in map ... somehow. ", MsgCodes.error2); return false;}//catastrophic error shouldn't be possible
 			
-			//get data point at dpIdx - this is node for which tmpMapNode is BMU
+			//get feature data point at dpIdx - this is node for which tmpMapNode is BMU
 			SOM_Example tmpDataPt = _trainData[dpIdx];
 				//should never happen, if map was built with this data 
 			if(null==tmpDataPt){ msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","!!Training Datapoint given by idx in BMU file str tok : " + tkns[0] + " of string : --" + strs[i] + "-- not found in training data. ", MsgCodes.error2); return false;}//catastrophic error shouldn't happen

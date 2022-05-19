@@ -50,7 +50,6 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		initUIClickCoords(menuUIClkCoords[0],menuUIClkCoords[3],menuUIClkCoords[2],menuUIClkCoords[3]);			
 	}
 
-
 	/**
 	 * Instancing class-specific (application driven) UI buttons to display are built 
 	 * in this function.  Add an entry to tmpBtnNamesArray for each button, in the order 

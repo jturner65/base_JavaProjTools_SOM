@@ -394,7 +394,7 @@ public abstract class SOM_MapManager {
 		mapUIAPI = buildSOM_UI_Interface();
 		initFlags();		
 		//message object manages displaying to screen and potentially to log files - needs to be built first
-		setMsgObj(MessageObject.buildMe(null));
+		setMsgObj(MessageObject.buildMe(false));
 		
 		//build project configuration data object - this manages all file locations and other configuration options
 		//needs to have msgObj defined before called
@@ -449,12 +449,12 @@ public abstract class SOM_MapManager {
 	/**
 	 * use this to set window/UI components, if exist
 	 * @param _win
-	 * @param _pa
+	 * @param _hasGraphics
 	 */
-	public void setPADispWinData(SOM_MapUIWin _win, IRenderInterface _pa) {
+	public void setPADispWinData(SOM_MapUIWin _win, boolean _hasGraphics) {
 		setWinAndWinData(_win);//win=_win;
 		//if(win != null) {setName(win.name);} else {setName("No_Win");}
-		MessageObject.pa = _pa;
+		MessageObject.hasGraphics = _hasGraphics;
 		projConfigData.setUIValsFromLoad();
 	}//setPAWindowData
 
@@ -1358,11 +1358,12 @@ public abstract class SOM_MapManager {
 		}
 		ArrayList<SOM_MapNode> closestNodeList = new ArrayList<SOM_MapNode>();
 		Entry<Double, ArrayList<SOM_MapNode>> closestList;
-		msgObj.dispMessage("SOM_MapManager::"+name,"addMappedNodesToEmptyNodes_FtrDist","Finished building map of nodes with examples keyed by ftr idx of non-zero ftrs | Start finding closest mapped nodes by ftr dist to non-mapped nodes.", MsgCodes.info5);		
+		msgObj.dispMessage("SOM_MapManager::"+name,"addMappedNodesToEmptyNodes_FtrDist","Finished building map of nodes with examples keyed by ftr idx of non-zero ftrs | Start finding closest mapped nodes by ftr dist to "+withOutMap.size()+" non-mapped nodes.", MsgCodes.info5);		
 
 		//for each map node without training example bmus...
 		for(SOM_MapNode emptyNode : withOutMap){//node has no label mappings, so need to determine label		
 			//find list of closest nodes based on ftr similarity
+			//msgObj.dispMessage("SOM_MapManager::"+name,"addMappedNodesToEmptyNodes_FtrDist","Unmapped node :"+emptyNode.toString(), MsgCodes.info5);		
 			closestList = emptyNode.findClosestMapNodes(MapNodesWithExByFtrIDX, emptyNode::getSqDistFromFtrType, SOM_FtrDataType.UNNORMALIZED);			
 			minSqDist = closestList.getKey();	
 			closestNodeList = closestList.getValue();	
