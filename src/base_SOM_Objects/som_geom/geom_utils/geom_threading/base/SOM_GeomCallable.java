@@ -198,7 +198,7 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 	protected final myPointf getRandPosOnSphere(double rad, myPointf ctr){
 		myPointf pos = new myPointf();
 		double 	cosTheta = ThreadLocalRandom.current().nextDouble(-1,1), sinTheta =  Math.sin(Math.acos(cosTheta)),
-				phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.twoPi_f);
+				phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI_F);
 		pos.set(sinTheta * Math.cos(phi), sinTheta * Math.sin(phi),cosTheta);
 		pos._mult((float) rad);
 		pos._add(ctr);
@@ -208,7 +208,7 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 	protected final myPoint getRandPosOnSphere_Double(double rad, myPoint ctr){
 		myPoint pos = new myPoint();
 		double 	cosTheta = ThreadLocalRandom.current().nextDouble(-1,1), sinTheta =  Math.sin(Math.acos(cosTheta)),
-				phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.twoPi_f);
+				phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI_F);
 		pos.set(sinTheta * Math.cos(phi), sinTheta * Math.sin(phi),cosTheta);
 		pos._mult((float) rad);
 		pos._add(ctr);
