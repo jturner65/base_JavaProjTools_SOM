@@ -865,12 +865,12 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	
 	@Override
 	public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {
-		msgObj.dispMessage("Straff_SOMMapUIWin","handleSideMenuMseOvrDispSel","Click Mouse display in "+name+" : btn : " + btn, MsgCodes.info4);
+		msgObj.dispMessage("SOM_MapUIWin","handleSideMenuMseOvrDispSel","Click Mouse display in "+name+" : btn : " + btn, MsgCodes.info4);
 		SOM_MseOvrDispTypeVals uiMseDispData = handleSideMenuMseOvrDisp_MapBtnToType(btn, val);
-		//msgObj.dispInfoMessage("Straff_SOMMapUIWin","handleSideMenuMseOvrDispSel","Mouse Display Function : " + btn +" selected == "+ uiMseDispData.toString());
+		//msgObj.dispInfoMessage("SOM_MapUIWin","handleSideMenuMseOvrDispSel","Mouse Display Function : " + btn +" selected == "+ uiMseDispData.toString());
 		if(uiMseDispData == SOM_MseOvrDispTypeVals.mseOvrOtherIDX) {	handleSideMenuMseOvrDispSel_Indiv(btn,val);	}
 		mapMgr.setUiMseDispData(uiMseDispData);
-		msgObj.dispMessage("Straff_SOMMapUIWin","handleSideMenuMseOvrDispSel","Done Click Mouse display in "+name+" : btn : " + btn + " | Dist Type : " + uiMseDispData.toString(), MsgCodes.info4);
+		msgObj.dispMessage("SOM_MapUIWin","handleSideMenuMseOvrDispSel","Done Click Mouse display in "+name+" : btn : " + btn + " | Dist Type : " + uiMseDispData.toString(), MsgCodes.info4);
 	}
 	
 	/**

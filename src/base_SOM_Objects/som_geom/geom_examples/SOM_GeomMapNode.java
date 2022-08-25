@@ -12,11 +12,10 @@ import base_SOM_Objects.som_examples.SOM_MapNode;
 
 public abstract class SOM_GeomMapNode extends SOM_MapNode {
 	/**
-	 * a visual representation of the data in this map node
+	 * a geometric visual representation of the data in this map node, of the same type/geometry as the training data
 	 */
 	protected SOM_GeomObj visObj;
 	
-
 	public SOM_GeomMapNode(SOM_MapManager _map, Tuple<Integer, Integer> _mapNodeLoc, SOM_FtrDataType _ftrTypeUsedToTrain,float[] _ftrs) {super(_map, _mapNodeLoc, _ftrTypeUsedToTrain,_ftrs); }
 
 	public SOM_GeomMapNode(SOM_MapManager _map, Tuple<Integer, Integer> _mapNodeLoc, SOM_FtrDataType _ftrTypeUsedToTrain,String[] _strftrs) {super(_map, _mapNodeLoc, _ftrTypeUsedToTrain,_strftrs); }
@@ -68,23 +67,10 @@ public abstract class SOM_GeomMapNode extends SOM_MapNode {
 	}
 
 	@Override
-	//manage instancing map node handling - specifically, handle using 2ndary features as node markers (like a product tag or a class)
-	//in other words, this takes the passed example's "class", in our case all the constituent points that make up the example, and assigns them to this node
-	//class and category are managed by an integer key
-	protected void addTrainingExToBMUs_Priv(double sqDist, SOM_Example ex) {
-//		TreeMap<Tuple<Integer, Integer>, Integer> trainExOrderCounts = ((Straff_CustProspectExample)ex).getOrderCountsForExample();
-//		//for each jpg-jp used in training example, assign 
-//		//TreeMap<Integer, Integer> jpCountsAtJpGrp, npJpCountsAtJpGrp;
-//		for (Tuple<Integer, Integer> jpgJp : trainExOrderCounts.keySet()) {
-//			Integer jpg = jpgJp.x, jp = jpgJp.y;
-//			Float numOrders = 1.0f*trainExOrderCounts.get(jpgJp);	
-//			Float newCount = getClassSegManager().addSegDataFromTrainingEx(new Integer[] {jp}, numOrders, "_JPCount_JP_", "JP Orders present for jp :");
-//			//newcount includes existing counts in this node, so needs to be used to map to category as well
-			//no category yet for geometric objects
-//			//Float dummy = getCategorySegManager().addSegDataFromTrainingEx(new Integer[] {jpg,jp}, newCount, "_JPGroupCount_JPG_", "JPGroup Orders present for jpg :");
-//	
-//		}
-	}
+	/**
+	 * This functionality is not required for this child of SOM_MapNode
+	 */
+	protected void addTrainingExToBMUs_Priv(double sqDist, SOM_Example ex) {}
 	/**
 	 * get salient name prefix for class segment for the objects mapped to this bmu
 	 * @return

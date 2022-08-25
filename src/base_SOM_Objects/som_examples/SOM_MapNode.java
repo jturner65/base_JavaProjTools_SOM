@@ -612,25 +612,44 @@ public abstract class SOM_MapNode extends SOM_Example{
 	}
 	
 	/**
-	 * manage instancing map node handlign - specifically, handle using 2ndary features as node markers (like a product tag)
+	 * manage instancing map node handling - specifically, handle using 2ndary features as node markers (like a product tag)
 	 * these functions will both build class and category-specific data in instancing map node, if any exists
 	 * @param dist
 	 * @param ex
 	 */
 	protected abstract void addTrainingExToBMUs_Priv(double dist, SOM_Example ex);
-	//add map node with examples to map node without any
+	/**
+	 * add map node with examples to map node without any
+	 * @param dist
+	 * @param ex
+	 */
 	protected abstract void addMapNodeExToBMUs_Priv(double dist, SOM_MapNode ex);
 	
-	//this will return the training label(s) of this example - a map node -never- is used as training
-	//they should not be used for supervision during/after training (not sure how that could even happen)
+	/**
+	 * this will return the training label(s) of this example - a map node -never- is used 
+	 * as training they should not be used for supervision during/after training (not sure 
+	 * how that could even happen)
+	 */
 	public TreeMap<Integer,Integer> getTrainingLabels() {return null;}
 
 	public boolean getHasMappedExamples(int _typeIDX) { return BMUExampleNodes[_typeIDX].hasMappedExamples();}
-	//get # of requested type of examples mapping to this node
+	/**
+	 * get # of requested type of examples mapping to this node
+	 * @param _typeIDX
+	 * @return
+	 */
 	public int getNumExamples(int _typeIDX) {	return BMUExampleNodes[_typeIDX].getNumExamples();	}		
-	//get a map of all examples of specified type near this bmu and the distances for the example
+	/**
+	 * get a map of all examples of specified type near this bmu and the distances for the example
+	 * @param _typeIDX
+	 * @return
+	 */
 	public HashMap<SOM_Example, Double> getAllExsAndDist(int _typeIDX){	return BMUExampleNodes[_typeIDX].getExsAndDist();}//getAllExsAndDist	
-	//return string array of descriptions for the requested kind of examples mapped to this node
+	/**
+	 * return string array of descriptions for the requested kind of examples mapped to this node
+	 * @param _typeIDX
+	 * @return
+	 */
 	public String[] getAllExampleDescs(int _typeIDX) {return BMUExampleNodes[_typeIDX].getAllExampleDescs();}
 	
 	public float[] getDispBoxDims() {return dispBoxDims;}
