@@ -1,9 +1,5 @@
 package base_SOM_Objects;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -16,7 +12,6 @@ import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -54,6 +49,7 @@ import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.MessageObject;
 import base_Utils_Objects.io.MsgCodes;
 import base_Utils_Objects.threading.myProcConsoleMsgMgr;
+import base_Utils_Objects.threading.myProcessManager;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -380,7 +376,12 @@ public abstract class SOM_MapManager {
 	 * PImage object to represent map node population graph
 	 */
 	protected PImage[] mapNodePopGraph; 
-
+	
+	
+	/**
+	 * This construct manages process launching.
+	 */
+	protected myProcessManager<mySOMProcConsoleMgr> processManager;
 	
 	/**
 	 * @param _win owning window(may be null)
@@ -395,7 +396,7 @@ public abstract class SOM_MapManager {
 		initFlags();		
 		//message object manages displaying to screen and potentially to log files - needs to be built first
 		setMsgObj(MessageObject.buildMe(false));
-		
+
 		//build project configuration data object - this manages all file locations and other configuration options
 		//needs to have msgObj defined before called
 		projConfigData = buildProjConfigData(_argsMap);
@@ -419,7 +420,8 @@ public abstract class SOM_MapManager {
 		} else {//setting this just so that it doesn't fail somewhere - won't actually be exec'ed
 			th_exec = Executors.newCachedThreadPool();// Executors.newFixedThreadPool(numUsableThreads);
 		}
-		
+		//must be built after th_exec and msgObj are built
+		processManager = new myProcessManager<>("SOM_MapManager::"+name, msgObj, th_exec);		
 		//data mappers - eventually will replace all example maps, and will derive all training data arrays
 		exampleDataMappers = new ConcurrentSkipListMap<String, SOM_ExampleManager>();
 		//build mappers that will manage data read from disk in order to calculate features and build data arrays used by SOM
@@ -806,45 +808,48 @@ public abstract class SOM_MapManager {
 		msgObj.dispMultiLineMessage("SOM_MapManager::"+name,"buildNewMap","\nwkDir : "+ wkDirStr + "\ncmdStr : " + cmdStr + "\nargs : "+argsStr, MsgCodes.info1);
 		
 		//monitor in multiple threads, either msgs or errors
-		List<Future<Boolean>> procMsgMgrsFtrs = new ArrayList<Future<Boolean>>();
-		List<myProcConsoleMsgMgr> procMsgMgrs = new ArrayList<myProcConsoleMsgMgr>(); 
-		//http://stackoverflow.com/questions/10723346/why-should-avoid-using-runtime-exec-in-java		
-		ProcessBuilder pb = new ProcessBuilder(execStr);		
-		File wkDir = new File(wkDirStr); 
-		pb.directory(wkDir);
+		success = processManager.launch(execStr, wkDirStr, new mySOMProcConsoleMgr( "Input" ), new mySOMProcConsoleMgr( "Error" ));
 		
-		String //resultIn = "",
-				resultErr = "";
-		Process process = null;
-		try {
-			process = pb.start();			
-			myProcConsoleMsgMgr inMsgs = new mySOMProcConsoleMgr(process,new InputStreamReader(process.getInputStream()), "Input" );
-			myProcConsoleMsgMgr errMsgs = new mySOMProcConsoleMgr(process,new InputStreamReader(process.getErrorStream()), "Error" );
-		
-			procMsgMgrs.add(inMsgs);
-			procMsgMgrs.add(errMsgs);			
-			procMsgMgrsFtrs = th_exec.invokeAll(procMsgMgrs);for(Future<Boolean> f: procMsgMgrsFtrs) { f.get(); }
-
-			//resultIn = inMsgs.getResults(); 
-			resultErr = errMsgs.getResults() ;//results of running map TODO save to log?	
-			if(resultErr.toLowerCase().contains("error:")) {throw new InterruptedException("SOM Executable aborted");}
-		} 
-		catch (SecurityException e) {		msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with SecurityException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;} 
-		catch (IOException e) {				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with IOException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;} 
-		catch (InterruptedException e) {	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with InterruptedException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}
-		catch (ExecutionException e) {    	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with ExecutionException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}	
-		catch (Exception e) {				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with Exception : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}	
-		finally {				
-			if(process != null) {
-				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Shutting down process with success == "+success, MsgCodes.info5);
-				process.destroy();
-				if (process.isAlive()) {
-					msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Forcing Process Destroy!.", MsgCodes.info5);
-				    process.destroyForcibly();
-				}
-				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Finished Shutting down process", MsgCodes.info5);
-			}			
-		}
+//		
+//		List<Future<Boolean>> procMsgMgrsFtrs = new ArrayList<Future<Boolean>>();
+//		List<myProcConsoleMsgMgr> procMsgMgrs = new ArrayList<myProcConsoleMsgMgr>(); 
+//		//http://stackoverflow.com/questions/10723346/why-should-avoid-using-runtime-exec-in-java		
+//		ProcessBuilder pb = new ProcessBuilder(execStr);		
+//		File wkDir = new File(wkDirStr); 
+//		pb.directory(wkDir);
+//		
+//		String //resultIn = "",
+//				resultErr = "";
+//		Process process = null;
+//		try {
+//			process = pb.start();			
+//			myProcConsoleMsgMgr inMsgs = new mySOMProcConsoleMgr(process,new InputStreamReader(process.getInputStream()), "Input" );
+//			myProcConsoleMsgMgr errMsgs = new mySOMProcConsoleMgr(process,new InputStreamReader(process.getErrorStream()), "Error" );
+//		
+//			procMsgMgrs.add(inMsgs);
+//			procMsgMgrs.add(errMsgs);			
+//			procMsgMgrsFtrs = th_exec.invokeAll(procMsgMgrs);for(Future<Boolean> f: procMsgMgrsFtrs) { f.get(); }
+//
+//			//resultIn = inMsgs.getResults(); 
+//			resultErr = errMsgs.getResults() ;//results of running map TODO save to log?	
+//			if(resultErr.toLowerCase().contains("error:")) {throw new InterruptedException("SOM Executable aborted");}
+//		} 
+//		catch (SecurityException e) {		msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with SecurityException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;} 
+//		catch (IOException e) {				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with IOException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;} 
+//		catch (InterruptedException e) {	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with InterruptedException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}
+//		catch (ExecutionException e) {    	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with ExecutionException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}	
+//		catch (Exception e) {				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with Exception : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}	
+//		finally {				
+//			if(process != null) {
+//				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Shutting down process with success == "+success, MsgCodes.info5);
+//				process.destroy();
+//				if (process.isAlive()) {
+//					msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Forcing Process Destroy!.", MsgCodes.info5);
+//				    process.destroyForcibly();
+//				}
+//				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Finished Shutting down process", MsgCodes.info5);
+//			}			
+//		}
 		msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Finished", MsgCodes.info5);			
 		//} catch (IOException e){	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Error running map defined by : " + mapExeDat.toString() + " :\n " + e.getMessage(), MsgCodes.error1);	return false;}		
 		return success;
@@ -2858,7 +2863,7 @@ public abstract class SOM_MapManager {
  */
 class mySOMProcConsoleMgr extends myProcConsoleMsgMgr{
 
-	public mySOMProcConsoleMgr(Process _process, Reader _in, String _type) {	super(_process, _in, _type);}
+	public mySOMProcConsoleMgr(String _type) {	super(_type);}
 	
 	/**
 	 * SOM outputs info about time to train each epoch in stderr instead of stdout despite it not being an error, so we don't want to display these messages as being errors
