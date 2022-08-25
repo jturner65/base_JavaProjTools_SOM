@@ -30,6 +30,7 @@ public abstract class SOM_MapNodeSegMgr {
 		msgObj = owner.mapMgr.buildMsgObj();
 		segData = new TreeMap<Integer, SOM_MapNodeSegmentData>();
 		segDataRatio = new TreeMap<Integer, Float>();
+		ttlNumMappedInstances = 0.0f;
 	}
 	/**
 	 * add segment relevant info from passed training example - call from map node, as class information is collected from example calling map node its bmu

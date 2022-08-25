@@ -163,7 +163,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	protected int[] getFlagIDXsToInitToTrue() {
 		// TODO Auto-generated method stub
-		return new int[] {showFullSourceObjIDX,useUIObjLocAsClrIDX,allTrainExUniqueIDX};
+		return new int[] {showFullSourceObjIDX,useUIObjLocAsClrIDX};
 	}
 
 	public void setGeomMapUIWin(SOM_GeomMapUIWin _somUIWin) {

@@ -832,12 +832,14 @@ public abstract class SOM_MapManager {
 		catch (SecurityException e) {		msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with SecurityException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;} 
 		catch (IOException e) {				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with IOException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;} 
 		catch (InterruptedException e) {	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with InterruptedException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}
-		catch (ExecutionException e) {    	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with ExecutionException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}		
+		catch (ExecutionException e) {    	msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with ExecutionException : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}	
+		catch (Exception e) {				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Process failed with Exception : \n" + e.toString() + "\n\t"+ e.getMessage(), MsgCodes.error1);success = false;}	
 		finally {				
 			if(process != null) {
-				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Shutting down process.", MsgCodes.info5);
+				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Shutting down process with success == "+success, MsgCodes.info5);
 				process.destroy();
 				if (process.isAlive()) {
+					msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Forcing Process Destroy!.", MsgCodes.info5);
 				    process.destroyForcibly();
 				}
 				msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Finished Shutting down process", MsgCodes.info5);
