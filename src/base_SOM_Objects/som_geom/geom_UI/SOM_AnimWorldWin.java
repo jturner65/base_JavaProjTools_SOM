@@ -136,7 +136,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	@Override
 	protected base_UpdateFromUIData buildUIDataUpdateObject() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -162,7 +161,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	@Override
 	protected int[] getFlagIDXsToInitToTrue() {
-		// TODO Auto-generated method stub
 		return new int[] {showFullSourceObjIDX,useUIObjLocAsClrIDX};
 	}
 

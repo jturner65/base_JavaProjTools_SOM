@@ -131,13 +131,9 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * @param tmpListObjVals treemap keyed by object IDX and value is list of strings of values for all UI list select objects
 	 */
 	@Override
-	protected final void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals) {		
-	}
+	protected final void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals) {}
 	@Override
-	protected final void setVisScreenDimsPriv_Indiv() {
-		// TODO Auto-generated method stub
-		
-	}
+	protected final void setVisScreenDimsPriv_Indiv() {}
 	
 	@Override
 	protected void setPrivFlagsIndiv(int idx, boolean val) {
@@ -152,13 +148,9 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	protected void drawOnScreenStuffPriv(float modAmtMillis) {}
 	@Override
 	//set flags that should be set on each frame - these are set at beginning of frame draw
-	protected void drawSetDispFlags() {
-		// TODO Auto-generated method stub
-		
-	}
+	protected void drawSetDispFlags() {	}
 	@Override
-	protected void drawMapIndiv() {		
-	}
+	protected void drawMapIndiv() {		}
 
 	@Override
 	protected void setUIWinValsIndiv(int UIidx) {}	
@@ -175,10 +167,6 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	protected void stopMe() {}	
 
-	@Override
-	protected void setCustMenuBtnNames() {
-	}
-	
 	/**
 	 * build SOM_MseOvrDispTypeVals value based on which button was chosen
 	 */
@@ -296,49 +284,41 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 
 	@Override
 	protected String getCategoryUIObjLabel() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected String getClassUIObjLabel() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected void setPrivFlags_LockCatForClassSegs(boolean val) {
-		// TODO Auto-generated method stub
-		
-	}
+	protected void setPrivFlags_LockCatForClassSegs(boolean val) {}
 
 	@Override
 	protected int getCategoryFromClass(int _curCatIDX, int _classIDX) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	protected int getClassFromCategory(int _catIDX, int _curClassIDX) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	protected int getClassLabelFromIDX(int _idx) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	protected int getCategoryLabelFromIDX(int _idx) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	protected final void launchMenuBtnHndlr(int funcRow, int btn) {	}
 
-
+	@Override
+	protected void setCustMenuBtnNames() {}
 
 }//myTrajEditWin
