@@ -268,7 +268,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 		
 		
 		return T;
-	}
+	}//calcOptNumObjsForDesiredProb
 			
 	
 
@@ -358,7 +358,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 */
 	@Override
 	public final void loadPreProcTrainData(String subDir, boolean forceLoad) {
-		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"loadPreProcTrainData","Begin loading preprocced data from " + subDir +  "directory.", MsgCodes.info5);
+		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"loadPreProcTrainData","Begin loading preprocced data from " + subDir +  " directory.", MsgCodes.info5);
 			//load geometry data
 		if(!geomSrcToTrainExDataManager.isDataPreProcced() || forceLoad) {			
 				//first need to load UI info about preprocced data (settings used to generate data)
@@ -382,26 +382,27 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"loadAllPreProccedData","Finished loading preprocced data from " + subDir +  " directory.", MsgCodes.info5);
 	}//loadPreProcTrainData
 	
-	
-	/**
-	 * train map with currently set SOM control values - UI will set values as they change, if UI is being used, otherwise values set via config files
-	 * this is what is called by "build som" button on UI
-	 */
-	public final boolean loadTrainDataMapConfigAndBuildMap(boolean mapNodesToData) {	
-		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"loadTrainDataMapConfigAndBuildMap","Start Loading training data and building map. Mapping examples to SOM Nodes : "+mapNodesToData, MsgCodes.info1);
-		//load all training data and build test and training data partitions
-		//loadPreprocAndBuildTestTrainPartitions(projConfigData.getTrainTestPartition(), false);
-		loadPreProcTrainData(projConfigData.getPreProcDataDesiredSubDirName(),false);
-		//build test/train data partitions only if changed
-		buildTrainTestFromPartition(projConfigData.getTrainTestPartition());			
-		//build experimental directories, save training, testing and diffs/mins data to directories - only should be called when building a new map
-		initNewSOMDirsAndSaveData();		
-		//reload currently set default config for SOM - IGNORES VALUES SET IN UI
-		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"loadTrainDataMapConfigAndBuildMap","Finished Loading training data and setting directories.", MsgCodes.info1);
-		boolean res = _ExecSOM(mapNodesToData);
-		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"loadTrainDataMapConfigAndBuildMap","Finished Loading training data and building map. Success : "  + res+ " | Mapped examples to SOM Nodes :"+mapNodesToData, MsgCodes.info1);
-		return res;
-	}//loadTrainDataMapConfigAndBuildMap
+//	
+//	/**
+//	 * train map with currently set SOM control values - UI will set values as they change, if UI is being used, otherwise values set via config files
+//	 * this is what is called by "build som" button on UI
+//	 */
+//	@Override
+//	public final boolean loadTrainDataMapConfigAndBuildMap(boolean mapNodesToData) {	
+//		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"loadTrainDataMapConfigAndBuildMap","Start Loading training data and building map. Mapping examples to SOM Nodes : "+mapNodesToData, MsgCodes.info1);
+//		//load all training data and build test and training data partitions
+//		//loadPreprocAndBuildTestTrainPartitions(projConfigData.getTrainTestPartition(), false);
+//		loadPreProcTrainData(projConfigData.getPreProcDataDesiredSubDirName(),false);
+//		//build test/train data partitions only if changed
+//		buildTrainTestFromPartition(projConfigData.getTrainTestPartition());			
+//		//build experimental directories, save training, testing and diffs/mins data to directories - only should be called when building a new map
+//		initNewSOMDirsAndSaveData();		
+//		//reload currently set default config for SOM - IGNORES VALUES SET IN UI
+//		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"loadTrainDataMapConfigAndBuildMap","Finished Loading training data and setting directories.", MsgCodes.info1);
+//		boolean res = _ExecSOM(mapNodesToData);
+//		getMsgObj().dispMessage("SOM_GeomMapManager::"+geomObjTypeName+"::"+name,"loadTrainDataMapConfigAndBuildMap","Finished Loading training data and building map. Success : "  + res+ " | Mapped examples to SOM Nodes :"+mapNodesToData, MsgCodes.info1);
+//		return res;
+//	}//loadTrainDataMapConfigAndBuildMap
 	
 	
 	/**
@@ -525,15 +526,12 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 
 	@Override
 	protected final void saveAllSegment_BMUReports_Indiv() {}
-
 	
 	/**
 	 * products are zone/segment descriptors corresponding to certain feature, class or category configurations that are descriptive of training data
 	 */
 	@Override
 	protected final void setProductBMUs() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -541,31 +539,26 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 * any instance-class specific code to execute when new map nodes are being loaded
 	 */
 	protected final void initMapNodesPriv() {
-		// TODO Auto-generated method stub
 	}
 
 
 	@Override
 	protected final Integer[] getAllClassLabels() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected final String getClassSegMappingDescrStr() {
-		// TODO Auto-generated method stub
 		return "Sample Point Membership";
 	}
 
 	@Override
 	protected final Integer[] getAllCategoryLabels() {
-		// TODO Auto-generated method stub
 		return new Integer[0];
 	}
 
 	@Override
 	protected final String getCategorySegMappingDescrStr() {
-		// TODO Auto-generated method stub
 		return "";
 	}
 	
@@ -605,24 +598,18 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	
 	@Override
 	protected final boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode,myPoint mseClckInWorld, int btn, boolean _wasSelNotDeSel) {
-		// TODO Auto-generated method stub
 		return _wasSelNotDeSel;
 	}
 
 	@Override
 	public final boolean checkMouseDragMove_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D,
 			myVector mseDragInWorld, int mseBtn) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	protected final void checkMouseRelease_Indiv() {
-		// TODO Auto-generated method stub
-		
+	protected final void checkMouseRelease_Indiv() {		
 	}
-
-
 	
 	/**
 	 * called from map as bmus after loaded and training data bmus are set from bmu file
@@ -662,9 +649,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	
 	public final void setTrainExShouldBeUnqiue(boolean val) {setFlag(allTrainExUniqueIDX, val);}
 	public final boolean getTrainExShouldBeUnqiue() {return getFlag(allTrainExUniqueIDX);}	
-	
-	
-	
+		
 	@Override
 	protected final int getNumFlags() {	return getNumGeomFlags_Indiv();}
 	protected abstract int getNumGeomFlags_Indiv();
@@ -686,17 +671,13 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 
 	////////////////////////////
 	// draw functions
-
 	
 	@Override
-	protected void initMapArasIndiv(int w, int h, int format, int num2ndFtrVals) {
-		
+	protected void initMapArasIndiv(int w, int h, int format, int num2ndFtrVals) {		
 	}
 
-
 	@Override
-	protected void drawSegmentsUMatrixDispIndiv(IRenderInterface pa) {
-			
+	protected void drawSegmentsUMatrixDispIndiv(IRenderInterface pa) {			
 	}
 	
 	public final void drawSelectedMapNodeGeomObjs(IRenderInterface pa, float animTimeMod, boolean showLabels, boolean useLocAsClr) {
@@ -713,38 +694,31 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	@Override
 	protected void drawMapRectangle_Indiv(IRenderInterface pa, int curImgNum) {	
 		drawMseOverData(pa);			
-
 	}
 
 	@Override
 	protected void drawPerFtrMap_Indiv(IRenderInterface pa) {		
 	}
 
-
 	@Override
 	protected final float getPreBuiltMapInfoDetail(IRenderInterface pa, String[] str, int i, float yOff, boolean isLoaded) {
-		// TODO Auto-generated method stub
 		return yOff;
 	}
 	
 	@Override
 	protected final float drawResultBarPriv1(IRenderInterface pa, float yOff) {
-		// TODO Auto-generated method stub
 		return yOff;
 	}
 
 	@Override
 	protected final float drawResultBarPriv2(IRenderInterface pa, float yOff) {
-		// TODO Auto-generated method stub
 		return yOff;
 	}
 
 	@Override
 	protected final float drawResultBarPriv3(IRenderInterface pa, float yOff) {
-		// TODO Auto-generated method stub
 		return yOff;
 	}
-
 	
 	/**
 	 * for saving bmu reports based on ftr vals
@@ -754,6 +728,5 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 		String ftrTypeDesc = getDataDescFromInt(ftrCalcType);
 		return "Feature Weight Segment using " + ftrTypeDesc +" examples for ftr idx : " + ftrIDX;
 	}
-
 
 }//class SOM_GeomMapManager

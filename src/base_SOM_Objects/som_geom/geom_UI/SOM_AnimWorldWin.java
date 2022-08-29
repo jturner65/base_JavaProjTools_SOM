@@ -92,12 +92,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	// - need to set in window
 	protected float[] SOMMapDims = new float[] { 834.8f, 834.8f };
 
-	public String[][] menuBtnNames = new String[][] { // each must have literals for every button defined in side bar menu, or ignored
-			{ "Load Geometry Data", "Save Geometry Data", "Build Training Data" }, // row 1
-			{ "Save Train Data", "---", "---", "Show SOM Win" }, // row 3
-			{ "Build Map", "LD SOM Config", "---", "---" }, // row 2
-			{ "---", "---", "---", "---" }, { "---", "---", "---", "---", "---" } };
-
 	public static final String[] MseOvrLblsAra = new String[] { "Loc", "Dist", "Pop", "Ftr", "Class", "Cat", "None" };
 
 	public SOM_AnimWorldWin(IRenderInterface _p, GUI_AppManager _AppMgr, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed,String _winTxt, SOM_GeomObjTypes _type) {
@@ -124,9 +118,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 //		setPrivFlags(useUIObjLocAsClrIDX, true);
 //		// set default to use unique training examples
 //		setPrivFlags(allTrainExUniqueIDX, true);
-
-		AppMgr.setAllMenuBtnNames(menuBtnNames);
-
+		
 		// instance-specific init
 		initMe_Indiv();
 		// build default objects in screen
@@ -785,7 +777,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 						break;
 					}
 					case 2: {
-						mapMgr.generateTrainingData();
 						resetButtonState();
 						break;
 					}
@@ -800,22 +791,22 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	
 			case 1: {// row 2 of menu side bar buttons
 				switch (btn) {
-					case 0: {
-						mapMgr.saveCurrentTrainData();
-						resetButtonState();
-						break;
-					}
-					case 1: {
+					case 0: {//calc optimal # of training examples
 						mapMgr.calcOptNumObjsForDesiredProb(10, .95f);
 						resetButtonState();
 						break;
 					}
-					case 2: {
+					case 1: {//generate training data
+						mapMgr.generateTrainingData();
 						resetButtonState();
 						break;
 					}
-					case 3: {// show/hide som Map UI
-						setPrivFlags(drawSOM_MapUIVis, !getPrivFlags(drawSOM_MapUIVis));
+					case 2: {//save current training data to disk, for use by SOM
+						mapMgr.saveCurrentTrainData();
+						resetButtonState();
+						break;
+					}
+					case 3: {
 						resetButtonState();
 						break;
 					}
@@ -830,8 +821,8 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 			} // row 2 of menu side bar buttons
 			case 2: {// row 3 of menu side bar buttons
 				switch (btn) {
-					case 0: {
-						mapMgr.loadTrainDataMapConfigAndBuildMap(false);
+					case 0: {// show/hide som Map UI
+						setPrivFlags(drawSOM_MapUIVis, !getPrivFlags(drawSOM_MapUIVis));
 						resetButtonState();
 						break;
 					}
@@ -840,10 +831,11 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 						resetButtonState();
 						break;
 					}
-					case 2: {
+					case 2: {// currently does not display map
+						mapMgr.loadTrainDataMapConfigAndBuildMap(false);
 						resetButtonState();
 						break;
-					}
+					}					
 					case 3: {
 						resetButtonState();
 						break;
@@ -1049,7 +1041,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	protected final void closeMe() {	}
 	@Override
-	protected final void showMe() {		setCustMenuBtnNames();	}
+	protected final void showMe() {			setCustMenuBtnNames();	}
 	@Override
 	protected final String[] getSaveFileDirNamesPriv() {		return new String[0];	}
 	@Override

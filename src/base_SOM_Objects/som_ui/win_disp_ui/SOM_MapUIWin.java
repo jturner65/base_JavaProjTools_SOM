@@ -976,8 +976,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	@Override
 	protected void closeMe() {}
 	@Override
-	protected void showMe() {
-		//pa.setMenuDbgBtnNames(menuDbgBtnNames);	
+	protected void showMe() {	
 		setCustMenuBtnNames();
 	}
 
