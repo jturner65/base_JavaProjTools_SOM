@@ -72,7 +72,7 @@ public class SOM_DataLoader{
 			msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading BMUs for training data successfully completed.", MsgCodes.info1);
 			mapMgr.setAllBMUsFromMap();
 		} else {
-			msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading BMUs for training data failed.  Unable to match products to map nodes since BMU loading failed.  Aborting further processing.", MsgCodes.error2);	
+			msgObj.dispMessage("SOM_DataLoader", "execDataLoad", "Loading BMUs for training data failed.  Unable to match test data to map nodes since BMU loading failed.  Aborting further processing.", MsgCodes.error2);	
 			return false;
 		}		
 			//finish up 
@@ -215,7 +215,11 @@ public class SOM_DataLoader{
 		return true;
 	}//checkBMUHeader
 	
-	//load best matching units for each training example - has values : idx, mapy, mapx.  Uses file built by som code.  can be verified by comparing actual example distance from each node
+	/**
+	 * load best matching units for each training example - has values : idx, mapy, mapx.  
+	 * Uses file built by som code.  can be verified by comparing actual example distance from each node
+	 * @return
+	 */
 	private boolean loadSOM_BMUs(){//modifies existing nodes and datapoints only
 		String bmFileName = projConfigData.getSOMResFName(SOM_ProjConfigData.bmuIDX);
 		if(bmFileName.length() < 1){msgObj.dispMessage("SOM_DataLoader","loadSOM_BMUs","getSOMResFName call failed : "+bmFileName, MsgCodes.info5);return false;}

@@ -375,8 +375,7 @@ public abstract class SOM_MapManager {
 	/**
 	 * PImage object to represent map node population graph
 	 */
-	protected PImage[] mapNodePopGraph; 
-	
+	protected PImage[] mapNodePopGraph; 	
 	
 	/**
 	 * This construct manages process launching.
@@ -446,7 +445,7 @@ public abstract class SOM_MapManager {
 	/**
 	 * only set if win != null
 	 */
-	private void setName(String _winName) {name = _winName + "_MapManager_ID_"+ID;}
+	private void setName(String _winName) {name = _winName + "_MapMgr_ID_"+ID;}
 	public String getName() {return name;}
 	/**
 	 * use this to set window/UI components, if exist
@@ -454,12 +453,17 @@ public abstract class SOM_MapManager {
 	 * @param _hasGraphics
 	 */
 	public void setPADispWinData(SOM_MapUIWin _win, boolean _hasGraphics) {
-		setWinAndWinData(_win);//win=_win;
-		//if(win != null) {setName(win.name);} else {setName("No_Win");}
+		setWinAndWinData(_win);
 		MessageObject.hasGraphics = _hasGraphics;
 		projConfigData.setUIValsFromLoad();
+		setPADispWinDataIndiv();
 	}//setPAWindowData
 
+	/**
+	 * Any instancing-class-specific functionality for after MapUIWindow is set
+	 */
+	protected abstract void setPADispWinDataIndiv();
+	
 	/**
 	 * build the map of example mappers used to manage all the data the SOM will consume
 	 */
@@ -1287,14 +1291,14 @@ public abstract class SOM_MapManager {
 	
 	//call 1 time for any particular type of data - all _exs should have their bmu's set by now
 	//this will set the bmu lists for each map node to include the mapped examples
-	public synchronized void _completeBMUProcessing(SOM_Example[] _exs, SOM_ExDataType dataType, boolean isMT) {
-		msgObj.dispMessage("SOM_MapManager::"+name,"_completeBMUProcessing","Start completion of " +_exs.length + " "+dataType.getName()+" data bmu mappings - assign to BMU's example collection and finalize.", MsgCodes.info5);
-		int dataTypeVal = dataType.getVal();
-		for(SOM_MapNode mapNode : MapNodes.values()){mapNode.clearBMUExs(dataTypeVal);addExToNodesWithNoExs(mapNode, dataType);}		//must be done synchronously always	
-		if(dataType==SOM_ExDataType.Training) {			for (int i=0;i<_exs.length;++i) {			_exs[i].mapTrainingToBMU(dataTypeVal);	}		} 
+	public synchronized void _completeBMUProcessing(SOM_Example[] _exs, SOM_ExDataType _dataType, boolean isMT) {
+		msgObj.dispMessage("SOM_MapManager::"+name,"_completeBMUProcessing","Start completion of " +_exs.length + " "+_dataType.getName()+" data bmu mappings - assign to BMU's example collection and finalize.", MsgCodes.info5);
+		int dataTypeVal = _dataType.getVal();
+		for(SOM_MapNode mapNode : MapNodes.values()){mapNode.clearBMUExs(dataTypeVal);addExToNodesWithNoExs(mapNode, _dataType);}		//must be done synchronously always	
+		if(_dataType==SOM_ExDataType.Training) {			for (int i=0;i<_exs.length;++i) {			_exs[i].mapTrainingToBMU(dataTypeVal);	}		} 
 		else {										for (int i=0;i<_exs.length;++i) {			_exs[i].mapToBMU(dataTypeVal);		}		}
-		_finalizeBMUProcessing(dataType);
-		msgObj.dispMessage("SOM_MapManager::"+name,"_completeBMUProcessing","Finished completion of " +_exs.length + " "+dataType.getName()+" data bmu mappings - assign to BMU's example collection and finalize.", MsgCodes.info5);
+		_finalizeBMUProcessing(_dataType);
+		msgObj.dispMessage("SOM_MapManager::"+name,"_completeBMUProcessing","Finished completion of " +_exs.length + " "+_dataType.getName()+" data bmu mappings - assign to BMU's example collection and finalize.", MsgCodes.info5);
 	}//_completeBMUProcessing
 	
 	/**
@@ -1316,6 +1320,9 @@ public abstract class SOM_MapManager {
 		//build a map keyed by ftrIDX of all nodes that have non-zero ftr idx values for the key ftr idx and also have examples mapped to them
 		//MapNodesByFtrIDX map can't be used - it holds -all- map nodes, not just those with examples
 		TreeMap<Integer, HashSet<SOM_MapNode>> MapNodesWithExByFtrIDX = new TreeMap<Integer, HashSet<SOM_MapNode>>();
+		
+		//TODO very large maps (100x100) have many nodes that have no examples mapped to them. Need to improve this process
+		msgObj.dispMessage("SOM_MapManager::"+name,"addMappedNodesToEmptyNodes_FtrDist","Very large maps (100x100) have many nodes that have no examples mapped to them. Need to improve this process.", MsgCodes.info5);		
 		for(SOM_MapNode nodeWithEx : withMap){
 			Integer[] nonZeroIDXs = nodeWithEx.getNonZeroIDXs();
 			for(Integer idx : nonZeroIDXs) {
@@ -2530,7 +2537,8 @@ public abstract class SOM_MapManager {
 	public MessageObject buildMsgObj() {return MessageObject.buildMe();}
 	
 	/**
-	 * called from map as bmus after loaded and training data bmus are set from bmu file - application-specific functionality 
+	 * called from SOM_DataLoarder after all BMUs are loaded and training data bmus are set from bmu 
+	 * file. Application-specific functionality to handle mapping test data, for example
 	 */
 	public abstract void setAllBMUsFromMap();
 

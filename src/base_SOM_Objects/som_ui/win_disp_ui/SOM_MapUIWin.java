@@ -206,8 +206,12 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		setPrivFlags(mapDrawUMatrixIDX, flagsToSet[0]);
 		setPrivFlags(mapExclProdZeroFtrIDX, flagsToSet[1]);
 		//set initial values for UI
-		mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataNormIDX].getVal()), (int)(this.guiObjs[uiBMU_DispDataFrmtIDX].getVal()),(float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),(float)(this.guiObjs[uiNodePopDispThreshIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
-		//mapMgr.initFromUIWinInitMe((int)(this.guiObjs[uiTrainDataNormIDX].getVal()), (float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),(float)(this.guiObjs[uiPopMapNodeDispSizeIDX].getVal()), (int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
+		mapMgr.initFromUIWinInitMe(
+				(int)(this.guiObjs[uiTrainDataNormIDX].getVal()), 
+				(int)(this.guiObjs[uiBMU_DispDataFrmtIDX].getVal()),
+				(float)(this.guiObjs[uiNodeWtDispThreshIDX].getVal()),
+				(float)(this.guiObjs[uiNodePopDispThreshIDX].getVal()), 
+				(int)(this.guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
 
 		initMeIndiv();
 	}
@@ -934,19 +938,15 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	//2nd index is file name, should have parameters encoded
 	@Override
 	protected final String[] getSaveFileDirNamesPriv() {
-		// TODO Auto-generated method stub
 		return new String[0];
 	}
 
 	@Override
 	public final void hndlFileLoad(File file, String[] vals, int[] stIdx) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public final ArrayList<String> hndlFileSave(File file) {
-		// TODO Auto-generated method stub
 		return new ArrayList<String>();
 	}
 	@Override
