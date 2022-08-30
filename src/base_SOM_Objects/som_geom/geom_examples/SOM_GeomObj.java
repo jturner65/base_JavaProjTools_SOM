@@ -741,16 +741,11 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _worldBounds
 	 */
 	protected abstract void setWorldBounds(float[][] _worldBounds);
-
-	//public final int getID() {return GeomObj_ID;}
-	
 	
 	public int getNumSamples() {if(null!=objSamples) {return objSamples.getNumSamples();}else{return 0;}}
 	public SOM_GeomSamplePointf getSamplePt(int idx) {if(null!=objSamples) {return objSamples.getSamplePt(idx);}else{return null;}}
 	public SOM_GeomSamplePointf[] getAllSamplePts() {if(null!=objSamples) {return objSamples.getAllSamplePts();}else{return new SOM_GeomSamplePointf[0];}}
-
 	
-
 	private void initGeomFlags(){geomStFlags = new int[1 + numFlags/32]; for(int i = 0; i<numFlags; ++i){setFlag(i,false);}}
 	public final void setGeomFlag(int idx, boolean val){
 		int flIDX = idx/32, mask = 1<<(idx%32);

@@ -4,7 +4,7 @@ import base_Math_Objects.MyHashCodeUtils;
 
 /**
  * this class is a struct that will hold the idxs of the sample array that make up a single training example
- * The purpose of this class is to facilitate uniqueness in traininge examples - the hash for the object is built
+ * The purpose of this class is to facilitate uniqueness in training examples - the hash for the object is built
  * using all the idxs - any object that has the same idxs should come back as equal to this object
  * @author john
  *

@@ -66,7 +66,7 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	public final void buildTrainingDataFromGeomObjs(SOM_GeomExampleManager geomExMgr, boolean setUniqueIDXs, int ttlNumTrainEx) {
 		msgObj.dispInfoMessage("SOM_GeomExampleManager::"+exampleName, "buildTrainingDataFromGeomObjs", "Start building example data in " + exampleName +"'s "+exMgrName + " ex mgr using geometric data from " + geomExMgr.exampleName +"'s " + geomExMgr.exMgrName+ " examples present.");
 		reset();
-		//all geomgetric objects from geometry example manager
+		//all geometric objects from geometry example manager
 		SOM_GeomObj[] geomEx = (SOM_GeomObj[]) geomExMgr.buildExampleArray();
 		int numSamplesTTL = geomEx.length * geomEx[0].getNumSamples();
 		allSamples = new SOM_GeomSamplePointf[numSamplesTTL];
