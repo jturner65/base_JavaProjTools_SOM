@@ -8,8 +8,8 @@ import java.util.concurrent.ExecutorService;
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;
 import base_Utils_Objects.io.FileIOManager;
-import base_Utils_Objects.io.MessageObject;
-import base_Utils_Objects.io.MsgCodes;
+import base_Utils_Objects.io.messaging.MessageObject;
+import base_Utils_Objects.io.messaging.MsgCodes;
 
 public class SOM_SaveExToBMUs_Runner extends SOM_MapRunner {
 	

@@ -6,8 +6,8 @@ import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;
 import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_Utils_Objects.io.FileIOManager;
-import base_Utils_Objects.io.MessageObject;
-import base_Utils_Objects.io.MsgCodes;
+import base_Utils_Objects.io.messaging.MessageObject;
+import base_Utils_Objects.io.messaging.MsgCodes;
 
 //save all training/testing data to appropriate format for SOM
 public class SOM_TrainDataWriter implements Callable<Boolean>{

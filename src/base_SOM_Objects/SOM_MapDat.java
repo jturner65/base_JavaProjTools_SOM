@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
-import base_Utils_Objects.io.MessageObject;
-import base_Utils_Objects.io.MsgCodes;
+import base_Utils_Objects.io.messaging.MessageObject;
+import base_Utils_Objects.io.messaging.MsgCodes;
 
 public class SOM_MapDat{
 	//project config object

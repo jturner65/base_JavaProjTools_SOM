@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;
 import base_Utils_Objects.io.FileIOManager;
-import base_Utils_Objects.io.MessageObject;
-import base_Utils_Objects.io.MsgCodes;
+import base_Utils_Objects.io.messaging.MessageObject;
+import base_Utils_Objects.io.messaging.MsgCodes;
 
 //this class will load the pre-procced csv data into the prospect data structure owned by the SOMMapData object
 public abstract class SOM_ExCSVDataLoader implements Callable<Boolean>{

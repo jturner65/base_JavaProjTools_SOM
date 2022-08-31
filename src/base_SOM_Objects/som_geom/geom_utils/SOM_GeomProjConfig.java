@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
-import base_Utils_Objects.io.MsgCodes;
+import base_Utils_Objects.io.messaging.MsgCodes;
 
 public class SOM_GeomProjConfig extends SOM_ProjConfigData {
 	//file name to use to save sphere-project-specific SOM config data

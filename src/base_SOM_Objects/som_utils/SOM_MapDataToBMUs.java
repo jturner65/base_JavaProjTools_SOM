@@ -9,7 +9,7 @@ import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
-import base_Utils_Objects.io.MessageObject;
+import base_Utils_Objects.io.messaging.MessageObject;
 
 //class to manage mapping of examples to bmus
 public abstract class SOM_MapDataToBMUs implements Callable<Boolean>{

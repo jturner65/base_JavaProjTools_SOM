@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 import base_SOM_Objects.som_examples.SOM_Example;
 import base_SOM_Objects.som_examples.SOM_FtrDataType;
-import base_Utils_Objects.io.MsgCodes;
+import base_Utils_Objects.io.messaging.MsgCodes;
 
 /**
  * instances of this class will hold all the different variants 
