@@ -199,10 +199,10 @@ public abstract class SOM_ProjConfigData {
 			qualifiedDir = new File(_dir).getCanonicalPath() + File.separator ;
 		} catch (Exception e) {
 			qualifiedDir = _dir;
-			msgObj.dispMessage("SOM_ProjConfigData","Constructor->buildQualifiedBaseDir","Failed to find " + _type + " directory "+ qualifiedDir + " due to : " + e + ". Exiting program.", MsgCodes.error1);
+			msgObj.dispMessage("SOM_ProjConfigData","ctor->buildQualifiedBaseDir","Failed to find " + _type + " directory "+ qualifiedDir + " due to : " + e + ". Exiting program.", MsgCodes.error1);
 			System.exit(1);
 		}
-		msgObj.dispMessage("SOM_ProjConfigData","Constructor->buildQualifiedBaseDir","Canonical Path to " + _type + " directory : " + qualifiedDir, MsgCodes.info1);
+		msgObj.dispMessage("SOM_ProjConfigData","ctor->buildQualifiedBaseDir","Canonical Path to " + _type + " directory : " + qualifiedDir, MsgCodes.info1);
 		return qualifiedDir;
 	}//buildQualifiedBaseDir
 	
@@ -792,11 +792,14 @@ public abstract class SOM_ProjConfigData {
 
 	//log file name
 	public String getFullLogFileNameString() {
-		String [] tmpNow = getDateTimeString(false, "_");
-		String logDirName= getDirNameAndBuild(subDirLocs.get("SOM_Logs") + "log_"+tmpNow[1] +File.separator, false);
-		return logDirName + "SOM_Run_Log.txt";
+		return getFullLogFileNameString("SOM_Run_Log.txt");
 	}
-	
+	//log file name
+	public String getFullLogFileNameString(String fileName) {
+		String [] tmpNow = getDateTimeString(false, "_");
+		String logDirName = getDirNameAndBuild(subDirLocs.get("SOM_Logs") + "log_"+tmpNow[1] +File.separator, false);
+		return logDirName + fileName;
+	}
 	/**
 	 * this will return the fully qualified path to the file in a sub directory in SOM_QualifiedConfigDir or SOM_QualifiedDataDir
 	 * specified in fNameKey - subDirs contains sub directories to query under SOM_QualifiedConfigDir 

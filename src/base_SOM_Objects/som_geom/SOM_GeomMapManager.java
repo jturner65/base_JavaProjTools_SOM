@@ -26,9 +26,8 @@ import base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen.SOM_GeomObjBl
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
-import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
-
 import base_Utils_Objects.io.messaging.MsgCodes;
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
 
 /**
  * extension of SOM_MapManager intended for geometric/graphical objects

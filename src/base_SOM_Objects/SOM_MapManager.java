@@ -417,6 +417,7 @@ public abstract class SOM_MapManager {
 			//th_exec = Executors.newFixedThreadPool(numUsableThreads+1);
 			th_exec = Executors.newCachedThreadPool();// this is performing much better even though it is using all available threads
 		} else {//setting this just so that it doesn't fail somewhere - won't actually be exec'ed
+			//TODO get rid of this when not MTCapable
 			th_exec = Executors.newCachedThreadPool();// Executors.newFixedThreadPool(numUsableThreads);
 		}
 		//must be built after th_exec and msgObj are built
@@ -815,7 +816,7 @@ public abstract class SOM_MapManager {
 		msgObj.dispMultiLineMessage("SOM_MapManager::"+name,"buildNewMap","\nwkDir : "+ wkDirStr + "\ncmdStr : " + cmdStr + "\nargs : "+argsStr, MsgCodes.info1);
 		
 		//monitor in multiple threads, either msgs or errors
-		success = processManager.launch(execStr, wkDirStr, new mySOMProcConsoleMgr( "Input" ), new mySOMProcConsoleMgr( "Error" ));
+		success = processManager.launch(execStr, wkDirStr, new mySOMProcConsoleMgr(msgObj, "Input" ), new mySOMProcConsoleMgr(msgObj, "Error" ));
 
 		msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","buildNewMap Finished", MsgCodes.info5);			
 		return success;
@@ -2833,7 +2834,7 @@ public abstract class SOM_MapManager {
  */
 class mySOMProcConsoleMgr extends myProcConsoleMsgMgr{
 
-	public mySOMProcConsoleMgr(String _type) {	super(_type);}
+	public mySOMProcConsoleMgr(MessageObject _msgObj, String _type) {	super(_msgObj,_type);}
 	
 	/**
 	 * SOM outputs info about time to train each epoch in stderr instead of stdout despite it not being an error, 

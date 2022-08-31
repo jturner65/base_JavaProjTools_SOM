@@ -690,12 +690,12 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param pa
 	 */	
 	public final void drawMeClrRnd_BMU(IRenderInterface pa) {
-		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeClrRnd(pa);}
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrRnd(pa);}
 	}	
 	
 	
 	public final void drawMeClrLoc_BMU(IRenderInterface pa) {
-		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeClrLoc(pa);}
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrLoc(pa);}
 	}
 	
 	/**
@@ -703,30 +703,30 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param pa
 	 */	
 	public final void drawMeClrRnd_WF_BMU(IRenderInterface pa) {
-		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeClrRnd_WF(pa);}
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrRnd_WF(pa);}
 	}		
 	
 	public final void drawMeClrLoc_WF_BMU(IRenderInterface pa) {
-		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeClrLoc_WF(pa);}
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrLoc_WF(pa);}
 	}
 	
 	public final void drawMyLabel_BMU(IRenderInterface pa, SOM_AnimWorldWin animWin) {	
-		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMyLabel(pa, animWin);	}
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMyLabel(pa, animWin);	}
 	}
 	
 	public final void drawMeSelected_ClrLoc_BMU(IRenderInterface pa,float animTmMod, boolean drawSamples) {
-		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeSelected_ClrLoc(pa, animTmMod,drawSamples);}
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSelected_ClrLoc(pa, animTmMod,drawSamples);}
 	}
 	public void drawMeSelected_ClrRnd_BMU(IRenderInterface pa,float animTmMod, boolean drawSamples) { 
-		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeSelected_ClrRnd(pa, animTmMod,drawSamples);}
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSelected_ClrRnd(pa, animTmMod,drawSamples);}
 	}	
 	
 	public final void drawMeSmpls_ClrRnd_BMU(IRenderInterface pa){
-		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeSmpls_ClrRnd(pa);}
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSmpls_ClrRnd(pa);}
 	}//
 	
 	public final void drawMeSmpls_ClrLoc_BMU(IRenderInterface pa){
-		if(!this.isBmuNull()) {		((SOM_GeomMapNode) this.getBmu()).getVisObj().drawMeSmpls_ClrLoc(pa);}
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSmpls_ClrLoc(pa);}
 	}//	
 
 
