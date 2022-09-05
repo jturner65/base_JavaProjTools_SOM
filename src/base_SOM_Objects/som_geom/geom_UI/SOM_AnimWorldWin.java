@@ -92,8 +92,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	// - need to set in window
 	protected float[] SOMMapDims = new float[] { 834.8f, 834.8f };
 
-	public static final String[] MseOvrLblsAra = new String[] { "Loc", "Dist", "Pop", "Ftr", "Class", "Cat", "None" };
-
 	public SOM_AnimWorldWin(IRenderInterface _p, GUI_AppManager _AppMgr, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed,String _winTxt, SOM_GeomObjTypes _type) {
 		super(_p, _AppMgr, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
 		initAndSetAnimWorldVals();
@@ -105,20 +103,9 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	protected final void initMe() {
 		// build map associated with this geometric experiment
 		// perform in this window since SOM window is subordinate to this one
-
 		mapMgr = buildGeom_SOMMapManager();
-
 		// capable of using right side menu
-		setFlags(drawRightSideMenu, true);
-		// init specific sim flags
-		//initPrivFlags(numPrivFlags);
-//		// default setting is to show the geometric objects
-//		setPrivFlags(showFullSourceObjIDX, true);
-//		// default to show location as color
-//		setPrivFlags(useUIObjLocAsClrIDX, true);
-//		// set default to use unique training examples
-//		setPrivFlags(allTrainExUniqueIDX, true);
-		
+		setFlags(drawRightSideMenu, true);		
 		// instance-specific init
 		initMe_Indiv();
 		// build default objects in screen
@@ -153,7 +140,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	@Override
 	protected int[] getFlagIDXsToInitToTrue() {
-		return new int[] {showFullSourceObjIDX,useUIObjLocAsClrIDX};
+		return new int[] {showFullSourceObjIDX,useUIObjLocAsClrIDX, allTrainExUniqueIDX};
 	}
 
 	public void setGeomMapUIWin(SOM_GeomMapUIWin _somUIWin) {
@@ -361,7 +348,9 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		tmpUIObjArray.put(gIDX_FractNumTrainEx, new Object[] { new double[] { 0.00001, 1.000, 0.00001 }, fractOfBinomialForBaseNumTrainEx,"Fract of Binomial for Train Ex", new boolean[] { false, false, true, false } }); // gIDX_FractNumTrainEx
 
 		// gIDX_NumTraingEx
-		long minNumTrainingExamples = getNumTrainingExamples(minNumObjs, minNumSmplsPerObj),maxNumTrainingExamples = 10 * minNumTrainingExamples,diffNumTrainingEx = (maxNumTrainingExamples - minNumTrainingExamples) > 1000 ? 1000 : 10;
+		long minNumTrainingExamples = numGeomObjs,
+				maxNumTrainingExamples = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj),
+				diffNumTrainingEx = (maxNumTrainingExamples - minNumTrainingExamples) > 1000 ? 1000 : 10;
 		numTrainingExamples = (int) minNumTrainingExamples;
 		tmpUIObjArray.put(gIDX_NumTrainingEx, new Object[] { new double[] { minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx },(double) (numTrainingExamples),	"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]",new boolean[] { true, false, true, false} }); // gIDX_NumUISamplesPerObj
 		tmpUIObjArray.put(gIDX_SelDispUIObj, new Object[] { new double[] { 0, numGeomObjs - 1, 1 }, (double) (curSelGeomObjIDX),"ID of Object to Select", new boolean[] { true, false, true, true } }); // gIDX_SelDispUIObj
@@ -378,12 +367,10 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	protected abstract long getNumTrainingExamples(int objs, int smplPerObj);
 
 	protected abstract int getMinNumObjs();
-
 	protected abstract int getMaxNumObjs();
-
 	protected abstract int getMinNumSmplsPerObj();
-
 	protected abstract int getMaxNumSmplsPerObj();
+	protected abstract int getModNumSmplsPerObj();
 
 	/**
 	 * Instancing class-specific (application driven) UI objects should be defined
@@ -403,15 +390,17 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 * or samples per object
 	 */
 	private void refreshNumTrainingExampleBounds() {
+		//min # of training examples will at least be # of geometric objects 
+		long newMinVal = numGeomObjs;
+		guiObjs[gIDX_NumTrainingEx].setNewMin(newMinVal);
 		// binomial coefficient - n (total # of samples across all objects) choose k
-		// (dim of minimal defining set of each object)
+		// (dim of minimal defining set of each object)		
 		long newMaxVal = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj);
 		guiObjs[gIDX_NumTrainingEx].setNewMax(newMaxVal);
-		int minVal = (int) guiObjs[gIDX_NumTrainingEx].getMinVal();
-		guiObjs[gIDX_NumTrainingEx].setNewDispText("Ttl # of Train Ex [" + minVal + ", " + newMaxVal + "]");
+		guiObjs[gIDX_NumTrainingEx].setNewDispText("Ttl # of Train Ex [" + newMinVal + ", " + newMaxVal + "]");
 		double curNum = guiObjs[gIDX_NumTrainingEx].getVal();
-		if (curNum < minVal) {
-			guiObjs[gIDX_NumTrainingEx].setVal(minVal);
+		if (curNum < newMinVal) {
+			guiObjs[gIDX_NumTrainingEx].setVal(newMinVal);
 		}
 		if (curNum > newMaxVal) {
 			guiObjs[gIDX_NumTrainingEx].setVal(newMaxVal);
