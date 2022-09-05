@@ -781,7 +781,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 			case 1: {// row 2 of menu side bar buttons
 				switch (btn) {
 					case 0: {//calc optimal # of training examples
-						mapMgr.calcOptNumObjsForDesiredProb(10, .95f);
+						mapMgr.calcOptNumObjsForDesiredProb(5, .95f);
 						resetButtonState();
 						break;
 					}

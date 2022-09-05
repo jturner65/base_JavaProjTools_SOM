@@ -519,12 +519,13 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 */
 	@Override
 	protected void buildTrainTestFromPartition(float trainTestPartition) {
-		getMsgObj().dispMessage(dispClassGeomName,"buildTestTrainFromInput","Starting Building Input, Test, Train data arrays.", MsgCodes.info5);		
+		getMsgObj().dispMessage(dispClassGeomName,"buildTrainTestFromPartition","Starting Building Input, Test, Train data arrays.", MsgCodes.info5);		
 		if(!getFlag(srcGeomObjsAllBuiltIDX)) {
-			getMsgObj().dispWarningMessage(dispClassGeomName,"buildTestTrainFromInput","Rebuilding Geometric Objects using current UI Values.");
+			getMsgObj().dispWarningMessage(dispClassGeomName,"buildTrainTestFromPartition","Rebuilding Geometric Objects using current UI Values.");
 			buildGeomExampleObjs();
 		} 
 		if(!getFlag(trainDatObjsAllBuiltIDX)) {
+			getMsgObj().dispMessage(dispClassGeomName,"buildTrainTestFromPartition","Attempt to build test/train since not built yet!",MsgCodes.info1);
 			resetTrainDataObjs();		
 				//synthesize training data using current configuration from UI with loaded data
 			trainExDataManager.buildTrainingDataFromGeomObjs(geomSrcToTrainExDataManager, getFlag(allTrainExUniqueIDX), ttlNumTrainExamples);
@@ -532,12 +533,12 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 			setFlag(trainDatObjsAllBuiltIDX,true);
 				//finalize and calc ftr vecs on geometry if we have loaded new data 
 			finishSOMExampleBuild(trainExDataManager,  ""+geomObjTypeName +" Geom object-derived training example");
-		}
+			getMsgObj().dispMessage(dispClassGeomName,"buildTrainTestFromPartition","End build test/train since not built yet! - built " + trainDatGeomObjects.length+ " objs in example array.",MsgCodes.info1);
+		} 
 		//set input data, shuffle it and set test and train partitions
 		//only build test and train partitions if training data has been synthesized from geometric examples
-		setInputTrainTestShuffleDataAras(trainTestPartition);
-		
-		getMsgObj().dispMessage(dispClassGeomName,"buildTestTrainFromInput","Finished Building Input, Test, Train, data arrays.", MsgCodes.info5);
+		setInputTrainTestShuffleDataAras(trainTestPartition);		
+		getMsgObj().dispMessage(dispClassGeomName,"buildTrainTestFromPartition","Finished Building Input, Test, Train, data arrays.", MsgCodes.info5);
 	}
 
 	/**
