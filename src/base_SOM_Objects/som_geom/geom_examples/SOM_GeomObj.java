@@ -92,7 +92,6 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * distance to draw point label from point
 	 */
 	public static final float lblDist = 2.0f;
-
 	
 	/**
 	 * build a geometry-based training/validation example for the SOM
@@ -128,7 +127,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		_ctorInit(_mapMgr,Integer.parseInt(_csvDat.trim().split(",")[1].trim()),_GeoType, _is3D, true);
 		
 		//only data needed to be saved
-		srcPts = buildSrcPtsFromCSVString(_numSrcPts, _csvDat);
+		srcPts = buildSrcPtsFromCSVString(_numSrcPts, _csvDat);	
 		//build geomSrcSamples from srcPts 
 		geomSrcSamples = new SOM_GeomSamplePointf[getSrcPts().length];
 		for(int i=0;i<geomSrcSamples.length;++i) {geomSrcSamples[i] =  new SOM_GeomSamplePointf(getSrcPts()[i], dispLabel+"_gen_pt_"+i, this);}
@@ -183,7 +182,9 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	}//copy ctor
 
 	private void _ctorInit(SOM_GeomMapManager _mapMgr, int _geoObj_ID, SOM_GeomObjTypes _GeoType, boolean _is3D, boolean _shouldBuildSamples) {
-		setWorldBounds(_mapMgr.getWorldBounds());	
+		initGeomFlags();
+		setGeomFlag(is3dIDX, _is3D);
+		setGeomFlag(buildSampleObjIDX, _shouldBuildSamples);
 		objGeomType = _GeoType;		
 		GeomObj_ID = _geoObj_ID;		//sets GeomObj_ID to be count of instancing class objs
 		dispLabel = objGeomType.toString() + "_"+GeomObj_ID;
@@ -191,9 +192,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		classIDs = new HashSet<Integer>();
 		categoryIDs = new HashSet<Integer>();
 		
-		initGeomFlags();
-		setGeomFlag(is3dIDX, _is3D);
-		setGeomFlag(buildSampleObjIDX, _shouldBuildSamples);
+
 		labelClrAra = getGeomFlag(is3dIDX)? new int[] {0,0,0,255} : new int[] {255,255,255,255};
 		rndClrAra = getRandClr();		
 	}//_ctorInit
@@ -405,7 +404,6 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		return spherePts;
 	}//getRandSpherePoints
 	
-	
 	/**
 	 * return a random point on this object
 	 */
@@ -505,9 +503,12 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		
 	////////////////////////
 	// draw functions
-	protected static final int lBnd = 40, uBnd = 255, rndBnd = uBnd - lBnd;
-	//convert a world location within the bounded cube region to be a 4-int color array
-	public abstract int[] getClrFromWorldLoc(myPointf pt);
+	protected static final int lBnd = 40, uBnd = 255, rndBnd = uBnd - lBnd;	
+	/**
+	 * convert a world location within the bounded cube region to be a 4-int color array. Override for 2d objects
+	 */
+	public int[] getClrFromWorldLoc(myPointf pt){return getClrFromWorldLoc_3D(pt,((SOM_GeomMapManager) mapMgr).getWorldBounds());}//getClrFromWorldLoc
+	
 	/**
 	 * 2 d get world loc color
 	 * @param pt
@@ -732,12 +733,6 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 
 	////////////////////////
 	// data accessor functions
-
-	/**
-	 * call from ctor of base class, but set statically for each instancing class type
-	 * @param _worldBounds
-	 */
-	protected abstract void setWorldBounds(float[][] _worldBounds);
 	
 	public int getNumSamples() {if(null!=objSamples) {return objSamples.getNumSamples();}else{return 0;}}
 	public SOM_GeomSamplePointf getSamplePt(int idx) {if(null!=objSamples) {return objSamples.getSamplePt(idx);}else{return null;}}
