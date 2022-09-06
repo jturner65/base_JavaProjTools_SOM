@@ -655,8 +655,23 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	
 	
 	public String getGeomObjTypeName() {return geomObjTypeName;}
-
+	
+	/**
+	 * The minimum number of sample points required to build this geometric object
+	 */
 	public abstract int getNumSamplesToBuildObject();
+	
+	/**
+	 * The maximum number of training examples to draw to prevent lag/crashing/overflow
+	 */
+	public final int getNumTrainingExsToShow() {
+		int maxNumToShow = getMaxNumExsToShow();
+		return trainDatGeomObjects.length > maxNumToShow ? maxNumToShow : trainDatGeomObjects.length;
+	}
+	/**
+	 * The maximum number of training examples to draw to prevent lag/crashing/overflow
+	 */
+	public abstract int getMaxNumExsToShow();
 	
 	public final void setGeomObjsBuilt(boolean val) {setFlag(srcGeomObjsAllBuiltIDX, val);}
 	public final boolean getGeomObjsBuilt() {return getFlag(srcGeomObjsAllBuiltIDX);}	

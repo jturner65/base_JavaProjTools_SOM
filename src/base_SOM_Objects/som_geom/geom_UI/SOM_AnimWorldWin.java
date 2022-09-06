@@ -558,8 +558,8 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		// nested ifthen shenannigans to get rid of if checks in each individual draw
 		drawMeFirst_Indiv();
 		// check if geom objs are built in mapMgr
-		// mapMgr.drawSrcObjsInUIWindow(pa, animTimeMod, curSelGeomObjIDX,
-		// getPrivFlags(showMapBasedLocsIDX));
+		boolean useUIObjLocAsClr = getPrivFlags(useUIObjLocAsClrIDX),
+				showUIObjLabel = getPrivFlags(showUIObjLabelIDX);
 		if (mapMgr.getGeomObjsBuilt()) {
 			boolean wantDrawBMUs = getPrivFlags(showMapBasedLocsIDX);
 			boolean shouldDrawBMUs = (wantDrawBMUs && getPrivFlags(mapBuiltToCurUIObjsIDX));
@@ -567,39 +567,51 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 				setPrivFlags(showMapBasedLocsIDX, false);
 				wantDrawBMUs = false;
 			}
-
-			_drawObjs(mapMgr.sourceGeomObjects, curSelGeomObjIDX, animTimeMod, shouldDrawBMUs,
+			_drawObjs(mapMgr.sourceGeomObjects, mapMgr.sourceGeomObjects.length, curSelGeomObjIDX, animTimeMod, shouldDrawBMUs,
 					getPrivFlags(showSamplePntsIDX), getPrivFlags(showFullSourceObjIDX),
-					getPrivFlags(useUIObjLocAsClrIDX), getPrivFlags(showSelUIObjIDX), getPrivFlags(showObjByWireFrmIDX),
-					getPrivFlags(showUIObjLabelIDX), getPrivFlags(showUIObjSmplsLabelIDX));
+					useUIObjLocAsClr, getPrivFlags(showSelUIObjIDX), getPrivFlags(showObjByWireFrmIDX),
+					showUIObjLabel, getPrivFlags(showUIObjSmplsLabelIDX));
 		}
 		// check if train samples are built in map mgr
 		if ((mapMgr.getTrainDataObjsBuilt()) && (getPrivFlags(showFullTrainingObjIDX))) {
-			// mapMgr.drawSynthObjsInUIWindow(pa, animTimeMod,
-			// getPrivFlags(showMapBasedLocsIDX));
-			_drawObjs(mapMgr.trainDatGeomObjects, -1, animTimeMod, false, false, true,
-					getPrivFlags(useUIObjLocAsClrIDX), false, getPrivFlags(showObjByWireFrmIDX),
-					getPrivFlags(showUIObjLabelIDX), false);
+			_drawObjs(mapMgr.trainDatGeomObjects, mapMgr.getNumTrainingExsToShow(), -1, animTimeMod, false, false, true,
+					useUIObjLocAsClr, false, getPrivFlags(showObjByWireFrmIDX),
+					showUIObjLabel, false);
 		} else {
 			setPrivFlags(showFullTrainingObjIDX, false);
 		}
-		// else { msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "drawMe", "ui obj data
-		// loaded is false");}
 		// draw geom objects for selected map node objects
 		if (getPrivFlags(drawMapNodeGeomObjsIDX)) {
-			mapMgr.drawSelectedMapNodeGeomObjs(pa, animTimeMod, getPrivFlags(showUIObjLabelIDX),
-					getPrivFlags(useUIObjLocAsClrIDX));
+			mapMgr.drawSelectedMapNodeGeomObjs(pa, animTimeMod, showUIObjLabel,	useUIObjLocAsClr);
 		}
 		drawMeLast_Indiv();
 		pa.popMatState();
 
 	}// drawMe
 
-	private void _drawObjs(SOM_GeomObj[] objs, int curSelObjIDX, float animTimeMod, boolean mapBuiltAndUseMapLoc,
+	/**
+	 * Draw all the example objects
+	 * @param objs the array holding the example objects to draw
+	 * @param numToDraw the number of objects to draw - expected to be > curSelObjIDX
+	 * @param curSelObjIDX the currently selected object idx.
+	 * @param animTimeMod
+	 * @param mapBuiltAndUseMapLoc
+	 * @param showSmpls
+	 * @param showObjs
+	 * @param useLocClr
+	 * @param showSel
+	 * @param showWireFrame
+	 * @param showLabel
+	 * @param showSmplsLabel
+	 */
+	
+	private void _drawObjs(SOM_GeomObj[] objs, int numToDraw, int curSelObjIDX, float animTimeMod, boolean mapBuiltAndUseMapLoc,
 			boolean showSmpls, boolean showObjs, boolean useLocClr, boolean showSel, boolean showWireFrame,
 			boolean showLabel, boolean showSmplsLabel) {
+		// nested ifthen shenannigans to get rid of if checks in each individual draw
 		if (mapBuiltAndUseMapLoc) { // show bmus for objs
-			if (showSel) {// if selected, show object filled with chosen color and show all other objects wireframe
+			if (showSel) {
+				// if selected, show object filled with chosen color and show all other objects wireframe
 				if (useLocClr) {	objs[curSelObjIDX].drawMeSelected_ClrLoc_BMU(pa, animTimeMod, showSmpls);} 
 				else {				objs[curSelObjIDX].drawMeSelected_ClrRnd_BMU(pa, animTimeMod, showSmpls);}
 				if (showLabel) {	objs[curSelObjIDX].drawMyLabel_BMU(pa, this);}
@@ -607,31 +619,33 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 				if (showObjs) {
 					if (useLocClr) {
 						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrLoc_WF_BMU(pa);}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeClrLoc_WF_BMU(pa);}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF_BMU(pa);}
 					} // loc color
 					else {
 						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrRnd_WF_BMU(pa);}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeClrRnd_WF_BMU(pa);}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF_BMU(pa);}
 					} // rand color
 				}
 				if (showSmpls) {
-					if (useLocClr) {for (int i = 0; i < curSelObjIDX; ++i) {	objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}
+					if (useLocClr) {
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}
 					} // loc color
 					else {
 						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}
 					} // rand color
 				}
 			} else {
-				if (showObjs) {		_drawObjs_UseBMUs(objs, useLocClr, showWireFrame, showLabel);}
+				if (showObjs) {		_drawObjs_UseBMUs(objs, numToDraw, useLocClr, showWireFrame, showLabel);}
 				if (showSmpls) {
-					if (useLocClr) {	for (int i = 0; i < objs.length; ++i) {					objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}} // loc color
-					else {				for (int i = 0; i < objs.length; ++i) {					objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}} // rand color
+					if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}} // loc color
+					else {				for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}} // rand color
 				}
 			}
 		} else {
-			if (showSel) {// if selected, show selected object filled with chosen color and show all other objects wireframe with or without samples and no labels
+			if (showSel) {
+				// if selected, show selected object filled with chosen color and show all other objects wireframe with or without samples and no labels
 				if (useLocClr) {			objs[curSelObjIDX].drawMeSelected_ClrLoc(pa, animTimeMod, showSmpls);} 
 				else {						objs[curSelObjIDX].drawMeSelected_ClrRnd(pa, animTimeMod, showSmpls);}
 				if (showLabel) {			objs[curSelObjIDX].drawMyLabel(pa, this);}
@@ -639,56 +653,55 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 				if (showObjs) {
 					if (useLocClr) {
 						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrLoc_WF(pa);}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeClrLoc_WF(pa);}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF(pa);}
 					} // loc color
 					else {
 						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrRnd_WF(pa);}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeClrRnd_WF(pa);}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF(pa);}
 					} // rand color
 				}
 				if (showSmpls) {
 					if (useLocClr) {
 						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrLoc(pa);	}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeSmpls_ClrLoc(pa);	}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrLoc(pa);	}
 					} // loc color
 					else {
 						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrRnd(pa);	}
-						for (int i = curSelObjIDX + 1; i < objs.length; ++i) {	objs[i].drawMeSmpls_ClrRnd(pa);	}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrRnd(pa);	}
 					} // rand color
 				}
-
 			} else {
-				if (showObjs) {				_drawObjs_UseActual(objs, animTimeMod, useLocClr, showSmpls, showWireFrame, showLabel);}
+				if (showObjs) {				_drawObjs_UseActual(objs, numToDraw, animTimeMod, useLocClr, showSmpls, showWireFrame, showLabel);}
 				if (showSmpls) {
-					if (useLocClr) {		for (int i = 0; i < objs.length; ++i) {					objs[i].drawMeSmpls_ClrLoc(pa);	}} // loc color
-					else {					for (int i = 0; i < objs.length; ++i) {					objs[i].drawMeSmpls_ClrRnd(pa);	}} // rand color
-					if (showSmplsLabel) {	for (int i = 0; i < objs.length; ++i) {					objs[i].drawMySmplsLabel(pa, this);}}
+					if (useLocClr) {		for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrLoc(pa);	}} // loc color
+					else {					for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrRnd(pa);	}} // rand color
+					if (showSmplsLabel) {	for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMySmplsLabel(pa, this);}}
 				}
 			}
 		}
 	}// _drawObjs
 
-	private void _drawObjs_UseActual(SOM_GeomObj[] objs, float animTimeMod, boolean useLocClr, boolean showSmpls,
+	private void _drawObjs_UseActual(SOM_GeomObj[] objs, int numToDraw, float animTimeMod, boolean useLocClr, boolean showSmpls,
 			boolean showWireFrame, boolean showLabel) {
 		if (showWireFrame) { // draw objects with wire frames
-			if (useLocClr) {	for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrLoc_WF(pa);}} // loc color
-			else {				for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrRnd_WF(pa);}} // rand color
+			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF(pa);}} // loc color
+			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF(pa);}} // rand color
 		} else {
-			if (useLocClr) {	for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrLoc(pa);}} // loc color
-			else {				for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrRnd(pa);}} // rand color
+			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc(pa);}} // loc color
+			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd(pa);}} // rand color
 		}
-		if (showLabel) {		for (int i = 0; i < objs.length; ++i) {		objs[i].drawMyLabel(pa, this);}}
+		if (showLabel) {		for (int i = 0; i < numToDraw; ++i) {		objs[i].drawMyLabel(pa, this);}}
 	}// _drawObjs_UseActual
 
-	private void _drawObjs_UseBMUs(SOM_GeomObj[] objs, boolean useLocClr, boolean showWireFrame, boolean showLabel) {
+	private void _drawObjs_UseBMUs(SOM_GeomObj[] objs, int numToDraw, boolean useLocClr, boolean showWireFrame, boolean showLabel) {
 		if (showWireFrame) { // draw objects with wire frames
-			if (useLocClr) {	for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrLoc_WF_BMU(pa);}} // loc color
-			else {				for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrRnd_WF_BMU(pa);}} // rand color
+			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF_BMU(pa);}} // loc color
+			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF_BMU(pa);}} // rand color
 		} else {
-			if (useLocClr) {	for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrLoc_BMU(pa);}} // loc color
-			else {				for (int i = 0; i < objs.length; ++i) {	objs[i].drawMeClrRnd_BMU(pa);}} // rand color
+			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_BMU(pa);}} // loc color
+			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_BMU(pa);}} // rand color
 		}
-		if (showLabel) {		for (int i = 0; i < objs.length; ++i) {	objs[i].drawMyLabel_BMU(pa, this);}}
+		if (showLabel) {		for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMyLabel_BMU(pa, this);}}
 	}// _drawObjs_UseBMUs
 
 	/**
