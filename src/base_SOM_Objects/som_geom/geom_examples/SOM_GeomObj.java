@@ -108,15 +108,13 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		_ctorInit(_mapMgr,incrID(), _GeoType, _is3D, _shouldBuildSamples);
 		
 		geomSrcSamples = _geomSrcSmpls;		
-		labelClrAra = getGeomFlag(is3dIDX)? new int[] {0,0,0,255} : new int[] {255,255,255,255};
-		
 		srcPts = initAndBuildSourcePoints(geomSrcSamples);
 		
 		objSamples = (_shouldBuildSamples ? new SOM_GeomObjSamples(this, geomSrcSamples.length, rndClrAra, labelClrAra) : null);		
 	}//ctor
 	
 	/**
-	 * building objects from CSV string
+	 * building objects from CSV string - CURRENTLY ALWAYS BUILDS SAMPLES
 	 * @param _mapMgr
 	 * @param _animWin
 	 * @param _exType
@@ -131,7 +129,6 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		
 		//only data needed to be saved
 		srcPts = buildSrcPtsFromCSVString(_numSrcPts, _csvDat);
-		
 		//build geomSrcSamples from srcPts 
 		geomSrcSamples = new SOM_GeomSamplePointf[getSrcPts().length];
 		for(int i=0;i<geomSrcSamples.length;++i) {geomSrcSamples[i] =  new SOM_GeomSamplePointf(getSrcPts()[i], dispLabel+"_gen_pt_"+i, this);}

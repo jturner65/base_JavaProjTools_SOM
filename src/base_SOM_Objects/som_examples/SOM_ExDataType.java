@@ -14,7 +14,7 @@ public enum SOM_ExDataType {
 			"Training Data (Used to train the SOM)", 
 			"Testing Data (Held-out training data used to investigate training)",
 			"Validation Data (Data to be clustered on map)",
-			"Product Data (Product examples to be assigned to clusters)",
+			"Product Data (Treat as exemplars to be assigned to clusters)",
 			"Map Node (Represents a node on the SOM)",
 			"Mouse Over (Data query at mouse location)"};
 	private static String[] _typeName = new String[] {"Training","Testing","Validation","Product","MapNode","MouseOver"};

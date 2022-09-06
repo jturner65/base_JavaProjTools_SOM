@@ -35,7 +35,7 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	 */
 	protected final int numExPerObj;	
 	/**
-	 * idxs to use to build the objects - these are known to be unique and to satisfy the requirements of the object
+	 * idxs to use to build the objects - these are known to be unique and to satisfy the requirements of the object.
 	 * This array is the same for all builders
 	 */
 	protected final SOM_GeomTrainingExUniqueID[] idxsToUse;
