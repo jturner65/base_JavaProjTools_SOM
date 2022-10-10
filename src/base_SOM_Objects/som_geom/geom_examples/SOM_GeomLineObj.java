@@ -41,46 +41,44 @@ public abstract class SOM_GeomLineObj extends SOM_GeomObj {
 	protected String[] dispAra;
 
 	/**
-	 * Constructor for line object
-	 * @param _mapMgr owning som map manager
- 	 * @param _a, _b : 2 points on line
- 	 * @param _numSmplPts : # of points to build
-	 * @param _locClrAra color based on location
-	 * @param _worldBounds 2d array of bounds for where reasonable points should be generated
-	 * 		first idx 	: 0 is min; 1 is diff
-	 * 		2nd idx 	: 0 is x, 1 is y
+	 * Constructor for base line object shared functionality
+	 * 	
+	 * @param _mapMgr : owning map manager
+	 * @param _exType : whether this is training/testing/validation etc.
+	 * @param _oid : pre-defined string ID put in SOM_Example OID field
+	 * @param _srcSmpls : the points and owning objects that make up the minimally defining set of points for this object.  If src objects are null, then this object is a foundation/source object
+	 * @param _GeoType : the type of geometry this line represents (either 2d or 3d)
+	 * @param _numSmplPts : # of sample points to build for this object TODO move to post-construction process
+	 * @param _shouldBuildSamples : whether we should build samples for this object
+	 * @param _shouldBuildVisRep : whether we should pre-build a mesh representation of this object
 	 */
-	
-	public SOM_GeomLineObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _id,
-			SOM_GeomSamplePointf[] _srcSmpls, SOM_GeomObjTypes _GeoType, int _numSmplPts, boolean _is3D,
-			boolean _shouldBuildSamples) {
-		super(_mapMgr, _exType, _id, _srcSmpls, _GeoType, _is3D, _shouldBuildSamples);
-		buildDirOriginAndDispPts("");		
-		super.buildLocClrInitObjAndSamples(origin, _numSmplPts);
-			
-		boundOriginWithinLine();
-
+	public SOM_GeomLineObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _oid,
+			SOM_GeomSamplePointf[] _srcSmpls, SOM_GeomObjTypes _GeoType, int _numSmplPts,
+			boolean _shouldBuildSamples, boolean _shouldBuildVisRep) {
+		super(_mapMgr, _exType, _oid, _srcSmpls, _GeoType, _numSmplPts, _GeoType == SOM_GeomObjTypes.line_3D, _shouldBuildSamples, _shouldBuildVisRep);
 	}//ctor
-
+	
+	/**
+	 * Constructor to build a line based on csv data
+	 * @param _mapMgr : owning map manager
+	 * @param _exType : whether this is training/testing/validation etc.
+	 * @param _oid : pre-defined string ID put in SOM_Example OID field
+	 * @param _csvDat : String from CSV describing object
+	 * @param _GeoType : the type of geometry this line represents (either 2d or 3d)
+	 */
 	public SOM_GeomLineObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _oid, String _csvDat,
-			SOM_GeomObjTypes _GeoType, boolean _is3D) {
-		super(_mapMgr, _exType, _oid, _csvDat, _GeoType, _numSrcPts, _is3D);
-		buildDirOriginAndDispPts("");		
-		super.buildLocClrAndSamplesFromCSVStr(origin, _csvDat);
+			SOM_GeomObjTypes _GeoType) {
+		super(_mapMgr, _exType, _oid, _csvDat, _GeoType, _numSrcPts, _GeoType == SOM_GeomObjTypes.line_3D);
 	}//csv ctor
 
 	/**
-	 * ctor to build object corresponding to bmu geometric object
-	 * @param _mapMgr
-	 * @param _mapNode
+	 * ctor to build line corresponding to a map node
+	 * @param _mapMgr : owning map manager
+	 * @param _mapNode : the map node being represented
+	 * @param _GeoType : the type of geometry this line represents (either 2d or 3d)
 	 */
-	public SOM_GeomLineObj(SOM_GeomMapManager _mapMgr, SOM_GeomMapNode _mapNode, SOM_GeomObjTypes _GeoType,
-			boolean _is3D) {
-		super(_mapMgr, _mapNode, _GeoType, _is3D);
-		buildDirOriginAndDispPts("BMU");
-		super.buildLocClrInitObjAndSamples(origin, _numSrcPts);
-		
-		boundOriginWithinLine();
+	public SOM_GeomLineObj(SOM_GeomMapManager _mapMgr, SOM_GeomMapNode _mapNode, SOM_GeomObjTypes _GeoType) {
+		super(_mapMgr, _mapNode, _GeoType, _GeoType == SOM_GeomObjTypes.line_3D);
 	}//bmu ctor
 
 	public SOM_GeomLineObj(SOM_GeomLineObj _otr) {
@@ -89,6 +87,39 @@ public abstract class SOM_GeomLineObj extends SOM_GeomObj {
 		origin = _otr.origin;
 		dispEndPts = _otr.dispEndPts;		
 	}//copy ctor
+	
+	/**
+	 * Object-type specific ctor init
+	 * @param _numSmplPts # of sample points to derive
+	 */
+	@Override
+	protected final void initObjVals(int _numSmplPts) { 
+		buildDirOriginAndDispPts("");		
+		super.buildLocClrInitObjAndSamples(origin, _numSmplPts);		
+		boundOriginWithinLine();			
+	}
+	
+	/**
+	 * Object-type-specific ctor init for CSV-derived nodes
+	 * @param _csvDat string of CSV data
+	 */
+	@Override
+	protected final void initObjValsFromCSV( String _csvDat) {
+		buildDirOriginAndDispPts("");		
+		super.buildLocClrAndSamplesFromCSVStr(origin, _csvDat);
+	}
+	
+	/**
+	 * Object-type-specific ctor init for map node-based object 
+	 * @param _mapNode
+	 */
+	@Override
+	protected final void initObjValsForMapNode(SOM_GeomMapNode _mapNode) {  
+		buildDirOriginAndDispPts("BMU_");		
+		super.buildLocClrInitObjAndSamples(origin, _numSrcPts);		
+		boundOriginWithinLine();			
+	}
+
 	
 	/**
 	 * build object-specific values for this object
@@ -103,7 +134,7 @@ public abstract class SOM_GeomLineObj extends SOM_GeomObj {
 
 		dir = _buildDir();	
 		//build normal and possibly binormal to line
-		buildNorm();
+		buildNormFromDir();
 		//origin is closest point to 0,0 on line
 		origin = findClosestPointOnLine(myPointf.ZEROPT);
 		if (!getGeomFlag(is3dIDX)) {
@@ -123,10 +154,10 @@ public abstract class SOM_GeomLineObj extends SOM_GeomObj {
 	}
 	
 	/**
-	 * build the normal and possibly binormal to line
+	 * build the normal and possibly binormal to line from dir vector
 	 * @return
 	 */
-	protected abstract void buildNorm();
+	protected abstract void buildNormFromDir();
 	
 	
 	/**
@@ -199,16 +230,14 @@ public abstract class SOM_GeomLineObj extends SOM_GeomObj {
 		myVectorf proj = new myVectorf(getSrcPts()[0],p);
 		return myVectorf._add(getSrcPts()[0], proj._dot(dir), dir);
 	}
-	
-	
+		
 	/**
 	 * return a point on the line 
 	 * @param t
 	 * @return
 	 */
 	public final myPointf getPointOnLine(float t) {return myVectorf._add(getSrcPts()[0], t, dir);}
-	
-	
+		
 	/**
 	 * find t value for point on line - expects point to be on line!
 	 * @param pt

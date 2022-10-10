@@ -50,8 +50,9 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	public static final int
 			debugIDX 						= 0,		//draw this sphere's sample points
 			is3dIDX							= 1,		//this object is in 3d or 2d
-			buildSampleObjIDX				= 2;		//should build sample object
-	public static final int numgeomStFlags = 3;	
+			buildSampleObjIDX				= 2,		//should build sample object
+			buildVisRepOfObjIDX				= 3;		//should prebuild a physical representation of object, if supported
+	public static final int numgeomStFlags = 4;	
 		
 	/**
 	 * type of object (geometric)
@@ -101,15 +102,19 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _srcSmpls : the source points and their owning SOM_GeomObj objects that built this sample (if null then these are the points that make this object)
 	 * @param _worldBounds : bounds in world for valid values for this object
 	 * @param _GeoType : geometric object type
+	 * @param _numSmplPts : # of sample points to build for this object
 	 */	
-	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _id, SOM_GeomSamplePointf[] _geomSrcSmpls, SOM_GeomObjTypes _GeoType, boolean _is3D, boolean _shouldBuildSamples) {
+	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _id, SOM_GeomSamplePointf[] _srcSmpls, SOM_GeomObjTypes _GeoType, int _numSmplPts,  boolean _is3D, boolean _shouldBuildSamples, boolean _shouldBuildVisRep) {
 		super(_mapMgr, _exType,_id);
-		_ctorInit(_mapMgr,incrID(), _GeoType, _is3D, _shouldBuildSamples);
+		_ctorInit(incrID(), _GeoType, _is3D, _shouldBuildSamples, _shouldBuildVisRep);
 		
-		geomSrcSamples = _geomSrcSmpls;		
-		srcPts = initAndBuildSourcePoints(geomSrcSamples);
+		geomSrcSamples = _srcSmpls;		
+		srcPts = _initAndBuildSrcPts(geomSrcSamples);
 		
 		objSamples = (_shouldBuildSamples ? new SOM_GeomObjSamples(this, geomSrcSamples.length, rndClrAra, labelClrAra) : null);		
+
+		//Object specific init
+		initObjVals(_numSmplPts);
 	}//ctor
 	
 	/**
@@ -124,25 +129,27 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 */
 	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_ExDataType _exType, String _oid, String _csvDat, SOM_GeomObjTypes _GeoType, int _numSrcPts, boolean _is3D) {
 		super(_mapMgr, _exType, _oid);
-		_ctorInit(_mapMgr,Integer.parseInt(_csvDat.trim().split(",")[1].trim()),_GeoType, _is3D, true);
+		_ctorInit(Integer.parseInt(_csvDat.trim().split(",")[1].trim()),_GeoType, _is3D, true, true);
 		
 		//only data needed to be saved
-		srcPts = buildSrcPtsFromCSVString(_numSrcPts, _csvDat);	
+		srcPts = _buildSrcPtsFromCSVString(_numSrcPts, _csvDat);	
 		//build geomSrcSamples from srcPts 
 		geomSrcSamples = new SOM_GeomSamplePointf[getSrcPts().length];
 		for(int i=0;i<geomSrcSamples.length;++i) {geomSrcSamples[i] =  new SOM_GeomSamplePointf(getSrcPts()[i], dispLabel+"_gen_pt_"+i, this);}
 
 		objSamples = new SOM_GeomObjSamples(this, geomSrcSamples.length, rndClrAra, labelClrAra);
+		//Object specific init for CSV
+		initObjValsFromCSV(_csvDat);
 	}
 	
 	/**
 	 * ctor to build object corresponding to bmu geometric object
 	 * @param _mapMgr
-	 * @param _mapNode
+	 * @param _mapNode Map Node
 	 */	
 	public SOM_GeomObj(SOM_GeomMapManager _mapMgr, SOM_GeomMapNode _mapNode, SOM_GeomObjTypes _GeoType, boolean _is3D) {
 		super(_mapMgr, SOM_ExDataType.MapNode,_GeoType.toString()+"_"+_mapNode.OID);
-		_ctorInit(_mapMgr,incrID(), _GeoType, _is3D, true);
+		_ctorInit(incrID(), _GeoType, _is3D, true, true);
 
 		float[] mapFtrsAra = _mapNode.getRawFtrs();	
 		srcPts = buildSrcPtsFromBMUMapNodeFtrs(mapFtrsAra, dispLabel);
@@ -152,15 +159,9 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		for(int i=0;i<geomSrcSamples.length;++i) {geomSrcSamples[i] =  new SOM_GeomSamplePointf(getSrcPts()[i], dispLabel+"_gen_pt_"+i, this);}
 		
 		objSamples = new SOM_GeomObjSamples(this, geomSrcSamples.length, rndClrAra, labelClrAra);
-	}
-	
-	protected final void _DBG_DispObjStats(float[] mapFtrsAra, String _callingMethod, String _nodeIdDispt) {
-		String ftrs = "";
-		for(int i=0;i<mapFtrsAra.length;++i) {ftrs += String.format("%.8f, ", mapFtrsAra[i]);}
-		String tmpDisp = _nodeIdDispt;
-		for(SOM_GeomSamplePointf pt : srcPts) {	tmpDisp += " | " + pt.toStrBrf();	}
-		tmpDisp += " | Ftrs :"+ftrs;
-		msgObj.dispInfoMessage("SOM_GeomObj::"+GeomObj_ID, _callingMethod, tmpDisp);
+		
+		//Object type-specific init for map node
+		initObjValsForMapNode(_mapNode);
 	}
 	
 	public SOM_GeomObj(SOM_GeomObj _otr) {
@@ -181,22 +182,50 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		objSamples = _otr.objSamples;
 	}//copy ctor
 
-	private void _ctorInit(SOM_GeomMapManager _mapMgr, int _geoObj_ID, SOM_GeomObjTypes _GeoType, boolean _is3D, boolean _shouldBuildSamples) {
+	protected final void _DBG_DispObjStats(float[] mapFtrsAra, String _callingMethod, String _nodeIdDispt) {
+		String ftrs = "";
+		for(int i=0;i<mapFtrsAra.length;++i) {ftrs += String.format("%.8f, ", mapFtrsAra[i]);}
+		String tmpDisp = _nodeIdDispt;
+		for(SOM_GeomSamplePointf pt : srcPts) {	tmpDisp += " | " + pt.toStrBrf();	}
+		tmpDisp += " | Ftrs :"+ftrs;
+		msgObj.dispInfoMessage("SOM_GeomObj::"+GeomObj_ID, _callingMethod, tmpDisp);
+	}
+
+	/**
+	 * Object-type specific ctor init
+	 * @param _numSmplPts # of sample points to derive
+	 */
+	protected abstract void initObjVals(int _numSmplPts);
+	
+	/**
+	 * Object-type-specific ctor init for CSV-derived nodes
+	 * @param _csvDat string of CSV data
+	 */
+	protected abstract void initObjValsFromCSV(String _csvDat);
+	
+	/**
+	 * Object-type-specific ctor init for map node-based object 
+	 * @param _mapNode
+	 */
+	protected abstract void initObjValsForMapNode(SOM_GeomMapNode _mapNode);
+	
+	private void _ctorInit(int _geoObj_ID, SOM_GeomObjTypes _GeoType, boolean _is3D, boolean _shouldBuildSamples, boolean _shouldBuildVisRep) {
 		initGeomFlags();
 		setGeomFlag(is3dIDX, _is3D);
 		setGeomFlag(buildSampleObjIDX, _shouldBuildSamples);
+		setGeomFlag(buildVisRepOfObjIDX, _shouldBuildVisRep);
 		objGeomType = _GeoType;		
 		GeomObj_ID = _geoObj_ID;		//sets GeomObj_ID to be count of instancing class objs
 		dispLabel = objGeomType.toString() + "_"+GeomObj_ID;
 		
 		classIDs = new HashSet<Integer>();
-		categoryIDs = new HashSet<Integer>();
-		
+		categoryIDs = new HashSet<Integer>();		
 
 		labelClrAra = getGeomFlag(is3dIDX)? new int[] {0,0,0,255} : new int[] {255,255,255,255};
 		rndClrAra = getRandClr();		
-	}//_ctorInit
+	}//_ctorInit	
 	
+
 	
 	/**
 	 * initialize object's ID
@@ -208,14 +237,14 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _srcSmpls
 	 * @return
 	 */
-	protected final SOM_GeomSamplePointf[] initAndBuildSourcePoints(SOM_GeomSamplePointf[] _srcSmpls) {
+	private final SOM_GeomSamplePointf[] _initAndBuildSrcPts(SOM_GeomSamplePointf[] _srcSmpls) {
 		SOM_GeomSamplePointf[] ptAra = new SOM_GeomSamplePointf[_srcSmpls.length];
 		for(int i=0;i<_srcSmpls.length;++i) {
 			if(_srcSmpls[i].getObj() == null) {_srcSmpls[i].setObj(this);}
 			ptAra[i]=new SOM_GeomSamplePointf(_srcSmpls[i], dispLabel+"_SrcPt_"+i, this);
 		}
 		return ptAra;
-	}//initAndBuildSourcePoints
+	}//_initAndBuildSrcPts
 	
 	
 	/**
@@ -284,7 +313,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _csvDat
 	 * @return
 	 */
-	private final SOM_GeomSamplePointf[] buildSrcPtsFromCSVString(int _numSrcSmpls, String _csvDat) {
+	private final SOM_GeomSamplePointf[] _buildSrcPtsFromCSVString(int _numSrcSmpls, String _csvDat) {
 		SOM_GeomSamplePointf[] res = new SOM_GeomSamplePointf[_numSrcSmpls];
 		String[] strDatAra = _csvDat.split(srcPtTag),parseStrAra;
 		//from idx 1 to end is src point csv strs
@@ -292,7 +321,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 			parseStrAra = strDatAra[i+1].trim().split(",");			
 			res[i] = new SOM_GeomSamplePointf(parseStrAra, this);}
 		return res;		
-	}//buildSrcPtsFromCSVString
+	}//_buildSrcPtsFromCSVString
 	
 	/**
 	 * build an array of source points from the characteristic features of the source map node
@@ -349,7 +378,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 */
 	protected final myPointf getRandPosOnSphere(double rad, myPointf ctr){
 		myPointf pos = new myPointf();
-		double 	cosTheta = ThreadLocalRandom.current().nextDouble(-1,1), sinTheta =  Math.sin(Math.acos(cosTheta)),
+		double 	cosTheta = ThreadLocalRandom.current().nextDouble(-1,1), sinTheta = Math.sin(Math.acos(cosTheta)),
 				phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI_F);
 		pos.set(sinTheta * Math.cos(phi), sinTheta * Math.sin(phi),cosTheta);
 		pos._mult((float) rad);

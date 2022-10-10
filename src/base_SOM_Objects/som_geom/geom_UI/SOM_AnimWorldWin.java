@@ -92,8 +92,8 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	// - need to set in window
 	protected float[] SOMMapDims = new float[] { 834.8f, 834.8f };
 
-	public SOM_AnimWorldWin(IRenderInterface _p, GUI_AppManager _AppMgr, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed,String _winTxt, SOM_GeomObjTypes _type) {
-		super(_p, _AppMgr, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
+	public SOM_AnimWorldWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx, int _flagIdx, SOM_GeomObjTypes _type) {
+		super(_p, _AppMgr, _winIdx, _flagIdx);
 		initAndSetAnimWorldVals();
 		geomObjType = _type;
 	}

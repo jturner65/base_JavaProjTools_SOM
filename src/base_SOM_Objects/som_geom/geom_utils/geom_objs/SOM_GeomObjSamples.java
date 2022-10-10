@@ -36,10 +36,6 @@ public class SOM_GeomObjSamples {
 	public int[] locClrAra;
 	public final int[] rndClrAra, labelClrAra;
 	/**
-	 * radius of sample point to display
-	 */
-	public final float ptRad;
-	/**
 	 * sphere detail of sample point to display
 	 */
 	public static final int ptDet = 2;	
@@ -50,7 +46,6 @@ public class SOM_GeomObjSamples {
 	
 	public SOM_GeomObjSamples(SOM_GeomObj _ownr, int _numSamples, int[] _rndClrAra, int[] _lblClrAra) {
 		ownr = _ownr;
-		ptRad = (float)Math.pow(_numSamples, 1.4);
 		objTypeStrAndID = ownr.getDispLabel();
 		rndClrAra = new int[_rndClrAra.length];
 		System.arraycopy(_rndClrAra, 0, rndClrAra, 0, _rndClrAra.length);
