@@ -16,6 +16,7 @@ import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.base_UpdateFromUIData;
 import base_UI_Objects.windowUI.base.myDispWindow;
 import base_UI_Objects.windowUI.drawnObjs.myDrawnSmplTraj;
+import base_UI_Objects.windowUI.uiObjs.GUIObj_Type;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
 /**
@@ -333,27 +334,28 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals) {
 		
-		// object array of elements of following format :
-		// the first element double array of min/max/mod values
-		// the 2nd element is starting value
-		// the 3rd elem is label for object
-		// the 4th element is boolean array of {treat as int, has list values, value is sent to owning window, value is sent to window upon mod, not just release}
+		//object array of elements of following format  : 
+		//	the first element double array of min/max/mod values
+		//	the 2nd element is starting value
+		//	the 3rd elem is label for object
+		//	the 4th element is object type (float, int or list of values)
+		//	the 5th element is boolean array of {value is sent to owning window, value is continuously updated}
 		int minNumObjs = getMinNumObjs(), maxNumObjs = getMaxNumObjs(),	diffNumObjs = (maxNumObjs - minNumObjs > 100 ? 10 : 1);
 		numGeomObjs = minNumObjs;
-		tmpUIObjArray.put(gIDX_NumUIObjs,new Object[] { new double[] { minNumObjs, maxNumObjs, diffNumObjs }, (double) (numGeomObjs * 1.0),"# of " + geomObjType + " Objects", new boolean[] { true, false, true, true } }); // gIDX_NumUIObjs
+		tmpUIObjArray.put(gIDX_NumUIObjs,new Object[] { new double[] { minNumObjs, maxNumObjs, diffNumObjs }, (double) (numGeomObjs * 1.0),"# of " + geomObjType + " Objects", GUIObj_Type.IntVal, new boolean[]{true, true}}); // gIDX_NumUIObjs
 		int minNumSmplsPerObj = getMinNumSmplsPerObj(), maxNumSmplsPerObj = getMaxNumSmplsPerObj(),	diffNumSmplsPerObj = (maxNumSmplsPerObj - minNumSmplsPerObj > 100 ? 10 : 1);
 		numSmplPointsPerObj = minNumSmplsPerObj;
-		tmpUIObjArray.put(gIDX_NumUISamplesPerObj, new Object[] { new double[] { minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj },(double) (numSmplPointsPerObj), "# of samples per Object", new boolean[] { true, false, true, true } }); // gIDX_NumUISamplesPerObj
+		tmpUIObjArray.put(gIDX_NumUISamplesPerObj, new Object[] { new double[] { minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj },(double) (numSmplPointsPerObj), "# of samples per Object", GUIObj_Type.IntVal, new boolean[]{true, true}}); // gIDX_NumUISamplesPerObj
 		// gIDX_FractNumTrainEx fractOfBinomialForBaseNumTrainEx
-		tmpUIObjArray.put(gIDX_FractNumTrainEx, new Object[] { new double[] { 0.00001, 1.000, 0.00001 }, fractOfBinomialForBaseNumTrainEx,"Fract of Binomial for Train Ex", new boolean[] { false, false, true, false } }); // gIDX_FractNumTrainEx
+		tmpUIObjArray.put(gIDX_FractNumTrainEx, new Object[] { new double[] { 0.00001, 1.000, 0.00001 }, fractOfBinomialForBaseNumTrainEx,"Fract of Binomial for Train Ex", GUIObj_Type.FloatVal, new boolean[]{true, false}}); // gIDX_FractNumTrainEx
 
 		// gIDX_NumTraingEx
 		long minNumTrainingExamples = numGeomObjs,
 				maxNumTrainingExamples = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj),
 				diffNumTrainingEx = (maxNumTrainingExamples - minNumTrainingExamples) > 1000 ? 1000 : 10;
 		numTrainingExamples = (int) minNumTrainingExamples;
-		tmpUIObjArray.put(gIDX_NumTrainingEx, new Object[] { new double[] { minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx },(double) (numTrainingExamples),	"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]",new boolean[] { true, false, true, false} }); // gIDX_NumUISamplesPerObj
-		tmpUIObjArray.put(gIDX_SelDispUIObj, new Object[] { new double[] { 0, numGeomObjs - 1, 1 }, (double) (curSelGeomObjIDX),"ID of Object to Select", new boolean[] { true, false, true, true } }); // gIDX_SelDispUIObj
+		tmpUIObjArray.put(gIDX_NumTrainingEx, new Object[] { new double[] { minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx },(double) (numTrainingExamples),	"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]", GUIObj_Type.IntVal, new boolean[]{true, false}}); // gIDX_NumUISamplesPerObj
+		tmpUIObjArray.put(gIDX_SelDispUIObj, new Object[] { new double[] { 0, numGeomObjs - 1, 1 }, (double) (curSelGeomObjIDX),"ID of Object to Select", GUIObj_Type.IntVal, new boolean[]{true, true}}); // gIDX_SelDispUIObj
 
 		// populate instancing application objects
 		setupGUIObjsAras_Indiv(tmpUIObjArray, tmpListObjVals);

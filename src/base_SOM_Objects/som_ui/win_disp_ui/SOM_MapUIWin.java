@@ -18,6 +18,7 @@ import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.base_UpdateFromUIData;
 import base_UI_Objects.windowUI.base.myDispWindow;
 import base_UI_Objects.windowUI.drawnObjs.myDrawnSmplTraj;
+import base_UI_Objects.windowUI.uiObjs.GUIObj_Type;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
 /**
@@ -350,44 +351,45 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		//	the first element double array of min/max/mod values
 		//	the 2nd element is starting value
 		//	the 3rd elem is label for object
-		//	the 4th element is boolean array of {treat as int, has list values, value is sent to owning window}
+		//	the 4th element is object type (float, int or list of values)
+		//	the 5th element is boolean array of {value is sent to owning window, value is continuously updated}
 		
-		tmpUIObjArray.put(uiTrainDataNormIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiTrainDataNormIDX).length-1, 1.0}, 1.0*SOM_FtrDataType.FTR_NORM.getVal(), "Data Normalizing", new boolean[]{true, true, true}});   				//uiTrainDataFrmtIDX                                                                        
-		tmpUIObjArray.put(uiBMU_DispDataFrmtIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiBMU_DispDataFrmtIDX).length-1, 1.0}, 1.0*SOM_FtrDataType.UNNORMALIZED.getVal(), "Map Node Ftr Disp Frmt", new boolean[]{true, true, true}});  				//uiBMU_DispDataFrmtIDX                                                                         
-		tmpUIObjArray.put(uiTrainDatPartIDX, new Object[] {new double[]{1.0, 100.0, 1.0}, 100.0,	"Data % To Train", new boolean[]{true, false, true}});   													//uiTrainDatPartIDX                                                                         
-		tmpUIObjArray.put(uiMapRowsIDX, new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Rows", new boolean[]{true, false, true}});   															//uiMapRowsIDX 	 		                                                                    
-		tmpUIObjArray.put(uiMapColsIDX, new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Columns", new boolean[]{true, false, true}});   															//uiMapColsIDX	 		                                                                    
-		tmpUIObjArray.put(uiMapEpochsIDX, new Object[] {new double[]{1.0, 200.0, 10}, 10.0, "# Training Epochs", new boolean[]{true, false, true}});  														//uiMapEpochsIDX		                                                                    
-		tmpUIObjArray.put(uiMapShapeIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapShapeIDX).length-1, 1},0.0, "Map Node Shape", new boolean[]{true, true, true}});   						//uiMapShapeIDX	 		                                                                    
-		tmpUIObjArray.put(uiMapBndsIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapBndsIDX).length-1, 1},1.0, "Map Boundaries",	new boolean[]{true, true, true}});  						//uiMapBndsIDX	 		                                                                    
-		tmpUIObjArray.put(uiMapKTypIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapKTypIDX).length-1, 1.01},2.0, "Dense/Sparse (C/G)PU",new boolean[]{true, true, true}});   				//uiMapKTypIDX	 		                                                                    
-		tmpUIObjArray.put(uiMapNHdFuncIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapNHdFuncIDX).length-1, 1},0.0, "Neighborhood Func", new boolean[]{true, true, true}});   					//uiMapNHdFuncIDX		                                                                    
-		tmpUIObjArray.put(uiMapRadCoolIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapRadCoolIDX).length-1, 1},0.0, "Radius Cooling", new boolean[]{true, true, true}});   						//uiMapRadCoolIDX		                                                                    
-		tmpUIObjArray.put(uiMapLrnCoolIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapLrnCoolIDX).length-1, 1},0.0, "Learn rate Cooling", new boolean[]{true, true, true}});   					//uiMapLrnCoolIDX		                                                                    
-		tmpUIObjArray.put(uiMapLrnStIDX, new Object[] {new double[]{0.001, 10.0, 0.001}, 1.0, "Start Learn Rate", new boolean[]{false, false, true}});   													//uiMapLrnStIDX	 		                                                                    
-		tmpUIObjArray.put(uiMapLrnEndIDX, new Object[] {new double[]{0.001, 1.0, 0.001}, 0.1, "End Learn Rate", new boolean[]{false, false, true}});   														//uiMapLrnEndIDX		                                                                    
-		tmpUIObjArray.put(uiMapRadStIDX, new Object[] {new double[]{2.0, 300.0, 1.0},	 20.0, "Start Cool Radius", new boolean[]{true, false, true}});   													//uiMapRadStIDX	 	# nodes	                                                                
-		tmpUIObjArray.put(uiMapRadEndIDX, new Object[] {new double[]{1.0, 10.0, 1.0},	 1.0, "End Cool Radius", new boolean[]{true, false, true}});   														//uiMapRadEndIDX		# nodes	  
-		tmpUIObjArray.put(uiMapPreBuiltDirIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapPreBuiltDirIDX).length-1,1.0}, 0.0, "Pretrained Map Dirs", new boolean[] {true, true, true}});			//uiMapPreBuiltDirIDX
-		tmpUIObjArray.put(uiMapNodeBMUTypeToDispIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapNodeBMUTypeToDispIDX).length-1, 1.0}, 0.0, "Ex Type For Node BMU", new boolean[]{true, true, true}}); 	//uiMapNodeBMUTypeToDispIDX                                                                 
-		tmpUIObjArray.put(uiNodeWtDispThreshIDX, new Object[] {new double[]{0.0, 1.0, .01}, SOM_MapManager.initNodeInSegFtrWtDistThresh, "Map Node Disp Wt Thresh", new boolean[]{false, false, true}});   	//uiNodeWtDispThreshIDX                                                                     
-		tmpUIObjArray.put(uiNodePopDispThreshIDX, new Object[] {new double[]{0.0, 1.0, .001},  0.0, "Node Disp Pop Size Thresh %",	new boolean[]{false, false, true}});														//uiPopMapNodeDispSizeIDX
-		tmpUIObjArray.put(uiNodeInSegThreshIDX, new Object[] {new double[]{0.0, 1.0, .001}, SOM_MapManager.initNodeInSegUMatrixDistThresh, "Segment UDist Thresh", new boolean[]{false, false, true}});   	//uiNodeInSegThreshIDX//threshold of u-matrix weight for nodes to belong to same segment    
-		tmpUIObjArray.put(uiMseRegionSensIDX, new Object[] {new double[]{0.0, 1.0, .001}, 0.001, "Mouse Over Sens",	new boolean[]{false, false, true}});   														//uiMseRegionSensIDX                                                                        
-		tmpUIObjArray.put(uiFtrSelectIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiFtrSelectIDX).length-1,1.0}, 0.0, "Feature IDX To Show", new boolean[] {true, true, true}});					//uiFtrSelectIDX
+		tmpUIObjArray.put(uiTrainDataNormIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiTrainDataNormIDX).length-1, 1.0}, 1.0*SOM_FtrDataType.FTR_NORM.getVal(), "Data Normalizing", GUIObj_Type.ListVal, new boolean[]{true}});   				//uiTrainDataFrmtIDX                                                                        
+		tmpUIObjArray.put(uiBMU_DispDataFrmtIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiBMU_DispDataFrmtIDX).length-1, 1.0}, 1.0*SOM_FtrDataType.UNNORMALIZED.getVal(), "Map Node Ftr Disp Frmt", GUIObj_Type.ListVal, new boolean[]{true}});  				//uiBMU_DispDataFrmtIDX                                                                         
+		tmpUIObjArray.put(uiTrainDatPartIDX, new Object[] {new double[]{1.0, 100.0, 1.0}, 100.0,	"Data % To Train", GUIObj_Type.IntVal, new boolean[]{true}});   													//uiTrainDatPartIDX                                                                         
+		tmpUIObjArray.put(uiMapRowsIDX, new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Rows", GUIObj_Type.IntVal, new boolean[]{true}});   															//uiMapRowsIDX 	 		                                                                    
+		tmpUIObjArray.put(uiMapColsIDX, new Object[] {new double[]{1.0, 120.0, 10}, 10.0, "# Map Columns", GUIObj_Type.IntVal, new boolean[]{true}});   															//uiMapColsIDX	 		                                                                    
+		tmpUIObjArray.put(uiMapEpochsIDX, new Object[] {new double[]{1.0, 200.0, 10}, 10.0, "# Training Epochs", GUIObj_Type.IntVal, new boolean[]{true}});  														//uiMapEpochsIDX		                                                                    
+		tmpUIObjArray.put(uiMapShapeIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapShapeIDX).length-1, 1},0.0, "Map Node Shape", GUIObj_Type.ListVal, new boolean[]{true}});   						//uiMapShapeIDX	 		                                                                    
+		tmpUIObjArray.put(uiMapBndsIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapBndsIDX).length-1, 1},1.0, "Map Boundaries", GUIObj_Type.ListVal, new boolean[]{true}});  						//uiMapBndsIDX	 		                                                                    
+		tmpUIObjArray.put(uiMapKTypIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapKTypIDX).length-1, 1.01},2.0, "Dense/Sparse (C/G)PU", GUIObj_Type.ListVal, new boolean[]{true}});   				//uiMapKTypIDX	 		                                                                    
+		tmpUIObjArray.put(uiMapNHdFuncIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapNHdFuncIDX).length-1, 1},0.0, "Neighborhood Func", GUIObj_Type.ListVal, new boolean[]{true}});   					//uiMapNHdFuncIDX		                                                                    
+		tmpUIObjArray.put(uiMapRadCoolIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapRadCoolIDX).length-1, 1},0.0, "Radius Cooling", GUIObj_Type.ListVal, new boolean[]{true}});   						//uiMapRadCoolIDX		                                                                    
+		tmpUIObjArray.put(uiMapLrnCoolIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapLrnCoolIDX).length-1, 1},0.0, "Learn rate Cooling", GUIObj_Type.ListVal, new boolean[]{true}});   					//uiMapLrnCoolIDX		                                                                    
+		tmpUIObjArray.put(uiMapLrnStIDX, new Object[] {new double[]{0.001, 10.0, 0.001}, 1.0, "Start Learn Rate", GUIObj_Type.FloatVal, new boolean[]{true}});   													//uiMapLrnStIDX	 		                                                                    
+		tmpUIObjArray.put(uiMapLrnEndIDX, new Object[] {new double[]{0.001, 1.0, 0.001}, 0.1, "End Learn Rate", GUIObj_Type.FloatVal, new boolean[]{true}});   														//uiMapLrnEndIDX		                                                                    
+		tmpUIObjArray.put(uiMapRadStIDX, new Object[] {new double[]{2.0, 300.0, 1.0},	 20.0, "Start Cool Radius", GUIObj_Type.IntVal, new boolean[]{true}});   													//uiMapRadStIDX	 	# nodes	                                                                
+		tmpUIObjArray.put(uiMapRadEndIDX, new Object[] {new double[]{1.0, 10.0, 1.0},	 1.0, "End Cool Radius", GUIObj_Type.IntVal, new boolean[]{true}});   														//uiMapRadEndIDX		# nodes	  
+		tmpUIObjArray.put(uiMapPreBuiltDirIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapPreBuiltDirIDX).length-1,1.0}, 0.0, "Pretrained Map Dirs", GUIObj_Type.ListVal, new boolean[]{true}});			//uiMapPreBuiltDirIDX
+		tmpUIObjArray.put(uiMapNodeBMUTypeToDispIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiMapNodeBMUTypeToDispIDX).length-1, 1.0}, 0.0, "Ex Type For Node BMU", GUIObj_Type.ListVal, new boolean[]{true}}); 	//uiMapNodeBMUTypeToDispIDX                                                                 
+		tmpUIObjArray.put(uiNodeWtDispThreshIDX, new Object[] {new double[]{0.0, 1.0, .01}, SOM_MapManager.initNodeInSegFtrWtDistThresh, "Map Node Disp Wt Thresh", GUIObj_Type.FloatVal, new boolean[]{true}});   	//uiNodeWtDispThreshIDX                                                                     
+		tmpUIObjArray.put(uiNodePopDispThreshIDX, new Object[] {new double[]{0.0, 1.0, .001},  0.0, "Node Disp Pop Size Thresh %", GUIObj_Type.FloatVal, new boolean[]{true}});														//uiPopMapNodeDispSizeIDX
+		tmpUIObjArray.put(uiNodeInSegThreshIDX, new Object[] {new double[]{0.0, 1.0, .001}, SOM_MapManager.initNodeInSegUMatrixDistThresh, "Segment UDist Thresh", GUIObj_Type.FloatVal, new boolean[]{true}});   	//uiNodeInSegThreshIDX//threshold of u-matrix weight for nodes to belong to same segment    
+		tmpUIObjArray.put(uiMseRegionSensIDX, new Object[] {new double[]{0.0, 1.0, .001}, 0.001, "Mouse Over Sens", GUIObj_Type.FloatVal, new boolean[]{true}});   														//uiMseRegionSensIDX                                                                        
+		tmpUIObjArray.put(uiFtrSelectIDX, new Object[] {new double[]{0.0, tmpListObjVals.get(uiFtrSelectIDX).length-1,1.0}, 0.0, "Feature IDX To Show", GUIObj_Type.ListVal, new boolean[]{true}});					//uiFtrSelectIDX
 		
 		String catUIDesc = getCategoryUIObjLabel();
 		if((null!=catUIDesc) && (catUIDesc.length()>0)) {
 			_catExistsAndIsShown = true;
 			tmpListObjVals.put(uiCategorySelectIDX, new String[] {"None"});	
-			tmpUIObjArray.put(uiCategorySelectIDX,new Object[] {new double[]{0.0, tmpListObjVals.get(uiCategorySelectIDX).length-1,1.0}, 0.0, catUIDesc, new boolean[] {true, true, true}});			//uiMapPreBuiltDirIDX
+			tmpUIObjArray.put(uiCategorySelectIDX,new Object[] {new double[]{0.0, tmpListObjVals.get(uiCategorySelectIDX).length-1,1.0}, 0.0, catUIDesc, GUIObj_Type.ListVal, new boolean[]{true}});			//uiMapPreBuiltDirIDX
 		} else {			_catExistsAndIsShown = false;		}
 		
 		String classUIDesc = getClassUIObjLabel();
 		if((null!=classUIDesc) && (classUIDesc.length()>0)) {
 			_classExistsAndIsShown = true;
 			tmpListObjVals.put(uiClassSelectIDX, new String[] {"None"});	
-			tmpUIObjArray.put(uiClassSelectIDX,new Object[] {new double[]{0.0, tmpListObjVals.get(uiClassSelectIDX).length-1,1.0}, 0.0, classUIDesc, new boolean[] {true, true, true}});			//uiMapPreBuiltDirIDX
+			tmpUIObjArray.put(uiClassSelectIDX,new Object[] {new double[]{0.0, tmpListObjVals.get(uiClassSelectIDX).length-1,1.0}, 0.0, classUIDesc, GUIObj_Type.ListVal, new boolean[]{true}});			//uiMapPreBuiltDirIDX
 		} else {			_classExistsAndIsShown = false;		}
 		
 		//populate instancing application objects
