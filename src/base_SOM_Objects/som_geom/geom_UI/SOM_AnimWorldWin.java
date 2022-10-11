@@ -79,7 +79,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 
 	protected static final int numBaseAnimWinPrivFlags = 16;
 
-	// initial values
+	// initial UI values
 	public int numGeomObjs = 10, numSmplPointsPerObj = 200, numTrainingExamples = 40000, curSelGeomObjIDX = 0;
 	// fraction of max count of binomial coefficient to set as # of training
 	// examples to sample from objects + samples

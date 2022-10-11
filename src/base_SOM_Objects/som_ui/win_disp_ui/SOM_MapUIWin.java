@@ -430,8 +430,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * @param tmpListObjVals treemap keyed by object IDX and value is list of strings of values for all UI list select objects
 	 */
 	protected abstract void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals);
-	
-	public final void resetUIVals(){for(int i=0; i<guiStVals.length;++i){				guiObjs[i].setVal(guiStVals[i]);		}}	
 		
 	//set window-specific variables that are based on current visible screen dimensions
 	protected final void setVisScreenDimsPriv() {
@@ -602,8 +600,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 			case uiMapColsIDX	    : {guiObjs[uiMapRadStIDX].setVal(.5*Math.min(guiObjs[uiMapRowsIDX].getVal(), val));break;}
 			case uiMapEpochsIDX	    : {break;}
 			case uiMapKTypIDX	    : {break;}
-			case uiMapRadStIDX	    : {if(val <= guiObjs[uiMapRadEndIDX].getVal()+guiMinMaxModVals[uiObjIDX][2]) {uiVals[uiObjIDX] = guiObjs[uiObjIDX].setVal(guiObjs[uiMapRadEndIDX].getVal()+guiMinMaxModVals[uiObjIDX][2]);}break;}
-			case uiMapRadEndIDX	    : {if(val >= guiObjs[uiMapRadStIDX].getVal()-guiMinMaxModVals[uiObjIDX][2]) { uiVals[uiObjIDX] = guiObjs[uiObjIDX].setVal(guiObjs[uiMapRadStIDX].getVal()-guiMinMaxModVals[uiObjIDX][2]);}break;}
+			case uiMapRadStIDX	    : {if(val <= guiObjs[uiMapRadEndIDX].getVal()+guiObjs[uiObjIDX].getModStep()) {uiVals[uiObjIDX] = guiObjs[uiObjIDX].setVal(guiObjs[uiMapRadEndIDX].getVal()+guiObjs[uiObjIDX].getModStep());}break;}
+			case uiMapRadEndIDX	    : {if(val >= guiObjs[uiMapRadStIDX].getVal()-guiObjs[uiObjIDX].getModStep()) { uiVals[uiObjIDX] = guiObjs[uiObjIDX].setVal(guiObjs[uiMapRadStIDX].getVal()-guiObjs[uiObjIDX].getModStep());}break;}
 		}
 	}//setUIDataVal_Integer	
 
@@ -615,8 +613,8 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		Integer uiObjIDX = getUIidxFromMapKeyString(key);
 		uiVals[uiObjIDX] = guiObjs[uiObjIDX].setVal(val);
 		switch (uiObjIDX) {
-		case uiMapLrnStIDX	    : {	if(val <= guiObjs[uiMapLrnEndIDX].getVal()+guiMinMaxModVals[uiObjIDX][2]) {	uiVals[uiObjIDX] = guiObjs[uiObjIDX].setVal(guiObjs[uiMapLrnEndIDX].getVal()+guiMinMaxModVals[uiObjIDX][2]);}break;}
-		case uiMapLrnEndIDX	    : {	if(val >= guiObjs[uiMapLrnStIDX].getVal()-guiMinMaxModVals[uiObjIDX][2]) {	uiVals[uiObjIDX] = guiObjs[uiObjIDX].setVal(guiObjs[uiMapLrnStIDX].getVal()-guiMinMaxModVals[uiObjIDX][2]);}break;}
+		case uiMapLrnStIDX	    : {	if(val <= guiObjs[uiMapLrnEndIDX].getVal()+guiObjs[uiObjIDX].getModStep()) {	uiVals[uiObjIDX] = guiObjs[uiObjIDX].setVal(guiObjs[uiMapLrnEndIDX].getVal()+guiObjs[uiObjIDX].getModStep());}break;}
+		case uiMapLrnEndIDX	    : {	if(val >= guiObjs[uiMapLrnStIDX].getVal()-guiObjs[uiObjIDX].getModStep()) {	uiVals[uiObjIDX] = guiObjs[uiObjIDX].setVal(guiObjs[uiMapLrnStIDX].getVal()-guiObjs[uiObjIDX].getModStep());}break;}
 		}
 	}//setUIDataVal_Float
 	
@@ -652,17 +650,17 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 			case uiMapEpochsIDX	    : {setMapDataVal_Integer(UIidx,val);break;}
 			case uiMapKTypIDX	    : {setMapDataVal_Integer(UIidx,val);break;}
 			case uiMapRadStIDX	    : {
-				if(val <= guiObjs[uiMapRadEndIDX].getVal()+guiMinMaxModVals[UIidx][2]) {val = guiObjs[UIidx].setVal(guiObjs[uiMapRadEndIDX].getVal()+guiMinMaxModVals[UIidx][2]);uiVals[UIidx] = val;}
+				if(val <= guiObjs[uiMapRadEndIDX].getVal()+guiObjs[UIidx].getModStep()) {val = guiObjs[UIidx].setVal(guiObjs[uiMapRadEndIDX].getVal()+guiObjs[UIidx].getModStep());uiVals[UIidx] = val;}
 				setMapDataVal_Integer(UIidx,val);		break;}
 			case uiMapRadEndIDX	    : {
-				if(val >= guiObjs[uiMapRadStIDX].getVal()-guiMinMaxModVals[UIidx][2]) { val = guiObjs[UIidx].setVal(guiObjs[uiMapRadStIDX].getVal()-guiMinMaxModVals[UIidx][2]);uiVals[UIidx] = val;}
+				if(val >= guiObjs[uiMapRadStIDX].getVal()-guiObjs[UIidx].getModStep()) { val = guiObjs[UIidx].setVal(guiObjs[uiMapRadStIDX].getVal()-guiObjs[UIidx].getModStep());uiVals[UIidx] = val;}
 				setMapDataVal_Integer(UIidx,val);		break;}
 			//end of integer values |start of float values
 			case uiMapLrnStIDX	    : {
-				if(val <= guiObjs[uiMapLrnEndIDX].getVal()+guiMinMaxModVals[UIidx][2]) {val = guiObjs[UIidx].setVal(guiObjs[uiMapLrnEndIDX].getVal()+guiMinMaxModVals[UIidx][2]);uiVals[UIidx] = val;}			
+				if(val <= guiObjs[uiMapLrnEndIDX].getVal()+guiObjs[UIidx].getModStep()) {val = guiObjs[UIidx].setVal(guiObjs[uiMapLrnEndIDX].getVal()+guiObjs[UIidx].getModStep());uiVals[UIidx] = val;}			
 				setMapDataVal_Float(UIidx,val);			break;}
 			case uiMapLrnEndIDX	    : {
-				if(val >= guiObjs[uiMapLrnStIDX].getVal()-guiMinMaxModVals[UIidx][2]) {	val = guiObjs[UIidx].setVal(guiObjs[uiMapLrnStIDX].getVal()-guiMinMaxModVals[UIidx][2]);uiVals[UIidx] = val;}		
+				if(val >= guiObjs[uiMapLrnStIDX].getVal()-guiObjs[UIidx].getModStep()) {	val = guiObjs[UIidx].setVal(guiObjs[uiMapLrnStIDX].getVal()-guiObjs[UIidx].getModStep());uiVals[UIidx] = val;}		
 				setMapDataVal_Float(UIidx,val);			break;}
 			//end of float values | start of string/list values
 			case uiMapNHdFuncIDX	: {setMapDataVal_String(UIidx,val); break;}
