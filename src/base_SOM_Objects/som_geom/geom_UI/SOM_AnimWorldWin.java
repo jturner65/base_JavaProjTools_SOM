@@ -113,11 +113,19 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		rebuildSourceGeomObjs();
 	}
 
-
+	/**
+	 * This function would provide an instance of the override class for base_UpdateFromUIData, which would
+	 * be used to communicate changes in UI settings directly to the value consumers.
+	 */
 	@Override
 	protected base_UpdateFromUIData buildUIDataUpdateObject() {
 		return null;
 	}
+	/**
+	 * This function is called on ui value update, to pass new ui values on to window-owned consumers
+	 */
+	@Override
+	protected final void updateCalcObjUIVals() {}
 
 //	@Override
 //	protected void buildUIUpdateStruct_Indiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
@@ -135,7 +143,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 //		//individual window values
 //		buildUIUpdateStruct_SubwindowIndiv(intValues, floatValues, boolValues);
 //	}
-	
+//	
 	protected abstract void buildUIUpdateStruct_SubwindowIndiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
 			TreeMap<Integer, Boolean> boolValues);
 
