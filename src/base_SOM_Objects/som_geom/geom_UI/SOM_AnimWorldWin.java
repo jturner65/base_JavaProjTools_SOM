@@ -119,22 +119,22 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		return null;
 	}
 
-	@Override
-	protected void buildUIUpdateStruct_Indiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
-			TreeMap<Integer, Boolean> boolValues) {
-		//int values 
-		intValues.put(gIDX_NumUIObjs, (int) guiObjs[gIDX_NumUIObjs].getVal());
-		intValues.put(gIDX_NumUISamplesPerObj, (int) guiObjs[gIDX_NumUISamplesPerObj].getVal());
-		intValues.put(gIDX_NumTrainingEx, (int) guiObjs[gIDX_NumTrainingEx].getVal());
-		intValues.put(gIDX_SelDispUIObj, (int) guiObjs[gIDX_SelDispUIObj].getVal());		
-		
-		//float values
-		floatValues.put(gIDX_FractNumTrainEx, (float) guiObjs[gIDX_FractNumTrainEx].getVal());	
-		//no boolean values
-		
-		//individual window values
-		buildUIUpdateStruct_SubwindowIndiv(intValues, floatValues, boolValues);
-	}
+//	@Override
+//	protected void buildUIUpdateStruct_Indiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
+//			TreeMap<Integer, Boolean> boolValues) {
+//		//int values 
+//		intValues.put(gIDX_NumUIObjs, (int) guiObjs[gIDX_NumUIObjs].getVal());
+//		intValues.put(gIDX_NumUISamplesPerObj, (int) guiObjs[gIDX_NumUISamplesPerObj].getVal());
+//		intValues.put(gIDX_NumTrainingEx, (int) guiObjs[gIDX_NumTrainingEx].getVal());
+//		intValues.put(gIDX_SelDispUIObj, (int) guiObjs[gIDX_SelDispUIObj].getVal());		
+//		
+//		//float values
+//		floatValues.put(gIDX_FractNumTrainEx, (float) guiObjs[gIDX_FractNumTrainEx].getVal());	
+//		//no boolean values
+//		
+//		//individual window values
+//		buildUIUpdateStruct_SubwindowIndiv(intValues, floatValues, boolValues);
+//	}
 	
 	protected abstract void buildUIUpdateStruct_SubwindowIndiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
 			TreeMap<Integer, Boolean> boolValues);

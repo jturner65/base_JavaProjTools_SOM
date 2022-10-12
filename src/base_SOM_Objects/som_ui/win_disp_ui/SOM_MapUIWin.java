@@ -226,12 +226,6 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		return null;
 	}
 
-	@Override
-	protected void buildUIUpdateStruct_Indiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
-			TreeMap<Integer, Boolean> boolValues) {
-		
-	}
-	
 	protected abstract void setInitValsForPrivFlags_Indiv();
 	/**
 	 * build instancing app's map manager
@@ -449,7 +443,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		privFlags[flIDX] = (val ?  privFlags[flIDX] | mask : privFlags[flIDX] & ~mask);
 		switch (idx) {//special actions for each flag
 			case buildSOMExe 			: {break;}			//placeholder	
-			case resetMapDefsIDX		: {if(val){resetUIVals(); setPrivFlags(resetMapDefsIDX,false);}}
+			case resetMapDefsIDX		: {if(val){resetUIVals(true); setPrivFlags(resetMapDefsIDX,false);}}
 			case mapDataLoadedIDX 		: {break;}			//placeholder				
 			case mapUseChiSqDistIDX		: {//whether or not to use chi-squared (weighted) distance for features
 				//turn off scaled ftrs if this is set
