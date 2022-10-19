@@ -322,8 +322,14 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		return 0;
 	}
 
+	/**
+	 * type is row of buttons (1st idx in curCustBtn array) 2nd idx is btn
+	 * @param funcRow idx for button row
+	 * @param btn idx for button within row (column)
+	 * @param label label for this button (for display purposes)
+	 */
 	@Override
-	protected final void launchMenuBtnHndlr(int funcRow, int btn) {	}
+	protected final void launchMenuBtnHndlr(int funcRow, int btn, String label) {}
 
 	@Override
 	protected void setCustMenuBtnLabels() {}
