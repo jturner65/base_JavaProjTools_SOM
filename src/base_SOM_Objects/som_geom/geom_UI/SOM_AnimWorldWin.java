@@ -11,11 +11,12 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
+import base_SOM_Objects.som_geom.geom_utils.SOMGeomUIDataUpdater;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_UI_Objects.GUI_AppManager;
-import base_UI_Objects.windowUI.base.base_UpdateFromUIData;
 import base_UI_Objects.windowUI.base.myDispWindow;
 import base_UI_Objects.windowUI.drawnObjs.myDrawnSmplTraj;
+import base_UI_Objects.windowUI.uiData.UIDataUpdater;
 import base_UI_Objects.windowUI.uiObjs.GUIObj_Type;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
@@ -118,34 +119,14 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 * be used to communicate changes in UI settings directly to the value consumers.
 	 */
 	@Override
-	protected base_UpdateFromUIData buildUIDataUpdateObject() {
-		return null;
+	protected UIDataUpdater buildUIDataUpdateObject() {
+		return new SOMGeomUIDataUpdater(this);
 	}
 	/**
 	 * This function is called on ui value update, to pass new ui values on to window-owned consumers
 	 */
 	@Override
 	protected final void updateCalcObjUIVals() {}
-
-//	@Override
-//	protected void buildUIUpdateStruct_Indiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
-//			TreeMap<Integer, Boolean> boolValues) {
-//		//int values 
-//		intValues.put(gIDX_NumUIObjs, (int) guiObjs[gIDX_NumUIObjs].getVal());
-//		intValues.put(gIDX_NumUISamplesPerObj, (int) guiObjs[gIDX_NumUISamplesPerObj].getVal());
-//		intValues.put(gIDX_NumTrainingEx, (int) guiObjs[gIDX_NumTrainingEx].getVal());
-//		intValues.put(gIDX_SelDispUIObj, (int) guiObjs[gIDX_SelDispUIObj].getVal());		
-//		
-//		//float values
-//		floatValues.put(gIDX_FractNumTrainEx, (float) guiObjs[gIDX_FractNumTrainEx].getVal());	
-//		//no boolean values
-//		
-//		//individual window values
-//		buildUIUpdateStruct_SubwindowIndiv(intValues, floatValues, boolValues);
-//	}
-//	
-	protected abstract void buildUIUpdateStruct_SubwindowIndiv(TreeMap<Integer, Integer> intValues, TreeMap<Integer, Float> floatValues,
-			TreeMap<Integer, Boolean> boolValues);
 
 	@Override
 	protected int[] getFlagIDXsToInitToTrue() {
@@ -338,16 +319,23 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 * @param val
 	 */
 	protected abstract void setPrivFlags_Indiv(int idx, boolean val);
-
+	
+	/**
+	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
+	 * @param tmpUIObjArray : map of object data, keyed by UI object idx, with array values being :                    
+	 *           the first element double array of min/max/mod values                                                   
+	 *           the 2nd element is starting value                                                                      
+	 *           the 3rd elem is label for object                                                                       
+	 *           the 4th element is object type (GUIObj_Type enum)
+	 *           the 5th element is boolean array of : (unspecified values default to false)
+	 *           	{value is sent to owning window, 
+	 *           	value is sent on any modifications (while being modified, not just on release), 
+	 *           	changes to value must be explicitly sent to consumer (are not automatically sent)}    
+	 * @param tmpListObjVals : map of list object possible selection values
+	 */
 	@Override
 	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals) {
 		
-		//object array of elements of following format  : 
-		//	the first element double array of min/max/mod values
-		//	the 2nd element is starting value
-		//	the 3rd elem is label for object
-		//	the 4th element is object type (float, int or list of values)
-		//	the 5th element is boolean array of {value is sent to owning window, value is continuously updated}
 		int minNumObjs = getMinNumObjs(), maxNumObjs = getMaxNumObjs(),	diffNumObjs = (maxNumObjs - minNumObjs > 100 ? 10 : 1);
 		numGeomObjs = minNumObjs;
 		tmpUIObjArray.put(gIDX_NumUIObjs,new Object[] { new double[] { minNumObjs, maxNumObjs, diffNumObjs }, (double) (numGeomObjs * 1.0),"# of " + geomObjType + " Objects", GUIObj_Type.IntVal, new boolean[]{true, true}}); // gIDX_NumUIObjs
@@ -423,62 +411,78 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		guiObjs[gIDX_NumTrainingEx].setVal(newVal);
 		setUIWinVals(gIDX_NumTrainingEx);
 	}
-
+	
+	/**
+	 * Called if int-handling guiObjs[UIidx] (int or list) has new data which updated UI adapter. 
+	 * Intended to support custom per-object handling by owning window.
+	 * Only called if data changed!
+	 * @param UIidx Index of gui obj with new data
+	 * @param ival integer value of new data
+	 * @param oldVal integer value of old data in UIUpdater
+	 */
 	@Override
-	protected final void setUIWinVals(int UIidx) {
-		float val = (float) guiObjs[UIidx].getVal();
-		int ival = (int) val;
-
-		switch (UIidx) {
-		case gIDX_NumUIObjs: {
-			if (ival != numGeomObjs) {
+	protected final void setUI_IntValsCustom(int UIidx, int ival, int oldVal) {
+		switch(UIidx){	
+			case gIDX_NumUIObjs: {
 				numGeomObjs = ival;
 				guiObjs[gIDX_SelDispUIObj].setNewMax(ival - 1);
 				refreshNumTrainingExampleBounds();
-				rebuildSourceGeomObjs();
+				rebuildSourceGeomObjs();			
+				break;
 			}
-			break;
-		}
-		case gIDX_NumUISamplesPerObj: {
-			if (ival != numSmplPointsPerObj) {
+			case gIDX_NumUISamplesPerObj: {
 				numSmplPointsPerObj = ival;
 				refreshNumTrainingExampleBounds();
 				regenBaseGeomObjSamples();
+				break;
+			}		
+			case gIDX_NumTrainingEx: {
+				numTrainingExamples = ival;		
+				setMapMgrGeomObjVals();
+				break;
 			}
-			break;
-		}
-		case gIDX_FractNumTrainEx: { // fraction of total # of possible samples in current configuration to use for
-										// training examples
-			if (val != fractOfBinomialForBaseNumTrainEx) {
+			case gIDX_SelDispUIObj: {				
+				curSelGeomObjIDX = MyMathUtils.min(ival, numGeomObjs - 1);
+				break;
+			}			
+			default : {
+				boolean found = setUI_IntValsCustom_Indiv( UIidx,  ival,  oldVal);
+				if (!found) {
+					msgObj.dispWarningMessage(className, "setUI_IntValsCustom", "No int-defined gui object mapped to idx :"+UIidx);
+				}
+				break;}
+		}			
+	}//setUI_IntValsCustom
+	
+	protected abstract boolean setUI_IntValsCustom_Indiv(int UIidx, int ival, int oldVal);
+	
+	/**
+	 * Called if float-handling guiObjs[UIidx] has new data which updated UI adapter.  
+	 * Intended to support custom per-object handling by owning window.
+	 * Only called if data changed!
+	 * @param UIidx Index of gui obj with new data
+	 * @param val float value of new data
+	 * @param oldVal float value of old data in UIUpdater
+	 */
+	@Override
+	protected final void setUI_FloatValsCustom(int UIidx, float val, float oldVal) {
+		switch(UIidx){		
+			case gIDX_FractNumTrainEx: { // fraction of total # of possible samples in current configuration to use for
+				// training examples
 				fractOfBinomialForBaseNumTrainEx = val;
 				refreshNumTrainingExamples();
-			}
-			break;
-		}
-		case gIDX_NumTrainingEx: {
-			if (ival != numTrainingExamples) {		numTrainingExamples = ival;		}
-			setMapMgrGeomObjVals();
-			break;
-		}
-		case gIDX_SelDispUIObj: {
-			if (ival != curSelGeomObjIDX) {
-				curSelGeomObjIDX = MyMathUtils.min(ival, numGeomObjs - 1);
-			} // don't select a sphere Higher than the # of spheres
-			break;
-		}
-		default: {
-			setUIWinVals_Indiv(UIidx, val);
-		}
-		}
-	}
-
-	/**
-	 * For instance-class specific ui values
-	 * 
-	 * @param UIidx
-	 */
-	protected abstract void setUIWinVals_Indiv(int UIidx, float val);
-
+				break;}
+			default : {
+				boolean found = setUI_FloatValsCustom_Indiv( UIidx, val, oldVal);
+				if (!found) {
+					msgObj.dispWarningMessage(className, "setUI_FloatValsCustom", "No float-defined gui object mapped to idx :"+UIidx);
+				}
+				break;}
+		}	
+	}//setUI_FloatValsCustom
+	
+	protected abstract boolean setUI_FloatValsCustom_Indiv(int UIidx, float ival, float oldVal);
+	
 	/**
 	 * override this since no close box support
 	 */
@@ -1053,7 +1057,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	@Override
 	protected final void closeMe() {	}
 	@Override
-	protected final void showMe() {			setCustMenuBtnNames();	}
+	protected final void showMe() {			setCustMenuBtnLabels();	}
 	@Override
 	protected final String[] getSaveFileDirNamesPriv() {		return new String[0];	}
 	@Override

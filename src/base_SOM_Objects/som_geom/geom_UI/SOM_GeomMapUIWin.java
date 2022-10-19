@@ -151,10 +151,17 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	protected void drawSetDispFlags() {	}
 	@Override
 	protected void drawMapIndiv() {		}
+	@Override
+	protected boolean setUI_IntValsCustom_Indiv(int UIidx, int ival, int oldVal) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	@Override
-	protected void setUIWinValsIndiv(int UIidx) {}	
-	
+	protected boolean setUI_FloatValsCustom_Indiv(int UIidx, float ival, float oldVal) {
+		// TODO Auto-generated method stub
+		return false;
+	}	
 	@Override
 	public void initDrwnTrajIndiv(){}
 	@Override
@@ -319,6 +326,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	protected final void launchMenuBtnHndlr(int funcRow, int btn) {	}
 
 	@Override
-	protected void setCustMenuBtnNames() {}
+	protected void setCustMenuBtnLabels() {}
+
 
 }//myTrajEditWin
