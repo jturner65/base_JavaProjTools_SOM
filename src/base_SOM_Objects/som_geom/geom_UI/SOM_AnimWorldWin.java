@@ -482,14 +482,6 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	}//setUI_FloatValsCustom
 	
 	protected abstract boolean setUI_FloatValsCustom_Indiv(int UIidx, float ival, float oldVal);
-	
-	/**
-	 * override this since no close box support
-	 */
-	@Override
-	protected boolean checkClsBox(int mouseX, int mouseY) {
-		return false;
-	}
 
 	/**
 	 * instancing class-specific functionality
@@ -737,8 +729,9 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 		// if(this.getPrivFlags(drawSOM_MapUIVis)) {
 		if (somUIWin != null) {
 			pa.pushMatState();
-			somUIWin.drawGUIObjs(); // draw what user-modifiable fields are currently available
-			somUIWin.drawClickableBooleans(); // draw what user-modifiable boolean buttons
+			somUIWin.drawWindowGuiObjs();					//draw what user-modifiable fields are currently available
+//			somUIWin.drawGUIObjs(); // draw what user-modifiable fields are currently available
+//			somUIWin.drawClickableBooleans(); // draw what user-modifiable boolean buttons
 			pa.popMatState();
 		}
 	}

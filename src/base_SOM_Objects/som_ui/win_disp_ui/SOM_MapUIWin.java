@@ -17,6 +17,7 @@ import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_SOM_Objects.som_ui.utils.SOMWinUIDataUpdater;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.myDispWindow;
+import base_UI_Objects.windowUI.uiObjs.myGUIObj_List;
 import base_UI_Objects.windowUI.drawnObjs.myDrawnSmplTraj;
 import base_UI_Objects.windowUI.uiData.UIDataUpdater;
 import base_UI_Objects.windowUI.uiObjs.GUIObj_Type;
@@ -416,17 +417,17 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 * pass the list of values for the feature map select display list box, in idx order
 	 * @param ftrStrVals : list of values to display for each feature
 	 */
-	public final void setUI_FeatureListVals(String[] ftrStrVals) {	guiObjs[uiFtrSelectIDX].setListVals(ftrStrVals);	}
+	public final void setUI_FeatureListVals(String[] ftrStrVals) {	((myGUIObj_List) guiObjs[uiFtrSelectIDX]).setListVals(ftrStrVals);	}
 	/**
 	 * pass the list of values for the category list box, in idx order
 	 * @param categoryVals : list of values to display for category select list
 	 */
-	public final void setUI_CategoryListVals(String[] categoryVals) {	if(getPrivFlags(_categoryCanBeShownIDX)) {	guiObjs[uiCategorySelectIDX].setListVals(categoryVals);	}}
+	public final void setUI_CategoryListVals(String[] categoryVals) {	if(getPrivFlags(_categoryCanBeShownIDX)) {	((myGUIObj_List) guiObjs[uiCategorySelectIDX]).setListVals(categoryVals);	}}
 	/**
 	 * pass the list of values for the class list box, in idx order
 	 * @param classVals : list of values to display for class select list
 	 */
-	public final void setUI_ClassListVals(String[] classVals) {		if(getPrivFlags(_classCanBeShownIDX)) {		guiObjs[uiClassSelectIDX].setListVals(classVals);	}}
+	public final void setUI_ClassListVals(String[] classVals) {		if(getPrivFlags(_classCanBeShownIDX)) {		((myGUIObj_List) guiObjs[uiClassSelectIDX]).setListVals(classVals);	}}
 	
 	/**
 	 * Instancing class-specific (application driven) UI objects should be defined
@@ -566,11 +567,11 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 		guiObjs[uiMapLrnStIDX].setVal(mapFloats.get("mapStLrnRate"));
 		guiObjs[uiMapLrnEndIDX].setVal(mapFloats.get("mapEndLrnRate"));
 		
-		guiObjs[uiMapShapeIDX].setValInList(mapStrings.get("mapGridShape"));	
-		guiObjs[uiMapBndsIDX].setValInList(mapStrings.get("mapBounds"));	
-		guiObjs[uiMapRadCoolIDX].setValInList(mapStrings.get("mapRadCool"));	
-		guiObjs[uiMapNHdFuncIDX].setValInList(mapStrings.get("mapNHood"));	
-		guiObjs[uiMapLrnCoolIDX].setValInList(mapStrings.get("mapLearnCool"));
+		((myGUIObj_List) guiObjs[uiMapShapeIDX]).setValInList(mapStrings.get("mapGridShape"));	
+		((myGUIObj_List) guiObjs[uiMapBndsIDX]).setValInList(mapStrings.get("mapBounds"));	
+		((myGUIObj_List) guiObjs[uiMapRadCoolIDX]).setValInList(mapStrings.get("mapRadCool"));	
+		((myGUIObj_List) guiObjs[uiMapNHdFuncIDX]).setValInList(mapStrings.get("mapNHood"));	
+		((myGUIObj_List) guiObjs[uiMapLrnCoolIDX]).setValInList(mapStrings.get("mapLearnCool"));
 				
 	}//setUIValues
 	
@@ -580,7 +581,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	 */
 	public final void setPreBuiltMapArray(String[] _pbltMapArray) {
 		msgObj.dispInfoMessage("SOM_MapUIWin","setPreBuiltMapArray","Attempting to set prebuilt map values list of size : " +_pbltMapArray.length);
-		int curIDX = guiObjs[uiMapPreBuiltDirIDX].setListVals(_pbltMapArray);
+		int curIDX = ((myGUIObj_List) guiObjs[uiMapPreBuiltDirIDX]).setListVals(_pbltMapArray);
 		uiUpdateData.setIntValue(uiMapPreBuiltDirIDX, (int) guiObjs[uiMapPreBuiltDirIDX].getVal());
 		mapMgr.setCurPreBuiltMapIDX(curIDX);
 	}//
@@ -594,7 +595,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 	public final void setMapDataVal_Float(int UIidx, double val) {	mapMgr.updateMapDatFromUI_Float(getMapKeyStringFromUIidx(UIidx), (float) val);}
 	@Override
 	//public void setMapDataVal_String(int UIidx, double val) {	mapMgr.updateMapDatFromUI_String(getMapKeyStringFromUIidx(UIidx), getUIListValStr(UIidx, (int)val));}
-	public final void setMapDataVal_String(int UIidx, double val) {	mapMgr.updateMapDatFromUI_String(getMapKeyStringFromUIidx(UIidx), guiObjs[UIidx].getListValStr((int)val));}
+	public final void setMapDataVal_String(int UIidx, double val) {	mapMgr.updateMapDatFromUI_String(getMapKeyStringFromUIidx(UIidx), ((myGUIObj_List) guiObjs[UIidx]).getListValStr((int)val));}
 	
 	// set UI vals from map mgr - these are changes resulting from non-UI made changes to map
 	@Override
@@ -634,7 +635,7 @@ public abstract class SOM_MapUIWin extends myDispWindow implements ISOM_UIWinMap
 			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_String","Attempting to set UI object with unknown Key : " +key + " using String value " + val +". Aborting.",MsgCodes.warning1);
 			return;}
 		Integer uiObjIDX = getUIidxFromMapKeyString(key);
-		int[] retVals = guiObjs[uiObjIDX].setValInList(val);
+		int[] retVals = ((myGUIObj_List) guiObjs[uiObjIDX]).setValInList(val);
 		//if retVals[1] != 0 then not ok
 		if(retVals[1] != 0) {
 			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_String","Attempting to set list object : " +key + " to unknown list value " + val +". Aborting.",MsgCodes.warning1);
