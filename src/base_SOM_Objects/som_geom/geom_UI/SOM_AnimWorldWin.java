@@ -14,10 +14,10 @@ import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_SOM_Objects.som_geom.geom_utils.SOMGeomUIDataUpdater;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_UI_Objects.GUI_AppManager;
-import base_UI_Objects.windowUI.base.myDispWindow;
-import base_UI_Objects.windowUI.drawnObjs.myDrawnSmplTraj;
+import base_UI_Objects.windowUI.base.Base_DispWindow;
+import base_UI_Objects.windowUI.drawnObjs.DrawnSimpleTraj;
 import base_UI_Objects.windowUI.uiData.UIDataUpdater;
-import base_UI_Objects.windowUI.uiObjs.GUIObj_Type;
+import base_UI_Objects.windowUI.uiObjs.base.GUIObj_Type;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
 /**
@@ -28,7 +28,7 @@ import base_Utils_Objects.io.messaging.MsgCodes;
  *
  */
 
-public abstract class SOM_AnimWorldWin extends myDispWindow {
+public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	/**
 	 * map manager corresponding to this animation world
 	 */
@@ -148,7 +148,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 */
 	protected void setSOM_MapUIWinState(boolean val) {
 		if (null != somUIWin) {
-			somUIWin.setFlags(myDispWindow.showIDX, val);
+			somUIWin.setFlags(Base_DispWindow.showIDX, val);
 //			/this.setRectDimsY( somUIWin.getRectDim(1));
 		}
 	}
@@ -1040,7 +1040,7 @@ public abstract class SOM_AnimWorldWin extends myDispWindow {
 	 */
 	protected abstract void hndlMseRelease_Priv();
 	@Override
-	public final void processTrajIndiv(myDrawnSmplTraj drawnNoteTraj) {	}
+	public final void processTrajIndiv(DrawnSimpleTraj drawnNoteTraj) {	}
 	@Override
 	protected final void addSScrToWinIndiv(int newWinKey) {	}
 	@Override

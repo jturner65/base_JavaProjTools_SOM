@@ -10,6 +10,7 @@ import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MseOvrDispTypeVals;
 import base_UI_Objects.GUI_AppManager;
+import base_UI_Objects.windowUI.drawnObjs.DrawnSimpleTraj;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
 /**
@@ -333,6 +334,9 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 
 	@Override
 	protected void setCustMenuBtnLabels() {}
+
+	@Override
+	public final void processTrajIndiv(DrawnSimpleTraj drawnTraj) {}
 
 
 }//myTrajEditWin

@@ -44,7 +44,7 @@ import base_SOM_Objects.som_utils.runners.SOM_SaveExToBMUs_Runner;
 import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
 import base_UI_Objects.my_procApplet;
 //import base_UI_Objects.IRenderInterface;
-import base_UI_Objects.windowUI.base.myDispWindow;
+import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
@@ -850,11 +850,11 @@ public abstract class SOM_MapManager {
 			//int w = (int) (SOM_mapDims[0]/mapScaleVal), h = (int) (SOM_mapDims[1]/mapScaleVal);
 			int w = (int) (mapDims[0]/mapScaleVal), h = (int) (mapDims[1]/mapScaleVal);
 			mapPerFtrWtImgs = new PImage[numFtrVals];
-			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = ((my_procApplet)myDispWindow.pa).createImage(w, h, format);	}	
+			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = ((my_procApplet)Base_DispWindow.pa).createImage(w, h, format);	}	
 			
-			mapCubicUMatrixImg = ((my_procApplet)myDispWindow.pa).createImage(w, h, format);			
+			mapCubicUMatrixImg = ((my_procApplet)Base_DispWindow.pa).createImage(w, h, format);			
 			//reInit MapCubicSegments 
-			mapUMatrixCubicSegmentsImg = ((my_procApplet)myDispWindow.pa).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
+			mapUMatrixCubicSegmentsImg = ((my_procApplet)Base_DispWindow.pa).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
 			//instancing-window specific initializations
 			initMapArasIndiv(w,h, format,num2ndryMaps);
 		}
@@ -922,7 +922,7 @@ public abstract class SOM_MapManager {
 		if(win!=null) {
 			msgObj.dispInfoMessage("SOM_MapManager::"+name, "setMapSegmentImgClrs_UMatrix", "Start building mapUMatrixCubicSegmentsImg for UMatrix Display.");
 			//reinitialize map array
-			mapUMatrixCubicSegmentsImg = ((my_procApplet)myDispWindow.pa).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
+			mapUMatrixCubicSegmentsImg = ((my_procApplet)Base_DispWindow.pa).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
 			mapUMatrixCubicSegmentsImg.loadPixels();
 			//float[] c;	
 			//single threaded exec
@@ -1465,7 +1465,7 @@ public abstract class SOM_MapManager {
 				Integer largestCount = tmpMapNodesByPopForType.firstKey();		
 				mapNodePopDispThreshVals[i]=largestCount*mapNodePopDispThreshPct;
 
-				mapNodePopGraph[i] = ((my_procApplet)myDispWindow.pa).createImage(largestCount, numMapNodes, PConstants.ARGB);
+				mapNodePopGraph[i] = ((my_procApplet)Base_DispWindow.pa).createImage(largestCount, numMapNodes, PConstants.ARGB);
 				mapNodePopGraph[i].loadPixels();
 				int row = 0, pxlIDX = 0;
 				for(Integer count : tmpMapNodesByPopForType.keySet()) {
@@ -1489,7 +1489,7 @@ public abstract class SOM_MapManager {
 	
 	
 //	private PShape buildMapNodePopGraphAsPShape(TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>> MapNodesByPopulation) {
-//		PShape grph = myDispWindow.pa.createShape();
+//		PShape grph = Base_DispWindow.pa.createShape();
 //		grph.beginShape(PConstants.LINES);
 //		grph.noFill();
 //		grph.stroke(255,255,255,255);
@@ -2160,8 +2160,8 @@ public abstract class SOM_MapManager {
 			pa.disableLights();
 			pa.scale(mapScaleVal);
 			//doing this in separate matrix stack frame because map is built small and scaled up
-			((my_procApplet)myDispWindow.pa).image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.getPrivFlags(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.setPrivFlags(SOM_MapUIWin.saveLocClrImgIDX,false);}			
-			if(win.getPrivFlags(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {((my_procApplet)myDispWindow.pa).image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
+			((my_procApplet)Base_DispWindow.pa).image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.getPrivFlags(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.setPrivFlags(SOM_MapUIWin.saveLocClrImgIDX,false);}			
+			if(win.getPrivFlags(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {((my_procApplet)Base_DispWindow.pa).image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
 			pa.enableLights();
 		pa.popMatState(); 
 		pa.pushMatState();
@@ -2206,7 +2206,7 @@ public abstract class SOM_MapManager {
 		pa.pushMatState();
 		pa.translate(mapDims[0],0.0f,0.0f);
 		pa.scale(200.0f/(1.0f*mapNodePopGraph[typIDX].width),mapDims[1]/(1.0f*mapNodePopGraph[typIDX].height));
-		((my_procApplet)myDispWindow.pa).image(mapNodePopGraph[typIDX], 0.0f, 0.0f);
+		((my_procApplet)Base_DispWindow.pa).image(mapNodePopGraph[typIDX], 0.0f, 0.0f);
 		
 		pa.popMatState();
 	}//drawMapNodePopGraph
@@ -2421,7 +2421,7 @@ public abstract class SOM_MapManager {
 	private final float drawNumMapNodesShownByPop(IRenderInterface pa,float yOff) {
 		if(win.getPrivFlags(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {
 			pa.translate(10.0f, 0.0f, 0.0f);
-			myDispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
+			Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
 			yOff += sideBarYDisp;
 			pa.translate(-10.0f,sideBarYDisp, 0.0f);
 			
@@ -2437,7 +2437,7 @@ public abstract class SOM_MapManager {
 	private final float drawMseRes(IRenderInterface pa,float yOff) {
 		if((getFlag(dispMseDataSideBarIDX)) && mseOverExample.canDisplayMseLabel()) {
 			pa.translate(10.0f, 0.0f, 0.0f);
-			myDispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Mouse Values : ");
+			Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Mouse Values : ");
 			yOff += sideBarYDisp;
 			pa.translate(0.0f,sideBarYDisp, 0.0f);
 			mseOverExample.drawMseLbl_Info(pa, new myPointf(0,0,0));
@@ -2454,11 +2454,11 @@ public abstract class SOM_MapManager {
 			pa.translate(0.0f, 0.0f, 0.0f);
 			//float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;	
 			if(loadedPreBuiltMapData.length==0) {				
-				myDispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
+				Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
 				yOff += sideBarYDisp;
 				pa.translate(10.0f, sideBarYDisp, 0.0f);
 			} else {	
-				myDispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Pre-build Map Directories specified in config : ");
+				Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Pre-build Map Directories specified in config : ");
 				yOff += sideBarYDisp;
 				pa.translate(10.0f, sideBarYDisp, 0.0f);
 				
@@ -2466,10 +2466,10 @@ public abstract class SOM_MapManager {
 					boolean isDefault = i==curDefaultMap;
 					boolean isLoaded = i==pretrainedMapIDX;
 					int clrIDX = (isLoaded ? IRenderInterface.gui_Yellow : IRenderInterface.gui_White);
-					myDispWindow.AppMgr.showOffsetText(0,clrIDX,""+String.format("%02d", i+1)+" | "+loadedPreBuiltMapData[i][0]);
+					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,""+String.format("%02d", i+1)+" | "+loadedPreBuiltMapData[i][0]);
 					yOff += sideBarYDisp;
 					pa.translate(10.0f,sideBarYDisp,0.0f);
-					myDispWindow.AppMgr.showOffsetText(0,clrIDX,"Detail : ");
+					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,"Detail : ");
 					if(isDefault) {
 						pa.pushMatState();
 						pa.translate(-10.0f,20.0f,0.0f);
@@ -2480,13 +2480,13 @@ public abstract class SOM_MapManager {
 					}
 					yOff += sideBarYDisp;
 					pa.translate(10.0f, sideBarYDisp, 0.0f);
-					myDispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][1]);		
+					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][1]);		
 					yOff += sideBarYDisp;
 					pa.translate(0.0f, sideBarYDisp, 0.0f);			
-					myDispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][2]);		
+					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][2]);		
 					yOff += sideBarYDisp;
 					pa.translate(0.0f, sideBarYDisp, 0.0f);			
-					myDispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][3]);		
+					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][3]);		
 					yOff += sideBarYDisp;
 					pa.translate(0.0f, sideBarYDisp, 0.0f);			
 					
@@ -2505,8 +2505,8 @@ public abstract class SOM_MapManager {
 	protected abstract float drawResultBarPriv2(IRenderInterface pa, float yOff);
 	protected abstract float drawResultBarPriv3(IRenderInterface pa, float yOff);
 
-	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return ((my_procApplet) myDispWindow.pa).getRndClrBright();}
-	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return ((my_procApplet) myDispWindow.pa).getRndClrBright(alpha);}
+	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return ((my_procApplet) Base_DispWindow.pa).getRndClrBright();}
+	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return ((my_procApplet) Base_DispWindow.pa).getRndClrBright(alpha);}
 
 	//////////////////////////////
 	// getters/setters

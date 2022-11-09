@@ -38,7 +38,7 @@ public abstract class SOM_ProjConfigData {
 	 */
 	protected FileIOManager fileIO;	
 	/**
-	 * ref to SOM_MapDat SOM executiond descriptor object
+	 * ref to SOM_MapDat SOM execution descriptor object
 	 */
 	protected SOM_MapDat SOMExeDat;		
 	/**
@@ -46,7 +46,7 @@ public abstract class SOM_ProjConfigData {
 	 */
 	public static final String fileComment = "#";		
 	/**
-	 * TODO these are a function of data stucture, so should be set via config file
+	 * TODO these are a function of data structure, so should be set via config file
 	 */
 	protected boolean useSparseTrainingData, useSparseTestingData;	
 	/**

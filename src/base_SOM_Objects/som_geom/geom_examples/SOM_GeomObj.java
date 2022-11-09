@@ -17,7 +17,7 @@ import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjDrawType;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjSamples;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSamplePointf;
-import base_UI_Objects.windowUI.base.myDispWindow;
+import base_UI_Objects.windowUI.base.Base_DispWindow;
 
 /**
  * class to instance the base functionality of a geometric object represented by 
@@ -336,7 +336,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 */
 	protected final void buildLocClrAndSamplesFromCSVStr(myPointf _locForClr, String _csvStr) {
 		locClrAra = getClrFromWorldLoc(_locForClr);			
-		if(null!=objSamples) {objSamples.buildSampleSetAndPShapesFromCSVStr(myDispWindow.pa, _csvStr);}
+		if(null!=objSamples) {objSamples.buildSampleSetAndPShapesFromCSVStr(Base_DispWindow.pa, _csvStr);}
 		//else {msgObj.dispWarningMessage("SOM_GeomObj::"+GeomObj_ID, "buildLocClrAndSamplesFromCSVStr", "Attempting to rebuild samples from CSV for obj "+dispLabel +" when no objSamples Object exists");}
 	}
 	
@@ -345,7 +345,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _numSmplPts
 	 */
 	public final void buildSmplSetAndSmplPShapes(int _numSmplPts) {
-		if(null!=objSamples) {objSamples.buildSampleSetAndPShapes(myDispWindow.pa,_numSmplPts);} 
+		if(null!=objSamples) {objSamples.buildSampleSetAndPShapes(Base_DispWindow.pa,_numSmplPts);} 
 		//else {msgObj.dispWarningMessage("SOM_GeomObj::"+GeomObj_ID, "buildSmplSetAndSmplPShapes", "Attempting to rebuild samples for obj "+dispLabel +" when no objSamples Object exists");}
 	}//buildSampleSet
 	
