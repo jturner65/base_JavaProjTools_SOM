@@ -1,0 +1,32 @@
+stack overflow error console msgs
+
+4/25/22, 11:59 AM | 00:01:04.451 | messageMgr::call (Input Stream Handler):Stream Input Line : 0052 | Msg :     Done!
+4/25/22, 11:59 AM | 00:01:04.451 | messageMgr::call (Input Stream Handler):Stream Input Line : 0053 | Msg :     Saving best matching units E:\Eclipse Workspace\eclipse workspace\SOM_GeometryProject\GeometryProject\SOM\2d_lineSOM_2022_04_25_11_58\Out_2d_line_Smp_25547_x100_y100_k0.bm
+4/25/22, 11:59 AM | 00:01:04.459 | messageMgr::call (Input Stream Handler):Stream Input Line : 0054 | Msg :     Saving Codebook E:\Eclipse Workspace\eclipse workspace\SOM_GeometryProject\GeometryProject\SOM\2d_lineSOM_2022_04_25_11_58\Out_2d_line_Smp_25547_x100_y100_k0.wts
+4/25/22, 11:59 AM | 00:01:04.483 | messageMgr::call (Input Stream Handler):Stream Input Line : 0000 | Msg : Time for epoch 1: 0.3688 Time for epoch 2: 0.3343 Time for epoch 3: 0.3586 Time for epoch 4: 0.3426 Time for epoch 5: 0.3574 Time for epoch 6: 0.354 Time for epoch 7: 0.3757 Time for epoch 8: 0.3185 Time for epoch 9: 0.3609 Time for epoch 10: 0.3093 Time for epoch 11: 0.3631 Time for epoch 12: 0.3083 Time for epoch 13: 0.3586 Time for epoch 14: 0.3176 Time for epoch 15: 0.3525 Time for epoch 16: 0.3153 Time for epoch 17: 0.3473 Time for epoch 18: 0.3131 Time for epoch 19: 0.3423 Time for epoch 20: 0.3125 Time for epoch 21: 0.3309 Time for epoch 22: 0.3076 Time for epoch 23: 0.3189 Time for epoch 24: 0.3037 Time for epoch 25: 0.315 Time for epoch 26: 0.2961 Time for epoch 27: 0.2993 Time for epoch 28: 0.2921 Time for epoch 29: 0.2917 Time for epoch 30: 0.2825 Time for epoch 31: 0.2844 Time for epoch 32: 0.2765 Time for epoch 33: 0.2761 Time for epoch 34: 0.2712 Time for epoch 35: 0.2728 Time for epoch 36: 0.2661 Time for epoch 37: 0.2663 Time for epoch 38: 0.2614 Time for epoch 39: 0.2647 Time for epoch 40: 0.2592 Time for epoch 41: 0.2586 Time for epoch 42: 0.2548 Time for epoch 43: 0.2536 Time for epoch 44: 0.2536 Time for epoch 45: 0.2505 Time for epoch 46: 0.2516 Time for epoch 47: 0.2496 Time for epoch 48: 0.2538 Time for epoch 49: 0.2491 Time for epoch 50: 0.2646 
+4/25/22, 11:59 AM | 00:01:04.483 | SOM_MapManager::SOM Map UI for 2D Lines_MapManager_ID_0::buildNewMap:Shutting down process.
+4/25/22, 11:59 AM | 00:01:04.483 | SOM_MapManager::SOM Map UI for 2D Lines_MapManager_ID_0::buildNewMap:Finished Shutting down process
+4/25/22, 11:59 AM | 00:01:04.483 | SOM_MapManager::SOM Map UI for 2D Lines_MapManager_ID_0::buildNewMap:buildNewMap Finished
+4/25/22, 11:59 AM | 00:01:04.485 | SOM_MapManager::SOM Map UI for 2D Lines_MapManager_ID_0::loadMapAndBMUs_Synch:Building Mappings synchronously.
+4/25/22, 11:59 AM | 00:01:04.486 | SOM_DataLoader::run:Starting Trained SOM map node data loader
+4/25/22, 11:59 AM | 00:01:04.486 | SOM_DataLoader::loadSOMWts:Starting Loading SOM weight data from file : Out_2d_line_Smp_25547_x100_y100_k0.wts
+4/25/22, 11:59 AM | 00:01:04.500 | fileIOManager:SOM_DataLoader::_loadFileIntoStringAra:Loaded wts data file : E:\Eclipse Workspace\eclipse workspace\SOM_GeometryProject\GeometryProject\SOM\2d_lineSOM_2022_04_25_11_58\Out_2d_line_Smp_25547_x100_y100_k0.wts	Length : 10002
+4/25/22, 11:59 AM | 00:01:04.569 | SOM_MapManager::SOM Map UI for 2D Lines_MapManager_ID_0::initMapFtrVisAras:Initializing per-feature map display to hold : 4 primary feature and 0 secondary feature map images.
+4/25/22, 11:59 AM | 00:01:04.569 | SOM_MapManager::SOM Map UI for 2D Lines_MapManager_ID_0::initMapAras:Start Initializing per-feature map display to hold : 4 primary feature and 0 secondary feature map images.
+4/25/22, 11:59 AM | 00:01:04.569 | SOM_DataLoader::loadSOMWts:Finished Loading SOM weight data from file : Out_2d_line_Smp_25547_x100_y100_k0.wts
+4/25/22, 11:59 AM | 00:01:04.569 | SOM_DataLoader::execDataLoad:Loading SOM Weights successfully completed.
+4/25/22, 11:59 AM | 00:01:04.569 | SOM_DataLoader::loadSOM_UMatrixDists:Start Loading U-Matrix File : E:\Eclipse Workspace\eclipse workspace\SOM_GeometryProject\GeometryProject\SOM\2d_lineSOM_2022_04_25_11_58\Out_2d_line_Smp_25547_x100_y100_k0.umx
+4/25/22, 11:59 AM | 00:01:04.570 | fileIOManager:SOM_DataLoader::_loadFileIntoStringAra:Loaded U Matrix data file : E:\Eclipse Workspace\eclipse workspace\SOM_GeometryProject\GeometryProject\SOM\2d_lineSOM_2022_04_25_11_58\Out_2d_line_Smp_25547_x100_y100_k0.umx	Length : 101
+4/25/22, 11:59 AM | 00:01:04.590 | SOM_MapManager::SOM Map UI for 2D Lines_MapManager_ID_0::buildSegmentsOnMap:Started building UMatrix Distance-based cluster map
+
+
+java.lang.RuntimeException: java.lang.StackOverflowError
+	at processing.opengl.PSurfaceJOGL$2.run(PSurfaceJOGL.java:412)
+	at java.base/java.lang.Thread.run(Thread.java:832)
+Caused by: java.lang.StackOverflowError
+	at java.base/java.util.concurrent.ConcurrentSkipListMap.cpr(ConcurrentSkipListMap.java:393)
+	at java.base/java.util.concurrent.ConcurrentSkipListMap.doPut(ConcurrentSkipListMap.java:616)
+	at java.base/java.util.concurrent.ConcurrentSkipListMap.put(ConcurrentSkipListMap.java:1347)
+	at base_SOM_Objects.som_segments.segments.SOM_MappedSegment.addMapNode(SOM_MappedSegment.java:44)
+	at base_SOM_Objects.som_segments.segments.SOM_MappedSegment.addMapNodeToSegment(SOM_MappedSegment.java:75)
+	at base_SOM_Objects.som_segments.segments.SOM_MappedSegment.addMapNodeToSegment(SOM_MappedSegment.java:83)

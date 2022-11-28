@@ -17,7 +17,7 @@ import base_SOM_Objects.som_examples.SOM_FtrDataType;
 import base_SOM_Objects.som_ui.utils.SOMWinUIDataUpdater;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
-import base_UI_Objects.windowUI.drawnObjs.DrawnSimpleTraj;
+import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
 import base_UI_Objects.windowUI.uiObjs.GUIObj_List;
 import base_UI_Objects.windowUI.uiData.UIDataUpdater;
 import base_UI_Objects.windowUI.uiObjs.base.GUIObj_Type;
