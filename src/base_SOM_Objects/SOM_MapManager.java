@@ -804,7 +804,7 @@ public abstract class SOM_MapManager {
 		String[] cmdExecStr = mapExeDat.getExecStrAra();
 
 		msgObj.dispMessage("SOM_MapManager::"+name,"buildNewMap","Execution Arguments passed to SOM, parsed by flags and values: ", MsgCodes.info2);
-		msgObj.dispMessageAra(cmdExecStr,"SOM_MapManager::"+name,"buildNewMap",2, MsgCodes.info2);//2 strings per line, display execution command	
+		msgObj.dispMessageAra("SOM_MapManager::"+name,"buildNewMap",cmdExecStr,2, MsgCodes.info2);//2 strings per line, display execution command	
 
 		String wkDirStr = mapExeDat.getExeWorkingDir(), 
 				cmdStr = mapExeDat.getExename(),
