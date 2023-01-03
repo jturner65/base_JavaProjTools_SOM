@@ -1,6 +1,6 @@
 package base_SOM_Objects.som_segments.segmentData;
 
-import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IRenderInterface;
 import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
 

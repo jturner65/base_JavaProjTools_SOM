@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeMap;
 
-import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IRenderInterface;
 import base_SOM_Objects.som_examples.SOM_MapNode;
 import base_SOM_Objects.som_segments.segmentData.SOM_MapNodeSegmentData;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;

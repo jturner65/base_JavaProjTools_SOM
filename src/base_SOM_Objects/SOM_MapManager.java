@@ -41,7 +41,7 @@ import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_SOM_Objects.som_utils.runners.SOM_CalcExFtrs_Runner;
 import base_SOM_Objects.som_utils.runners.SOM_MapExDataToBMUs_Runner;
 import base_SOM_Objects.som_utils.runners.SOM_SaveExToBMUs_Runner;
-import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IRenderInterface;
 import base_UI_Objects.my_procApplet;
 //import base_UI_Objects.IRenderInterface;
 import base_UI_Objects.windowUI.base.Base_DispWindow;

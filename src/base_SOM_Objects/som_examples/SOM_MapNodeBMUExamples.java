@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeMap;
 
-import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IRenderInterface;
 import base_Math_Objects.vectorObjs.floats.myPointf;
 
 

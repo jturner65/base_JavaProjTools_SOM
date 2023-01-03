@@ -3,7 +3,7 @@ package base_SOM_Objects.som_geom.geom_examples;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IRenderInterface;
 import base_Math_Objects.vectorObjs.tuples.Tuple;
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_examples.SOM_Example;
