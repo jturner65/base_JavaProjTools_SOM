@@ -56,7 +56,7 @@ public abstract class SOM_FtrDataBoundMonitor {
 		return res;
 	}//fastCopyAra
 	
-	//check if value is in bnds array for particular jp, otherwise modify bnd
+	//check if value is in bnds array for particular class, otherwise modify bnd
 	public final void checkValInBnds(Integer typeIDX, Integer destIDX, float val) {
 		if (val < bndsAra[typeIDX][minBndIDX][destIDX]) {bndsAra[typeIDX][minBndIDX][destIDX]=val;bndsAra[typeIDX][diffBndIDX][destIDX] = bndsAra[typeIDX][maxBndIDX][destIDX]-bndsAra[typeIDX][minBndIDX][destIDX]; checkInAllBounds( destIDX, val);}
 		if (val > bndsAra[typeIDX][maxBndIDX][destIDX]) {bndsAra[typeIDX][maxBndIDX][destIDX]=val;bndsAra[typeIDX][diffBndIDX][destIDX] = bndsAra[typeIDX][maxBndIDX][destIDX]-bndsAra[typeIDX][minBndIDX][destIDX]; checkInAllBounds( destIDX, val);}
@@ -68,7 +68,7 @@ public abstract class SOM_FtrDataBoundMonitor {
 		if (val > bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]) {bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]=val;bndsAra[ttlOfAllCalcIDX][diffBndIDX][destIDX] = bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]-bndsAra[ttlOfAllCalcIDX][minBndIDX][destIDX];}
 	}
 
-	//get mins/diffs for ftr vals per ftr jp and for all vals per all jps
+	//get mins/diffs for ftr vals per ftr class and for all vals per all class
 	public final Float[] getMinBndsAra() {return bndsAra[ttlOfAllCalcIDX][minBndIDX];}
 	public final Float[] getMaxBndsAra() {return bndsAra[ttlOfAllCalcIDX][maxBndIDX];}
 	public final Float[] getDiffBndsAra() {return bndsAra[ttlOfAllCalcIDX][diffBndIDX];}
@@ -81,10 +81,10 @@ public abstract class SOM_FtrDataBoundMonitor {
 	public final Float[] getDiffBndsAra(int typeIDX) {return bndsAra[typeIDX][diffBndIDX];}
 	public final Float[] getCountBndsAra(int typeIDX) {return bndsAra[typeIDX][countBndIDX];}
 	
-	//increment count of training examples with jp data represented by destIDX, and total calc value seen
+	//increment count of training examples with class data represented by destIDX, and total calc value seen
 	public final void incrBnds(int typeIDX, int destIDX) {
-		synchronized(bndsAra[typeIDX][countBndIDX][destIDX]) {bndsAra[typeIDX][countBndIDX][destIDX] +=1; }
-		synchronized(bndsAra[ttlOfAllCalcIDX][countBndIDX][destIDX]) {bndsAra[ttlOfAllCalcIDX][countBndIDX][destIDX] +=1;}
+		synchronized(bndsAra[typeIDX][countBndIDX]){bndsAra[typeIDX][countBndIDX][destIDX] +=1; }
+		synchronized(bndsAra[ttlOfAllCalcIDX][countBndIDX]) {bndsAra[ttlOfAllCalcIDX][countBndIDX][destIDX] +=1;}
 	}	
 	
 	public final String getDescForIdx(int idx) {
