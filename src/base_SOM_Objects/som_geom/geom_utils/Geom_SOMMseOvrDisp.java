@@ -54,7 +54,7 @@ public class Geom_SOMMseOvrDisp extends SOM_MseOvrDisplay {
 	 * instancing-specific finalizing called after every mouse-over data process
 	 */
 	@Override
-	protected void finalizeMseLblDatCtor_Indiv(ArrayList<String> _mseLblDat, int longestLine) {	}
+	protected void finalizeMseLblDatCtor_Indiv(ArrayList<String> _mseLblDat, int _longestLine) {	}
 	/**
 	 * instancing-specific clearing called when mouse over display is cleared
 	 */

@@ -26,7 +26,7 @@ public class SOM_MapNodeClassSegMgr extends SOM_MapNodeSegMgr {
 	/**
 	 * add segment relevant info from passed training example
 	 * @param idxs idx of class and/or category - idx 0 is always relevant to specific class, idx 1+ is subordinate idxs 
-	 * @param numEx # of examples to add at class
+	 * @param numClsEx # of examples to add at class
 	 * @param segNameStr string template to use for name of constructed segment
 	 * @param segDescStr string template to use for description of constructed segment
 	 */
@@ -48,7 +48,7 @@ public class SOM_MapNodeClassSegMgr extends SOM_MapNodeSegMgr {
 	/**
 	 * copy segment information to this owning node from passed map node - means this seg mgr's owning node has no bmus
 	 * @param dist dist this node is from ex
-	 * @param ex closest map node with examples that consider it bmu
+	 * @param otrSegIDCounts similar node ex's particular map of segment ids to counts
 	 * @param segNameStr string template to use for name of constructed segment
 	 * @param segDescStr string template to use for description of constructed segment
 	 */

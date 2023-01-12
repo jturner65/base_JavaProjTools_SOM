@@ -163,14 +163,14 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	/**
 	 * instancing window will build the map manager that this anim world will use
 	 * 
-	 * @return
+	 * @return newly built map manager
 	 */
-	public abstract SOM_GeomMapManager buildGeom_SOMMapManager();
+	protected abstract SOM_GeomMapManager buildGeom_SOMMapManager();
 
 	/**
 	 * return appropriate SOM Map Manager for this window
 	 * 
-	 * @return
+	 * @return SOM Map manager
 	 */
 	public final SOM_MapManager getMapMgr() {
 		return mapMgr;
@@ -491,7 +491,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	/**
 	 * get ui values used to build current geometry (for preproc save)
 	 * 
-	 * @return
+	 * @return map holding current ui values, augmented by possible instance-specific values
 	 */
 	public TreeMap<String, String> getAllUIValsForPreProcSave() {
 		TreeMap<String, String> res = new TreeMap<String, String>();
@@ -502,21 +502,18 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
 		getAllUIValsForPreProcSave_Indiv(res);
 		return res;
-
 	}
 
 	/**
 	 * get instance-class specific ui values used to build current geometry (for
 	 * preproc save)
 	 * 
-	 * @return
+	 * @return instance-specific map holding current ui values
 	 */
 	protected abstract void getAllUIValsForPreProcSave_Indiv(TreeMap<String, String> vals);
 
 	/**
 	 * set ui values used to build preproc data being loaded
-	 * 
-	 * @return
 	 */
 	public void setAllUIValsFromPreProcLoad(TreeMap<String, String> uiVals) {
 		guiObjs[gIDX_FractNumTrainEx].setVal(Double.parseDouble(uiVals.get("gIDX_FractNumTrainEx")));
@@ -530,8 +527,6 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
 	/**
 	 * set ui instance-specific values used to build preproc data being loaded
-	 * 
-	 * @return
 	 */
 	protected abstract void setAllUIValsFromPreProcLoad_Indiv(TreeMap<String, String> uiVals);
 

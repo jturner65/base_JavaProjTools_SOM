@@ -78,10 +78,17 @@ public abstract class SOM_MseOvrDisplay {
 		return longestLine;		
 	}//buildDispArrayList
 
-	//build display label arraylist from passed map of float-name labels, using line as header/desc
-	private int buildDispArrayList_IDXSort(ArrayList<String> _mseLblDat, TreeMap<Float, ArrayList<String>> valsToDisp, String line, int valsPerLine) {
+	/**
+	 * build display label arraylist from passed map of float-name labels, using line as header/desc
+	 * @param _mseLblDat
+	 * @param _valsToDisp
+	 * @param line
+	 * @param valsPerLine
+	 * @return
+	 */
+	private int buildDispArrayList_IDXSort(ArrayList<String> _mseLblDat, TreeMap<Float, ArrayList<String>> _valsToDisp, String line, int valsPerLine) {
 		int longestLine = line.length();
-		if (valsToDisp.size()== 0) {
+		if (_valsToDisp.size()== 0) {
 			line += "None";
 			_mseLblDat.add(line);
 			longestLine = longestLine >= line.length() ? longestLine : line.length();
@@ -91,8 +98,8 @@ public abstract class SOM_MseOvrDisplay {
 			longestLine = longestLine >= line.length() ? longestLine : line.length();
 			line="";
 			int valsOnLine = 0;
-			for (Float val : valsToDisp.keySet()) {
-				ArrayList<String> valNameList = valsToDisp.get(val);
+			for (Float val : _valsToDisp.keySet()) {
+				ArrayList<String> valNameList = _valsToDisp.get(val);
 				for(String valName : valNameList) {
 					line += ""+valName;//+":" + String.format("%03f", val);
 					if(valsOnLine < valsPerLine-1) {				line += " | ";			}				
@@ -113,17 +120,31 @@ public abstract class SOM_MseOvrDisplay {
 		return longestLine;		
 	}//buildDispArrayList
 	
-	//final setup for mouse label and label dimensions
-	private final void finalizeMseLblDatCtor(ArrayList<String> _mseLblDat, int longestLine) {
+	/**
+	 * final setup for mouse label and label dimensions
+	 * @param _mseLblDat
+	 * @param _longestLine
+	 */
+	private final void finalizeMseLblDatCtor(ArrayList<String> _mseLblDat, int _longestLine) {
 		mseLabelAra = _mseLblDat.toArray(new String[1]);
-		mseLabelDims = new float[] {10, -10.0f,longestLine*6.0f+10, mseLabelAra.length*10.0f + 15.0f};	
+		mseLabelDims = new float[] {10, -10.0f,_longestLine*6.0f+10, mseLabelAra.length*10.0f + 15.0f};	
 		display = true;
-		finalizeMseLblDatCtor_Indiv(_mseLblDat,longestLine);
-	}//finalizeMseLblDatCtor	
+		finalizeMseLblDatCtor_Indiv(_mseLblDat,_longestLine);
+	}//finalizeMseLblDatCtor
 	
-	protected abstract void finalizeMseLblDatCtor_Indiv(ArrayList<String> _mseLblDat, int longestLine);
+	/**
+	 * Instance-specific final setup for mouse label and label dimensions
+	 * @param _mseLblDat
+	 * @param _longestLine
+	 */
+	protected abstract void finalizeMseLblDatCtor_Indiv(ArrayList<String> _mseLblDat, int _longestLine);
 	
-	public final void initMseDatFtrs_WtSorted(myPointf ptrLoc, TreeMap<Integer, Float> _ftrs, float _thresh) {
+	/**
+	 * 
+	 * @param _ftrs
+	 * @param _thresh
+	 */
+	public final void initMseDatFtrs_WtSorted(TreeMap<Integer, Float> _ftrs, float _thresh) {
 		initAllCtor(_thresh);
 		//decreasing order
 		TreeMap<Float, ArrayList<String>> strongestFtrs = new TreeMap<Float, ArrayList<String>>(Collections.reverseOrder());
@@ -141,7 +162,12 @@ public abstract class SOM_MseOvrDisplay {
 		finalizeMseLblDatCtor(_mseLblDat, longestLine);
 	}//ctor	for ftrs
 	
-	public final void initMseDatFtrs_IdxSorted(myPointf ptrLoc, TreeMap<Integer, Float> _ftrs, float _thresh) {
+	/**
+	 * construct per ftr val display string
+	 * @param _ftrs
+	 * @param _thresh
+	 */
+	public final void initMseDatFtrs_IdxSorted(TreeMap<Integer, Float> _ftrs, float _thresh) {
 		initAllCtor(_thresh);
 		//decreasing order
 		TreeMap<Float, ArrayList<String>> strongestFtrs = new TreeMap<Float, ArrayList<String>>();
@@ -151,7 +177,7 @@ public abstract class SOM_MseOvrDisplay {
 			if(Math.abs(ftr) >= dispThesh) {		
 				ArrayList<String> vals = strongestFtrs.get(ftrIDX_F);
 				if(null==vals) {vals = new ArrayList<String>();}
-				vals.add("IDX :"+String.format("%3d", ftrIDX) + " | Val : "+String.format("%05f", ftr));
+				vals.add("["+String.format("%3d", ftrIDX) + "] = "+String.format("%05f", ftr));
 				strongestFtrs.put(ftrIDX_F, vals);
 			}
 		}	
@@ -167,15 +193,21 @@ public abstract class SOM_MseOvrDisplay {
 	}//ctor	for ftrs
 	protected abstract String getFtrDispTitleString(int count);
 	/**
-	 * construct per feature display value
+	 * construct per feature display string
 	 * @param ftrIDX : the index in the feature vector
 	 * @param ftr : the value in the ftr vector
 	 * @param strongestFtrs : the map being populated with the string arrays at each ftr value
 	 */
 	protected abstract void buildPerFtrData(Integer ftrIDX, Float ftr, TreeMap<Float, ArrayList<String>> strongestFtrs);
 	
-	//need to support all ftr types from map - this is built by distance/UMatrix map
-	public final void initMseDatUMat(myPointf ptrLoc, float distClr, float distMin, float distDiff, float _thresh) {
+	/**
+	 * need to support all ftr types from map - this is built by distance/UMatrix map
+	 * @param distClr
+	 * @param distMin
+	 * @param distDiff
+	 * @param _thresh
+	 */
+	public final void initMseDatUMat(float distClr, float distMin, float distDiff, float _thresh) {
 		initAllCtor(_thresh);
 		float distData = ((distClr/255.0f)*distDiff) + distMin;
 		ArrayList<String> _mseLblDat = new ArrayList<String>();
@@ -188,69 +220,70 @@ public abstract class SOM_MseOvrDisplay {
 	
 	
 	/**
-	 * display nearest map node probabilities, either jp(class)-based or jpgroup(category)-based
-	 * @param _map
-	 * @param ptrLoc
-	 * @param nearestMapNode
+	 * display nearest map node probabilities, either class-based or category-based
+	 * @param _nearestMapNode
 	 * @param _thresh
-	 * @param useJPProbs
+	 * @param _useClassProbs whether to use per-class or per-category probabilities
 	 */
-	public final void initMseDatProb(myPointf ptrLoc,  SOM_MapNode nearestMapNode, float _thresh, boolean useClassProbs) {
+	public final void initMseDatProb(SOM_MapNode _nearestMapNode, float _thresh, boolean _useClassProbs) {
 		initAllCtor(_thresh);
-		ArrayList<String> _mseLblDat = new ArrayList<String>();
+		ArrayList<String> mseLblDat = new ArrayList<String>();
 		TreeMap<Float, ArrayList<String>> mapNodeProbs = new TreeMap<Float, ArrayList<String>>(Collections.reverseOrder());
 		String dispLine;
-		if(useClassProbs) {
-			TreeMap<Integer, Float> perClassProbs = nearestMapNode.getClass_SegDataRatio();
-			Float ttlNumClasses = nearestMapNode.getTtlNumMappedClassInstances();
-			for(Integer cls : perClassProbs.keySet()) {
-				float prob = perClassProbs.get(cls);
-				ArrayList<String> valsAtProb = mapNodeProbs.get(prob);
-				if(null==valsAtProb) {valsAtProb = new ArrayList<String>();}
-				valsAtProb.add(""+cls);
-				mapNodeProbs.put(prob, valsAtProb);				
-			}	
-			
-			dispLine = getClassProbTitleString(nearestMapNode, Math.round(ttlNumClasses));
+		TreeMap<Integer, Float> perGroupingProbs;
+		if(_useClassProbs) {
+			perGroupingProbs = _nearestMapNode.getClass_SegDataRatio();
+			dispLine = getClassProbTitleString(_nearestMapNode, Math.round(_nearestMapNode.getTtlNumMappedClassInstances()));
 		} else {
-			TreeMap<Integer, Float> perJPGProbs =  nearestMapNode.getCategory_SegDataRatio();
-			Float ttlNumCategories = nearestMapNode.getTtlNumMappedCategoryInstances();
-			for(Integer jpg : perJPGProbs.keySet()) {		
-				float prob = perJPGProbs.get(jpg);
-				ArrayList<String> valsAtProb = mapNodeProbs.get(prob);
-				if(null==valsAtProb) {valsAtProb = new ArrayList<String>();}
-				valsAtProb.add(""+jpg);
-				mapNodeProbs.put(prob, valsAtProb);				
-			}	
-			dispLine = getCategoryProbTitleString(nearestMapNode, Math.round(ttlNumCategories));
+			perGroupingProbs = _nearestMapNode.getCategory_SegDataRatio();
+			dispLine = getCategoryProbTitleString(_nearestMapNode, Math.round(_nearestMapNode.getTtlNumMappedCategoryInstances()));
 		}
+		//Either category or class probabilities
+		for(Integer grp : perGroupingProbs.keySet()) {		
+			float prob = perGroupingProbs.get(grp);
+			ArrayList<String> valsAtProb = mapNodeProbs.get(prob);
+			if(null==valsAtProb) {valsAtProb = new ArrayList<String>();}
+			valsAtProb.add(""+grp);
+			mapNodeProbs.put(prob, valsAtProb);				
+		}	
 		int count = 0;
 		for(ArrayList<String> list : mapNodeProbs.values()) {	count+=list.size();}
 		dispLine += " count : "+ count;		
-		int longestLine = buildDispArrayList(_mseLblDat, mapNodeProbs, dispLine, 3);		
-		finalizeMseLblDatCtor(_mseLblDat, longestLine);
+		int longestLine = buildDispArrayList(mseLblDat, mapNodeProbs, dispLine, 3);		
+		finalizeMseLblDatCtor(mseLblDat, longestLine);
 	}//ctor for nearest map node probs
 	
-	public void initMseDatProb(myPointf ptrLoc,  SOM_MapNode nearestMapNode, float _thresh, SOM_ExDataType _type) {
+	/**
+	 * display nearest map node's count of mapped examples
+	 * @param _nearestMapNode
+	 * @param _thresh
+	 * @param _type
+	 */
+	public final void initMseDatCounts(SOM_MapNode _nearestMapNode, float _thresh, SOM_ExDataType _type) {
 		initAllCtor(_thresh);
-		ArrayList<String> _mseLblDat = new ArrayList<String>();		
+		ArrayList<String> mseLblDat = new ArrayList<String>();		
 		int _typeIDX = _type.getVal();
-		String dispLine = "# of mapped " + _type.getName() +" examples : " + nearestMapNode.getNumExamples(_typeIDX);
+		String dispLine = "# of mapped " + _type.getName() +" examples : " + _nearestMapNode.getNumExamples(_typeIDX);
 		int longestLine = dispLine.length();
-		_mseLblDat.add(dispLine);		
-		dispLine = "Has Mapped Examples : " + nearestMapNode.getHasMappedExamples(_typeIDX);
-		_mseLblDat.add(dispLine);
+		mseLblDat.add(dispLine);		
+		dispLine = "Has Mapped Examples : " + _nearestMapNode.getHasMappedExamples(_typeIDX);
+		mseLblDat.add(dispLine);
 		longestLine = longestLine >= dispLine.length() ? longestLine : dispLine.length();
-		finalizeMseLblDatCtor(_mseLblDat, longestLine);
+		finalizeMseLblDatCtor(mseLblDat, longestLine);
 	}//ctor for nearest map nod population of mapped training examples
 	
-	public void initMseDatNodeName(myPointf ptrLoc,  SOM_MapNode nearestMapNode, float _thresh) {
+	/**
+	 * Display nearest map node's name
+	 * @param nearestMapNode
+	 * @param _thresh
+	 */
+	public final void initMseDatNodeName(SOM_MapNode _nearestMapNode, float _thresh) {
 		initAllCtor(_thresh);
-		ArrayList<String> _mseLblDat = new ArrayList<String>();		
-		String dispLine ="Nearest Map Node Name : "+ nearestMapNode.OID;
+		ArrayList<String> mseLblDat = new ArrayList<String>();		
+		String dispLine ="Nearest Map Node Name : "+ _nearestMapNode.OID;
 		int longestLine = dispLine.length();
-		_mseLblDat.add(dispLine);				
-		finalizeMseLblDatCtor(_mseLblDat, longestLine);
+		mseLblDat.add(dispLine);				
+		finalizeMseLblDatCtor(mseLblDat, longestLine);
 	}//initMseDatNodeName
 	
 	public final void clearMseDat() {

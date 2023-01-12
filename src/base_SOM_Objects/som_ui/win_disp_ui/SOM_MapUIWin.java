@@ -138,7 +138,6 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 * @param rd
 	 * @param rdClosed
 	 * @param _winTxt
-	 * @param _canDrawTraj
 	 */	
 	public SOM_MapUIWin(IRenderInterface _p, GUI_AppManager _AppMgr, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt) {
 		super(_p, _AppMgr, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
@@ -170,7 +169,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 
 	/**
 	 * Given MapDat key, return an int corresponding to the appropriate ui object in the instancing window
-	 * @param UIidx
+	 * @param mapKey
 	 * @return
 	 */
 	@Override
@@ -795,7 +794,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	
 	/**
 	 * feature type used to train currently loaded map
-	 * @param _ftrToTrain
+	 * @param _ftrTypeUsedToTrain
 	 */
 	public void setFtrTrainTypeFromConfig(int _ftrTypeUsedToTrain) {
 		guiObjs[uiTrainDataNormIDX].setVal(_ftrTypeUsedToTrain);
@@ -991,10 +990,10 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 
 	/**
 	 * check mouse over/click in experiment; if btn == -1 then mouse over
-	 * @param msx
-	 * @param msy
+	 * @param mouseX
+	 * @param mouseY
 	 * @param mseClckInWorld
-	 * @param btn
+	 * @param mseBtn
 	 * @return
 	 */
 	public final boolean checkMouseClick(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
@@ -1002,10 +1001,13 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	};
 	/**
 	 * check mouse drag/move in experiment; if btn == -1 then mouse over
-	 * @param msx
-	 * @param msy
-	 * @param mseClckInWorld
-	 * @param btn
+	 * @param mouseX
+	 * @param mouseY
+	 * @param pmouseX
+	 * @param pmouseY
+	 * @param mouseClickIn3D
+	 * @param mseDragInWorld
+	 * @param mseBtn
 	 * @return  
 	 */
 	public final boolean checkMouseDragMove(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {

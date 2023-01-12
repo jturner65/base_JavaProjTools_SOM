@@ -68,7 +68,8 @@ public abstract class SOM_MappedSegment {
 	
 	/**
 	 * If map node meets criteria, add it to this segment as well as its neighbors
-	 * @param ex map node to add
+	 * @param mapNodeEx
+	 * @param mapNodes
 	 */
 	public final void addMapNodeToSegment(SOM_MapNode mapNodeEx,TreeMap<Tuple<Integer,Integer>, SOM_MapNode> mapNodes) {
 		//add passed map node to this segment - expected that appropriate membership has already been verified

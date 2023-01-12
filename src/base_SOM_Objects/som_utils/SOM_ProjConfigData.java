@@ -302,7 +302,7 @@ public abstract class SOM_ProjConfigData {
 	
 	/**
 	 * allow for changing/setting the SOM Project-specific prefix/name for file writing and directories
-	 * @param val
+	 * @param valx
 	 */
 	public void setSOMProjName(String valx) {
 		String val = valx.toLowerCase();
@@ -710,9 +710,12 @@ public abstract class SOM_ProjConfigData {
 			
 	/**
 	 * build array with and without year of string representations of dates, used for file name access
-	 * @param _dType data type used to train
 	 */
 	public void buildDateTimeStrAraAndDType() {	dateTimeStrAra = getDateTimeString(false, "_");}//idx 0 has year, idx 1 does not
+	/**
+	 * Set the feature data type used to train the SOM
+	 * @param _dType data type used to train
+	 */
 	public void setFtrDataTypeUsedToTrain(String _dType) { ftrTypeUsedToTrainStr = _dType;}
 	
 	public SOM_FtrDataType getFtrTypeUsedToTrain() {return mapMgr.getDataFrmtTypeFromName(ftrTypeUsedToTrainStr);}

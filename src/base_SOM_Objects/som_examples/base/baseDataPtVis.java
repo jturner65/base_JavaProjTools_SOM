@@ -16,23 +16,49 @@ import base_Utils_Objects.io.messaging.MessageObject;
  *
  */
 public abstract class baseDataPtVis{
+	/**
+	 * Map manager reference
+	 */
 	public SOM_MapManager mapMgr;
-	//message object manages logging/printing to screen
+	/**
+	 * message object manages logging/printing to screen
+	 */
 	protected MessageObject msgObj;
-	//type of example data this is
+	/**
+	 * type of example data this is
+	 */
 	protected SOM_ExDataType exampleDataType;
-	//location in mapspace most closely matching this node - actual map location (most likely between 4 map nodes), built from neighborhood
+	/**
+	 * location in mapspace most closely matching this node - actual map location (most likely between 4 map nodes), built from neighborhood
+	 */
 	public myPointf mapLoc;		
-	//bmu map node location - this is same as mapLoc(and ignored) for map nodes
+	/**
+	 * bmu map node location - this is same as mapLoc(and ignored) for map nodes
+	 */
 	protected myPointf mapNodeLoc;
-	//draw-based vars
+	/**
+	 * radius to draw on map
+	 */
 	protected float mapDrawRad;
+	/**
+	 * sphere detail to draw on map
+	 */
 	protected static int drawDet;	
-	//for debugging purposes, gives min and max radii of spheres that will be displayed on map for each node proportional to # of samples - only display related
-	public static float minRad = 100000, maxRad = -100000;
-	//array of color IDXs for specific color roles : idx 0 ==fill, idx 1 == strk, idx 2 == txt
-	//alt is for displaying alternate state
+	/**
+	 * for debugging purposes, gives min radius of spheres that will be displayed on map for each node proportional to # of samples - only display related
+	 */
+	public static float minRad = 100000;
+	/**
+	 * for debugging purposes, gives max radius of spheres that will be displayed on map for each node proportional to # of samples - only display related
+	 */
+	public static float maxRad = -100000;
+	/**
+	 * array of color IDXs for specific color roles : idx 0 ==fill, idx 1 == strk, idx 2 == txt
+	 */
 	private int[] mapNodeClrs;
+	/**
+	 * alternate state array of color IDXs for specific color roles : idx 0 ==fill, idx 1 == strk, idx 2 == txt
+	 */
 	private int[] mapAltClrs;		
 	
 	public baseDataPtVis(SOM_MapManager _map, SOM_ExDataType _type) {
@@ -56,10 +82,9 @@ public abstract class baseDataPtVis{
 	}//
 	
 	protected void setRad(float _rad){
-		mapDrawRad = _rad;//((float)(Math.log(2.0f*(_rad+1))));
+		mapDrawRad = _rad;
 		minRad = minRad > mapDrawRad ? mapDrawRad : minRad;
 		maxRad = maxRad < mapDrawRad ? mapDrawRad : maxRad;
-		//drawDet = ((int)(Math.log(2.0f*(rad+1)))+1);
 	}
 	public float getRad(){return mapDrawRad;}
 	
@@ -69,12 +94,19 @@ public abstract class baseDataPtVis{
 	public void setMapAltClrs(int[] mapAltClrs) {	this.mapAltClrs = mapAltClrs;}
 	public int[] getMapNodeClrs() {	return mapNodeClrs;}
 	public void setMapNodeClrs(int[] mapNodeClrs) {	this.mapNodeClrs = mapNodeClrs;}
-
 	
-	//set map location for this example
+	/**
+	 * set map location for this example
+	 * @param _pt
+	 */
 	public final void setMapLoc(myPointf _pt){mapLoc.set(_pt.x,_pt.y,_pt.z);}
 
-	//draw this example with a line linking it to its best matching unit
+	/**
+	 * draw this example with a line linking it to its best matching unit
+	 * @param p
+	 * @param _rad
+	 * @param ID
+	 */
 	public final void drawMeLinkedToBMU(IRenderInterface p, float _rad, String ID){
 		p.pushMatState();
 		//draw point of radius rad at mapLoc - actual location on map

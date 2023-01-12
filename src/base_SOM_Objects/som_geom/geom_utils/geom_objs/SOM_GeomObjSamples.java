@@ -55,10 +55,10 @@ public class SOM_GeomObjSamples {
 	
 	/**
 	 * build samples from csv string listing
-	 * @param _locForClr
+	 * @param _pa
 	 * @param _csvStr
 	 */
-	public final void buildSampleSetAndPShapesFromCSVStr(IRenderInterface pa, String _csvStr) {
+	public final void buildSampleSetAndPShapesFromCSVStr(IRenderInterface _pa, String _csvStr) {
 		String[] tmpDatAra = _csvStr.split("ST_"+samplPtTag);
 		String[] onlySamplesAra = tmpDatAra[1].trim().split("END_"+samplPtTag);
 		String[] samplePtAra = onlySamplesAra[0].trim().split(samplPtTag);
@@ -69,7 +69,7 @@ public class SOM_GeomObjSamples {
 			String[] ptDescAra = samplePtAra[i+1].trim().split(",");
 			objSamplePts[i] = new SOM_GeomSamplePointf(ptDescAra, ownr);				
 		}		
-		buildSamplePShapeObjs(pa);
+		buildSamplePShapeObjs(_pa);
 	}
 	
 	public int getNumSamples() {return objSamplePts.length;}

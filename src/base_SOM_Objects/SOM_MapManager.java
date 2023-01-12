@@ -2020,7 +2020,7 @@ public abstract class SOM_MapManager {
 	 * @param sens
 	 * @return
 	 */
-	public final void setMseDataExampleFtrs_WtSorted(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs_WtSorted(ptrLoc, ftrs, sens); mseOverExample.setMapLoc(ptrLoc);}
+	public final void setMseDataExampleFtrs_WtSorted(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs_WtSorted(ftrs, sens); mseOverExample.setMapLoc(ptrLoc);}
 	/**
 	 * display features in idx-ascending order
 	 * @param ptrLoc
@@ -2028,16 +2028,22 @@ public abstract class SOM_MapManager {
 	 * @param sens
 	 * @return
 	 */
-	public final void setMseDataExampleFtrs_IdxSorted(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs_IdxSorted(ptrLoc, ftrs, sens); mseOverExample.setMapLoc(ptrLoc);}
+	public final void setMseDataExampleFtrs_IdxSorted(myPointf ptrLoc, TreeMap<Integer, Float> ftrs, float sens) {mseOverExample.initMseDatFtrs_IdxSorted(ftrs, sens); mseOverExample.setMapLoc(ptrLoc);}
 	
-	public final void setMseDataExampleDists(myPointf ptrLoc, float dist, float distMin, float distDiff, float sens) {mseOverExample.initMseDatUMat( ptrLoc, dist,distMin,distDiff, sens);mseOverExample.setMapLoc(ptrLoc);}
-	public final void setMseDataExampleClassProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, true);mseOverExample.setMapLoc(ptrLoc);}
-	public final void setMseDataExampleCategoryProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, false);mseOverExample.setMapLoc(ptrLoc);}
-	public final void setMseDataExampleNodePop(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb( ptrLoc, nearestNode, sens, SOM_ExDataType.Training);mseOverExample.setMapLoc(ptrLoc);}
-	public final void setMseDataExampleNodeName(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatNodeName(ptrLoc, nearestNode, sens);mseOverExample.setMapLoc(ptrLoc);}	
+	public final void setMseDataExampleDists(myPointf ptrLoc, float dist, float distMin, float distDiff, float sens) {mseOverExample.initMseDatUMat(dist,distMin,distDiff, sens);mseOverExample.setMapLoc(ptrLoc);}
+	public final void setMseDataExampleClassProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb(nearestNode, sens, true);mseOverExample.setMapLoc(ptrLoc);}
+	public final void setMseDataExampleCategoryProb(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatProb(nearestNode, sens, false);mseOverExample.setMapLoc(ptrLoc);}
+	public final void setMseDataExampleNodePop(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatCounts(nearestNode, sens, SOM_ExDataType.Training);mseOverExample.setMapLoc(ptrLoc);}
+	public final void setMseDataExampleNodeName(myPointf ptrLoc, SOM_MapNode nearestNode, float sens) {mseOverExample.initMseDatNodeName(nearestNode, sens);mseOverExample.setMapLoc(ptrLoc);}	
 	public final void setMseDataExampleNone() { mseOverExample.clearMseDat(); }
 	
-	//get datapoint at passed location in map coordinates (so should be in frame of map's upper right corner) - assume map is square and not hex
+	/**
+	 * get datapoint at passed location in map coordinates (so should be in frame of map's upper right corner) - assume map is square and not hex
+	 * @param x
+	 * @param y
+	 * @param sensitivity
+	 * @param locPt
+	 */
 	public final void setMouseOverDataText(float x, float y, float sensitivity, myPointf locPt){//, boolean useScFtrs){
 		//float sensitivity = (float) guiObjs[uiMseRegionSensIDX].getVal();
 		

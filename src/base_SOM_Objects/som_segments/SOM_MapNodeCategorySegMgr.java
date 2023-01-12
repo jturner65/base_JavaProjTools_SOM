@@ -40,7 +40,7 @@ public class SOM_MapNodeCategorySegMgr extends SOM_MapNodeSegMgr {
 	/**
 	 * copy segment information to this owning node from passed map node - means this seg mgr's owning node has no bmus
 	 * @param dist dist this node is from ex
-	 * @param ex closest map node with examples that consider it bmu
+	 * @param otrSegIDCounts similar node ex's particular map of segment ids to counts
 	 * @param segNameStr string template to use for name of constructed segment
 	 * @param segDescStr string template to use for description of constructed segment
 	 */
