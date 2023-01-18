@@ -376,7 +376,7 @@ public abstract class SOM_ProjConfigData {
 	}//buildFileNameMap
 	
 	//public MessageObject buildMsgObj() {return new MessageObject(msgObj);}
-	public MessageObject buildMsgObj() {return MessageObject.buildMe();}
+	public MessageObject buildMsgObj() {return MessageObject.getInstance();}
 	
 	//this will save all essential information for a SOM-based experimental run, to make duplication of experiment easier
 	//Info saved : SOM_MapData; 

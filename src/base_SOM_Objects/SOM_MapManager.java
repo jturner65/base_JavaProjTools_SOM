@@ -394,7 +394,7 @@ public abstract class SOM_MapManager {
 		mapUIAPI = buildSOM_UI_Interface();
 		initFlags();		
 		//message object manages displaying to screen and potentially to log files - needs to be built first
-		setMsgObj(MessageObject.buildMe(false));
+		msgObj = MessageObject.getInstance();
 
 		//build project configuration data object - this manages all file locations and other configuration options
 		//needs to have msgObj defined before called
@@ -453,9 +453,8 @@ public abstract class SOM_MapManager {
 	 * @param _win
 	 * @param _hasGraphics
 	 */
-	public void setPADispWinData(SOM_MapUIWin _win, boolean _hasGraphics) {
+	public void setPADispWinData(SOM_MapUIWin _win) {
 		setWinAndWinData(_win);
-		MessageObject.hasGraphics = _hasGraphics;
 		projConfigData.setUIValsFromLoad();
 		setPADispWinDataIndiv();
 	}//setPAWindowData
@@ -2541,7 +2540,7 @@ public abstract class SOM_MapManager {
 	protected abstract void getSOMExecInfo_Indiv(TreeMap<String, String> res);
 	
 	//return a copy of the message object - making a copy so that multiple threads can consume without concurrency issues
-	public MessageObject buildMsgObj() {return MessageObject.buildMe();}
+	public MessageObject buildMsgObj() {return MessageObject.getInstance();}
 	
 	/**
 	 * called from SOM_DataLoarder after all BMUs are loaded and training data bmus are set from bmu 
@@ -2579,9 +2578,7 @@ public abstract class SOM_MapManager {
 	public void setBMU_DispFtrTypeFormat(SOM_FtrDataType _frmt) {	BMU_DispFtrType = _frmt; }//setCurrentDataFormat
 	public SOM_FtrDataType getBMU_DispFtrTypeFormat() {	return BMU_DispFtrType;}
 	public MessageObject getMsgObj(){	return msgObj;}
-	public void setMsgObj(MessageObject msgObj) {	this.msgObj = msgObj;}
-	
-	
+
 	public float[] getSOM_mapLoc() {	return SOM_mapLoc;}
 	public void setSOM_mapLoc(float[] _SOM_mapLoc) {			SOM_mapLoc = _SOM_mapLoc;}
 	

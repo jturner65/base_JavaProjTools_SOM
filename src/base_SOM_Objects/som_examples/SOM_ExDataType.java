@@ -10,14 +10,14 @@ import java.util.Map;
 public enum SOM_ExDataType {
 	Training(0), Testing(1), Validation(2), Product(3), MapNode(4), MouseOver(5);
 	private int value; 
-	private String[] _typeExplanation = new String[] {
+	private final String[] _typeExplanation = new String[] {
 			"Training Data (Used to train the SOM)", 
 			"Testing Data (Held-out training data used to investigate training)",
 			"Validation Data (Data to be clustered on map)",
 			"Product Data (Treat as exemplars to be assigned to clusters)",
 			"Map Node (Represents a node on the SOM)",
 			"Mouse Over (Data query at mouse location)"};
-	private static String[] _typeName = new String[] {"Training","Testing","Validation","Product","MapNode","MouseOver"};
+	private static final String[] _typeName = new String[] {"Training","Testing","Validation","Product","MapNode","MouseOver"};
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, SOM_ExDataType> map = new HashMap<Integer, SOM_ExDataType>(); 
 	static { for (SOM_ExDataType enumV : SOM_ExDataType.values()) { map.put(enumV.value, enumV);}}

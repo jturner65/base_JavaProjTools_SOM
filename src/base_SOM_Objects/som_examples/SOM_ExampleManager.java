@@ -101,7 +101,7 @@ public abstract class SOM_ExampleManager {
 		projConfigData = mapMgr.projConfigData;
 		exampleName = _exName;
 		longExampleName = _longExampleName;
-		msgObj = MessageObject.buildMe();
+		msgObj = MessageObject.getInstance();
 		//fileIO is used to load and save info from/to local files except for the raw data loading, which has its own handling
 		fileIO = new FileIOManager(msgObj,"SOM_ExampleManager::"+exampleName);
 		preProcDatPartSz = mapMgr.getPreProcDatPartSz();

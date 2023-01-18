@@ -110,7 +110,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	/** 
 	 * Type of geometric object
 	 */
-	protected String geomObjTypeName;
+	private final String geomObjTypeName;
 	
 	/**
 	 * coordinate bounds in world for the objects this map manager owns 
@@ -126,7 +126,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 		super(_win, _argsMap);
 			//# of training features determined by type of object
 		setNumTrainFtrs(_numFtrs);
-		geomObjTypeName = _geomObjType.toString();
+		geomObjTypeName = _geomObjType.getName();
 		projConfigData.setSOMProjName(geomObjTypeName);	
 		dispWin = _dispWin;
 		String dispWinStatus  = geomObjTypeName + " World bounds set to ";

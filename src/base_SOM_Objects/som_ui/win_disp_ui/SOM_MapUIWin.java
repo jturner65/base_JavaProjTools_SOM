@@ -189,8 +189,8 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	private void initAfterMapMgrSet(boolean[] flagsToSet) {
 		mapUIAPI = mapMgr.mapUIAPI;
 		setVisScreenWidth(rectDim[2]);
-		//only set for visualization - needs to reset static refs in msgObj
-		mapMgr.setPADispWinData(this, true);
+		//only set for visualization
+		mapMgr.setPADispWinData(this);
 		
 		//this window uses right side info window
 		setFlags(drawRightSideMenu, true);		//may need some re-scaling to keep things in the middle and visible

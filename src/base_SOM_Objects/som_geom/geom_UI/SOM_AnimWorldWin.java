@@ -88,7 +88,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	public double fractOfBinomialForBaseNumTrainEx = .001;
 
 	// object type the instancing window manages
-	public final SOM_GeomObjTypes geomObjType;
+	protected final SOM_GeomObjTypes geomObjType;
 
 	// dimensions of SOM Map - hard coded to override setting from SOM Map UI Window
 	// - need to set in window
@@ -184,20 +184,20 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
 		tmpBtnNamesArray.add(new Object[] { "Debugging", "Debug", debugAnimIDX });
 		// UI",drawSOM_MapUIVis});
-		tmpBtnNamesArray.add(new Object[] { "Regenerating " + geomObjType + " Objs","Regenerate " + geomObjType + " Objs", regenUIObjsIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType + " Objects", "Show " + geomObjType + " Objects",	showFullSourceObjIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType + " Sample Points","Show " + geomObjType + " Sample Points", showSamplePntsIDX });
+		tmpBtnNamesArray.add(new Object[] { "Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs", regenUIObjsIDX });
+		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects",	showFullSourceObjIDX });
+		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points", showSamplePntsIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing Labels", "Show Labels", showUIObjLabelIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing Sample Labels", "Show Sample Labels", showUIObjSmplsLabelIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing Loc-based Color", "Showing Random Color", useUIObjLocAsClrIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType + " Training Exs",	"Show " + geomObjType + " Training Exs", showFullTrainingObjIDX });
+		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs", showFullTrainingObjIDX });
 
-		tmpBtnNamesArray.add(new Object[] { "Hi-Light Sel " + geomObjType + " ", "Enable " + geomObjType + " Hi-Light",	showSelUIObjIDX });
-		// tmpBtnNamesArray.add(new Object[]{"Train From " +geomObjType + " Samples",
-		// "Train From " +geomObjType + " Centers/Bases", useSmplsForTrainIDX});
+		tmpBtnNamesArray.add(new Object[] { "Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light",	showSelUIObjIDX });
+		// tmpBtnNamesArray.add(new Object[]{"Train From " +geomObjType.getName()+ " Samples",
+		// "Train From " +geomObjType.getName()+ " Centers/Bases", useSmplsForTrainIDX});
 		// tmpBtnNamesArray.add(new Object[]{"Save Data", "Save Data",
 		// saveUIObjDataIDX});
-		tmpBtnNamesArray.add(new Object[] { "Gen Unique " + geomObjType + " Train Exs",	"Allow dupe " + geomObjType + " Train Exs", allTrainExUniqueIDX });
+		tmpBtnNamesArray.add(new Object[] { "Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs", allTrainExUniqueIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing BMU-derived Locs", "Showing Actual Locs", showMapBasedLocsIDX });
 
@@ -338,7 +338,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		
 		int minNumObjs = getMinNumObjs(), maxNumObjs = getMaxNumObjs(),	diffNumObjs = (maxNumObjs - minNumObjs > 100 ? 10 : 1);
 		numGeomObjs = minNumObjs;
-		tmpUIObjArray.put(gIDX_NumUIObjs,new Object[] { new double[] { minNumObjs, maxNumObjs, diffNumObjs }, (double) (numGeomObjs * 1.0),"# of " + geomObjType + " Objects", GUIObj_Type.IntVal, new boolean[]{true, true}}); // gIDX_NumUIObjs
+		tmpUIObjArray.put(gIDX_NumUIObjs,new Object[] { new double[] { minNumObjs, maxNumObjs, diffNumObjs }, (double) (numGeomObjs * 1.0),"# of " + geomObjType.getName()+ " Objects", GUIObj_Type.IntVal, new boolean[]{true, true}}); // gIDX_NumUIObjs
 		int minNumSmplsPerObj = getMinNumSmplsPerObj(), maxNumSmplsPerObj = getMaxNumSmplsPerObj(),	diffNumSmplsPerObj = (maxNumSmplsPerObj - minNumSmplsPerObj > 100 ? 10 : 1);
 		numSmplPointsPerObj = minNumSmplsPerObj;
 		tmpUIObjArray.put(gIDX_NumUISamplesPerObj, new Object[] { new double[] { minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj },(double) (numSmplPointsPerObj), "# of samples per Object", GUIObj_Type.IntVal, new boolean[]{true, true}}); // gIDX_NumUISamplesPerObj
