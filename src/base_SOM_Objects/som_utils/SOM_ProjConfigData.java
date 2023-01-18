@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -133,7 +134,7 @@ public abstract class SOM_ProjConfigData {
 	//separately from calls to setSOM_ExpFileNames because experimental parameters can change between the saving of training data and the running of the experiment
 	private String SOMOutExpSffx = "x-1_y-1_k-1";//illegal values set on purpose, needs to be set/overridden by config
 	
-	public SOM_ProjConfigData(SOM_MapManager _mapMgr, TreeMap<String, Object> _argsMap) {
+	public SOM_ProjConfigData(SOM_MapManager _mapMgr, Map<String, Object> _argsMap) {
 		mapMgr = _mapMgr;
 		msgObj = _mapMgr.buildMsgObj();
 		//_argsMap is map of command line/control params.  useful here for config and data dir

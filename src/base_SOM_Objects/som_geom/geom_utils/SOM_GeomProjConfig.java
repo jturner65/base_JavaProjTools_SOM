@@ -2,7 +2,7 @@ package base_SOM_Objects.som_geom.geom_utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.Map;
 
 import base_SOM_Objects.SOM_MapManager;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
@@ -12,7 +12,7 @@ public class SOM_GeomProjConfig extends SOM_ProjConfigData {
 	//file name to use to save sphere-project-specific SOM config data
 	private final String custGeomSOMConfigDataFileName= "GeomProj_SOM_CustomMapTrainData.txt";
 
-	public SOM_GeomProjConfig(SOM_MapManager _mapMgr, TreeMap<String, Object> _argsMap) {	super(_mapMgr, _argsMap);}
+	public SOM_GeomProjConfig(SOM_MapManager _mapMgr, Map<String, Object> _argsMap) {	super(_mapMgr, _argsMap);}
 
 	@Override
 	protected void _loadIndivConfigVarsPriv(String varName, String val) {

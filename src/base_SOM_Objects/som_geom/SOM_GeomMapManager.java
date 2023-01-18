@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 
 import base_Math_Objects.MyMathUtils;
@@ -122,7 +123,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	//disp message string to facilitate message output
 	private String dispClassGeomName;
 		
-	public SOM_GeomMapManager(SOM_MapUIWin _win, SOM_AnimWorldWin _dispWin, float[][] _worldBounds, TreeMap<String, Object> _argsMap, SOM_GeomObjTypes _geomObjType, int _numFtrs) {
+	public SOM_GeomMapManager(SOM_MapUIWin _win, SOM_AnimWorldWin _dispWin, float[][] _worldBounds, Map<String, Object> _argsMap, SOM_GeomObjTypes _geomObjType, int _numFtrs) {
 		super(_win, _argsMap);
 			//# of training features determined by type of object
 		setNumTrainFtrs(_numFtrs);
@@ -169,7 +170,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	 * build instance-specific project file configuration 
 	 */
 	@Override
-	protected final SOM_ProjConfigData buildProjConfigData(TreeMap<String, Object> _argsMap) {				return new SOM_GeomProjConfig(this,_argsMap);	}	
+	protected final SOM_ProjConfigData buildProjConfigData(Map<String, Object> _argsMap) {				return new SOM_GeomProjConfig(this,_argsMap);	}	
 
 	/**
 	 * build an interface to manage communications between UI and SOM map dat

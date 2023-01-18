@@ -1,6 +1,7 @@
 package base_SOM_Objects.som_geom.geom_UI;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeMap;
 
 import base_Render_Interface.IRenderInterface;
@@ -32,9 +33,9 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	/**
 	 * default args for building map manager
 	 */
-	protected TreeMap<String, Object> argsMap;
+	protected HashMap<String, Object> argsMap;
 	
-	public SOM_GeomMapUIWin(IRenderInterface _p, GUI_AppManager _AppMgr, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, TreeMap<String, Object> _argsMap, SOM_AnimWorldWin _animWin) {
+	public SOM_GeomMapUIWin(IRenderInterface _p, GUI_AppManager _AppMgr, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, HashMap<String, Object> _argsMap, SOM_AnimWorldWin _animWin) {
 		super(_p, _AppMgr, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
 		argsMap = _argsMap;
 		animWin = _animWin;

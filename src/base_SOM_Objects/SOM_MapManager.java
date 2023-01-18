@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.SortedMap;
@@ -388,7 +389,7 @@ public abstract class SOM_MapManager {
 	 * @param _argsMap String[] _dirs : idx 0 is config directory, as specified by cmd line; idx 1 is data directory, as specified by cmd line
 	 * 					String[] _args : command line arguments other than directory info
 	 */
-	public SOM_MapManager(SOM_MapUIWin _win, TreeMap<String, Object> _argsMap) {
+	public SOM_MapManager(SOM_MapUIWin _win, Map<String, Object> _argsMap) {
 		setWinAndWinData(_win);//win=_win;	
 		ID = cnt++;		
 		mapUIAPI = buildSOM_UI_Interface();
@@ -472,7 +473,7 @@ public abstract class SOM_MapManager {
 	/**
 	 * build instance-specific project file configuration - necessary if using project-specific config file
 	 */	
-	protected abstract SOM_ProjConfigData buildProjConfigData(TreeMap<String, Object> _argsMap);
+	protected abstract SOM_ProjConfigData buildProjConfigData(Map<String, Object> _argsMap);
 	
 	/**
 	 * build mouse-over example
