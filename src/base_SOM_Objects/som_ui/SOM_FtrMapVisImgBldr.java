@@ -4,9 +4,9 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
 import base_Math_Objects.vectorObjs.tuples.Tuple;
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_FtrDataType;
-import base_SOM_Objects.som_examples.SOM_MapNode;
+import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
+import base_SOM_Objects.som_managers.SOM_MapManager;
+import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
 import processing.core.PImage;
@@ -22,7 +22,7 @@ public class SOM_FtrMapVisImgBldr implements Callable<Boolean>{
 	private PImage[] mapLocClrImg;
 	private float[] map_ftrsMin, map_ftrsDiffs;
 	public SOM_FtrMapVisImgBldr(SOM_MapManager _mapMgr, SOM_FtrDataType _ftrType, PImage[] _mapLocClrImg, int[] _xVals, int[] _yVals, float[] _map_ftrsMins, float[] _map_ftrsDiffs, float _mapScaleVal) {
-		msgObj= _mapMgr.buildMsgObj();
+		msgObj = MessageObject.getInstance();
 		MapNodes = _mapMgr.getMapNodes();
 		ftrType = _ftrType;
 		mapLocClrImg = _mapLocClrImg;

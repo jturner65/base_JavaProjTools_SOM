@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import base_Math_Objects.vectorObjs.tuples.Tuple;
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_ExDataType;
-import base_SOM_Objects.som_examples.SOM_Example;
-import base_SOM_Objects.som_examples.SOM_FtrDataType;
-import base_SOM_Objects.som_examples.SOM_MapNode;
+import base_SOM_Objects.som_examples.base.SOM_Example;
+import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
+import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
+import base_SOM_Objects.som_managers.SOM_MapManager;
+import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.messaging.MessageObject;
@@ -39,7 +39,7 @@ public class SOM_DataLoader{
 		
 	public SOM_DataLoader(SOM_MapManager _mapMgr, SOM_ProjConfigData _configData) {
 		mapMgr = _mapMgr; 
-		msgObj = mapMgr.buildMsgObj();
+		msgObj = MessageObject.getInstance();
 		fileIO = new FileIOManager(msgObj,"SOM_DataLoader");
 		projConfigData = _configData;
 	}
@@ -286,7 +286,7 @@ public class SOM_DataLoader{
 			List<Future<Boolean>> bmuDataBldFtrs;
 			List<SOM_ExBMULoader> bmuDataLoaders = new ArrayList<SOM_ExBMULoader>();
 			////////////////////
-			for(int i=0;i<numThds;++i) {bmuDataLoaders.add(new SOM_ExBMULoader(mapMgr.buildMsgObj(),ftrTypeUsedToTrainIDX,useChiSqDist, typeOfData, bmusToExs[i],i));	}
+			for(int i=0;i<numThds;++i) {bmuDataLoaders.add(new SOM_ExBMULoader(msgObj,ftrTypeUsedToTrainIDX,useChiSqDist, typeOfData, bmusToExs[i],i));	}
 			try {bmuDataBldFtrs = mapMgr.getTh_Exec().invokeAll(bmuDataLoaders);for(Future<Boolean> f: bmuDataBldFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }		
 		} else {		
 			//single threaded version of above - do not use SOMExBMULoader since we have already partitioned structure holding bmus bmusToExs and may not hold only 1 hashmap

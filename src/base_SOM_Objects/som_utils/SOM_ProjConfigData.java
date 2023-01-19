@@ -14,17 +14,19 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import base_SOM_Objects.SOM_MapDat;
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_Example;
-import base_SOM_Objects.som_examples.SOM_FtrDataType;
+import base_SOM_Objects.som_examples.base.SOM_Example;
+import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
 import base_SOM_Objects.som_fileIO.SOM_TrainDataWriter;
+import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
-//structure to hold all the file names, file configurations and general program configurations required to run the SOM project
-//will manage that all file names need to be reset when any are changed
+/**
+ * Structure to hold all the file names, file configurations and general program configurations required 
+ * to run a SOM project. This will manage that all file names need to be reset when any are changed
+ * @author John Turner
+ */
 public abstract class SOM_ProjConfigData {
 	/**
 	 * owning map manager
@@ -33,7 +35,7 @@ public abstract class SOM_ProjConfigData {
 	/**
 	 * object to manage screen and log output
 	 */
-	protected MessageObject msgObj;
+	protected static MessageObject msgObj;
 	/**
 	 * manage IO in this object
 	 */
@@ -136,7 +138,7 @@ public abstract class SOM_ProjConfigData {
 	
 	public SOM_ProjConfigData(SOM_MapManager _mapMgr, Map<String, Object> _argsMap) {
 		mapMgr = _mapMgr;
-		msgObj = _mapMgr.buildMsgObj();
+		msgObj = MessageObject.getInstance();
 		//_argsMap is map of command line/control params.  useful here for config and data dir
 		String _configDir = (String) _argsMap.get("configDir");
 		String _dataDir = (String) _argsMap.get("dataDir");

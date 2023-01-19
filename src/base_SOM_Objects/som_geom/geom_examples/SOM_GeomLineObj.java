@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Math_Objects.vectorObjs.floats.myVectorf;
-import base_SOM_Objects.som_examples.SOM_ExDataType;
+import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSamplePointf;

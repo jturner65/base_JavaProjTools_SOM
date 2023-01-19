@@ -2,7 +2,7 @@ package base_SOM_Objects.som_ui.win_disp_ui;
 
 import java.util.HashMap;
 
-import base_SOM_Objects.SOM_MapManager;
+import base_SOM_Objects.som_managers.SOM_MapManager;
 
 /**
  * an object of this class provides an interface to sync the current map values

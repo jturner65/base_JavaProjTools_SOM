@@ -3,7 +3,7 @@ package base_SOM_Objects.som_geom.geom_utils.geom_threading.trainDataGen;
 import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 
-import base_SOM_Objects.som_examples.SOM_ExDataType;
+import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomExampleManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;

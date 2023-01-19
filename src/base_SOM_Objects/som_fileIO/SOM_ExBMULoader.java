@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 
-import base_SOM_Objects.som_examples.SOM_Example;
-import base_SOM_Objects.som_examples.SOM_MapNode;
+import base_SOM_Objects.som_examples.base.SOM_Example;
+import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
 

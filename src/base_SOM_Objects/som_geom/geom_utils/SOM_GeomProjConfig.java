@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
-import base_SOM_Objects.SOM_MapManager;
+import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_Utils_Objects.io.messaging.MsgCodes;
 

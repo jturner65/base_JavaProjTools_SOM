@@ -2,9 +2,9 @@ package base_SOM_Objects.som_segments.segments;
 
 
 
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_Example;
-import base_SOM_Objects.som_examples.SOM_MapNode;
+import base_SOM_Objects.som_examples.base.SOM_Example;
+import base_SOM_Objects.som_managers.SOM_MapManager;
+import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
 
 /**
  * This class will manage an instance of a segment mapped based on UMatrix distance

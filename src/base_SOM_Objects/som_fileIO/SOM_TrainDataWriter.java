@@ -2,14 +2,18 @@ package base_SOM_Objects.som_fileIO;
 
 import java.util.concurrent.Callable;
 
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_Example;
-import base_SOM_Objects.som_examples.SOM_FtrDataType;
+import base_SOM_Objects.som_examples.base.SOM_Example;
+import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
+import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
-//save all training/testing data to appropriate format for SOM
+/**
+ * save all training/testing data to appropriate format for SOM
+ * @author John Turner
+ *
+ */
 public class SOM_TrainDataWriter implements Callable<Boolean>{
 	private SOM_MapManager mapMgr;	
 	private MessageObject msgObj; 
@@ -21,7 +25,7 @@ public class SOM_TrainDataWriter implements Callable<Boolean>{
 	private FileIOManager fileIO;
 	
 	public SOM_TrainDataWriter(SOM_MapManager _mapData, SOM_FtrDataType _dataFrmt, int _numTrainFtrs, String _fileName, String _savFileFrmt, SOM_Example[] _exAra) {
-		mapMgr = _mapData; msgObj = mapMgr.buildMsgObj();
+		mapMgr = _mapData; msgObj = MessageObject.getInstance();
 		ftrDataFrmt = _dataFrmt;		//either unmodified, standardized or normalized -> 0,1,2
 		exAra = _exAra;
 		numFtrs = _numTrainFtrs;
@@ -36,8 +40,8 @@ public class SOM_TrainDataWriter implements Callable<Boolean>{
 		String[] outStrings = new String[numSmpls + 4];
 		//# of data points
 		outStrings[0]="% "+numSmpls;
-		//# of features per data point +1
-		outStrings[1]="% "+numFtrs;
+		//# of features per data point +1 for key
+		outStrings[1]="% "+(numFtrs+1);
 		//9 + 1's * smplDim
 		String str1="% 9", str2 ="% Key";
 		for(int i=0; i< numFtrs; ++i) {

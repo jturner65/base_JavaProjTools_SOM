@@ -56,13 +56,22 @@ public abstract class SOM_FtrDataBoundMonitor {
 		return res;
 	}//fastCopyAra
 	
-	//check if value is in bnds array for particular jp, otherwise modify bnd
+	/**
+	 * check if value is in bnds array for particular jp, otherwise modify bnd
+	 * @param typeIDX
+	 * @param destIDX
+	 * @param val
+	 */
 	public final void checkValInBnds(Integer typeIDX, Integer destIDX, float val) {
 		if (val < bndsAra[typeIDX][minBndIDX][destIDX]) {bndsAra[typeIDX][minBndIDX][destIDX]=val;bndsAra[typeIDX][diffBndIDX][destIDX] = bndsAra[typeIDX][maxBndIDX][destIDX]-bndsAra[typeIDX][minBndIDX][destIDX]; checkInAllBounds( destIDX, val);}
 		if (val > bndsAra[typeIDX][maxBndIDX][destIDX]) {bndsAra[typeIDX][maxBndIDX][destIDX]=val;bndsAra[typeIDX][diffBndIDX][destIDX] = bndsAra[typeIDX][maxBndIDX][destIDX]-bndsAra[typeIDX][minBndIDX][destIDX]; checkInAllBounds( destIDX, val);}
 	}
 	
-	//manages mins, maxs, diffs of all calc types (customers, validation, training examples
+	/**
+	 * manages mins, maxs, diffs of all calc types (customers, validation, training examples
+	 * @param destIDX
+	 * @param val
+	 */
 	protected final void checkInAllBounds(Integer destIDX, float val) {
 		if (val < bndsAra[ttlOfAllCalcIDX][minBndIDX][destIDX]) {bndsAra[ttlOfAllCalcIDX][minBndIDX][destIDX]=val;bndsAra[ttlOfAllCalcIDX][diffBndIDX][destIDX] = bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]-bndsAra[ttlOfAllCalcIDX][minBndIDX][destIDX]; }
 		if (val > bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]) {bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]=val;bndsAra[ttlOfAllCalcIDX][diffBndIDX][destIDX] = bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]-bndsAra[ttlOfAllCalcIDX][minBndIDX][destIDX];}

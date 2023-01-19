@@ -52,7 +52,7 @@ public abstract class SOM_GeomObjBldrRunner extends myThreadRunner {
 	 * @param _taskType type of task to execute
 	 */
 	public SOM_GeomObjBldrRunner(SOM_GeomMapManager _mapMgr, ExecutorService _th_exec, SOM_GeomObj[] _objArray, boolean _forceST, int[] _numVals, SOM_GeomObjBldrTasks _taskType) {
-		super(_mapMgr.getMsgObj(), _th_exec, _mapMgr.isMTCapable() && !_forceST, _mapMgr.getNumUsableThreads()-1, _numVals[0]);		
+		super(_th_exec, _mapMgr.isMTCapable() && !_forceST, _mapMgr.getNumUsableThreads()-1, _numVals[0]);		
 		mapMgr = _mapMgr;
 		numSmplsPerObj = _numVals[1];
 		taskType = _taskType;

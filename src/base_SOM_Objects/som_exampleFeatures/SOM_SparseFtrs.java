@@ -3,7 +3,8 @@ package base_SOM_Objects.som_exampleFeatures;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_exampleFeatures.base.SOM_Features;
+import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
 /**

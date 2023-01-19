@@ -3,8 +3,8 @@ package base_SOM_Objects.som_geom.geom_utils;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_MapNode;
+import base_SOM_Objects.som_managers.SOM_MapManager;
+import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
 import base_SOM_Objects.som_ui.SOM_MseOvrDisplay;
 import base_UI_Objects.my_procApplet;
 

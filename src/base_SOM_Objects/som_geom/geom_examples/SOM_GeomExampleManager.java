@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_ExDataType;
-import base_SOM_Objects.som_examples.SOM_Example;
-import base_SOM_Objects.som_examples.SOM_ExampleManager;
+import base_SOM_Objects.som_examples.base.SOM_Example;
+import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSamplePointf;
 import base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen.SOM_GeomObjBldrRunner;
+import base_SOM_Objects.som_managers.SOM_ExampleManager;
+import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_Utils_Objects.io.messaging.MsgCodes;
 /**
  * example manager base class for Geometry-based SOM projects

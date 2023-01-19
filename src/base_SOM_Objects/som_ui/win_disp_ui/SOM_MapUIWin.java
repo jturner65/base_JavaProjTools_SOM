@@ -10,11 +10,11 @@ import base_Render_Interface.IRenderInterface;
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
-import base_SOM_Objects.SOM_MapDat;
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_ExDataType;
-import base_SOM_Objects.som_examples.SOM_FtrDataType;
+import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
+import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
+import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_SOM_Objects.som_ui.utils.SOMWinUIDataUpdater;
+import base_SOM_Objects.som_utils.SOM_MapDat;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
@@ -190,7 +190,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		mapUIAPI = mapMgr.mapUIAPI;
 		setVisScreenWidth(rectDim[2]);
 		//only set for visualization
-		mapMgr.setPADispWinData(this);
+		mapMgr.setDispWinData(this);
 		
 		//this window uses right side info window
 		setFlags(drawRightSideMenu, true);		//may need some re-scaling to keep things in the middle and visible

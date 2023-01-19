@@ -3,15 +3,19 @@ package base_SOM_Objects.som_fileIO;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_Example;
+import base_SOM_Objects.som_examples.base.SOM_Example;
+import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_Utils_Objects.io.FileIOManager;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
-//this class will load the pre-procced csv data into the prospect data structure owned by the SOMMapData object
+/**
+ * this class will load the pre-procced csv data into the prospect data structure owned by the SOMMapData object
+ * @author John Turner
+ *
+ */
 public abstract class SOM_ExCSVDataLoader implements Callable<Boolean>{
-	public SOM_MapManager mapMgr;
+	protected SOM_MapManager mapMgr;
 	private MessageObject msgObj;
 	private String fileName, dispYesStr, dispNoStr;
 	private int thdIDX;
@@ -19,9 +23,10 @@ public abstract class SOM_ExCSVDataLoader implements Callable<Boolean>{
 	//ref to map to add to, either prospects or validation records
 	private ConcurrentSkipListMap<String, SOM_Example> mapToAddTo;
 	protected String type;
+	
 	public SOM_ExCSVDataLoader(SOM_MapManager _mapMgr, int _thdIDX, String _fileName, String _yStr, String _nStr, ConcurrentSkipListMap<String, SOM_Example> _mapToAddTo) {	
 		mapMgr=_mapMgr;
-		msgObj=mapMgr.buildMsgObj();thdIDX=_thdIDX;fileName=_fileName;dispYesStr=_yStr;dispNoStr=_nStr; 
+		msgObj = MessageObject.getInstance();thdIDX=_thdIDX;fileName=_fileName;dispYesStr=_yStr;dispNoStr=_nStr; 
 		mapToAddTo = _mapToAddTo;
 		fileIO = new FileIOManager(msgObj,"SOMExCSVDataLoader TH_IDX_"+String.format("%02d", thdIDX));
 		type="";

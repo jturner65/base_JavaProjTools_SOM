@@ -6,9 +6,9 @@ import java.util.TreeMap;
 
 import base_Render_Interface.IRenderInterface;
 import base_Math_Objects.vectorObjs.floats.myPointf;
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_ExDataType;
-import base_SOM_Objects.som_examples.SOM_MapNode;
+import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
+import base_SOM_Objects.som_managers.SOM_MapManager;
+import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
 
 public abstract class SOM_MseOvrDisplay {
 	protected SOM_MapManager mapMgr;

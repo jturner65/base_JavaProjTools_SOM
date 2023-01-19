@@ -11,11 +11,8 @@ import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_Math_Objects.vectorObjs.floats.myPointf;
-import base_SOM_Objects.SOM_MapManager;
-import base_SOM_Objects.som_examples.SOM_Example;
-import base_SOM_Objects.som_examples.SOM_ExampleManager;
-import base_SOM_Objects.som_examples.SOM_FtrDataType;
-import base_SOM_Objects.som_examples.SOM_MapNode;
+import base_SOM_Objects.som_examples.base.SOM_Example;
+import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
 import base_SOM_Objects.som_geom.geom_UI.SOM_AnimWorldWin;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomExampleManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomFtrBndMon;
@@ -25,6 +22,9 @@ import base_SOM_Objects.som_geom.geom_utils.SOM_GeomProjConfig;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen.SOM_GeomObjBldrRunner;
 import base_SOM_Objects.som_geom.geom_utils.geom_threading.geomGen.SOM_GeomObjBldrTasks;
+import base_SOM_Objects.som_managers.SOM_ExampleManager;
+import base_SOM_Objects.som_managers.SOM_MapManager;
+import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
@@ -148,9 +148,9 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 	}//ctor	
 	
 	/**
-	 * Any instancing-class-specific functionality for after MapUIWindow is set
+	 * Any instancing-class-specific functionality for after MapUIWindow is set - name has changed once window is set
 	 */
-	protected final void setPADispWinDataIndiv() {
+	protected final void setDispWinDataIndiv() {
 		dispClassGeomName = "SOM_GeomMapManager::"+geomObjTypeName+"::"+name;
 	}
 	

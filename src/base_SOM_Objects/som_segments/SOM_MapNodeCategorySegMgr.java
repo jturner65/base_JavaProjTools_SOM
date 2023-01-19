@@ -2,7 +2,8 @@ package base_SOM_Objects.som_segments;
 
 import java.util.TreeMap;
 
-import base_SOM_Objects.som_examples.SOM_MapNode;
+import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
+import base_SOM_Objects.som_segments.base.SOM_MapNodeSegMgr;
 import base_SOM_Objects.som_segments.segmentData.SOM_MapNodeSegmentData;
 
 public class SOM_MapNodeCategorySegMgr extends SOM_MapNodeSegMgr {
