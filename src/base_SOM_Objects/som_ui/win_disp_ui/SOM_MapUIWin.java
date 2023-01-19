@@ -13,7 +13,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
 import base_SOM_Objects.som_managers.SOM_MapManager;
-import base_SOM_Objects.som_ui.utils.SOMWinUIDataUpdater;
+import base_SOM_Objects.som_ui.uiData.SOMWinUIDataUpdater;
 import base_SOM_Objects.som_utils.SOM_MapDat;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.Base_DispWindow;

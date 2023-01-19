@@ -1,4 +1,4 @@
-package base_SOM_Objects.som_ui.utils;
+package base_SOM_Objects.som_ui.uiData;
 
 import java.util.Map;
 
