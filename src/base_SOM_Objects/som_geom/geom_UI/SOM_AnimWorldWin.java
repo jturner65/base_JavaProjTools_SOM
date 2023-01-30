@@ -770,7 +770,6 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 */
 	@Override
 	protected final void launchMenuBtnHndlr(int funcRow, int btn, String label){
-		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "Begin requested action : Click '" + label +"' (Row:"+(funcRow+1)+"|Col:"+btn+") in " + name, MsgCodes.info4);
 		switch (funcRow) {
 			case 0: {// row 1 of menu side bar buttons
 				// {"Gen Training Data", "Save Training data","Load Training Data"}, //row 1
@@ -877,15 +876,13 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 				break;
 			} // row 3 of menu side bar buttons
 		}
-		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "End requested action (multithreaded actions may still be working) : Click Functions "+(funcRow+1)+" in " + name + " : btn : " + btn, MsgCodes.info4);
 	}
 
 	@Override
 	public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {somUIWin.handleSideMenuMseOvrDispSel(btn, val);}
 
 	@Override
-	public final void handleSideMenuDebugSelEnable(int btn) {
-		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSelEnable","Click Debug functionality on in " + name + " : btn : " + btn, MsgCodes.info4);
+	protected final void handleSideMenuDebugSelEnable(int btn) {
 		switch (btn) {
 			case 0: {
 				break;
@@ -907,12 +904,10 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 				break;
 			}
 		}
-		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSel", "End Debug functionality on selection.",MsgCodes.info4);
 	}
 	
 	@Override
-	public final void handleSideMenuDebugSelDisable(int btn) {
-		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSelDisable","Click Debug functionality off in " + name + " : btn : " + btn, MsgCodes.info4);
+	protected final void handleSideMenuDebugSelDisable(int btn) {
 		switch (btn) {
 		case 0: {
 			break;
@@ -935,7 +930,6 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 			break;
 		}
 		}
-		msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSelDisable", "End Debug functionality off selection.",MsgCodes.info4);
 	}
 
 	/**

@@ -196,8 +196,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	}
 
 	@Override
-	public final void handleSideMenuDebugSelEnable(int btn) {
-		msgObj.dispMessage(className, "handleSideMenuDebugSelEnable","Click Debug functionality on in " + name + " : btn : " + btn, MsgCodes.info4);
+	protected final void handleSideMenuDebugSelEnable(int btn) {
 		switch (btn) {
 			case 0: {
 				break;
@@ -219,12 +218,10 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 				break;
 			}
 		}
-		msgObj.dispMessage(className, "handleSideMenuDebugSel", "End Debug functionality on selection.",MsgCodes.info4);
 	}
 	
 	@Override
-	public final void handleSideMenuDebugSelDisable(int btn) {
-		msgObj.dispMessage(className, "handleSideMenuDebugSelDisable","Click Debug functionality off in " + name + " : btn : " + btn, MsgCodes.info4);
+	protected final void handleSideMenuDebugSelDisable(int btn) {
 		switch (btn) {
 		case 0: {
 			break;
@@ -247,7 +244,6 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 			break;
 		}
 		}
-		msgObj.dispMessage(className, "handleSideMenuDebugSelDisable", "End Debug functionality off selection.",MsgCodes.info4);
 	}
 
 	//handle mouseover 
