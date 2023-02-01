@@ -107,7 +107,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// perform in this window since SOM window is subordinate to this one
 		mapMgr = buildGeom_SOMMapManager();
 		// capable of using right side menu
-		setFlags(drawRightSideMenu, true);		
+		dispFlags.setDrawRtSideMenu(true);
 		// instance-specific init
 		initMe_Indiv();
 		// build default objects in screen
@@ -148,7 +148,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 */
 	protected void setSOM_MapUIWinState(boolean val) {
 		if (null != somUIWin) {
-			somUIWin.setFlags(Base_DispWindow.showIDX, val);
+			somUIWin.dispFlags.setShowWin(val);
 //			/this.setRectDimsY( somUIWin.getRectDim(1));
 		}
 	}
@@ -875,6 +875,10 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 				}
 				break;
 			} // row 3 of menu side bar buttons
+			default : {
+				msgObj.dispWarningMessage(className+"(SOM_AnimWorldWin)","launchMenuBtnHndlr","Clicked Unknown Btn row : " + funcRow +" | Btn : " + btn);
+				break;
+			}
 		}
 	}
 

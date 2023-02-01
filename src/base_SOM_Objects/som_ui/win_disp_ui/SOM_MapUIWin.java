@@ -191,10 +191,8 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		setVisScreenWidth(rectDim[2]);
 		//only set for visualization
 		mapMgr.setDispWinData(this);
-		
-		//this window uses right side info window
-		setFlags(drawRightSideMenu, true);		//may need some re-scaling to keep things in the middle and visible
-		
+		// capable of using right side menu
+		dispFlags.setDrawRtSideMenu(true);		
 		//init specific sim flags
 		//initPrivFlags(numPrivFlags);
 		/**
