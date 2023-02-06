@@ -250,14 +250,14 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	protected boolean hndlMouseMoveIndiv(int mouseX, int mouseY, myPoint mseClckInWorld){
 		boolean res = false;
-		if(getPrivFlags(mapDataLoadedIDX)){ res = checkMouseOvr(mouseX, mouseY);	}
+		if(privFlags.getFlag(mapDataLoadedIDX)){ res = checkMouseOvr(mouseX, mouseY);	}
 		return res;
 	}	
 	@Override
 	protected boolean hndlMouseClickIndiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
 		boolean mod = false;	
-		if(getPrivFlags(mapDataLoadedIDX)){ 
-			//msgObj.dispInfoMessage(className, "hndlMouseClickIndiv", "In Mouse Click mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
+		if(privFlags.getFlag(mapDataLoadedIDX)){ 
+			//msgObj.dispInfoMessage(className, "hndlMouseClickIndiv", "In Mouse Click mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | mseBtn : " +mseBtn + " | privFlags.getFlag(mapDataLoadedIDX) : "+privFlags.getFlag(mapDataLoadedIDX));
 			mod = this.checkMouseClick(mouseX, mouseY, mseClckInWorld, mseBtn);
 		}
 //		if(mod) {return mod;}
@@ -267,15 +267,15 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	protected boolean hndlMouseDragIndiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
 		boolean mod = false;
-		if(getPrivFlags(mapDataLoadedIDX)){ 
-			//msgObj.dispInfoMessage(className, "hndlMouseDragIndiv", "In Mouse Drag mx : " +mouseX+ " | my : " + mouseY+" | pmx : " +pmouseX+ " | pmy : " + pmouseY+" | mouseClickIn3D : " + mouseClickIn3D.toStrBrf()+" | mseDragInWorld : " + mseDragInWorld.toStrBrf()+ " | mseBtn : " +mseBtn + " | getPrivFlags(mapDataLoadedIDX) : "+getPrivFlags(mapDataLoadedIDX));
+		if(privFlags.getFlag(mapDataLoadedIDX)){ 
+			//msgObj.dispInfoMessage(className, "hndlMouseDragIndiv", "In Mouse Drag mx : " +mouseX+ " | my : " + mouseY+" | pmx : " +pmouseX+ " | pmy : " + pmouseY+" | mouseClickIn3D : " + mouseClickIn3D.toStrBrf()+" | mseDragInWorld : " + mseDragInWorld.toStrBrf()+ " | mseBtn : " +mseBtn + " | privFlags.getFlag(mapDataLoadedIDX) : "+privFlags.getFlag(mapDataLoadedIDX));
 			mod = this.checkMouseDragMove(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
 		}		
 		return mod;
 	}
 	@Override
 	protected void hndlMouseRelIndiv() {			
-		if(getPrivFlags(mapDataLoadedIDX)){ 
+		if(privFlags.getFlag(mapDataLoadedIDX)){ 
 			//msgObj.dispInfoMessage(className, "hndlMouseRelIndiv", "In Mouse Release");
 			this.checkMouseRelease();
 		}		

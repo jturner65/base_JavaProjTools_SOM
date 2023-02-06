@@ -19,6 +19,7 @@ import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
 import base_UI_Objects.windowUI.uiData.UIDataUpdater;
 import base_UI_Objects.windowUI.uiObjs.base.GUIObj_Type;
 import base_Utils_Objects.io.messaging.MsgCodes;
+import base_Utils_Objects.tools.flags.Base_BoolFlags;
 
 /**
  * this class will instance a combined window to hold an animation world and a
@@ -55,8 +56,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 */
 
 	public static final int 
-		debugAnimIDX 			= 0,				//debug
-		
+		//idx 0 is debug in privFlags structure
 		showFullSourceObjIDX	= 1,				//show/hide full source object(sources of sample points)
 		showSamplePntsIDX 		= 2,				//show/hide sample points
 		
@@ -182,7 +182,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// add an entry for each button, in the order they are wished to be displayed
 		// true tag, false tag, btn IDX
 
-		tmpBtnNamesArray.add(new Object[] { "Debugging", "Debug", debugAnimIDX });
+		tmpBtnNamesArray.add(new Object[] { "Debugging", "Debug", Base_BoolFlags.debugIDX });
 		// UI",drawSOM_MapUIVis});
 		tmpBtnNamesArray.add(new Object[] { "Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs", regenUIObjsIDX });
 		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects",	showFullSourceObjIDX });
@@ -266,13 +266,26 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		((SOM_GeomMapManager) mapMgr).rebuildGeomExObjSamples();
 		msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "regenBaseGeomObjSamples", "Finished regenerating "	+ numSmplPointsPerObj + " samples for all base objects of type " + this.geomObjType);
 	}
-
+	/**
+	 * UI code-level Debug mode functionality. Called only from flags structure
+	 * @param val
+	 */
 	@Override
-	public final void setPrivFlags(int idx, boolean val) {
-		int flIDX = idx / 32, mask = 1 << (idx % 32);
-		privFlags[flIDX] = (val ? privFlags[flIDX] | mask : privFlags[flIDX] & ~mask);
+	public void handleDebugMode(boolean val) {}
+	
+	/**
+	 * Application-specific Debug mode functionality (application-specific). Called only from privflags structure
+	 * @param val
+	 */
+	@Override
+	public void handlePrivFlagsDebugMode(boolean val) {	}
+	
+	/**
+	 * Handle application-specific flag setting
+	 */
+	@Override
+	public void handlePrivFlags_Indiv(int idx, boolean val, boolean oldVal){
 		switch (idx) {// special actions for each flag
-		case debugAnimIDX: {			break;		}
 		case showSamplePntsIDX: {		break;		} // show/hide object's sample points
 		case showFullSourceObjIDX: {	break;		} // show/hide full object
 		case showFullTrainingObjIDX: {	break;		}
@@ -559,30 +572,30 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// nested ifthen shenannigans to get rid of if checks in each individual draw
 		drawMeFirst_Indiv();
 		// check if geom objs are built in mapMgr
-		boolean useUIObjLocAsClr = getPrivFlags(useUIObjLocAsClrIDX),
-				showUIObjLabel = getPrivFlags(showUIObjLabelIDX);
+		boolean useUIObjLocAsClr = privFlags.getFlag(useUIObjLocAsClrIDX),
+				showUIObjLabel = privFlags.getFlag(showUIObjLabelIDX);
 		if (mapMgr.getGeomObjsBuilt()) {
-			boolean wantDrawBMUs = getPrivFlags(showMapBasedLocsIDX);
-			boolean shouldDrawBMUs = (wantDrawBMUs && getPrivFlags(mapBuiltToCurUIObjsIDX));
+			boolean wantDrawBMUs = privFlags.getFlag(showMapBasedLocsIDX);
+			boolean shouldDrawBMUs = (wantDrawBMUs && privFlags.getFlag(mapBuiltToCurUIObjsIDX));
 			if (!shouldDrawBMUs && wantDrawBMUs) {
-				setPrivFlags(showMapBasedLocsIDX, false);
+				privFlags.setFlag(showMapBasedLocsIDX, false);
 				wantDrawBMUs = false;
 			}
 			_drawObjs(mapMgr.sourceGeomObjects, mapMgr.sourceGeomObjects.length, curSelGeomObjIDX, animTimeMod, shouldDrawBMUs,
-					getPrivFlags(showSamplePntsIDX), getPrivFlags(showFullSourceObjIDX),
-					useUIObjLocAsClr, getPrivFlags(showSelUIObjIDX), getPrivFlags(showObjByWireFrmIDX),
-					showUIObjLabel, getPrivFlags(showUIObjSmplsLabelIDX));
+					privFlags.getFlag(showSamplePntsIDX), privFlags.getFlag(showFullSourceObjIDX),
+					useUIObjLocAsClr, privFlags.getFlag(showSelUIObjIDX), privFlags.getFlag(showObjByWireFrmIDX),
+					showUIObjLabel, privFlags.getFlag(showUIObjSmplsLabelIDX));
 		}
 		// check if train samples are built in map mgr
-		if ((mapMgr.getTrainDataObjsBuilt()) && (getPrivFlags(showFullTrainingObjIDX))) {
+		if ((mapMgr.getTrainDataObjsBuilt()) && (privFlags.getFlag(showFullTrainingObjIDX))) {
 			_drawObjs(mapMgr.trainDatGeomObjects, mapMgr.getNumTrainingExsToShow(), -1, animTimeMod, false, false, true,
-					useUIObjLocAsClr, false, getPrivFlags(showObjByWireFrmIDX),
+					useUIObjLocAsClr, false, privFlags.getFlag(showObjByWireFrmIDX),
 					showUIObjLabel, false);
 		} else {
-			setPrivFlags(showFullTrainingObjIDX, false);
+			privFlags.setFlag(showFullTrainingObjIDX, false);
 		}
 		// draw geom objects for selected map node objects
-		if (getPrivFlags(drawMapNodeGeomObjsIDX)) {
+		if (privFlags.getFlag(drawMapNodeGeomObjsIDX)) {
 			mapMgr.drawSelectedMapNodeGeomObjs(pa, animTimeMod, showUIObjLabel,	useUIObjLocAsClr);
 		}
 		drawMeLast_Indiv();
@@ -721,7 +734,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	@Override
 	public final void drawCustMenuObjs() {
 		// ((SOM_GeometryMain) pa).drawSOMUIObjs();
-		// if(this.getPrivFlags(drawSOM_MapUIVis)) {
+		// if(this.privFlags.getFlag(drawSOM_MapUIVis)) {
 		if (somUIWin != null) {
 			pa.pushMatState();
 			somUIWin.drawWindowGuiObjs();					//draw what user-modifiable fields are currently available
@@ -830,7 +843,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 			case 2: {// row 3 of menu side bar buttons
 				switch (btn) {
 					case 0: {// show/hide som Map UI
-						setPrivFlags(drawSOM_MapUIVis, !getPrivFlags(drawSOM_MapUIVis));
+						privFlags.setFlag(drawSOM_MapUIVis, !privFlags.getFlag(drawSOM_MapUIVis));
 						resetButtonState();
 						break;
 					}
@@ -951,7 +964,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
 		boolean res = false;
 		// if(res) {return res;}
-		if ((this.somUIWin != null) && (getPrivFlags(drawSOM_MapUIVis))) {
+		if ((this.somUIWin != null) && (privFlags.getFlag(drawSOM_MapUIVis))) {
 			res = somUIWin.handleMouseMove(mouseX, mouseY);
 			if (res) {		return true;	}
 		}
@@ -972,7 +985,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	// cntl key pressed handles unfocus of spherey
 	@Override
 	protected final boolean hndlMouseClickIndiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
-		if ((this.somUIWin != null) && (getPrivFlags(drawSOM_MapUIVis))) {
+		if ((this.somUIWin != null) && (privFlags.getFlag(drawSOM_MapUIVis))) {
 			boolean res = somUIWin.handleMouseClick(mouseX, mouseY, mseBtn);
 			if (res) {			return true;	}
 		}
@@ -1000,7 +1013,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		if (res) {			return res;		}
 		// handleMouseDrag(int mouseX, int mouseY,int pmouseX, int pmouseY, myVector
 		// mseDragInWorld, int mseBtn)
-		if ((this.somUIWin != null) && (getPrivFlags(drawSOM_MapUIVis))) {
+		if ((this.somUIWin != null) && (privFlags.getFlag(drawSOM_MapUIVis))) {
 			res = somUIWin.handleMouseDrag(mouseX, mouseY, pmouseX, pmouseY, mseDragInWorld, mseBtn);
 			if (res) {				return true;			}
 		}
@@ -1024,7 +1037,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
 	@Override
 	protected final void hndlMouseRelIndiv() {
-		if ((this.somUIWin != null) && (getPrivFlags(drawSOM_MapUIVis))) {			somUIWin.handleMouseRelease();		}
+		if ((this.somUIWin != null) && (privFlags.getFlag(drawSOM_MapUIVis))) {			somUIWin.handleMouseRelease();		}
 		hndlMseRelease_Priv();
 	}
 

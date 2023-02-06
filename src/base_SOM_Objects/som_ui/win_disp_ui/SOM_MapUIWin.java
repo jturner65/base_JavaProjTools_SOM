@@ -35,46 +35,47 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	public SOM_UIToMapCom mapUIAPI;	
 	//idxs of boolean values/flags
 	public static final int 
-		buildSOMExe 				= 0,			//command to initiate SOM-building
-		resetMapDefsIDX				= 1,			//reset default UI values for map
-		mapDataLoadedIDX			= 2,			//whether map has been loaded or not	
-		mapUseChiSqDistIDX			= 3,			//whether to use chi-squared (weighted by variance) distance for features or regular euclidean dist
-		mapExclProdZeroFtrIDX		= 4,			//whether or not distances between two datapoints assume that absent features in source data point should be zero or ignored when comparing to map node ftrs
+		//idx 0 is debug in privFlags structure
+		buildSOMExe 				= 1,			//command to initiate SOM-building
+		resetMapDefsIDX				= 2,			//reset default UI values for map
+		mapDataLoadedIDX			= 3,			//whether map has been loaded or not	
+		mapUseChiSqDistIDX			= 4,			//whether to use chi-squared (weighted by variance) distance for features or regular euclidean dist
+		mapExclProdZeroFtrIDX		= 5,			//whether or not distances between two datapoints assume that absent features in source data point should be zero or ignored when comparing to map node ftrs
 
 		//display/interaction
-		mapDrawTrainDatIDX			= 5,			//draw training examples
-		mapDrawTestDatIDX 			= 6,			//draw testing examples - data held out and not used to train the map 
-		mapDrawNodeLblIDX			= 7,			//draw labels for nodes
-		mapDrawNodesWith0MapExIDX	= 8,			//draw nodes that have no mapped examples
-		mapDrawWtMapNodesIDX		= 9,			//draw map nodes with non-0 (present) ftr vals for currently selected ftr
-		mapDrawPopMapNodesIDX	   	= 10,			//draw map nodes that are bmus for training examples, with size logarithmically proportional to pop size
-		mapDrawAllMapNodesIDX		= 11,			//draw all map nodes, even empty
-		drawMapNodePopGraphIDX		= 12,			//draw graph next to SOM Map display showing map node population curve, with x axis being proportional to population, and y axis holding each node
+		mapDrawTrainDatIDX			= 6,			//draw training examples
+		mapDrawTestDatIDX 			= 7,			//draw testing examples - data held out and not used to train the map 
+		mapDrawNodeLblIDX			= 8,			//draw labels for nodes
+		mapDrawNodesWith0MapExIDX	= 9,			//draw nodes that have no mapped examples
+		mapDrawWtMapNodesIDX		= 10,			//draw map nodes with non-0 (present) ftr vals for currently selected ftr
+		mapDrawPopMapNodesIDX	   	= 11,			//draw map nodes that are bmus for training examples, with size logarithmically proportional to pop size
+		mapDrawAllMapNodesIDX		= 12,			//draw all map nodes, even empty
+		drawMapNodePopGraphIDX		= 13,			//draw graph next to SOM Map display showing map node population curve, with x axis being proportional to population, and y axis holding each node
 		
 		//UMatrix 		
-		mapDrawUMatrixIDX			= 13,			//draw visualization of u matrix - distance between nodes
-		mapDrawUMatSegImgIDX		= 14,			//draw the image of the interpolated segments based on UMatrix Distance
-		mapDrawUMatSegMembersIDX	= 15,			//draw umatrix-based segments around regions of maps - visualizes clusters with different colors
+		mapDrawUMatrixIDX			= 14,			//draw visualization of u matrix - distance between nodes
+		mapDrawUMatSegImgIDX		= 15,			//draw the image of the interpolated segments based on UMatrix Distance
+		mapDrawUMatSegMembersIDX	= 16,			//draw umatrix-based segments around regions of maps - visualizes clusters with different colors
 		
 		//ftr and ftr-dist-based
-		mapDrawDistImageIDX			= 16,			//draw umatrix-like rendering based on sq dist between adjacent node vectors
-		mapDrawFtrWtSegMembersIDX	= 17,			//draw ftr-wt-based segments around regions of map - display only segment built from currently display ftr on ftr map
+		mapDrawDistImageIDX			= 17,			//draw umatrix-like rendering based on sq dist between adjacent node vectors
+		mapDrawFtrWtSegMembersIDX	= 18,			//draw ftr-wt-based segments around regions of map - display only segment built from currently display ftr on ftr map
 		
 		//class and category-based segments
-		mapDrawClassSegmentsIDX		= 18,			//show class segments
-		mapDrawCategorySegmentsIDX	= 19,			//show category (collection of classes) segments
-		_categoryCanBeShownIDX		= 20,			//whether category values are used and can be shown on UI/interracted with
-		_classCanBeShownIDX			= 21,			//whether class values are used and can be shown on UI/interracted with
-		mapLockClassCatSegmentsIDX  = 22,			//lock category to cycle through classes
+		mapDrawClassSegmentsIDX		= 19,			//show class segments
+		mapDrawCategorySegmentsIDX	= 20,			//show category (collection of classes) segments
+		_categoryCanBeShownIDX		= 21,			//whether category values are used and can be shown on UI/interracted with
+		_classCanBeShownIDX			= 22,			//whether class values are used and can be shown on UI/interracted with
+		mapLockClassCatSegmentsIDX  = 23,			//lock category to cycle through classes
 		
-		showSelRegionIDX			= 23,			//highlight a specific region of the map, i.e. all nodes above a certain threshold for a chosen ftr
+		showSelRegionIDX			= 24,			//highlight a specific region of the map, i.e. all nodes above a certain threshold for a chosen ftr
 		//train/test data management
-		somTrainDataLoadedIDX		= 24,			//whether data used to build map has been loaded yet
-		saveLocClrImgIDX			= 25,			//
+		somTrainDataLoadedIDX		= 25,			//whether data used to build map has been loaded yet
+		saveLocClrImgIDX			= 26,			//
 		//save segment mappings
-		saveAllSegmentMapsIDX		= 26;			//this will save all the segment mappings that have been defined
+		saveAllSegmentMapsIDX		= 27;			//this will save all the segment mappings that have been defined
 	
-	public static final int numSOMBasePrivFlags = 27;
+	public static final int numSOMBasePrivFlags = 28;
 	//instancing class will determine numPrivFlags based on how many more flags are added
 	
 	/**
@@ -198,13 +199,13 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		/**
 		 * set these values from when UI was created 
 		 */
-		setPrivFlags(_categoryCanBeShownIDX, _catExistsAndIsShown);
-		setPrivFlags(_classCanBeShownIDX, _classExistsAndIsShown);		
-		setPrivFlags(mapDrawTrainDatIDX,getPrivFlags(mapDrawTrainDatIDX));
-		setPrivFlags(mapDrawWtMapNodesIDX,getPrivFlags(mapDrawWtMapNodesIDX));
-		setPrivFlags(mapUseChiSqDistIDX,getPrivFlags(mapUseChiSqDistIDX));
-		setPrivFlags(mapDrawUMatrixIDX, flagsToSet[0]);
-		setPrivFlags(mapExclProdZeroFtrIDX, flagsToSet[1]);
+		privFlags.setFlag(_categoryCanBeShownIDX, _catExistsAndIsShown);
+		privFlags.setFlag(_classCanBeShownIDX, _classExistsAndIsShown);		
+		privFlags.setFlag(mapDrawTrainDatIDX,privFlags.getFlag(mapDrawTrainDatIDX));
+		privFlags.setFlag(mapDrawWtMapNodesIDX,privFlags.getFlag(mapDrawWtMapNodesIDX));
+		privFlags.setFlag(mapUseChiSqDistIDX,privFlags.getFlag(mapUseChiSqDistIDX));
+		privFlags.setFlag(mapDrawUMatrixIDX, flagsToSet[0]);
+		privFlags.setFlag(mapExclProdZeroFtrIDX, flagsToSet[1]);
 		//set initial values for UI
 		mapMgr.initFromUIWinInitMe(
 				(int)(guiObjs[uiTrainDataNormIDX].getVal()), 
@@ -249,7 +250,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		//set passed map manager as current
 		mapMgr = _mapMgr;
 		//re-init window to use this map manager
-		initAfterMapMgrSet(new boolean[] {getPrivFlags(mapDrawUMatrixIDX), getPrivFlags(mapExclProdZeroFtrIDX)});
+		initAfterMapMgrSet(new boolean[] {privFlags.getFlag(mapDrawUMatrixIDX), privFlags.getFlag(mapExclProdZeroFtrIDX)});
 		//send new mapMgr's config data
 		mapMgr.setUIValsFromProjConfig();
 	}
@@ -419,12 +420,12 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 * pass the list of values for the category list box, in idx order
 	 * @param categoryVals : list of values to display for category select list
 	 */
-	public final void setUI_CategoryListVals(String[] categoryVals) {	if(getPrivFlags(_categoryCanBeShownIDX)) {	((GUIObj_List) guiObjs[uiCategorySelectIDX]).setListVals(categoryVals);	}}
+	public final void setUI_CategoryListVals(String[] categoryVals) {	if(privFlags.getFlag(_categoryCanBeShownIDX)) {	((GUIObj_List) guiObjs[uiCategorySelectIDX]).setListVals(categoryVals);	}}
 	/**
 	 * pass the list of values for the class list box, in idx order
 	 * @param classVals : list of values to display for class select list
 	 */
-	public final void setUI_ClassListVals(String[] classVals) {		if(getPrivFlags(_classCanBeShownIDX)) {		((GUIObj_List) guiObjs[uiClassSelectIDX]).setListVals(classVals);	}}
+	public final void setUI_ClassListVals(String[] classVals) {		if(privFlags.getFlag(_classCanBeShownIDX)) {		((GUIObj_List) guiObjs[uiClassSelectIDX]).setListVals(classVals);	}}
 	
 	/**
 	 * Instancing class-specific (application driven) UI objects should be defined
@@ -448,14 +449,28 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		setVisScreenDimsPriv_Indiv();
 	}//calcAndSetMapLoc
 	protected abstract void setVisScreenDimsPriv_Indiv();
-	
+	/**
+	 * UI code-level Debug mode functionality. Called only from flags structure
+	 * @param val
+	 */
 	@Override
-	public final void setPrivFlags(int idx, boolean val){				
-		int flIDX = idx/32, mask = 1<<(idx%32);
-		privFlags[flIDX] = (val ?  privFlags[flIDX] | mask : privFlags[flIDX] & ~mask);
+	public void handleDebugMode(boolean val) {}
+	
+	/**
+	 * Application-specific Debug mode functionality (application-specific). Called only from privflags structure
+	 * @param val
+	 */
+	@Override
+	public void handlePrivFlagsDebugMode(boolean val) {	}
+	
+	/**
+	 * Handle application-specific flag setting
+	 */
+	@Override
+	public void handlePrivFlags_Indiv(int idx, boolean val, boolean oldVal){
 		switch (idx) {//special actions for each flag
 			case buildSOMExe 			: {break;}			//placeholder	
-			case resetMapDefsIDX		: {if(val){resetUIVals(true); setPrivFlags(resetMapDefsIDX,false);}}
+			case resetMapDefsIDX		: {if(val){resetUIVals(true); privFlags.setFlag(resetMapDefsIDX,false);}}
 			case mapDataLoadedIDX 		: {break;}			//placeholder				
 			case mapUseChiSqDistIDX		: {//whether or not to use chi-squared (weighted) distance for features
 				//turn off scaled ftrs if this is set
@@ -473,20 +488,20 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 				break;}
 			case mapDrawWtMapNodesIDX		: {//draw map nodes
 				if (val) {//turn off other node displays
-					setPrivFlags(mapDrawPopMapNodesIDX, false);
-					setPrivFlags(mapDrawAllMapNodesIDX, false);					
+					privFlags.setFlag(mapDrawPopMapNodesIDX, false);
+					privFlags.setFlag(mapDrawAllMapNodesIDX, false);					
 				}
 				break;}							
 			case mapDrawPopMapNodesIDX  : {				
 				if (val) {//turn off other node displays
-					setPrivFlags(mapDrawWtMapNodesIDX, false);
-					setPrivFlags(mapDrawAllMapNodesIDX, false);					
+					privFlags.setFlag(mapDrawWtMapNodesIDX, false);
+					privFlags.setFlag(mapDrawAllMapNodesIDX, false);					
 				}
 				break;}
 			case mapDrawAllMapNodesIDX	: {//draw all map nodes, even empty
 				if (val) {//turn off other node displays
-					setPrivFlags(mapDrawPopMapNodesIDX, false);
-					setPrivFlags(mapDrawWtMapNodesIDX, false);					
+					privFlags.setFlag(mapDrawPopMapNodesIDX, false);
+					privFlags.setFlag(mapDrawWtMapNodesIDX, false);					
 				}
 				break;}	
 			case mapDrawFtrWtSegMembersIDX :{
@@ -498,7 +513,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 			case saveAllSegmentMapsIDX : {
 				if(val) {
 					mapMgr.saveAllSegment_BMUReports();
-					setPrivFlags(saveAllSegmentMapsIDX, false);
+					privFlags.setFlag(saveAllSegmentMapsIDX, false);
 				}
 				break;}			
 			case mapDrawNodeLblIDX : {//whether or not to show labels of nodes being displayed				
@@ -529,9 +544,9 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	protected abstract void setPrivFlags_LockCatForClassSegs(boolean val);
 	//set flag values when finished building map, to speed up initial display
 	public final void setFlagsDoneMapBuild(){
-		setPrivFlags(mapDrawTrainDatIDX, false);
-		setPrivFlags(mapDrawWtMapNodesIDX, false);
-		setPrivFlags(mapDrawAllMapNodesIDX, false);
+		privFlags.setFlag(mapDrawTrainDatIDX, false);
+		privFlags.setFlag(mapDrawWtMapNodesIDX, false);
+		privFlags.setFlag(mapDrawAllMapNodesIDX, false);
 	}//setFlagsDoneMapBuild
 	
 
@@ -539,7 +554,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	//build new SOM_MAP map using UI-entered values, then load resultant data - map nodes, bmus to training data
 	protected final void buildNewSOMMap(){
 		msgObj.dispMessage("SOM_MapUIWin","buildNewSOMMap","Starting Map Build", MsgCodes.info5);
-		setPrivFlags(buildSOMExe,false);
+		privFlags.setFlag(buildSOMExe,false);
 		//send current UI values to map manager, load appropriate data, build directory structure and execute map
 		boolean returnCode = mapMgr.loadTrainDataMapConfigAndBuildMap(true);
 		//returnCode is whether map was built and trained successfully
@@ -921,11 +936,11 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	@Override
 	protected final void drawMe(float animTimeMod) {
 		drawSetDispFlags();
-		if(getPrivFlags(mapDataLoadedIDX) != mapMgr.isMapDrawable()){setPrivFlags(mapDataLoadedIDX,mapMgr.isMapDrawable());}
-		boolean isMapDataLoaded = getPrivFlags(mapDataLoadedIDX);
+		if(privFlags.getFlag(mapDataLoadedIDX) != mapMgr.isMapDrawable()){privFlags.setFlag(mapDataLoadedIDX,mapMgr.isMapDrawable());}
+		boolean isMapDataLoaded = privFlags.getFlag(mapDataLoadedIDX);
 		drawMap(isMapDataLoaded);		
 		if(doBuildMap){buildNewSOMMap(); doBuildMap = false;} 
-		else if(getPrivFlags(buildSOMExe)) {	doBuildMap = true;	}	
+		else if(privFlags.getFlag(buildSOMExe)) {	doBuildMap = true;	}	
 	}
 	protected abstract void drawSetDispFlags();
 	
