@@ -51,6 +51,14 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		msgObj.dispInfoMessage(className, "initUIBox", "Using animWin.uiClkCoords : y == "+ menuUIClkCoords[3] + " | height ==  "+menuUIClkCoords[3]);
 		initUIClickCoords(menuUIClkCoords[0],menuUIClkCoords[3],menuUIClkCoords[2],menuUIClkCoords[3]);			
 	}
+	/**
+	 * Initialize any UI control flags appropriate for specific instanced SOM mapUI window
+	 */
+	@Override
+	protected final void initDispFlags_Indiv() {
+		//disable right-side menu since the main animation window will handle showing/hiding that.
+		dispFlags.setDrawRtSideMenu(false);
+	}
 
 	/**
 	 * Instancing class-specific (application driven) UI buttons to display are built 
@@ -167,7 +175,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	public void initDrwnTrajIndiv(){}
 	@Override
-	public void drawCustMenuObjs(){}
+	public void drawCustMenuObjs(float animTimeMod){}
 	@Override
 	protected boolean simMe(float modAmtSec) {	return true;}
 	//set camera to custom location - only used if dispFlag set

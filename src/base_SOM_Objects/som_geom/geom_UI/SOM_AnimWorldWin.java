@@ -99,15 +99,26 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		initAndSetAnimWorldVals();
 		geomObjType = _type;
 	}
+	/**
+	 * Initialize any UI control flags appropriate for all SOM Animation window applications
+	 */
+	@Override
+	protected final void initDispFlags() {
+		// capable of using right side menu
+		dispFlags.setDrawRtSideMenu(true);
+		initDispFlags_Indiv();
+	}
 	
-
+	/**
+	 * Initialize any UI control flags appropriate for specific instanced SOM Animation window
+	 */
+	protected abstract void initDispFlags_Indiv();
+	
 	@Override
 	protected final void initMe() {
 		// build map associated with this geometric experiment
 		// perform in this window since SOM window is subordinate to this one
 		mapMgr = buildGeom_SOMMapManager();
-		// capable of using right side menu
-		dispFlags.setDrawRtSideMenu(true);
 		// instance-specific init
 		initMe_Indiv();
 		// build default objects in screen
@@ -732,12 +743,12 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 * draw som map window UI Objects
 	 */
 	@Override
-	public final void drawCustMenuObjs() {
+	public final void drawCustMenuObjs(float modAmtMillis) {
 		// ((SOM_GeometryMain) pa).drawSOMUIObjs();
 		// if(this.privFlags.getFlag(drawSOM_MapUIVis)) {
 		if (somUIWin != null) {
 			pa.pushMatState();
-			somUIWin.drawWindowGuiObjs();					//draw what user-modifiable fields are currently available
+			somUIWin.drawWindowGuiObjs(modAmtMillis);					//draw what user-modifiable fields are currently available
 //			somUIWin.drawGUIObjs(); // draw what user-modifiable fields are currently available
 //			somUIWin.drawClickableBooleans(); // draw what user-modifiable boolean buttons
 			pa.popMatState();
