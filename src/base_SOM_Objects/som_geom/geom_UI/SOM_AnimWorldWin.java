@@ -94,11 +94,35 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	// - need to set in window
 	protected float[] SOMMapDims = new float[] { 834.8f, 834.8f };
 
+
 	public SOM_AnimWorldWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx, int _flagIdx, SOM_GeomObjTypes _type) {
 		super(_p, _AppMgr, _winIdx, _flagIdx);
 		initAndSetAnimWorldVals();
 		geomObjType = _type;
 	}
+	
+	/**
+	 * Individual SOM map window for each anim world.
+	 * @param ownerWin
+	 * @param fIdx
+	 * @return
+	 */
+	public final void buildAndSetSOM_MapDispUIWin(int fIdx) {
+		float[] _dimOpen = AppMgr.getDefaultPopUpWinDimOpen();
+		//hidden
+		float[] _dimClosed  =  AppMgr.getDefaultPopUpWinDimClosed();
+		String owner = this.getName();
+		//(int _winIDX, float[] _dimOpen, float[] _dimClosed, boolean[] _dispFlags, int[] _fill, int[] _strk, int[] _trajFill, int[] _trajStrk)
+		somUIWin = new SOM_GeomMapUIWin(pa, AppMgr, "Map UI for " + owner, fIdx, new int[]{20,40,50,200}, new int[]{255,255,255,255}, _dimOpen, _dimClosed, "Visualize SOM Node location for "+owner,AppMgr.getArgsMap(), this);	
+		somUIWin.finalInit(false,false, false, new myPoint(-AppMgr.gridDimX/2.0,-AppMgr.gridDimY/2.0,-AppMgr.gridDimZ/2.0), new myVector(0,0,0));
+		somUIWin.setTrajColors(new int[]{180,180,180,255},new int[]{100,100,100,255});
+		somUIWin.setRtSideUIBoxClrs(new int[]{0,0,0,200},new int[]{255,255,255,255});
+		somUIWin.setUI_FeatureListVals(setUI_GeomObjFeatureListVals());
+		somUIWin.setMapMgr(mapMgr);
+		msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "setGeomMapUIWin", "Setting somUIWin in " + name + " to be  : "
+				+ somUIWin.name + " and somUIWin's mapMgr to one belonging to win : " + mapMgr.win.name);		
+	}//buildAndSetSOM_MapDispUIWin	
+	
 	/**
 	 * Initialize any UI control flags appropriate for all SOM Animation window applications
 	 */
@@ -142,14 +166,6 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	@Override
 	protected int[] getFlagIDXsToInitToTrue() {
 		return new int[] {showFullSourceObjIDX,useUIObjLocAsClrIDX, allTrainExUniqueIDX};
-	}
-
-	public void setGeomMapUIWin(SOM_GeomMapUIWin _somUIWin) {
-		somUIWin = _somUIWin;
-		somUIWin.setUI_FeatureListVals(setUI_GeomObjFeatureListVals());
-		somUIWin.setMapMgr(mapMgr);
-		msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "setGeomMapUIWin", "Setting somUIWin in " + name + " to be  : "
-				+ somUIWin.name + " and somUIWin's mapMgr to one belonging to win : " + mapMgr.win.name);
 	}
 
 	protected abstract String[] setUI_GeomObjFeatureListVals();
