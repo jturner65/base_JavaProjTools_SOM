@@ -57,7 +57,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	protected final void initDispFlags_Indiv() {
 		//disable right-side menu since the main animation window will handle showing/hiding that.
-		dispFlags.setDrawRtSideMenu(false);
+		dispFlags.setHasRtSideMenu(false);
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * instance-specific window initialization
 	 */
 	@Override
-	protected void initMeIndiv() {
+	protected void initMe_Indiv() {
 		//default to showing right side bar menu
 		//setFlags(showRightSideMenu, true);	
 		//moved from mapMgr ctor, to remove dependence on papplet in that object
@@ -146,7 +146,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	protected final void setVisScreenDimsPriv_Indiv() {}
 	
 	@Override
-	protected void setPrivFlagsIndiv(int idx, boolean val) {
+	protected void setPrivFlags_Indiv(int idx, boolean val) {
 		switch (idx) {//special actions for each flag
 			case mapShowLocClrIDX		: {//draw all map nodes, even empty
 				break;}						
@@ -160,7 +160,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	//set flags that should be set on each frame - these are set at beginning of frame draw
 	protected void drawSetDispFlags() {	}
 	@Override
-	protected void drawMapIndiv() {		}
+	protected void drawMap_Indiv() {		}
 	@Override
 	protected boolean setUI_IntValsCustom_Indiv(int UIidx, int ival, int oldVal) {
 		// TODO Auto-generated method stub
@@ -173,14 +173,14 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		return false;
 	}	
 	@Override
-	public void initDrwnTrajIndiv(){}
+	public void initDrwnTraj_Indiv(){}
 	@Override
 	public void drawCustMenuObjs(float animTimeMod){}
 	@Override
 	protected boolean simMe(float modAmtSec) {	return true;}
 	//set camera to custom location - only used if dispFlag set
 	@Override
-	protected void setCameraIndiv(float[] camVals){	}
+	protected void setCamera_Indiv(float[] camVals){	}
 	@Override
 	protected void stopMe() {}	
 
@@ -256,13 +256,13 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 
 	//handle mouseover 
 	@Override
-	protected boolean hndlMouseMoveIndiv(int mouseX, int mouseY, myPoint mseClckInWorld){
+	protected boolean hndlMouseMove_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld){
 		boolean res = false;
 		if(privFlags.getFlag(mapDataLoadedIDX)){ res = checkMouseOvr(mouseX, mouseY);	}
 		return res;
 	}	
 	@Override
-	protected boolean hndlMouseClickIndiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
+	protected boolean hndlMouseClick_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
 		boolean mod = false;	
 		if(privFlags.getFlag(mapDataLoadedIDX)){ 
 			//msgObj.dispInfoMessage(className, "hndlMouseClickIndiv", "In Mouse Click mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | mseBtn : " +mseBtn + " | privFlags.getFlag(mapDataLoadedIDX) : "+privFlags.getFlag(mapDataLoadedIDX));
@@ -273,7 +273,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		return mod;
 	}
 	@Override
-	protected boolean hndlMouseDragIndiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
+	protected boolean hndlMouseDrag_Indiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
 		boolean mod = false;
 		if(privFlags.getFlag(mapDataLoadedIDX)){ 
 			//msgObj.dispInfoMessage(className, "hndlMouseDragIndiv", "In Mouse Drag mx : " +mouseX+ " | my : " + mouseY+" | pmx : " +pmouseX+ " | pmy : " + pmouseY+" | mouseClickIn3D : " + mouseClickIn3D.toStrBrf()+" | mseDragInWorld : " + mseDragInWorld.toStrBrf()+ " | mseBtn : " +mseBtn + " | privFlags.getFlag(mapDataLoadedIDX) : "+privFlags.getFlag(mapDataLoadedIDX));
@@ -282,7 +282,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		return mod;
 	}
 	@Override
-	protected void hndlMouseRelIndiv() {			
+	protected void hndlMouseRel_Indiv() {			
 		if(privFlags.getFlag(mapDataLoadedIDX)){ 
 			//msgObj.dispInfoMessage(className, "hndlMouseRelIndiv", "In Mouse Release");
 			this.checkMouseRelease();
@@ -341,7 +341,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	protected void setCustMenuBtnLabels() {}
 
 	@Override
-	public final void processTrajIndiv(DrawnSimpleTraj drawnTraj) {}
+	public final void processTraj_Indiv(DrawnSimpleTraj drawnTraj) {}
 
 
 }//myTrajEditWin

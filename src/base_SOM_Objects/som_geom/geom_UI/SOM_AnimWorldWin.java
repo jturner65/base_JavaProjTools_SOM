@@ -95,8 +95,8 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	protected float[] SOMMapDims = new float[] { 834.8f, 834.8f };
 
 
-	public SOM_AnimWorldWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx, int _flagIdx, SOM_GeomObjTypes _type) {
-		super(_p, _AppMgr, _winIdx, _flagIdx);
+	public SOM_AnimWorldWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx, SOM_GeomObjTypes _type) {
+		super(_p, _AppMgr, _winIdx);
 		initAndSetAnimWorldVals();
 		geomObjType = _type;
 	}
@@ -128,8 +128,6 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 */
 	@Override
 	protected final void initDispFlags() {
-		// capable of using right side menu
-		dispFlags.setDrawRtSideMenu(true);
 		initDispFlags_Indiv();
 	}
 	
@@ -573,7 +571,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 /////////////////////////////
 	// drawing routines
 	@Override
-	protected final void setCameraIndiv(float[] camVals) {
+	protected final void setCamera_Indiv(float[] camVals) {
 		// , float rx, float ry, float dz are now member variables of every window
 		pa.setCameraWinVals(camVals);
 		// puts origin of all drawn objects at screen center and moves forward/away by dz
@@ -987,7 +985,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	}
 
 	@Override
-	protected final boolean hndlMouseMoveIndiv(int mouseX, int mouseY, myPoint mseClckInWorld) {
+	protected final boolean hndlMouseMove_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld) {
 
 		boolean res = false;
 		// if(res) {return res;}
@@ -1011,7 +1009,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	// alt key pressed handles trajectory
 	// cntl key pressed handles unfocus of spherey
 	@Override
-	protected final boolean hndlMouseClickIndiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
+	protected final boolean hndlMouseClick_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
 		if ((this.somUIWin != null) && (privFlags.getFlag(drawSOM_MapUIVis))) {
 			boolean res = somUIWin.handleMouseClick(mouseX, mouseY, mseBtn);
 			if (res) {			return true;	}
@@ -1030,12 +1028,12 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	protected abstract boolean hndlMseClick_Priv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn);
 
 	@Override
-	protected final boolean hndlMouseDragIndiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
+	protected final boolean hndlMouseDrag_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
 		boolean res = false;
 		//msgObj.dispInfoMessage(className,"hndlMouseDragIndiv","sphere ui drag in world mouseClickIn3D : " + mouseClickIn3D.toStrBrf() + " mseDragInWorld : " +mseDragInWorld.toStrBrf());
 //		if((privFlags[sphereSelIDX]) && (curSelSphere!="")){//pass drag through to selected sphere
 //			//msgObj.dispInfoMessage(className,"hndlMouseDragIndiv","sphere ui drag in world mouseClickIn3D : " + mouseClickIn3D.toStrBrf() + " mseDragInWorld : " + mseDragInWorld.toStrBrf());
-//			res = sphereCntls.get(curSelSphere).hndlMouseDragIndiv(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D,curMseLookVec, mseDragInWorld);
+//			res = sphereCntls.get(curSelSphere).hndlMouseDrag_Indiv(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D,curMseLookVec, mseDragInWorld);
 //		}
 		if (res) {			return res;		}
 		// handleMouseDrag(int mouseX, int mouseY,int pmouseX, int pmouseY, myVector
@@ -1063,7 +1061,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	protected abstract boolean hndlMseDrag_Priv(int mouseX, int mouseY, int pmouseX, int pmouseY,myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn);
 
 	@Override
-	protected final void hndlMouseRelIndiv() {
+	protected final void hndlMouseRel_Indiv() {
 		if ((this.somUIWin != null) && (privFlags.getFlag(drawSOM_MapUIVis))) {			somUIWin.handleMouseRelease();		}
 		hndlMseRelease_Priv();
 	}
@@ -1073,15 +1071,15 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 */
 	protected abstract void hndlMseRelease_Priv();
 	@Override
-	public final void processTrajIndiv(DrawnSimpleTraj drawnNoteTraj) {	}
+	public final void processTraj_Indiv(DrawnSimpleTraj drawnNoteTraj) {	}
 	@Override
-	protected final void addSScrToWinIndiv(int newWinKey) {	}
+	protected final void addSScrToWin_Indiv(int newWinKey) {	}
 	@Override
-	protected final void addTrajToScrIndiv(int subScrKey, String newTrajKey) {	}
+	protected final void addTrajToScr_Indiv(int subScrKey, String newTrajKey) {	}
 	@Override
-	protected final void delSScrToWinIndiv(int idx) {	}
+	protected final void delSScrToWin_Indiv(int idx) {	}
 	@Override
-	protected final void delTrajToScrIndiv(int subScrKey, String newTrajKey) {	}
+	protected final void delTrajToScr_Indiv(int subScrKey, String newTrajKey) {	}
 	// resize drawn all trajectories
 	@Override
 	protected final void resizeMe(float scale) {	}

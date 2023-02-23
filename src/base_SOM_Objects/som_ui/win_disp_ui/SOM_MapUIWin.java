@@ -190,7 +190,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	protected final void initDispFlags() {
 		
 		// capable of using right side menu
-		dispFlags.setDrawRtSideMenu(true);
+		//dispFlags.setHasRtSideMenu(true);
 		initDispFlags_Indiv();
 	}
 	/**
@@ -227,7 +227,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 				(float)(guiObjs[uiNodePopDispThreshIDX].getVal()), 
 				(int)(guiObjs[uiMapNodeBMUTypeToDispIDX].getVal()));
 
-		initMeIndiv();
+		initMe_Indiv();
 	}
 	
 	@Override
@@ -268,7 +268,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		mapMgr.setUIValsFromProjConfig();
 	}
 	
-	protected abstract void initMeIndiv();	
+	protected abstract void initMe_Indiv();	
 	
 	@Override
 	/**
@@ -546,10 +546,10 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 				setPrivFlags_LockCatForClassSegs(val);
 				break;}
 
-			default			: {setPrivFlagsIndiv(idx,val);}
+			default			: {setPrivFlags_Indiv(idx,val);}
 		}
 	}//setFlag		
-	protected abstract void setPrivFlagsIndiv(int idx, boolean val);
+	protected abstract void setPrivFlags_Indiv(int idx, boolean val);
 	/**
 	 * Instance-specific code for managing locking of category segment selection to enable cycling through class within category
 	 * @param val whether the lock button is being turned on or off
@@ -897,7 +897,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 //	 * For instance-class specific ui values
 //	 * @param UIidx
 //	 */
-//	protected abstract void setUIWinValsIndiv(int UIidx);
+//	protected abstract void setUIWinVals_Indiv(int UIidx);
 	
 	/**
 	 * return class label from index - will be instance specific
@@ -961,11 +961,11 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		//draw map rectangle
 		pa.pushMatState();
 		//instance-specific drawing
-		drawMapIndiv();
+		drawMap_Indiv();
 		if(mapDataLoaded){mapMgr.drawSOMMapData(pa);}	
 		pa.popMatState();
 	}//drawMap()	
-	protected abstract void drawMapIndiv();
+	protected abstract void drawMap_Indiv();
 	
 	public final void drawMseOverData() {	mapMgr.drawMseOverData(pa);}
 
@@ -1064,7 +1064,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	@Override
 	protected void snapMouseLocs(int oldMouseX, int oldMouseY, int[] newMouseLoc){}//not a snap-to window
 	@Override
-	public void processTrajIndiv(DrawnSimpleTraj drawnNoteTraj){		}
+	public void processTraj_Indiv(DrawnSimpleTraj drawnNoteTraj){		}
 	@Override
 	protected void endShiftKeyI() {}
 	@Override
@@ -1072,13 +1072,13 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	@Override
 	protected void endCntlKeyI() {}
 	@Override
-	protected void addSScrToWinIndiv(int newWinKey){}
+	protected void addSScrToWin_Indiv(int newWinKey){}
 	@Override
-	protected void addTrajToScrIndiv(int subScrKey, String newTrajKey){}
+	protected void addTrajToScr_Indiv(int subScrKey, String newTrajKey){}
 	@Override
-	protected void delSScrToWinIndiv(int idx) {}	
+	protected void delSScrToWin_Indiv(int idx) {}	
 	@Override
-	protected void delTrajToScrIndiv(int subScrKey, String newTrajKey) {}
+	protected void delTrajToScr_Indiv(int subScrKey, String newTrajKey) {}
 	//resize drawn all trajectories
 	@Override
 	protected void resizeMe(float scale) {}
