@@ -850,11 +850,11 @@ public abstract class SOM_MapManager {
 			//int w = (int) (SOM_mapDims[0]/mapScaleVal), h = (int) (SOM_mapDims[1]/mapScaleVal);
 			int w = (int) (mapDims[0]/mapScaleVal), h = (int) (mapDims[1]/mapScaleVal);
 			mapPerFtrWtImgs = new PImage[numFtrVals];
-			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = ((my_procApplet)Base_DispWindow.pa).createImage(w, h, format);	}	
+			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = ((my_procApplet)Base_DispWindow.ri).createImage(w, h, format);	}	
 			
-			mapCubicUMatrixImg = ((my_procApplet)Base_DispWindow.pa).createImage(w, h, format);			
+			mapCubicUMatrixImg = ((my_procApplet)Base_DispWindow.ri).createImage(w, h, format);			
 			//reInit MapCubicSegments 
-			mapUMatrixCubicSegmentsImg = ((my_procApplet)Base_DispWindow.pa).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
+			mapUMatrixCubicSegmentsImg = ((my_procApplet)Base_DispWindow.ri).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
 			//instancing-window specific initializations
 			initMapArasIndiv(w,h, format,num2ndryMaps);
 		}
@@ -922,7 +922,7 @@ public abstract class SOM_MapManager {
 		if(win!=null) {
 			msgObj.dispInfoMessage("SOM_MapManager::"+name, "setMapSegmentImgClrs_UMatrix", "Start building mapUMatrixCubicSegmentsImg for UMatrix Display.");
 			//reinitialize map array
-			mapUMatrixCubicSegmentsImg = ((my_procApplet)Base_DispWindow.pa).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
+			mapUMatrixCubicSegmentsImg = ((my_procApplet)Base_DispWindow.ri).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
 			mapUMatrixCubicSegmentsImg.loadPixels();
 			//float[] c;	
 			//single threaded exec
@@ -1465,7 +1465,7 @@ public abstract class SOM_MapManager {
 				Integer largestCount = tmpMapNodesByPopForType.firstKey();		
 				mapNodePopDispThreshVals[i]=largestCount*mapNodePopDispThreshPct;
 
-				mapNodePopGraph[i] = ((my_procApplet)Base_DispWindow.pa).createImage(largestCount, numMapNodes, PConstants.ARGB);
+				mapNodePopGraph[i] = ((my_procApplet)Base_DispWindow.ri).createImage(largestCount, numMapNodes, PConstants.ARGB);
 				mapNodePopGraph[i].loadPixels();
 				int row = 0, pxlIDX = 0;
 				for(Integer count : tmpMapNodesByPopForType.keySet()) {
@@ -1489,7 +1489,7 @@ public abstract class SOM_MapManager {
 	
 	
 //	private PShape buildMapNodePopGraphAsPShape(TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>> MapNodesByPopulation) {
-//		PShape grph = Base_DispWindow.pa.createShape();
+//		PShape grph = Base_DispWindow.ri.createShape();
 //		grph.beginShape(PConstants.LINES);
 //		grph.noFill();
 //		grph.stroke(255,255,255,255);
@@ -2058,7 +2058,7 @@ public abstract class SOM_MapManager {
 	 * @param locPt
 	 */
 	public final void setMouseOverDataText(float x, float y, float sensitivity, myPointf locPt){//, boolean useScFtrs){
-		//float sensitivity = (float) guiObjs[uiMseRegionSensIDX].getVal();
+		//float sensitivity = (float) guiObjs_Numeric[uiMseRegionSensIDX].getVal();
 		
 		SOM_MapNode nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 		switch(uiMseDispData) {
@@ -2182,8 +2182,8 @@ public abstract class SOM_MapManager {
 			pa.disableLights();
 			pa.scale(mapScaleVal);
 			//doing this in separate matrix stack frame because map is built small and scaled up
-			((my_procApplet)Base_DispWindow.pa).image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.privFlags.getFlag(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.privFlags.setFlag(SOM_MapUIWin.saveLocClrImgIDX,false);}			
-			if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {((my_procApplet)Base_DispWindow.pa).image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
+			((my_procApplet)Base_DispWindow.ri).image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.privFlags.getFlag(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.privFlags.setFlag(SOM_MapUIWin.saveLocClrImgIDX,false);}			
+			if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {((my_procApplet)Base_DispWindow.ri).image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
 			pa.enableLights();
 		pa.popMatState(); 
 		pa.pushMatState();
@@ -2228,7 +2228,7 @@ public abstract class SOM_MapManager {
 		pa.pushMatState();
 		pa.translate(mapDims[0],0.0f,0.0f);
 		pa.scale(200.0f/(1.0f*mapNodePopGraph[typIDX].width),mapDims[1]/(1.0f*mapNodePopGraph[typIDX].height));
-		((my_procApplet)Base_DispWindow.pa).image(mapNodePopGraph[typIDX], 0.0f, 0.0f);
+		((my_procApplet)Base_DispWindow.ri).image(mapNodePopGraph[typIDX], 0.0f, 0.0f);
 		
 		pa.popMatState();
 	}//drawMapNodePopGraph
@@ -2542,8 +2542,8 @@ public abstract class SOM_MapManager {
 	protected abstract float drawResultBarPriv2(IRenderInterface pa, float yOff);
 	protected abstract float drawResultBarPriv3(IRenderInterface pa, float yOff);
 
-	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return ((my_procApplet) Base_DispWindow.pa).getRndClrBright();}
-	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return ((my_procApplet) Base_DispWindow.pa).getRndClrBright(alpha);}
+	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return ((my_procApplet) Base_DispWindow.ri).getRndClrBright();}
+	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return ((my_procApplet) Base_DispWindow.ri).getRndClrBright(alpha);}
 
 	//////////////////////////////
 	// getters/setters

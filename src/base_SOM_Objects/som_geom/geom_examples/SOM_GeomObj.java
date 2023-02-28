@@ -336,7 +336,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 */
 	protected final void buildLocClrAndSamplesFromCSVStr(myPointf _locForClr, String _csvStr) {
 		locClrAra = getClrFromWorldLoc(_locForClr);			
-		if(null!=objSamples) {objSamples.buildSampleSetAndPShapesFromCSVStr(Base_DispWindow.pa, _csvStr);}
+		if(null!=objSamples) {objSamples.buildSampleSetAndPShapesFromCSVStr(Base_DispWindow.ri, _csvStr);}
 		//else {msgObj.dispWarningMessage("SOM_GeomObj::"+GeomObj_ID, "buildLocClrAndSamplesFromCSVStr", "Attempting to rebuild samples from CSV for obj "+dispLabel +" when no objSamples Object exists");}
 	}
 	
@@ -345,7 +345,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param _numSmplPts
 	 */
 	public final void buildSmplSetAndSmplPShapes(int _numSmplPts) {
-		if(null!=objSamples) {objSamples.buildSampleSetAndPShapes(Base_DispWindow.pa,_numSmplPts);} 
+		if(null!=objSamples) {objSamples.buildSampleSetAndPShapes(Base_DispWindow.ri,_numSmplPts);} 
 		//else {msgObj.dispWarningMessage("SOM_GeomObj::"+GeomObj_ID, "buildSmplSetAndSmplPShapes", "Attempting to rebuild samples for obj "+dispLabel +" when no objSamples Object exists");}
 	}//buildSampleSet
 	

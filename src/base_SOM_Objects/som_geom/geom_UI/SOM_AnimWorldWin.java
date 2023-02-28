@@ -15,6 +15,7 @@ import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
+import base_UI_Objects.windowUI.base.GUI_AppWinVals;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
 import base_UI_Objects.windowUI.uiData.UIDataUpdater;
 import base_UI_Objects.windowUI.uiObjs.base.GUIObj_Type;
@@ -111,12 +112,47 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		float[] _dimOpen = AppMgr.getDefaultPopUpWinDimOpen();
 		//hidden
 		float[] _dimClosed  =  AppMgr.getDefaultPopUpWinDimClosed();
+		float[] _initCamVals = new float[] {-0.06f*MyMathUtils.TWO_PI_F, -0.04f*MyMathUtils.TWO_PI_F, -200.0f};
 		String owner = this.getName();
 		//(int _winIDX, float[] _dimOpen, float[] _dimClosed, boolean[] _dispFlags, int[] _fill, int[] _strk, int[] _trajFill, int[] _trajStrk)
-		somUIWin = new SOM_GeomMapUIWin(pa, AppMgr, "Map UI for " + owner, fIdx, new int[]{20,40,50,200}, new int[]{255,255,255,255}, _dimOpen, _dimClosed, "Visualize SOM Node location for "+owner,AppMgr.getArgsMap(), this);	
-		somUIWin.finalInit(false,false, false, new myPoint(-AppMgr.gridDimX/2.0,-AppMgr.gridDimY/2.0,-AppMgr.gridDimZ/2.0), new myVector(0,0,0));
-		somUIWin.setTrajColors(new int[]{180,180,180,255},new int[]{100,100,100,255});
-		somUIWin.setRtSideUIBoxClrs(new int[]{0,0,0,200},new int[]{255,255,255,255});
+
+		
+		/**
+		 * Creates a struct holding a display window's necessary initialization values
+		 * @param _winIdx the window's idx
+		 * @param _strVals an array holding the window title(idx 0) and the window description(idx 1)
+		 * @param _flags an array holding boolean values for idxs : 
+		 * 		0 : dispWinIs3d, 
+		 * 		1 : canDrawInWin; 
+		 * 		2 : canShow3dbox (only supported for 3D); 
+		 * 		3 : canMoveView
+		 * @param _floatVals an array holding float arrays for 
+		 * 				rectDimOpen(idx 0),
+		 * 				rectDimClosed(idx 1),
+		 * 				initCameraVals(idx 2)
+		 * @param _intVals and array holding int arrays for
+		 * 				winFillClr (idx 0),
+		 * 				winStrkClr (idx 1),
+		 * 				winTrajFillClr(idx 2),
+		 * 				winTrajStrkClr(idx 3),
+		 * 				rtSideFillClr(idx 4),
+		 * 				rtSideStrkClr(idx 5)
+		 * @param _sceneCenterVal center of scene, for drawing objects
+		 * @param _initSceneFocusVal initial focus target for camera
+		 */
+		
+		GUI_AppWinVals GeomMapUIWinDef = new GUI_AppWinVals(-1, new String[] {"Map UI for " + owner, "Visualize SOM Node location for "+owner},
+				new boolean[] {false, false, false, false},
+				new float[][] {_dimOpen, _dimClosed, _initCamVals},
+				new int [][] {new int[]{20,40,50,200}, new int[]{255,255,255,255},
+					new int[]{180,180,180,255},new int[]{100,100,100,255},
+					new int[]{0,0,0,200},new int[]{255,255,255,255}},				
+				new myPoint(-AppMgr.gridDimX/2.0,-AppMgr.gridDimY/2.0,-AppMgr.gridDimZ/2.0), new myVector(0,0,0));
+		
+		somUIWin = new SOM_GeomMapUIWin(ri, AppMgr, GeomMapUIWinDef,AppMgr.getArgsMap(), this);	
+		
+		
+		somUIWin.finalInit(new myPoint(-AppMgr.gridDimX/2.0,-AppMgr.gridDimY/2.0,-AppMgr.gridDimZ/2.0), new myVector(0,0,0));
 		somUIWin.setUI_FeatureListVals(setUI_GeomObjFeatureListVals());
 		somUIWin.setMapMgr(mapMgr);
 		msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "setGeomMapUIWin", "Setting somUIWin in " + name + " to be  : "
@@ -172,10 +208,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 * whenever som is shown or not
 	 */
 	protected void setSOM_MapUIWinState(boolean val) {
-		if (null != somUIWin) {
-			somUIWin.dispFlags.setShowWin(val);
-//			/this.setRectDimsY( somUIWin.getRectDim(1));
-		}
+		if (null != somUIWin) {	somUIWin.setShowWin(val);}
 	}
 
 	/**
@@ -346,7 +379,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 			this.setSOM_MapUIWinState(val);
 			break;
 		}
-		default: {			setPrivFlags_Indiv(idx, val);}
+		default: {			handleSOMAnimFlags_Indiv(idx, val);}
 		}
 	}// setPrivFlags
 
@@ -356,7 +389,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 * @param idx
 	 * @param val
 	 */
-	protected abstract void setPrivFlags_Indiv(int idx, boolean val);
+	protected abstract void handleSOMAnimFlags_Indiv(int idx, boolean val);
 	
 	/**
 	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
@@ -428,30 +461,30 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	private void refreshNumTrainingExampleBounds() {
 		//min # of training examples will at least be # of geometric objects 
 		long newMinVal = numGeomObjs;
-		guiObjs[gIDX_NumTrainingEx].setNewMin(newMinVal);
+		setNewUIMinVal(gIDX_NumTrainingEx, newMinVal);
 		// binomial coefficient - n (total # of samples across all objects) choose k
 		// (dim of minimal defining set of each object)		
 		long newMaxVal = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj);
-		guiObjs[gIDX_NumTrainingEx].setNewMax(newMaxVal);
-		guiObjs[gIDX_NumTrainingEx].setNewDispText("Ttl # of Train Ex [" + newMinVal + ", " + newMaxVal + "]");
-		double curNum = guiObjs[gIDX_NumTrainingEx].getVal();
+		setNewUIMaxVal(gIDX_NumTrainingEx, newMaxVal);
+		setNewUIDispText(gIDX_NumTrainingEx, true, "Ttl # of Train Ex [" + newMinVal + ", " + newMaxVal + "]");
+		double curNum = getUIValue(gIDX_NumTrainingEx);
 		if (curNum < newMinVal) {
-			guiObjs[gIDX_NumTrainingEx].setVal(newMinVal);
+			setNewUIValue(gIDX_NumTrainingEx,newMinVal);
 		}
 		if (curNum > newMaxVal) {
-			guiObjs[gIDX_NumTrainingEx].setVal(newMaxVal);
+			setNewUIValue(gIDX_NumTrainingEx,newMaxVal);
 		}
 	}// refreshNumTrainingExampleBounds
 
 	private void refreshNumTrainingExamples() {
 		long TtlNumExamples = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj);
 		double newVal = fractOfBinomialForBaseNumTrainEx * TtlNumExamples;
-		guiObjs[gIDX_NumTrainingEx].setVal(newVal);
+		setNewUIValue(gIDX_NumTrainingEx,newVal);
 		setUIWinVals(gIDX_NumTrainingEx);
 	}
 	
 	/**
-	 * Called if int-handling guiObjs[UIidx] (int or list) has new data which updated UI adapter. 
+	 * Called if int-handling guiObjs_Numeric[UIidx] (int or list) has new data which updated UI adapter. 
 	 * Intended to support custom per-object handling by owning window.
 	 * Only called if data changed!
 	 * @param UIidx Index of gui obj with new data
@@ -463,7 +496,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		switch(UIidx){	
 			case gIDX_NumUIObjs: {
 				numGeomObjs = ival;
-				guiObjs[gIDX_SelDispUIObj].setNewMax(ival - 1);
+				setNewUIMaxVal(gIDX_SelDispUIObj,ival - 1);
 				refreshNumTrainingExampleBounds();
 				rebuildSourceGeomObjs();			
 				break;
@@ -495,7 +528,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	protected abstract boolean setUI_IntValsCustom_Indiv(int UIidx, int ival, int oldVal);
 	
 	/**
-	 * Called if float-handling guiObjs[UIidx] has new data which updated UI adapter.  
+	 * Called if float-handling guiObjs_Numeric[UIidx] has new data which updated UI adapter.  
 	 * Intended to support custom per-object handling by owning window.
 	 * Only called if data changed!
 	 * @param UIidx Index of gui obj with new data
@@ -533,10 +566,10 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 */
 	public TreeMap<String, String> getAllUIValsForPreProcSave() {
 		TreeMap<String, String> res = new TreeMap<String, String>();
-		res.put("gIDX_NumUIObjs", String.format("%4d", (int) guiObjs[gIDX_NumUIObjs].getVal()));
-		res.put("gIDX_NumUISamplesPerObj", String.format("%4d", (int) guiObjs[gIDX_NumUISamplesPerObj].getVal()));
-		res.put("gIDX_FractNumTrainEx", String.format("%.4f", guiObjs[gIDX_FractNumTrainEx].getVal()));
-		res.put("gIDX_NumTrainingEx", String.format("%4d", (int) guiObjs[gIDX_NumTrainingEx].getVal()));
+		res.put("gIDX_NumUIObjs", String.format("%4d", (int) getUIValue(gIDX_NumUIObjs)));
+		res.put("gIDX_NumUISamplesPerObj", String.format("%4d", (int) getUIValue(gIDX_NumUISamplesPerObj)));
+		res.put("gIDX_FractNumTrainEx", String.format("%.4f", getUIValue(gIDX_FractNumTrainEx)));
+		res.put("gIDX_NumTrainingEx", String.format("%4d", (int) getUIValue(gIDX_NumTrainingEx)));
 
 		getAllUIValsForPreProcSave_Indiv(res);
 		return res;
@@ -554,10 +587,10 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 * set ui values used to build preproc data being loaded
 	 */
 	public void setAllUIValsFromPreProcLoad(TreeMap<String, String> uiVals) {
-		guiObjs[gIDX_FractNumTrainEx].setVal(Double.parseDouble(uiVals.get("gIDX_FractNumTrainEx")));
-		guiObjs[gIDX_NumUIObjs].setVal(Integer.parseInt(uiVals.get("gIDX_NumUIObjs")));
-		guiObjs[gIDX_NumUISamplesPerObj].setVal(Integer.parseInt(uiVals.get("gIDX_NumUISamplesPerObj")));
-		guiObjs[gIDX_NumTrainingEx].setVal(Integer.parseInt(uiVals.get("gIDX_NumTrainingEx")));
+		setNewUIValue(gIDX_FractNumTrainEx,Double.parseDouble(uiVals.get("gIDX_FractNumTrainEx")));
+		setNewUIValue(gIDX_NumUIObjs,Integer.parseInt(uiVals.get("gIDX_NumUIObjs")));
+		setNewUIValue(gIDX_NumUISamplesPerObj,Integer.parseInt(uiVals.get("gIDX_NumUISamplesPerObj")));
+		setNewUIValue(gIDX_NumTrainingEx,Integer.parseInt(uiVals.get("gIDX_NumTrainingEx")));
 
 		setAllUIValsFromPreProcLoad_Indiv(uiVals);
 		setAllUIWinVals();
@@ -573,9 +606,9 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	@Override
 	protected final void setCamera_Indiv(float[] camVals) {
 		// , float rx, float ry, float dz are now member variables of every window
-		pa.setCameraWinVals(camVals);
+		ri.setCameraWinVals(camVals);
 		// puts origin of all drawn objects at screen center and moves forward/away by dz
-		pa.translate(camVals[0], camVals[1], (float) dz);
+		ri.translate(camVals[0], camVals[1], (float) dz);
 		setCamOrient();
 	}
 
@@ -593,7 +626,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
 	@Override
 	protected final void drawMe(float animTimeMod) {
-		pa.pushMatState();
+		ri.pushMatState();
 		// nested ifthen shenannigans to get rid of if checks in each individual draw
 		drawMeFirst_Indiv();
 		// check if geom objs are built in mapMgr
@@ -621,10 +654,10 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		}
 		// draw geom objects for selected map node objects
 		if (privFlags.getFlag(drawMapNodeGeomObjsIDX)) {
-			mapMgr.drawSelectedMapNodeGeomObjs(pa, animTimeMod, showUIObjLabel,	useUIObjLocAsClr);
+			mapMgr.drawSelectedMapNodeGeomObjs(ri, animTimeMod, showUIObjLabel,	useUIObjLocAsClr);
 		}
 		drawMeLast_Indiv();
-		pa.popMatState();
+		ri.popMatState();
 
 	}// drawMe
 
@@ -651,70 +684,70 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		if (mapBuiltAndUseMapLoc) { // show bmus for objs
 			if (showSel) {
 				// if selected, show object filled with chosen color and show all other objects wireframe
-				if (useLocClr) {	objs[curSelObjIDX].drawMeSelected_ClrLoc_BMU(pa, animTimeMod, showSmpls);} 
-				else {				objs[curSelObjIDX].drawMeSelected_ClrRnd_BMU(pa, animTimeMod, showSmpls);}
-				if (showLabel) {	objs[curSelObjIDX].drawMyLabel_BMU(pa, this);}
+				if (useLocClr) {	objs[curSelObjIDX].drawMeSelected_ClrLoc_BMU(ri, animTimeMod, showSmpls);} 
+				else {				objs[curSelObjIDX].drawMeSelected_ClrRnd_BMU(ri, animTimeMod, showSmpls);}
+				if (showLabel) {	objs[curSelObjIDX].drawMyLabel_BMU(ri, this);}
 
 				if (showObjs) {
 					if (useLocClr) {
-						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrLoc_WF_BMU(pa);}
-						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF_BMU(pa);}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrLoc_WF_BMU(ri);}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF_BMU(ri);}
 					} // loc color
 					else {
-						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrRnd_WF_BMU(pa);}
-						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF_BMU(pa);}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrRnd_WF_BMU(ri);}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF_BMU(ri);}
 					} // rand color
 				}
 				if (showSmpls) {
 					if (useLocClr) {
-						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}
-						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrLoc_BMU(ri);	}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrLoc_BMU(ri);	}
 					} // loc color
 					else {
-						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}
-						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrRnd_BMU(ri);	}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrRnd_BMU(ri);	}
 					} // rand color
 				}
 			} else {
 				if (showObjs) {		_drawObjs_UseBMUs(objs, numToDraw, useLocClr, showWireFrame, showLabel);}
 				if (showSmpls) {
-					if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrLoc_BMU(pa);	}} // loc color
-					else {				for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrRnd_BMU(pa);	}} // rand color
+					if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrLoc_BMU(ri);	}} // loc color
+					else {				for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrRnd_BMU(ri);	}} // rand color
 				}
 			}
 		} else {
 			if (showSel) {
 				// if selected, show selected object filled with chosen color and show all other objects wireframe with or without samples and no labels
-				if (useLocClr) {			objs[curSelObjIDX].drawMeSelected_ClrLoc(pa, animTimeMod, showSmpls);} 
-				else {						objs[curSelObjIDX].drawMeSelected_ClrRnd(pa, animTimeMod, showSmpls);}
-				if (showLabel) {			objs[curSelObjIDX].drawMyLabel(pa, this);}
+				if (useLocClr) {			objs[curSelObjIDX].drawMeSelected_ClrLoc(ri, animTimeMod, showSmpls);} 
+				else {						objs[curSelObjIDX].drawMeSelected_ClrRnd(ri, animTimeMod, showSmpls);}
+				if (showLabel) {			objs[curSelObjIDX].drawMyLabel(ri, this);}
 				// all other objects default to wireframe display
 				if (showObjs) {
 					if (useLocClr) {
-						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrLoc_WF(pa);}
-						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF(pa);}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrLoc_WF(ri);}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF(ri);}
 					} // loc color
 					else {
-						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrRnd_WF(pa);}
-						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF(pa);}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeClrRnd_WF(ri);}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF(ri);}
 					} // rand color
 				}
 				if (showSmpls) {
 					if (useLocClr) {
-						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrLoc(pa);	}
-						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrLoc(pa);	}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrLoc(ri);	}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrLoc(ri);	}
 					} // loc color
 					else {
-						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrRnd(pa);	}
-						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrRnd(pa);	}
+						for (int i = 0; i < curSelObjIDX; ++i) {				objs[i].drawMeSmpls_ClrRnd(ri);	}
+						for (int i = curSelObjIDX + 1; i < numToDraw; ++i) {	objs[i].drawMeSmpls_ClrRnd(ri);	}
 					} // rand color
 				}
 			} else {
 				if (showObjs) {				_drawObjs_UseActual(objs, numToDraw, animTimeMod, useLocClr, showSmpls, showWireFrame, showLabel);}
 				if (showSmpls) {
-					if (useLocClr) {		for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrLoc(pa);	}} // loc color
-					else {					for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrRnd(pa);	}} // rand color
-					if (showSmplsLabel) {	for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMySmplsLabel(pa, this);}}
+					if (useLocClr) {		for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrLoc(ri);	}} // loc color
+					else {					for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrRnd(ri);	}} // rand color
+					if (showSmplsLabel) {	for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMySmplsLabel(ri, this);}}
 				}
 			}
 		}
@@ -723,24 +756,24 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	private void _drawObjs_UseActual(SOM_GeomObj[] objs, int numToDraw, float animTimeMod, boolean useLocClr, boolean showSmpls,
 			boolean showWireFrame, boolean showLabel) {
 		if (showWireFrame) { // draw objects with wire frames
-			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF(pa);}} // loc color
-			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF(pa);}} // rand color
+			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF(ri);}} // loc color
+			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF(ri);}} // rand color
 		} else {
-			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc(pa);}} // loc color
-			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd(pa);}} // rand color
+			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc(ri);}} // loc color
+			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd(ri);}} // rand color
 		}
-		if (showLabel) {		for (int i = 0; i < numToDraw; ++i) {		objs[i].drawMyLabel(pa, this);}}
+		if (showLabel) {		for (int i = 0; i < numToDraw; ++i) {		objs[i].drawMyLabel(ri, this);}}
 	}// _drawObjs_UseActual
 
 	private void _drawObjs_UseBMUs(SOM_GeomObj[] objs, int numToDraw, boolean useLocClr, boolean showWireFrame, boolean showLabel) {
 		if (showWireFrame) { // draw objects with wire frames
-			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF_BMU(pa);}} // loc color
-			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF_BMU(pa);}} // rand color
+			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF_BMU(ri);}} // loc color
+			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF_BMU(ri);}} // rand color
 		} else {
-			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_BMU(pa);}} // loc color
-			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_BMU(pa);}} // rand color
+			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_BMU(ri);}} // loc color
+			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_BMU(ri);}} // rand color
 		}
-		if (showLabel) {		for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMyLabel_BMU(pa, this);}}
+		if (showLabel) {		for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMyLabel_BMU(ri, this);}}
 	}// _drawObjs_UseBMUs
 
 	/**
@@ -761,11 +794,11 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// ((SOM_GeometryMain) pa).drawSOMUIObjs();
 		// if(this.privFlags.getFlag(drawSOM_MapUIVis)) {
 		if (somUIWin != null) {
-			pa.pushMatState();
+			ri.pushMatState();
 			somUIWin.drawWindowGuiObjs(modAmtMillis);					//draw what user-modifiable fields are currently available
 //			somUIWin.drawGUIObjs(); // draw what user-modifiable fields are currently available
 //			somUIWin.drawClickableBooleans(); // draw what user-modifiable boolean buttons
-			pa.popMatState();
+			ri.popMatState();
 		}
 	}
 
@@ -773,12 +806,12 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	// draw 2d constructs over 3d area on screen - draws behind left menu section
 	// modAmtMillis is in milliseconds
 	protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
-		pa.pushMatState();
+		ri.pushMatState();
 		//instance-specific
-		float newYOff = drawRightSideInfoBar_Indiv(modAmtMillis, yOff);
+		float newYOff = drawRightSideInfoBar_Indiv(modAmtMillis, txtHeightOff);
 		// display current simulation variables - call sim world through sim exec
-		mapMgr.drawResultBar(pa, newYOff);
-		pa.popMatState();
+		mapMgr.drawResultBar(ri, newYOff);
+		ri.popMatState();
 	}// drawOnScreenStuff
 
 	/**

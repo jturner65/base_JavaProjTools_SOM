@@ -11,6 +11,7 @@ import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MseOvrDispTypeVals;
 import base_UI_Objects.GUI_AppManager;
+import base_UI_Objects.windowUI.base.GUI_AppWinVals;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
@@ -35,8 +36,8 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 */
 	protected HashMap<String, Object> argsMap;
 	
-	public SOM_GeomMapUIWin(IRenderInterface _p, GUI_AppManager _AppMgr, String _n, int _flagIdx, int[] fc, int[] sc, float[] rd, float[] rdClosed, String _winTxt, HashMap<String, Object> _argsMap, SOM_AnimWorldWin _animWin) {
-		super(_p, _AppMgr, _n, _flagIdx, fc, sc, rd, rdClosed, _winTxt);
+	public SOM_GeomMapUIWin(IRenderInterface _p, GUI_AppManager _AppMgr, GUI_AppWinVals _winInitVals, HashMap<String, Object> _argsMap, SOM_AnimWorldWin _animWin) {
+		super(_p, _AppMgr,_winInitVals);
 		argsMap = _argsMap;
 		animWin = _animWin;
 		super.initThisWin(false);
