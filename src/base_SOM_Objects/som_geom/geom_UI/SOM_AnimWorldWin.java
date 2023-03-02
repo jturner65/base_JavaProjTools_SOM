@@ -18,10 +18,8 @@ import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.base.GUI_AppWinVals;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
 import base_UI_Objects.windowUI.uiData.UIDataUpdater;
-import base_UI_Objects.windowUI.uiObjs.base.base.GUIObj_Type;
 import base_Utils_Objects.io.messaging.MsgCodes;
 import base_Utils_Objects.tools.flags.Base_BoolFlags;
-
 /**
  * this class will instance a combined window to hold an animation world and a
  * map display window overlay
@@ -93,7 +91,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
 	// dimensions of SOM Map - hard coded to override setting from SOM Map UI Window
 	// - need to set in window
-	protected float[] SOMMapDims = new float[] { 834.8f, 834.8f };
+	protected float[] SOMMapDims = new float[]{834.8f, 834.8f};
 
 
 	public SOM_AnimWorldWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx, SOM_GeomObjTypes _type) {
@@ -240,28 +238,28 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// add an entry for each button, in the order they are wished to be displayed
 		// true tag, false tag, btn IDX
 
-		tmpBtnNamesArray.add(new Object[] { "Debugging", "Debug", Base_BoolFlags.debugIDX });
+		tmpBtnNamesArray.add(new Object[]{"Debugging", "Debug", Base_BoolFlags.debugIDX});
 		// UI",drawSOM_MapUIVis});
-		tmpBtnNamesArray.add(new Object[] { "Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs", regenUIObjsIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects",	showFullSourceObjIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points", showSamplePntsIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing Labels", "Show Labels", showUIObjLabelIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing Sample Labels", "Show Sample Labels", showUIObjSmplsLabelIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing Loc-based Color", "Showing Random Color", useUIObjLocAsClrIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs", showFullTrainingObjIDX });
+		tmpBtnNamesArray.add(new Object[]{"Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs", regenUIObjsIDX});
+		tmpBtnNamesArray.add(new Object[]{"Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects",	showFullSourceObjIDX});
+		tmpBtnNamesArray.add(new Object[]{"Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points", showSamplePntsIDX});
+		tmpBtnNamesArray.add(new Object[]{"Showing Labels", "Show Labels", showUIObjLabelIDX});
+		tmpBtnNamesArray.add(new Object[]{"Showing Sample Labels", "Show Sample Labels", showUIObjSmplsLabelIDX});
+		tmpBtnNamesArray.add(new Object[]{"Showing Loc-based Color", "Showing Random Color", useUIObjLocAsClrIDX});
+		tmpBtnNamesArray.add(new Object[]{"Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs", showFullTrainingObjIDX});
 
-		tmpBtnNamesArray.add(new Object[] { "Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light",	showSelUIObjIDX });
+		tmpBtnNamesArray.add(new Object[]{"Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light",	showSelUIObjIDX});
 		// tmpBtnNamesArray.add(new Object[]{"Train From " +geomObjType.getName()+ " Samples",
 		// "Train From " +geomObjType.getName()+ " Centers/Bases", useSmplsForTrainIDX});
 		// tmpBtnNamesArray.add(new Object[]{"Save Data", "Save Data",
 		// saveUIObjDataIDX});
-		tmpBtnNamesArray.add(new Object[] { "Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs", allTrainExUniqueIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX });
-		tmpBtnNamesArray.add(new Object[] { "Showing BMU-derived Locs", "Showing Actual Locs", showMapBasedLocsIDX });
+		tmpBtnNamesArray.add(new Object[]{"Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs", allTrainExUniqueIDX});
+		tmpBtnNamesArray.add(new Object[]{"Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX});
+		tmpBtnNamesArray.add(new Object[]{"Showing BMU-derived Locs", "Showing Actual Locs", showMapBasedLocsIDX});
 
 		String[] showWFObjsTFLabels = getShowWireFrameBtnTFLabels();
 		if ((null != showWFObjsTFLabels) && (showWFObjsTFLabels.length == 2)) {
-			tmpBtnNamesArray.add(new Object[] { showWFObjsTFLabels[0], showWFObjsTFLabels[1], showObjByWireFrmIDX });
+			tmpBtnNamesArray.add(new Object[]{showWFObjsTFLabels[0], showWFObjsTFLabels[1], showObjByWireFrmIDX});
 		}
 
 		// add instancing-class specific buttons - returns total # of private flags in
@@ -409,20 +407,18 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		
 		int minNumObjs = getMinNumObjs(), maxNumObjs = getMaxNumObjs(),	diffNumObjs = (maxNumObjs - minNumObjs > 100 ? 10 : 1);
 		numGeomObjs = minNumObjs;
-		tmpUIObjArray.put(gIDX_NumUIObjs,new Object[] { new double[] { minNumObjs, maxNumObjs, diffNumObjs }, (double) (numGeomObjs * 1.0),"# of " + geomObjType.getName()+ " Objects", GUIObj_Type.IntVal, new boolean[]{true, true}}); // gIDX_NumUIObjs
+		tmpUIObjArray.put(gIDX_NumUIObjs, uiObjInitAra_Int(new double[]{minNumObjs, maxNumObjs, diffNumObjs}, numGeomObjs,"# of " + geomObjType.getName()+ " Objects", new boolean[]{true, true})); // gIDX_NumUIObjs
 		int minNumSmplsPerObj = getMinNumSmplsPerObj(), maxNumSmplsPerObj = getMaxNumSmplsPerObj(),	diffNumSmplsPerObj = (maxNumSmplsPerObj - minNumSmplsPerObj > 100 ? 10 : 1);
 		numSmplPointsPerObj = minNumSmplsPerObj;
-		tmpUIObjArray.put(gIDX_NumUISamplesPerObj, new Object[] { new double[] { minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj },(double) (numSmplPointsPerObj), "# of samples per Object", GUIObj_Type.IntVal, new boolean[]{true, true}}); // gIDX_NumUISamplesPerObj
-		// gIDX_FractNumTrainEx fractOfBinomialForBaseNumTrainEx
-		tmpUIObjArray.put(gIDX_FractNumTrainEx, new Object[] { new double[] { 0.00001, 1.000, 0.00001 }, fractOfBinomialForBaseNumTrainEx,"Fract of Binomial for Train Ex", GUIObj_Type.FloatVal, new boolean[]{true, false}}); // gIDX_FractNumTrainEx
+		tmpUIObjArray.put(gIDX_NumUISamplesPerObj, uiObjInitAra_Int(new double[]{minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj}, numSmplPointsPerObj, "# of samples per Object", new boolean[]{true, true})); // gIDX_NumUISamplesPerObj
+		tmpUIObjArray.put(gIDX_FractNumTrainEx, uiObjInitAra_Float(new double[]{0.00001, 1.000, 0.00001}, fractOfBinomialForBaseNumTrainEx,"Fract of Binomial for Train Ex", new boolean[]{true, false})); // gIDX_FractNumTrainEx
 
-		// gIDX_NumTraingEx
 		long minNumTrainingExamples = numGeomObjs,
 				maxNumTrainingExamples = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj),
 				diffNumTrainingEx = (maxNumTrainingExamples - minNumTrainingExamples) > 1000 ? 1000 : 10;
 		numTrainingExamples = (int) minNumTrainingExamples;
-		tmpUIObjArray.put(gIDX_NumTrainingEx, new Object[] { new double[] { minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx },(double) (numTrainingExamples),	"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]", GUIObj_Type.IntVal, new boolean[]{true, false}}); // gIDX_NumUISamplesPerObj
-		tmpUIObjArray.put(gIDX_SelDispUIObj, new Object[] { new double[] { 0, numGeomObjs - 1, 1 }, (double) (curSelGeomObjIDX),"ID of Object to Select", GUIObj_Type.IntVal, new boolean[]{true, true}}); // gIDX_SelDispUIObj
+		tmpUIObjArray.put(gIDX_NumTrainingEx, uiObjInitAra_Int(new double[]{minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx}, numTrainingExamples,	"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]", new boolean[]{true, false})); // gIDX_NumUISamplesPerObj
+		tmpUIObjArray.put(gIDX_SelDispUIObj, uiObjInitAra_Int(new double[]{0, numGeomObjs-1, 1}, curSelGeomObjIDX,"ID of Object to Select", new boolean[]{true, true})); // gIDX_SelDispUIObj
 
 		// populate instancing application objects
 		setupGUIObjsAras_Indiv(tmpUIObjArray, tmpListObjVals);
