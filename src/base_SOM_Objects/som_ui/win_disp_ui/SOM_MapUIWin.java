@@ -455,7 +455,9 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 */
 	protected abstract void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals);
 		
-	//set window-specific variables that are based on current visible screen dimensions
+	/**
+	 * set window-specific variables that are based on current visible screen dimensions
+	 */
 	protected final void setVisScreenDimsPriv() {
 		float xStart = winInitVals.rectDim[0] + .5f*(curVisScrDims[0] - (curVisScrDims[1]-(2*xOff)));
 		//start x and y and dimensions of full map visualization as function of visible window size;

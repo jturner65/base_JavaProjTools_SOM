@@ -108,9 +108,11 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 */
 	public final void buildAndSetSOM_MapDispUIWin(int fIdx) {
 		float[] _dimOpen = AppMgr.getDefaultPopUpWinDimOpen();
-		//hidden
 		float[] _dimClosed  =  AppMgr.getDefaultPopUpWinDimClosed();
-		float[] _initCamVals = new float[] {-0.06f*MyMathUtils.TWO_PI_F, -0.04f*MyMathUtils.TWO_PI_F, -200.0f};
+		//Keep popup window full width whether shown or hidden
+		_dimClosed[2] = _dimOpen[2];
+		//keep hidden window
+		float[] _initCamVals = AppMgr.getInitCameraValues();
 		String owner = this.getName();
 		//(int _winIDX, float[] _dimOpen, float[] _dimClosed, boolean[] _dispFlags, int[] _fill, int[] _strk, int[] _trajFill, int[] _trajStrk)
 
