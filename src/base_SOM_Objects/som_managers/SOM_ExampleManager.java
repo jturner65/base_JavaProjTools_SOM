@@ -10,7 +10,7 @@ import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_managers.runners.SOM_MapExDataToBMUs_Runner;
 import base_SOM_Objects.som_managers.runners.SOM_SaveExToBMUs_Runner;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
-import base_Utils_Objects.io.FileIOManager;
+import base_Utils_Objects.io.file.FileIOManager;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
 

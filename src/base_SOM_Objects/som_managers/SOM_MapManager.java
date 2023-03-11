@@ -46,7 +46,7 @@ import base_Render_Interface.IRenderInterface;
 import base_UI_Objects.my_procApplet;
 //import base_UI_Objects.IRenderInterface;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
-import base_Utils_Objects.io.FileIOManager;
+import base_Utils_Objects.io.file.FileIOManager;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
 import base_Utils_Objects.threading.myProcConsoleMsgMgr;
@@ -1453,7 +1453,7 @@ public abstract class SOM_MapManager {
 	protected void buildMapNodePopGraphImage() {
 		if(MapNodesByPopulation == null) {return;}
 		if(win!=null) {
-			//msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","Started building map nod population graph image for all examples.", MsgCodes.info5);	
+			//msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","Started building map nod population graph image for all examples with mapNodePopDispThreshPct : "+mapNodePopDispThreshPct+".", MsgCodes.info5);	
 			TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>> tmpMapNodesByPopForType;
 			int whiteClr = 0xFFFFFFFF, greyClr = 0xFF888888;
 			int clrToUse;			

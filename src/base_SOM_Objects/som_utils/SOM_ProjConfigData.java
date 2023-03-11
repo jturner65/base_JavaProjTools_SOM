@@ -18,7 +18,7 @@ import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
 import base_SOM_Objects.som_fileIO.SOM_TrainDataWriter;
 import base_SOM_Objects.som_managers.SOM_MapManager;
-import base_Utils_Objects.io.FileIOManager;
+import base_Utils_Objects.io.file.FileIOManager;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
