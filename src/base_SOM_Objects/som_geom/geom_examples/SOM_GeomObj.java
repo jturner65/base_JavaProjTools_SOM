@@ -387,7 +387,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	}//getRandPosOnSphere
 	
 	/**
-	 * return 4 points that describe a sphere uniquely - no trio of points can be colinear, and the 4 points cannot be co planar
+	 * return 4 points that describe a sphere uniquely - no trio of points can be collinear, and the 4 points cannot be co planar
 	 * get 3 non-colinear points, find 4th by finding normal of plane 3 points describe
 	 * @param rad radius of desired sphere
 	 * @param ctr center of desired sphere
@@ -579,181 +579,181 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 
 	/**
 	 * draw entire object this class represents, using location as color or using randomly assigned color
-	 * @param pa
+	 * @param ri
 	 */	
 		
-	public final void drawMeClrRnd(IRenderInterface pa) {
-		pa.pushMatState();		
-		pa.setFill(rndClrAra,255);
-		pa.setStroke(rndClrAra,255);
-		_drawMe_Geom(pa,SOM_GeomObjDrawType.rndClr);
-		pa.popMatState();	
+	public final void drawMeClrRnd(IRenderInterface ri) {
+		ri.pushMatState();		
+		ri.setFill(rndClrAra,255);
+		ri.setStroke(rndClrAra,255);
+		_drawMe_Geom(ri,SOM_GeomObjDrawType.rndClr);
+		ri.popMatState();	
 	}	
 	
 	
-	public final void drawMeClrLoc(IRenderInterface pa) {
-		pa.pushMatState();		
-		pa.setFill(locClrAra,255);
-		pa.setStroke(locClrAra,255);
-		_drawMe_Geom(pa,SOM_GeomObjDrawType.locClr);
-		pa.popMatState();	
+	public final void drawMeClrLoc(IRenderInterface ri) {
+		ri.pushMatState();		
+		ri.setFill(locClrAra,255);
+		ri.setStroke(locClrAra,255);
+		_drawMe_Geom(ri,SOM_GeomObjDrawType.locClr);
+		ri.popMatState();	
 	}
 	
 	/**
 	 * draw entire object this class represents, using location as color or using randomly assigned color
-	 * @param pa
+	 * @param ri
 	 */	
-	public final void drawMeClrRnd_WF(IRenderInterface pa) {
-		pa.pushMatState();		
-		pa.noFill();
-		pa.setStroke(rndClrAra,255);
-		_drawMe_Geom(pa,SOM_GeomObjDrawType.noFillRndClr);
-		pa.popMatState();	
+	public final void drawMeClrRnd_WF(IRenderInterface ri) {
+		ri.pushMatState();		
+		ri.noFill();
+		ri.setStroke(rndClrAra,255);
+		_drawMe_Geom(ri,SOM_GeomObjDrawType.noFillRndClr);
+		ri.popMatState();	
 	}	
 	
-	public final void drawMeClrLoc_WF(IRenderInterface pa) {
-		pa.pushMatState();		
-		pa.noFill();
-		pa.setStroke(locClrAra,255);
-		_drawMe_Geom(pa,SOM_GeomObjDrawType.noFillLocClr);
-		pa.popMatState();	
+	public final void drawMeClrLoc_WF(IRenderInterface ri) {
+		ri.pushMatState();		
+		ri.noFill();
+		ri.setStroke(locClrAra,255);
+		_drawMe_Geom(ri,SOM_GeomObjDrawType.noFillLocClr);
+		ri.popMatState();	
 	}
 	
 		
 	/**
 	 * Draw this object's label
-	 * @param pa
+	 * @param ri
 	 */
-	public abstract void drawMyLabel(IRenderInterface pa, SOM_AnimWorldWin animWin);
+	public abstract void drawMyLabel(IRenderInterface ri, SOM_AnimWorldWin animWin);
 	
-	protected void _drawLabelAtLoc_3D(IRenderInterface pa, myPointf pt, SOM_AnimWorldWin animWin, String label, float _scl, float _off) {
-		pa.pushMatState();		
-		pa.translate(pt.x,pt.y,pt.z); 
+	protected void _drawLabelAtLoc_3D(IRenderInterface ri, myPointf pt, SOM_AnimWorldWin animWin, String label, float _scl, float _off) {
+		ri.pushMatState();		
+		ri.translate(pt.x,pt.y,pt.z); 
 		animWin.unSetCamOrient();
-		pa.scale(_scl);
-		pa.showText(label, _off,-_off,0); 
-		pa.popMatState();
+		ri.scale(_scl);
+		ri.showText(label, _off,-_off,0); 
+		ri.popMatState();
 	}
-	protected final void _drawPointAtLoc_3D(IRenderInterface pa, myPointf pt, float r) {
-		pa.pushMatState(); 
-		pa.drawSphere(pt, r, 4);		
-		pa.popMatState();
+	protected final void _drawPointAtLoc_3D(IRenderInterface ri, myPointf pt, float r) {
+		ri.pushMatState(); 
+		ri.drawSphere(pt, r, 4);		
+		ri.popMatState();
 	} // render sphere of radius r and center P)	
 	
 	/**
 	 * show a point in 2d
-	 * @param pa
+	 * @param ri
 	 * @param P
 	 * @param r
 	 * @param s
 	 * @param _off
 	 */
-	protected final void _drawLabelAtLoc_2D(IRenderInterface pa, myPointf pt, float r, String label, float _off) {
-		pa.pushMatState(); 
-		//pa.translate(pt.x,pt.y,0); 
-		pa.drawEllipse2D(pt.x,pt.y,r,r);				
-		pa.showText(label, _off, _off);
-		pa.popMatState();
+	protected final void _drawLabelAtLoc_2D(IRenderInterface ri, myPointf pt, float r, String label, float _off) {
+		ri.pushMatState(); 
+		//ri.translate(pt.x,pt.y,0); 
+		ri.drawEllipse2D(pt.x,pt.y,r,r);				
+		ri.showText(label, _off, _off);
+		ri.popMatState();
 	} // render sphere of radius r and center P)	
 	
-	protected final void _drawPointAtLoc_2D(IRenderInterface pa, myPointf pt, float r) {
-		pa.pushMatState(); 
-		//pa.translate(pt.x,pt.y,0); 
-		pa.drawEllipse2D(pt.x,pt.y,r,r);//pa.circle(0,0,r,r);						
-		pa.popMatState();
+	protected final void _drawPointAtLoc_2D(IRenderInterface ri, myPointf pt, float r) {
+		ri.pushMatState(); 
+		//ri.translate(pt.x,pt.y,0); 
+		ri.drawEllipse2D(pt.x,pt.y,r,r);//ri.circle(0,0,r,r);						
+		ri.popMatState();
 	} // render sphere of radius r and center P)	
 	
 	/**
 	 * draw this object
-	 * @param pa
+	 * @param ri
 	 */
-	protected abstract void _drawMe_Geom(IRenderInterface pa, SOM_GeomObjDrawType drawType);
+	protected abstract void _drawMe_Geom(IRenderInterface ri, SOM_GeomObjDrawType drawType);
 	
 	/**
 	 * draw this object with appropriate selected highlight/cue
-	 * @param pa
+	 * @param ri
 	 * @param animTimeMod
 	 */
-	public final void drawMeSelected_ClrLoc(IRenderInterface pa, float animTimeMod, boolean drawSamples) {
-		drawMeClrLoc(pa);
-		_drawMeSelected(pa,animTimeMod);
-		if(drawSamples && null!=objSamples) {objSamples.drawMeSmplsSelected(pa);}	
+	public final void drawMeSelected_ClrLoc(IRenderInterface ri, float animTimeMod, boolean drawSamples) {
+		drawMeClrLoc(ri);
+		_drawMeSelected(ri,animTimeMod);
+		if(drawSamples && null!=objSamples) {objSamples.drawMeSmplsSelected(ri);}	
 	};
 	/**
 	 * draw this object with appropriate selected highlight/cue
-	 * @param pa
+	 * @param ri
 	 * @param animTmMod
 	 */
-	public void drawMeSelected_ClrRnd(IRenderInterface pa, float animTmMod, boolean drawSamples) {
-		drawMeClrRnd(pa);
-		_drawMeSelected(pa,animTmMod);
-		if(drawSamples && null!=objSamples) {objSamples.drawMeSmplsSelected(pa);}
+	public void drawMeSelected_ClrRnd(IRenderInterface ri, float animTmMod, boolean drawSamples) {
+		drawMeClrRnd(ri);
+		_drawMeSelected(ri,animTmMod);
+		if(drawSamples && null!=objSamples) {objSamples.drawMeSmplsSelected(ri);}
 	};
-	protected abstract void _drawMeSelected(IRenderInterface pa, float animTmMod);
+	protected abstract void _drawMeSelected(IRenderInterface ri, float animTmMod);
 	
 	/**
 	 * draw this object's samples, using the random color
-	 * @param pa
+	 * @param ri
 	 */
-	public final void drawMySmplsLabel(IRenderInterface pa, SOM_AnimWorldWin animWin){	if(null!=objSamples) {if(getGeomFlag(is3dIDX)){objSamples.drawMySmplsLabel_3D(pa, animWin); } else { objSamples.drawMySmplsLabel_2D(pa);}}}//
+	public final void drawMySmplsLabel(IRenderInterface ri, SOM_AnimWorldWin animWin){	if(null!=objSamples) {if(getGeomFlag(is3dIDX)){objSamples.drawMySmplsLabel_3D(ri, animWin); } else { objSamples.drawMySmplsLabel_2D(ri);}}}//
 	
 	/**
 	 * draw this object's samples, using the random color
-	 * @param pa
+	 * @param ri
 	 */
-	public final void drawMeSmpls_ClrRnd(IRenderInterface pa){	if(null!=objSamples) {objSamples.drawMeSmpls_ClrRnd(pa);}}//
+	public final void drawMeSmpls_ClrRnd(IRenderInterface ri){	if(null!=objSamples) {objSamples.drawMeSmpls_ClrRnd(ri);}}//
 	
 	/**
 	 * draw this object's samples, using the location-based color
-	 * @param pa
+	 * @param ri
 	 */
-	public final void drawMeSmpls_ClrLoc(IRenderInterface pa){	if(null!=objSamples) {objSamples.drawMeSmpls_ClrLoc(pa);}}//
+	public final void drawMeSmpls_ClrLoc(IRenderInterface ri){	if(null!=objSamples) {objSamples.drawMeSmpls_ClrLoc(ri);}}//
 	
 	//////////////////////////////
 	// bmu drawing
 	
 	/**
 	 * draw entire object this class represents at location dictated by BMU, using location as color or using randomly assigned color
-	 * @param pa
+	 * @param ri
 	 */	
-	public final void drawMeClrRnd_BMU(IRenderInterface pa) {
-		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrRnd(pa);}
+	public final void drawMeClrRnd_BMU(IRenderInterface ri) {
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrRnd(ri);}
 	}	
 	
 	
-	public final void drawMeClrLoc_BMU(IRenderInterface pa) {
-		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrLoc(pa);}
+	public final void drawMeClrLoc_BMU(IRenderInterface ri) {
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrLoc(ri);}
 	}
 	
 	/**
 	 * draw wireframe rep of object's bmu
-	 * @param pa
+	 * @param ri
 	 */	
-	public final void drawMeClrRnd_WF_BMU(IRenderInterface pa) {
-		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrRnd_WF(pa);}
+	public final void drawMeClrRnd_WF_BMU(IRenderInterface ri) {
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrRnd_WF(ri);}
 	}		
 	
-	public final void drawMeClrLoc_WF_BMU(IRenderInterface pa) {
-		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrLoc_WF(pa);}
+	public final void drawMeClrLoc_WF_BMU(IRenderInterface ri) {
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeClrLoc_WF(ri);}
 	}
 	
-	public final void drawMyLabel_BMU(IRenderInterface pa, SOM_AnimWorldWin animWin) {	
-		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMyLabel(pa, animWin);	}
+	public final void drawMyLabel_BMU(IRenderInterface ri, SOM_AnimWorldWin animWin) {	
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMyLabel(ri, animWin);	}
 	}
 	
-	public final void drawMeSelected_ClrLoc_BMU(IRenderInterface pa,float animTmMod, boolean drawSamples) {
-		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSelected_ClrLoc(pa, animTmMod,drawSamples);}
+	public final void drawMeSelected_ClrLoc_BMU(IRenderInterface ri,float animTmMod, boolean drawSamples) {
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSelected_ClrLoc(ri, animTmMod,drawSamples);}
 	}
-	public void drawMeSelected_ClrRnd_BMU(IRenderInterface pa,float animTmMod, boolean drawSamples) { 
-		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSelected_ClrRnd(pa, animTmMod,drawSamples);}
+	public void drawMeSelected_ClrRnd_BMU(IRenderInterface ri,float animTmMod, boolean drawSamples) { 
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSelected_ClrRnd(ri, animTmMod,drawSamples);}
 	}	
 	
-	public final void drawMeSmpls_ClrRnd_BMU(IRenderInterface pa){
-		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSmpls_ClrRnd(pa);}
+	public final void drawMeSmpls_ClrRnd_BMU(IRenderInterface ri){
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSmpls_ClrRnd(ri);}
 	}//
 	
-	public final void drawMeSmpls_ClrLoc_BMU(IRenderInterface pa){
-		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSmpls_ClrLoc(pa);}
+	public final void drawMeSmpls_ClrLoc_BMU(IRenderInterface ri){
+		if(!isBmuNull()) {		((SOM_GeomMapNode) getBmu()).getVisObj().drawMeSmpls_ClrLoc(ri);}
 	}//	
 
 
