@@ -782,11 +782,13 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 			case uiTrainDatPartIDX 			: {break;}
 			case uiNodeWtDispThreshIDX : {
 				float _mapNodeWtDispThresh = (float)(getUIValue(uiNodeWtDispThreshIDX));
+				msgObj.dispInfoMessage(className, "setUI_FloatValsCustom", "Setting node weight disp thresh to be :"+_mapNodeWtDispThresh);
 				mapMgr.setMapNodeWtDispThresh(_mapNodeWtDispThresh);
 				mapMgr.setNodeInFtrWtSegThresh(_mapNodeWtDispThresh);				
 				break;}
 			case  uiNodePopDispThreshIDX:{
 				float _mapNodePopDispThresh = (float)(getUIValue(uiNodePopDispThreshIDX));
+				msgObj.dispInfoMessage(className, "setUI_FloatValsCustom", "Setting node pop disp thresh to be :"+_mapNodePopDispThresh);
 				mapMgr.setMapNodePopDispThreshPct(_mapNodePopDispThresh);
 				break;}
 			case uiNodeInSegThreshIDX 		:{		//used to determine threshold of value for setting membership in a segment/cluster

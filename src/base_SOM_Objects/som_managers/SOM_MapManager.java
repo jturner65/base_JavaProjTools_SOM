@@ -1453,7 +1453,7 @@ public abstract class SOM_MapManager {
 	protected void buildMapNodePopGraphImage() {
 		if(MapNodesByPopulation == null) {return;}
 		if(win!=null) {
-			//msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","Started building map nod population graph image for all examples with mapNodePopDispThreshPct : "+mapNodePopDispThreshPct+".", MsgCodes.info5);	
+			msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","Started building map nod population graph image for all examples with mapNodePopDispThreshPct : "+mapNodePopDispThreshPct+".", MsgCodes.info5);	
 			TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>> tmpMapNodesByPopForType;
 			int whiteClr = 0xFFFFFFFF, greyClr = 0xFF888888;
 			int clrToUse;			
