@@ -459,9 +459,9 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 * set window-specific variables that are based on current visible screen dimensions
 	 */
 	protected final void setVisScreenDimsPriv() {
-		float xStart = winInitVals.rectDim[0] + .5f*(curVisScrDims[0] - (curVisScrDims[1]-(2*xOff)));
+		float xStart = winInitVals.rectDim[0] + .5f*(curVisScrDims[0] - (curVisScrDims[1]-(2*winInitVals.getXOffset())));
 		//start x and y and dimensions of full map visualization as function of visible window size;
-		mapMgr.setSOM_mapLoc(new float[]{xStart, winInitVals.rectDim[1] + txtHeightOff});
+		mapMgr.setSOM_mapLoc(new float[]{xStart, winInitVals.rectDim[1] + winInitVals.getTextHeightOffset()});
 		//handle application-specific functionality
 		setVisScreenDimsPriv_Indiv();
 	}//calcAndSetMapLoc
@@ -946,7 +946,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
 		ri.pushMatState();
 		//display current simulation variables - call sim world through sim exec
-		mapMgr.drawResultBar(ri, txtHeightOff);
+		mapMgr.drawResultBar(ri, winInitVals.getTextHeightOffset());
 		ri.popMatState();					
 	}//drawOnScreenStuff
 	
@@ -981,12 +981,12 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	
 	@Override
 	public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {
-		msgObj.dispMessage("SOM_MapUIWin","handleSideMenuMseOvrDispSel","Click Mouse display in "+name+" : btn : " + btn, MsgCodes.info4);
+		msgObj.dispMessage("SOM_MapUIWin","handleSideMenuMseOvrDispSel","Click Mouse display in "+getName()+" : btn : " + btn, MsgCodes.info4);
 		SOM_MseOvrDispTypeVals uiMseDispData = handleSideMenuMseOvrDisp_MapBtnToType(btn, val);
 		//msgObj.dispInfoMessage("SOM_MapUIWin","handleSideMenuMseOvrDispSel","Mouse Display Function : " + btn +" selected == "+ uiMseDispData.toString());
 		if(uiMseDispData == SOM_MseOvrDispTypeVals.mseOvrOtherIDX) {	handleSideMenuMseOvrDispSel_Indiv(btn,val);	}
 		mapMgr.setUiMseDispData(uiMseDispData);
-		msgObj.dispMessage("SOM_MapUIWin","handleSideMenuMseOvrDispSel","Done Click Mouse display in "+name+" : btn : " + btn + " | Dist Type : " + uiMseDispData.toString(), MsgCodes.info4);
+		msgObj.dispMessage("SOM_MapUIWin","handleSideMenuMseOvrDispSel","Done Click Mouse display in "+getName()+" : btn : " + btn + " | Dist Type : " + uiMseDispData.toString(), MsgCodes.info4);
 	}
 	
 	/**
@@ -1072,11 +1072,11 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	@Override
 	public void processTraj_Indiv(DrawnSimpleTraj drawnNoteTraj){		}
 	@Override
-	protected void endShiftKeyI() {}
+	protected void endShiftKey_Indiv() {}
 	@Override
-	protected void endAltKeyI() {}
+	protected void endAltKey_Indiv() {}
 	@Override
-	protected void endCntlKeyI() {}
+	protected void endCntlKey_Indiv() {}
 	@Override
 	protected void addSScrToWin_Indiv(int newWinKey){}
 	@Override

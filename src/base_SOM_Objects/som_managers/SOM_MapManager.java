@@ -437,7 +437,7 @@ public abstract class SOM_MapManager {
 	private void setWinAndWinData(SOM_MapUIWin _win) {
 		win=_win;
 		if(win != null) {			//update dims with window size values
-			setName(win.name);
+			setName(win.getName());
 			mapDims = win.getWinUIMapDims();
 		} else {
 			setName("No_Win");
