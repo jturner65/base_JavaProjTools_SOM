@@ -143,7 +143,7 @@ public class SOM_MapNodeBMUExamples{
 			p.setFill(_dispClrs,255); p.setStroke(_dispClrs,255);		
 			p.drawSphere(myPointf.ZEROPT, logExSize, nodeSphrDet);
 
-			p.showOffsetTextAra(1.2f * logExSize,IRenderInterface.gui_Cyan, visLabel);		
+			p.showTextAra(1.2f * logExSize,IRenderInterface.gui_Cyan, visLabel);		
 		p.popMatState();		
 	}
 

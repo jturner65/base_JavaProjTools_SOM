@@ -141,7 +141,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		 * @param _initSceneFocusVal initial focus target for camera
 		 */
 		
-		GUI_AppWinVals GeomMapUIWinDef = new GUI_AppWinVals(AppMgr, -1, new String[] {"Map UI for " + owner, "Visualize SOM Node location for "+owner},
+		GUI_AppWinVals GeomMapUIWinDef = new GUI_AppWinVals(-1, new String[] {"Map UI for " + owner, "Visualize SOM Node location for "+owner},
 				new boolean[] {false, false, false, false},
 				new float[][] {_dimOpen, _dimClosed, _initCamVals},
 				new int [][] {new int[]{20,40,50,200}, new int[]{255,255,255,255},
@@ -235,7 +235,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	}
 
 	@Override
-	public final int initAllPrivBtns(ArrayList<Object[]> tmpBtnNamesArray) {
+	public final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray) {
 
 		// add an entry for each button, in the order they are wished to be displayed
 		// true tag, false tag, btn IDX
@@ -803,7 +803,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
 		ri.pushMatState();
 		//instance-specific
-		float newYOff = drawRightSideInfoBar_Indiv(modAmtMillis, winInitVals.getTextHeightOffset());
+		float newYOff = drawRightSideInfoBar_Indiv(modAmtMillis, AppMgr.getTextHeightOffset());
 		// display current simulation variables - call sim world through sim exec
 		mapMgr.drawResultBar(ri, newYOff);
 		ri.popMatState();

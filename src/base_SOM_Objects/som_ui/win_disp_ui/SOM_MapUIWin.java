@@ -273,7 +273,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	/**
 	 * initialize all private-flag based UI buttons here - called by base class before initMe
 	 */
-	public final int initAllPrivBtns(ArrayList<Object[]> tmpBtnNamesArray){	
+	public final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray){	
 		//add an entry for each button, in the order they are wished to be displayed		
 		tmpBtnNamesArray.add(new Object[]{"Building SOM","Build SOM ",buildSOMExe});
 		tmpBtnNamesArray.add(new Object[]{"Reset Dflt UI Vals","Reset Dflt UI Vals",resetMapDefsIDX});
@@ -459,9 +459,9 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 * set window-specific variables that are based on current visible screen dimensions
 	 */
 	protected final void setVisScreenDimsPriv() {
-		float xStart = winInitVals.rectDim[0] + .5f*(curVisScrDims[0] - (curVisScrDims[1]-(2*winInitVals.getXOffset())));
+		float xStart = winInitVals.rectDim[0] + .5f*(curVisScrDims[0] - (curVisScrDims[1]-(2*AppMgr.getXOffset())));
 		//start x and y and dimensions of full map visualization as function of visible window size;
-		mapMgr.setSOM_mapLoc(new float[]{xStart, winInitVals.rectDim[1] + winInitVals.getTextHeightOffset()});
+		mapMgr.setSOM_mapLoc(new float[]{xStart, winInitVals.rectDim[1] + AppMgr.getTextHeightOffset()});
 		//handle application-specific functionality
 		setVisScreenDimsPriv_Indiv();
 	}//calcAndSetMapLoc
@@ -946,7 +946,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
 		ri.pushMatState();
 		//display current simulation variables - call sim world through sim exec
-		mapMgr.drawResultBar(ri, winInitVals.getTextHeightOffset());
+		mapMgr.drawResultBar(ri, AppMgr.getTextHeightOffset());
 		ri.popMatState();					
 	}//drawOnScreenStuff
 	
