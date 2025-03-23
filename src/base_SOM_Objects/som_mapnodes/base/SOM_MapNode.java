@@ -732,12 +732,12 @@ public abstract class SOM_MapNode extends SOM_Example{
 //	}	
 	public void drawMeSmall(IRenderInterface p){
 		p.pushMatState();
-		p.showTxtAra(mapLoc, 2, 2, getMapNodeClrs(), new String[] {this.OID}); 
+		p.showTextAra(mapLoc, 2, 2, getMapNodeClrs(), new String[] {this.OID}); 
 		p.popMatState();		
 	}		
 	public void drawMeWithWt(IRenderInterface p, float wt, String[] disp){
 		p.pushMatState();	
-		p.showTxtAra(mapLoc, wt, (int)wt+1, getMapNodeClrs(),  disp); 
+		p.showTextAra(mapLoc, wt, (int)wt+1, getMapNodeClrs(),  disp); 
 		p.popMatState();		
 	}//drawMeWithWt
 

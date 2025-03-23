@@ -334,7 +334,7 @@ public abstract class SOM_MseOvrDisplay {
 		//draw point of radius rad at maploc with label	
 		//p.showBox(mapLoc, rad, 5, clrVal,clrVal, IRenderInterface.gui_LightGreen, mseLabelDat);
 		//(myPointf P, float rad, int det, int[] clrs, String[] txtAra, float[] rectDims)
-		pa.showBoxTxtAra(drawLoc, 5, 5, nodeClrs, mseLabelAra, mseLabelDims);
+		pa.showBoxTextAra(drawLoc, 5, 5, nodeClrs, mseLabelAra, mseLabelDims);
 		pa.popMatState();
 	}
 	public void setMapLoc(myPointf _pt) {mapLoc.set(_pt);}

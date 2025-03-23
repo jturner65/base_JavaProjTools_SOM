@@ -128,7 +128,7 @@ public class SOM_MapNodeBMUExamples{
 	// drawing routines for owning node
 	public void drawMapNodeWithLabel(IRenderInterface p) {
 		p.pushMatState();	
-			p.showTxtAra(node.mapLoc, logExSize, nodeSphrDet, dispClrs,  visLabel); 		
+			p.showTextAra(node.mapLoc, logExSize, nodeSphrDet, dispClrs,  visLabel); 		
 		p.popMatState();		
 	}
 

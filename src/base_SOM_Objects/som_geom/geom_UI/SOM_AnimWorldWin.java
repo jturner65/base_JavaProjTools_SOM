@@ -615,7 +615,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	public void drawSOMWinUI(float modAmtMillis) {
 		if (null != somUIWin) {
 			somUIWin.draw2D(modAmtMillis);
-			somUIWin.drawHeader(modAmtMillis);
+			somUIWin.drawHeader(new String[0], false, AppMgr.isDebugMode(), modAmtMillis);
 		}
 	}
 
