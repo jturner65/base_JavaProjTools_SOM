@@ -1008,7 +1008,7 @@ public abstract class SOM_MapManager {
 	
 	protected abstract int _getNumSecondaryMaps();
 	//only appropriate if using UI
-	public void setSaveLocClrImg(boolean val) {if (win != null) { win.privFlags.setFlag(SOM_MapUIWin.saveLocClrImgIDX,val);}}
+	public void setSaveLocClrImg(boolean val) {if (win != null) { win.setPrivFlag(SOM_MapUIWin.saveLocClrImgIDX,val);}}
 	//whether or not distances between two datapoints assume that absent features in smaller-length datapoints are 0, or to ignore the values in the larger datapoints
 	public abstract void setMapExclZeroFtrs(boolean val);
 
@@ -2171,7 +2171,7 @@ public abstract class SOM_MapManager {
 	public final void drawSOMMapData(IRenderInterface pa) {
 		PImage tmpImg;
 		int curImgNum;
-		if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawUMatrixIDX)) {				
+		if(win.getPrivFlag(SOM_MapUIWin.mapDrawUMatrixIDX)) {				
 			tmpImg =  mapCubicUMatrixImg;
 			curImgNum = -1;
 		} else {
@@ -2182,43 +2182,43 @@ public abstract class SOM_MapManager {
 			pa.disableLights();
 			pa.scale(mapScaleVal);
 			//doing this in separate matrix stack frame because map is built small and scaled up
-			((my_procApplet)Base_DispWindow.ri).image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.privFlags.getFlag(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.privFlags.setFlag(SOM_MapUIWin.saveLocClrImgIDX,false);}			
-			if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {((my_procApplet)Base_DispWindow.ri).image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
+			((my_procApplet)Base_DispWindow.ri).image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.getPrivFlag(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.setPrivFlag(SOM_MapUIWin.saveLocClrImgIDX,false);}			
+			if(win.getPrivFlag(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {((my_procApplet)Base_DispWindow.ri).image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
 			pa.enableLights();
 		pa.popMatState(); 
 		pa.pushMatState();
 			pa.disableLights();
-			boolean drawLbl = win.privFlags.getFlag(SOM_MapUIWin.mapDrawNodeLblIDX);
-			boolean draw0PopNodes = win.privFlags.getFlag(SOM_MapUIWin.mapDrawNodesWith0MapExIDX);
+			boolean drawLbl = win.getPrivFlag(SOM_MapUIWin.mapDrawNodeLblIDX);
+			boolean draw0PopNodes = win.getPrivFlag(SOM_MapUIWin.mapDrawNodesWith0MapExIDX);
 			pa.translate(SOM_mapLoc[0],SOM_mapLoc[1],0);	
-			if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawTrainDatIDX)){			drawTrainData(pa);}	
-			if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawTestDatIDX)) {			drawTestData(pa);}
-			if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {	if(drawLbl) {drawPopMapNodes(pa, draw0PopNodes, mapNodeDispType.getVal());} else {drawPopMapNodesNoLbl(pa, draw0PopNodes, mapNodeDispType.getVal());}}
+			if(win.getPrivFlag(SOM_MapUIWin.mapDrawTrainDatIDX)){			drawTrainData(pa);}	
+			if(win.getPrivFlag(SOM_MapUIWin.mapDrawTestDatIDX)) {			drawTestData(pa);}
+			if(win.getPrivFlag(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {	if(drawLbl) {drawPopMapNodes(pa, draw0PopNodes, mapNodeDispType.getVal());} else {drawPopMapNodesNoLbl(pa, draw0PopNodes, mapNodeDispType.getVal());}}
 			else {numMapNodeByPopNowShown = 0;}
 		
 			if (curImgNum > -1) {
-				if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawWtMapNodesIDX)){			drawNodesWithWt(pa, mapNodeWtDispThresh, curFtrMapImgIDX);} 
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawWtMapNodesIDX)){			drawNodesWithWt(pa, mapNodeWtDispThresh, curFtrMapImgIDX);} 
 				//display ftr-wt, class and category images, if enabled
-				if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawFtrWtSegments(pa, mapNodeWtDispThresh, curFtrMapImgIDX);}
-				if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawClassSegments(pa,curClassLabel);	}		
-				if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawCategorySegments(pa,curCategoryLabel);	}				
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawFtrWtSegments(pa, mapNodeWtDispThresh, curFtrMapImgIDX);}
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawClassSegments(pa,curClassLabel);	}		
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawCategorySegments(pa,curCategoryLabel);	}				
 				drawPerFtrMap_Indiv(pa);
 			} else {			
-				if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawUMatSegMembersIDX)) {		drawUMatrixSegments(pa);}
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawUMatSegMembersIDX)) {		drawUMatrixSegments(pa);}
 				
-				if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawAllFtrWtSegments(pa, mapNodeWtDispThresh);}	//draw all segments - will overlap here, might look like garbage		
-				if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawAllClassSegments(pa);}
-				if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawAllCategorySegments(pa);}
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawAllFtrWtSegments(pa, mapNodeWtDispThresh);}	//draw all segments - will overlap here, might look like garbage		
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawAllClassSegments(pa);}
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawAllCategorySegments(pa);}
 				drawSegmentsUMatrixDispIndiv(pa);
 			}
 			//if draw all map nodes
-			if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawAllMapNodesIDX)){	if(drawLbl) {drawAllNodesWithLbl(pa);} else {drawAllNodesNoLbl(pa);} }
+			if(win.getPrivFlag(SOM_MapUIWin.mapDrawAllMapNodesIDX)){	if(drawLbl) {drawAllNodesWithLbl(pa);} else {drawAllNodesNoLbl(pa);} }
 			//draw nodes that are selected
 			if(SelectedMapNodes.size() > 0) {drawNodesIfSelected(pa);}
 			//instance-specific stuff to draw on map, after nodes are drawn
 			drawMapRectangle_Indiv(pa, curImgNum);
 			//if selected, draw graph describing population of each map node
-			if(win.privFlags.getFlag(SOM_MapUIWin.drawMapNodePopGraphIDX)) {drawMapNodePopGraph(pa, mapNodeDispType.getVal());}
+			if(win.getPrivFlag(SOM_MapUIWin.drawMapNodePopGraphIDX)) {drawMapNodePopGraph(pa, mapNodeDispType.getVal());}
 			pa.enableLights();
 		pa.popMatState();	
 		
@@ -2456,7 +2456,7 @@ public abstract class SOM_MapManager {
 	}//drawResultBar
 	
 	private final float drawNumMapNodesShownByPop(IRenderInterface pa,float yOff) {
-		if(win.privFlags.getFlag(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {
+		if(win.getPrivFlag(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {
 			pa.translate(10.0f, 0.0f, 0.0f);
 			Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
 			yOff += sideBarYDisp;

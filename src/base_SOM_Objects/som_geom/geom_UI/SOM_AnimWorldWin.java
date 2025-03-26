@@ -149,10 +149,8 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 					new int[]{0,0,0,200},new int[]{255,255,255,255}},				
 				new myPoint(-AppMgr.gridDimX/2.0,-AppMgr.gridDimY/2.0,-AppMgr.gridDimZ/2.0), new myVector(0,0,0));
 		
-		somUIWin = new SOM_GeomMapUIWin(ri, AppMgr, GeomMapUIWinDef,AppMgr.getArgsMap(), this);	
+		somUIWin = new SOM_GeomMapUIWin(ri, AppMgr, GeomMapUIWinDef, AppMgr.getArgsMap(), this);	
 		
-		
-		somUIWin.finalInit(new myPoint(-AppMgr.gridDimX/2.0,-AppMgr.gridDimY/2.0,-AppMgr.gridDimZ/2.0), new myVector(0,0,0));
 		somUIWin.setUI_FeatureListVals(setUI_GeomObjFeatureListVals());
 		somUIWin.setMapMgr(mapMgr);
 		msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "setGeomMapUIWin", "Setting somUIWin in " + winInitVals.winName + " to be  : "
@@ -235,7 +233,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	}
 
 	@Override
-	public final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray) {
+	protected final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray) {
 
 		// add an entry for each button, in the order they are wished to be displayed
 		// true tag, false tag, btn IDX
@@ -790,7 +788,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// if(this.privFlags.getFlag(drawSOM_MapUIVis)) {
 		if (somUIWin != null) {
 			ri.pushMatState();
-			somUIWin.drawWindowGuiObjs(modAmtMillis);					//draw what user-modifiable fields are currently available
+			somUIWin.drawWindowGuiObjs(AppMgr.isDebugMode(), modAmtMillis);					//draw what user-modifiable fields are currently available
 //			somUIWin.drawGUIObjs(); // draw what user-modifiable fields are currently available
 //			somUIWin.drawClickableBooleans(); // draw what user-modifiable boolean buttons
 			ri.popMatState();

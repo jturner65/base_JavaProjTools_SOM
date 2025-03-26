@@ -273,7 +273,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	/**
 	 * initialize all private-flag based UI buttons here - called by base class before initMe
 	 */
-	public final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray){	
+	protected final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray){	
 		//add an entry for each button, in the order they are wished to be displayed		
 		tmpBtnNamesArray.add(new Object[]{"Building SOM","Build SOM ",buildSOMExe});
 		tmpBtnNamesArray.add(new Object[]{"Reset Dflt UI Vals","Reset Dflt UI Vals",resetMapDefsIDX});
@@ -376,42 +376,42 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		tmpListObjVals.put(uiMapNodeBMUTypeToDispIDX, bmuMapTypes);
 		tmpListObjVals.put(uiFtrSelectIDX, new String[] {"None"});		
 			
-		tmpUIObjArray.put(uiTrainDataNormIDX, uiObjInitAra_List(new double[]{0.0, listOfTypes.length-1, 1.0}, SOM_FtrDataType.FTR_NORM.getVal(), "Data Normalizing", new boolean[]{true}));   				//uiTrainDataFrmtIDX                                                                        
-		tmpUIObjArray.put(uiBMU_DispDataFrmtIDX, uiObjInitAra_List(new double[]{0.0, listOfTypes.length-1, 1.0}, SOM_FtrDataType.UNNORMALIZED.getVal(), "Map Node Ftr Disp Frmt", new boolean[]{true}));  	//uiBMU_DispDataFrmtIDX                                                                         
-		tmpUIObjArray.put(uiTrainDatPartIDX, uiObjInitAra_Int(new double[]{1.0, 100.0, 1.0}, 100.0, "Data % To Train", new boolean[]{true}));   											//uiTrainDatPartIDX                                                                         
-		tmpUIObjArray.put(uiMapRowsIDX, uiObjInitAra_Int(new double[]{1.0, 120.0, 10}, 10.0, "# Map Rows", new boolean[]{true}));   														//uiMapRowsIDX 	 		                                                                    
-		tmpUIObjArray.put(uiMapColsIDX, uiObjInitAra_Int(new double[]{1.0, 120.0, 10}, 10.0, "# Map Columns", new boolean[]{true}));   													//uiMapColsIDX	 		                                                                    
-		tmpUIObjArray.put(uiMapEpochsIDX, uiObjInitAra_Int(new double[]{1.0, 200.0, 10}, 10.0, "# Training Epochs", new boolean[]{true}));  												//uiMapEpochsIDX		                                                                    
-		tmpUIObjArray.put(uiMapShapeIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapShapeIDX).length-1, 1}, 0.0, "Map Node Shape", new boolean[]{true}));   						//uiMapShapeIDX	 		                                                                    
-		tmpUIObjArray.put(uiMapBndsIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapBndsIDX).length-1, 1}, 1.0, "Map Boundaries", new boolean[]{true}));  						//uiMapBndsIDX	 		                                                                    
-		tmpUIObjArray.put(uiMapKTypIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapKTypIDX).length-1, 1.01}, 2.0, "Dense/Sparse (C/G)PU", new boolean[]{true}));   				//uiMapKTypIDX	 		                                                                    
-		tmpUIObjArray.put(uiMapNHdFuncIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapNHdFuncIDX).length-1, 1}, 0.0, "Neighborhood Func", new boolean[]{true}));   					//uiMapNHdFuncIDX		                                                                    
-		tmpUIObjArray.put(uiMapRadCoolIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapRadCoolIDX).length-1, 1}, 0.0, "Radius Cooling", new boolean[]{true}));   						//uiMapRadCoolIDX		                                                                    
-		tmpUIObjArray.put(uiMapLrnCoolIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapLrnCoolIDX).length-1, 1}, 0.0, "Learn rate Cooling", new boolean[]{true}));   					//uiMapLrnCoolIDX		                                                                    
-		tmpUIObjArray.put(uiMapLrnStIDX, uiObjInitAra_Float(new double[]{0.001, 10.0, 0.001}, 1.0, "Start Learn Rate", new boolean[]{true}));   													//uiMapLrnStIDX	 		                                                                    
-		tmpUIObjArray.put(uiMapLrnEndIDX, uiObjInitAra_Float(new double[]{0.001, 1.0, 0.001}, 0.1, "End Learn Rate", new boolean[]{true}));   														//uiMapLrnEndIDX		                                                                    
-		tmpUIObjArray.put(uiMapRadStIDX, uiObjInitAra_Int(new double[]{2.0, 300.0, 1.0}, 20.0, "Start Cool Radius", new boolean[]{true}));   													//uiMapRadStIDX	 	# nodes	                                                                
-		tmpUIObjArray.put(uiMapRadEndIDX, uiObjInitAra_Int(new double[]{1.0, 10.0, 1.0}, 1.0, "End Cool Radius", new boolean[]{true}));   														//uiMapRadEndIDX		# nodes	  
-		tmpUIObjArray.put(uiMapPreBuiltDirIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapPreBuiltDirIDX).length-1,1.0}, 0.0, "Pretrained Map Dirs", new boolean[]{true}));			//uiMapPreBuiltDirIDX
-		tmpUIObjArray.put(uiMapNodeBMUTypeToDispIDX, uiObjInitAra_List(new double[]{0.0, bmuMapTypes.length-1, 1.0}, 0.0, "Ex Type For Node BMU", new boolean[]{true})); 	//uiMapNodeBMUTypeToDispIDX                                                                 
-		tmpUIObjArray.put(uiNodeWtDispThreshIDX, uiObjInitAra_Float(new double[]{0.0, 1.0, .01}, SOM_MapManager.initNodeInSegFtrWtDistThresh, "Map Node Disp Wt Thresh", new boolean[]{true}));   	//uiNodeWtDispThreshIDX                                                                     
-		tmpUIObjArray.put(uiNodePopDispThreshIDX, uiObjInitAra_Float(new double[]{0.0, 1.0, .001}, 0.0, "Node Disp Pop Size Thresh %", new boolean[]{true}));														//uiPopMapNodeDispSizeIDX
-		tmpUIObjArray.put(uiNodeInSegThreshIDX, uiObjInitAra_Float(new double[]{0.0, 1.0, .001}, SOM_MapManager.initNodeInSegUMatrixDistThresh, "Segment UDist Thresh", new boolean[]{true}));   	//uiNodeInSegThreshIDX//threshold of u-matrix weight for nodes to belong to same segment    
-		tmpUIObjArray.put(uiMseRegionSensIDX, uiObjInitAra_Float(new double[]{0.0, 1.0, .001}, 0.001, "Mouse Over Sens", new boolean[]{true}));   														//uiMseRegionSensIDX                                                                        
-		tmpUIObjArray.put(uiFtrSelectIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiFtrSelectIDX).length-1,1.0}, 0.0, "Feature IDX To Show", new boolean[]{true}));					//uiFtrSelectIDX
+		tmpUIObjArray.put(uiTrainDataNormIDX, uiObjInitAra_List(new double[]{0.0, listOfTypes.length-1, 1.0}, SOM_FtrDataType.FTR_NORM.getVal(), "Data Normalizing"));   				//uiTrainDataFrmtIDX                                                                        
+		tmpUIObjArray.put(uiBMU_DispDataFrmtIDX, uiObjInitAra_List(new double[]{0.0, listOfTypes.length-1, 1.0}, SOM_FtrDataType.UNNORMALIZED.getVal(), "Map Node Ftr Disp Frmt"));  	//uiBMU_DispDataFrmtIDX                                                                         
+		tmpUIObjArray.put(uiTrainDatPartIDX, uiObjInitAra_Int(new double[]{1.0, 100.0, 1.0}, 100.0, "Data % To Train"));   											//uiTrainDatPartIDX                                                                         
+		tmpUIObjArray.put(uiMapRowsIDX, uiObjInitAra_Int(new double[]{1.0, 120.0, 10}, 10.0, "# Map Rows"));   														//uiMapRowsIDX 	 		                                                                    
+		tmpUIObjArray.put(uiMapColsIDX, uiObjInitAra_Int(new double[]{1.0, 120.0, 10}, 10.0, "# Map Columns"));   													//uiMapColsIDX	 		                                                                    
+		tmpUIObjArray.put(uiMapEpochsIDX, uiObjInitAra_Int(new double[]{1.0, 200.0, 10}, 10.0, "# Training Epochs"));  												//uiMapEpochsIDX		                                                                    
+		tmpUIObjArray.put(uiMapShapeIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapShapeIDX).length-1, 1}, 0.0, "Map Node Shape"));   						//uiMapShapeIDX	 		                                                                    
+		tmpUIObjArray.put(uiMapBndsIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapBndsIDX).length-1, 1}, 1.0, "Map Boundaries"));  						//uiMapBndsIDX	 		                                                                    
+		tmpUIObjArray.put(uiMapKTypIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapKTypIDX).length-1, 1.01}, 2.0, "Dense/Sparse (C/G)PU"));   				//uiMapKTypIDX	 		                                                                    
+		tmpUIObjArray.put(uiMapNHdFuncIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapNHdFuncIDX).length-1, 1}, 0.0, "Neighborhood Func"));   					//uiMapNHdFuncIDX		                                                                    
+		tmpUIObjArray.put(uiMapRadCoolIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapRadCoolIDX).length-1, 1}, 0.0, "Radius Cooling"));   						//uiMapRadCoolIDX		                                                                    
+		tmpUIObjArray.put(uiMapLrnCoolIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapLrnCoolIDX).length-1, 1}, 0.0, "Learn rate Cooling"));   					//uiMapLrnCoolIDX		                                                                    
+		tmpUIObjArray.put(uiMapLrnStIDX, uiObjInitAra_Float(new double[]{0.001, 10.0, 0.001}, 1.0, "Start Learn Rate"));   													//uiMapLrnStIDX	 		                                                                    
+		tmpUIObjArray.put(uiMapLrnEndIDX, uiObjInitAra_Float(new double[]{0.001, 1.0, 0.001}, 0.1, "End Learn Rate"));   														//uiMapLrnEndIDX		                                                                    
+		tmpUIObjArray.put(uiMapRadStIDX, uiObjInitAra_Int(new double[]{2.0, 300.0, 1.0}, 20.0, "Start Cool Radius"));   													//uiMapRadStIDX	 	# nodes	                                                                
+		tmpUIObjArray.put(uiMapRadEndIDX, uiObjInitAra_Int(new double[]{1.0, 10.0, 1.0}, 1.0, "End Cool Radius"));   														//uiMapRadEndIDX		# nodes	  
+		tmpUIObjArray.put(uiMapPreBuiltDirIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiMapPreBuiltDirIDX).length-1,1.0}, 0.0, "Pretrained Map Dirs"));			//uiMapPreBuiltDirIDX
+		tmpUIObjArray.put(uiMapNodeBMUTypeToDispIDX, uiObjInitAra_List(new double[]{0.0, bmuMapTypes.length-1, 1.0}, 0.0, "Ex Type For Node BMU")); 	//uiMapNodeBMUTypeToDispIDX                                                                 
+		tmpUIObjArray.put(uiNodeWtDispThreshIDX, uiObjInitAra_Float(new double[]{0.0, 1.0, .01}, SOM_MapManager.initNodeInSegFtrWtDistThresh, "Map Node Disp Wt Thresh"));   	//uiNodeWtDispThreshIDX                                                                     
+		tmpUIObjArray.put(uiNodePopDispThreshIDX, uiObjInitAra_Float(new double[]{0.0, 1.0, .001}, 0.0, "Node Disp Pop Size Thresh %"));														//uiPopMapNodeDispSizeIDX
+		tmpUIObjArray.put(uiNodeInSegThreshIDX, uiObjInitAra_Float(new double[]{0.0, 1.0, .001}, SOM_MapManager.initNodeInSegUMatrixDistThresh, "Segment UDist Thresh"));   	//uiNodeInSegThreshIDX//threshold of u-matrix weight for nodes to belong to same segment    
+		tmpUIObjArray.put(uiMseRegionSensIDX, uiObjInitAra_Float(new double[]{0.0, 1.0, .001}, 0.001, "Mouse Over Sens"));   														//uiMseRegionSensIDX                                                                        
+		tmpUIObjArray.put(uiFtrSelectIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiFtrSelectIDX).length-1,1.0}, 0.0, "Feature IDX To Show"));					//uiFtrSelectIDX
 		
 		String catUIDesc = getCategoryUIObjLabel();
 		if((null!=catUIDesc) && (catUIDesc.length()>0)) {
 			_catExistsAndIsShown = true;
 			tmpListObjVals.put(uiCategorySelectIDX, new String[] {"None"});	
-			tmpUIObjArray.put(uiCategorySelectIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiCategorySelectIDX).length-1,1.0}, 0.0, catUIDesc, new boolean[]{true}));			//uiMapPreBuiltDirIDX
+			tmpUIObjArray.put(uiCategorySelectIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiCategorySelectIDX).length-1,1.0}, 0.0, catUIDesc));			//uiMapPreBuiltDirIDX
 		} else {			_catExistsAndIsShown = false;		}
 		
 		String classUIDesc = getClassUIObjLabel();
 		if((null!=classUIDesc) && (classUIDesc.length()>0)) {
 			_classExistsAndIsShown = true;
 			tmpListObjVals.put(uiClassSelectIDX, new String[] {"None"});	
-			tmpUIObjArray.put(uiClassSelectIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiClassSelectIDX).length-1,1.0}, 0.0, classUIDesc, new boolean[]{true}));			//uiMapPreBuiltDirIDX
+			tmpUIObjArray.put(uiClassSelectIDX, uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiClassSelectIDX).length-1,1.0}, 0.0, classUIDesc));			//uiMapPreBuiltDirIDX
 		} else {			_classExistsAndIsShown = false;		}
 		
 		//populate instancing application objects
@@ -611,7 +611,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	public final void setPreBuiltMapArray(String[] _pbltMapArray) {
 		msgObj.dispInfoMessage("SOM_MapUIWin","setPreBuiltMapArray","Attempting to set prebuilt map values list of size : " +_pbltMapArray.length);
 		int curIDX = setAllUIListValues(uiMapPreBuiltDirIDX,_pbltMapArray);
-		uiUpdateData.setIntValue(uiMapPreBuiltDirIDX, (int) getUIValue(uiMapPreBuiltDirIDX));
+		getUIDataUpdater().setIntValue(uiMapPreBuiltDirIDX, (int) getUIValue(uiMapPreBuiltDirIDX));
 		mapMgr.setCurPreBuiltMapIDX(curIDX);
 	}//
 
@@ -633,15 +633,15 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_Integer","Attempting to set UI object with unknown Key : " +key + " using integer value " + val +". Aborting.",MsgCodes.warning1);	
 			return;}
 		Integer uiObjIDX = getUIidxFromMapKeyString(key);
-		uiUpdateData.setIntValue(uiObjIDX, (int) setNewUIValue(uiObjIDX, val));
+		getUIDataUpdater().setIntValue(uiObjIDX, (int) setNewUIValue(uiObjIDX, val));
 		switch (uiObjIDX) {
 			//integer values
 			case uiMapRowsIDX 	    : {setNewUIValue(uiMapRadStIDX, .5*Math.min(val, getUIValue(uiMapColsIDX)));	break;}
 			case uiMapColsIDX	    : {setNewUIValue(uiMapRadStIDX, .5*Math.min(getUIValue(uiMapRowsIDX), val));break;}
 			case uiMapEpochsIDX	    : {break;}
 			case uiMapKTypIDX	    : {break;}
-			case uiMapRadStIDX	    : {if(val <= getUIValue(uiMapRadEndIDX)+getModStep(uiObjIDX)) {uiUpdateData.setIntValue(uiObjIDX, (int) setNewUIValue(uiObjIDX, getUIValue(uiMapRadEndIDX)+getModStep(uiObjIDX)));}break;}
-			case uiMapRadEndIDX	    : {if(val >= getUIValue(uiMapRadStIDX)-getModStep(uiObjIDX)) { uiUpdateData.setIntValue(uiObjIDX, (int) setNewUIValue(uiObjIDX, getUIValue(uiMapRadStIDX)-getModStep(uiObjIDX)));}break;}
+			case uiMapRadStIDX	    : {if(val <= getUIValue(uiMapRadEndIDX)+getModStep(uiObjIDX)) {getUIDataUpdater().setIntValue(uiObjIDX, (int) setNewUIValue(uiObjIDX, getUIValue(uiMapRadEndIDX)+getModStep(uiObjIDX)));}break;}
+			case uiMapRadEndIDX	    : {if(val >= getUIValue(uiMapRadStIDX)-getModStep(uiObjIDX)) { getUIDataUpdater().setIntValue(uiObjIDX, (int) setNewUIValue(uiObjIDX, getUIValue(uiMapRadStIDX)-getModStep(uiObjIDX)));}break;}
 		}
 	}//setUIDataVal_Integer	
 
@@ -651,10 +651,10 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_Float","Attempting to set UI object with unknown Key : " +key + " using integer value " + val +". Aborting.",MsgCodes.warning1);	
 			return;}
 		Integer uiObjIDX = getUIidxFromMapKeyString(key);
-		uiUpdateData.setFloatValue(uiObjIDX, (float)setNewUIValue(uiObjIDX, val));
+		getUIDataUpdater().setFloatValue(uiObjIDX, (float)setNewUIValue(uiObjIDX, val));
 		switch (uiObjIDX) {
-		case uiMapLrnStIDX	    : {	if(val <= getUIValue(uiMapLrnEndIDX)+getModStep(uiObjIDX)) {uiUpdateData.setFloatValue(uiObjIDX, (float) setNewUIValue(uiObjIDX, getUIValue(uiMapLrnEndIDX)+getModStep(uiObjIDX)));}break;}
-		case uiMapLrnEndIDX	    : {	if(val >= getUIValue(uiMapLrnStIDX)-getModStep(uiObjIDX)) {	uiUpdateData.setFloatValue(uiObjIDX, (float) setNewUIValue(uiObjIDX, getUIValue(uiMapLrnStIDX)-getModStep(uiObjIDX)));}break;}
+		case uiMapLrnStIDX	    : {	if(val <= getUIValue(uiMapLrnEndIDX)+getModStep(uiObjIDX)) {getUIDataUpdater().setFloatValue(uiObjIDX, (float) setNewUIValue(uiObjIDX, getUIValue(uiMapLrnEndIDX)+getModStep(uiObjIDX)));}break;}
+		case uiMapLrnEndIDX	    : {	if(val >= getUIValue(uiMapLrnStIDX)-getModStep(uiObjIDX)) {	getUIDataUpdater().setFloatValue(uiObjIDX, (float) setNewUIValue(uiObjIDX, getUIValue(uiMapLrnStIDX)-getModStep(uiObjIDX)));}break;}
 		}
 	}//setUIDataVal_Float
 	
@@ -669,7 +669,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		if(retVals[1] != 0) {
 			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_String","Attempting to set list object : " +key + " to unknown list value " + val +". Aborting.",MsgCodes.warning1);
 		} else {
-			uiUpdateData.setIntValue(uiObjIDX, retVals[0]);
+			getUIDataUpdater().setIntValue(uiObjIDX, retVals[0]);
 		}
 	}//setUIDataVal_String
 	
@@ -695,10 +695,10 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 			case uiMapEpochsIDX	    : {setMapDataVal_Integer(UIidx,ival);break;}
 			case uiMapKTypIDX	    : {setMapDataVal_Integer(UIidx,ival);break;}
 			case uiMapRadStIDX	    : {
-				if(ival <= getUIValue(uiMapRadEndIDX)+getModStep(UIidx)) {uiUpdateData.setIntValue(UIidx, (int) setNewUIValue(UIidx, getUIValue(uiMapRadEndIDX)+getModStep(UIidx)));}
+				if(ival <= getUIValue(uiMapRadEndIDX)+getModStep(UIidx)) {getUIDataUpdater().setIntValue(UIidx, (int) setNewUIValue(UIidx, getUIValue(uiMapRadEndIDX)+getModStep(UIidx)));}
 				setMapDataVal_Integer(UIidx,ival);		break;}
 			case uiMapRadEndIDX	    : {
-				if(ival >= getUIValue(uiMapRadStIDX)-getModStep(UIidx)) {uiUpdateData.setIntValue(UIidx, (int) setNewUIValue(UIidx, getUIValue(uiMapRadStIDX)-getModStep(UIidx)));}
+				if(ival >= getUIValue(uiMapRadStIDX)-getModStep(UIidx)) {getUIDataUpdater().setIntValue(UIidx, (int) setNewUIValue(UIidx, getUIValue(uiMapRadStIDX)-getModStep(UIidx)));}
 				setMapDataVal_Integer(UIidx,ival);		break;}
 
 			case uiMapNHdFuncIDX	: {setMapDataVal_String(UIidx,ival); break;}
@@ -767,10 +767,10 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	protected final void setUI_FloatValsCustom(int UIidx, float val, float oldVal) {
 		switch(UIidx){
 			case uiMapLrnStIDX	    : {
-				if(val <= getUIValue(uiMapLrnEndIDX)+getModStep(UIidx)) {uiUpdateData.setFloatValue(UIidx, (float) setNewUIValue(UIidx, getUIValue(uiMapLrnEndIDX)+getModStep(UIidx)));}			
+				if(val <= getUIValue(uiMapLrnEndIDX)+getModStep(UIidx)) {getUIDataUpdater().setFloatValue(UIidx, (float) setNewUIValue(UIidx, getUIValue(uiMapLrnEndIDX)+getModStep(UIidx)));}			
 				setMapDataVal_Float(UIidx,val);			break;}
 			case uiMapLrnEndIDX	    : {
-				if(val >= getUIValue(uiMapLrnStIDX)-getModStep(UIidx)) {uiUpdateData.setFloatValue(UIidx, (float) setNewUIValue(UIidx, getUIValue(uiMapLrnStIDX)-getModStep(UIidx)));}		
+				if(val >= getUIValue(uiMapLrnStIDX)-getModStep(UIidx)) {getUIDataUpdater().setFloatValue(UIidx, (float) setNewUIValue(UIidx, getUIValue(uiMapLrnStIDX)-getModStep(UIidx)));}		
 				setMapDataVal_Float(UIidx,val);			break;}
 			
 			case uiTrainDataNormIDX 		: {//format of training data
