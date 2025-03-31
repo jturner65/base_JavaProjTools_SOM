@@ -709,10 +709,10 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 			//end map arg-related string/list values
 			
 			case uiTrainDataNormIDX 		: {//format of training data
-				mapMgr.setCurrentTrainDataFormat(SOM_FtrDataType.getVal((int)(getUIValue(uiTrainDataNormIDX))));
+				mapMgr.setCurrentTrainDataFormat(SOM_FtrDataType.getEnumByIndex((int)(getUIValue(uiTrainDataNormIDX))));
 				break;}
 			case uiBMU_DispDataFrmtIDX 			: {
-				mapMgr.setBMU_DispFtrTypeFormat(SOM_FtrDataType.getVal((int)(getUIValue(uiBMU_DispDataFrmtIDX))));
+				mapMgr.setBMU_DispFtrTypeFormat(SOM_FtrDataType.getEnumByIndex((int)(getUIValue(uiBMU_DispDataFrmtIDX))));
 				break;}
 			case uiTrainDatPartIDX 			: {break;}
 			case uiNodeWtDispThreshIDX : {
@@ -732,7 +732,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 				mapMgr.setCurPreBuiltMapIDX((int) (getUIValue(uiMapPreBuiltDirIDX)));
 				break;}			
 			case uiMapNodeBMUTypeToDispIDX 	: {//type of examples being mapped to each map node to display
-				mapMgr.setMapNodeDispType(SOM_ExDataType.getVal((int)(getUIValue(uiMapNodeBMUTypeToDispIDX))));
+				mapMgr.setMapNodeDispType(SOM_ExDataType.getEnumByIndex((int)(getUIValue(uiMapNodeBMUTypeToDispIDX))));
 				break;}			
 			case uiMseRegionSensIDX 		: {			break;}
 			case uiFtrSelectIDX				: {		//feature idx map to display
@@ -774,10 +774,10 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 				setMapDataVal_Float(UIidx,val);			break;}
 			
 			case uiTrainDataNormIDX 		: {//format of training data
-				mapMgr.setCurrentTrainDataFormat(SOM_FtrDataType.getVal((int)(getUIValue(uiTrainDataNormIDX))));
+				mapMgr.setCurrentTrainDataFormat(SOM_FtrDataType.getEnumByIndex((int)(getUIValue(uiTrainDataNormIDX))));
 				break;}
 			case uiBMU_DispDataFrmtIDX 			: {
-				mapMgr.setBMU_DispFtrTypeFormat(SOM_FtrDataType.getVal((int)(getUIValue(uiBMU_DispDataFrmtIDX))));
+				mapMgr.setBMU_DispFtrTypeFormat(SOM_FtrDataType.getEnumByIndex((int)(getUIValue(uiBMU_DispDataFrmtIDX))));
 				break;}
 			case uiTrainDatPartIDX 			: {break;}
 			case uiNodeWtDispThreshIDX : {
@@ -799,7 +799,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 				mapMgr.setCurPreBuiltMapIDX((int) (getUIValue(uiMapPreBuiltDirIDX)));
 				break;}			
 			case uiMapNodeBMUTypeToDispIDX 	: {//type of examples being mapped to each map node to display
-				mapMgr.setMapNodeDispType(SOM_ExDataType.getVal((int)(getUIValue(uiMapNodeBMUTypeToDispIDX))));
+				mapMgr.setMapNodeDispType(SOM_ExDataType.getEnumByIndex((int)(getUIValue(uiMapNodeBMUTypeToDispIDX))));
 				break;}			
 			case uiMseRegionSensIDX 		: {			break;}
 			case uiFtrSelectIDX				: {		//feature idx map to display

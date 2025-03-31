@@ -8,8 +8,7 @@ import java.util.Map;
  * @author john turner 
  */
 public enum SOM_ExDataType {
-	Training(0), Testing(1), Validation(2), Product(3), MapNode(4), MouseOver(5);
-	private int value; 
+	Training, Testing, Validation, Product, MapNode, MouseOver;
 	private final String[] _typeExplanation = new String[] {
 			"Training Data (Used to train the SOM)", 
 			"Testing Data (Held-out training data used to investigate training)",
@@ -20,14 +19,14 @@ public enum SOM_ExDataType {
 	private static final String[] _typeName = new String[] {"Training","Testing","Validation","Product","MapNode","MouseOver"};
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, SOM_ExDataType> map = new HashMap<Integer, SOM_ExDataType>(); 
-	static { for (SOM_ExDataType enumV : SOM_ExDataType.values()) { map.put(enumV.value, enumV);}}
-	private SOM_ExDataType(int _val){value = _val;} 
-	public int getVal(){return value;}
-	public static SOM_ExDataType getVal(int idx){return map.get(idx);}
+	static { for (SOM_ExDataType enumV : SOM_ExDataType.values()) { map.put(enumV.ordinal(), enumV);}}
+	public int getVal(){return ordinal();}
+	public static SOM_ExDataType getEnumByIndex(int idx){return map.get(idx);}
+	public static SOM_ExDataType getEnumFromValue(int idx){return map.get(idx);}
 	public static int getNumVals(){return map.size();}						//get # of values in enum
-	public String getName() {return _typeName[value];}
+	public String getName() {return _typeName[ordinal()];}
 	@Override
-    public String toString() { return ""+value + ":"+_typeExplanation[value]; }	
+    public String toString() { return ""+ordinal() + ":"+_typeExplanation[ordinal()]; }	
 }//enum ExDataType
 
 

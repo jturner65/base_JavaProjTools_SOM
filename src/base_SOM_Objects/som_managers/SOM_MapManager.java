@@ -829,10 +829,10 @@ public abstract class SOM_MapManager {
 	///////////////////////////////////////////
 	// map image init	
 	public final void initFromUIWinInitMe(int _trainDatFrmt,int _BMUDispDatFrmt, float _mapNodeWtDispThresh, float _mapNodePopDispThreshPct, int _mapNodeDispType) {
-		setCurrentTrainDataFormat(SOM_FtrDataType.getVal(_trainDatFrmt));
-		setBMU_DispFtrTypeFormat(SOM_FtrDataType.getVal(_BMUDispDatFrmt));
+		setCurrentTrainDataFormat(SOM_FtrDataType.getEnumByIndex(_trainDatFrmt));
+		setBMU_DispFtrTypeFormat(SOM_FtrDataType.getEnumByIndex(_BMUDispDatFrmt));
 		mapNodeWtDispThresh = _mapNodeWtDispThresh;
-		mapNodeDispType = SOM_ExDataType.getVal(_mapNodeDispType);
+		mapNodeDispType = SOM_ExDataType.getEnumByIndex(_mapNodeDispType);
 		if(mapNodePopDispThreshPct != _mapNodePopDispThreshPct) {
 			mapNodePopDispThreshPct = _mapNodePopDispThreshPct;
 			buildMapNodePopGraphImage();
@@ -1314,7 +1314,7 @@ public abstract class SOM_MapManager {
 	 * @param typeIDX type of data
 	 */
 	private void addMappedNodesToEmptyNodes_FtrDist(HashSet<SOM_MapNode> withMap, HashSet<SOM_MapNode> withOutMap, int typeIDX) {
-		msgObj.dispMessage("SOM_MapManager::"+name,"addMappedNodesToEmptyNodes_FtrDist","Start assigning " +withOutMap.size() + " map nodes that are not BMUs to any " +SOM_ExDataType.getVal(typeIDX).getName() + " examples to have nearest map node to them as BMU.", MsgCodes.info5);		
+		msgObj.dispMessage("SOM_MapManager::"+name,"addMappedNodesToEmptyNodes_FtrDist","Start assigning " +withOutMap.size() + " map nodes that are not BMUs to any " +SOM_ExDataType.getEnumByIndex(typeIDX).getName() + " examples to have nearest map node to them as BMU.", MsgCodes.info5);		
 		msgObj.dispMessage("SOM_MapManager::"+name,"addMappedNodesToEmptyNodes_FtrDist","Start building map of nodes with examples keyed by ftr idx of non-zero ftrs", MsgCodes.info5);		
 		Double minSqDist;
 		float minMapSqDist, mapSqDist;
@@ -1368,7 +1368,7 @@ public abstract class SOM_MapManager {
 			
 			emptyNode.copyMapNodeExamples(minSqDist, closestMapNode, typeIDX);			//adds single closest -map- node we know has a label, or itself if none found
 		}//for each non-mapped node
-		msgObj.dispMessage("SOM_MapManager::"+name,"addMappedNodesToEmptyNodes_FtrDist","Finished assigning " +withOutMap.size() + " map nodes that are not BMUs to any "  +SOM_ExDataType.getVal(typeIDX).getName() + " examples to have nearest map node to them as BMU.", MsgCodes.info5);
+		msgObj.dispMessage("SOM_MapManager::"+name,"addMappedNodesToEmptyNodes_FtrDist","Finished assigning " +withOutMap.size() + " map nodes that are not BMUs to any "  +SOM_ExDataType.getEnumByIndex(typeIDX).getName() + " examples to have nearest map node to them as BMU.", MsgCodes.info5);
 	}//addMappedNodesToEmptyNodes_FtrDist
 	
 	/**
@@ -2590,7 +2590,7 @@ public abstract class SOM_MapManager {
 	//set current map ftr type, and update ui if necessary
 	public void setCurrentTrainDataFormat(SOM_FtrDataType _frmt) {	curMapTrainFtrType = _frmt; msgObj.dispInfoMessage("SOM_MapManager::"+name,"setCurrentTrainDataFormat","curMapTrainFtrType set to : " +curMapTrainFtrType + "."); projConfigData.setFtrDataTypeUsedToTrain(curMapTrainFtrType.getBrfName());}//setCurrentDataFormat
 	public void setCurrentTrainDataFormatFromConfig(int _frmt) {
-		curMapTrainFtrType = SOM_FtrDataType.getVal(_frmt); 
+		curMapTrainFtrType = SOM_FtrDataType.getEnumByIndex(_frmt); 
 		msgObj.dispInfoMessage("SOM_MapManager::"+name,"setCurrentTrainDataFormatFromConfig","curMapTrainFtrType set to : " +curMapTrainFtrType + " from Config."); 
 		if (win != null) {win.setFtrTrainTypeFromConfig(_frmt);}		
 	}//setCurrentDataFormat

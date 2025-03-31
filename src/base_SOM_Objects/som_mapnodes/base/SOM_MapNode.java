@@ -265,7 +265,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 		mapNodeLoc.set(mapLoc);
 		uMatClr = new int[3];
 		BMUExampleNodes = new SOM_MapNodeBMUExamples[SOM_ExDataType.getNumVals()];
-		for(int i=0;i<BMUExampleNodes.length;++i) {	BMUExampleNodes[i] = new SOM_MapNodeBMUExamples(this,SOM_ExDataType.getVal(i));	}
+		for(int i=0;i<BMUExampleNodes.length;++i) {	BMUExampleNodes[i] = new SOM_MapNodeBMUExamples(this,SOM_ExDataType.getEnumByIndex(i));	}
 		uMatrixSegData = new SOM_MapNodeSegmentData(this, this.OID+"_UMatrixData", "UMatrix Distance");
 		//build structure that holds counts of classes mapped to this node
 		classSegManager = new SOM_MapNodeClassSegMgr(this);		
@@ -604,7 +604,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 		BMUExampleNodes[_typeIDX].setCopyOfMapNode(dist, ex.BMUExampleNodes[_typeIDX]);
 		hasMappedExamples[_typeIDX]=false;
 		//add relelvant tags, if any, for training examples - only call if being called by training examples
-		if(SOM_ExDataType.Training == SOM_ExDataType.getVal(_typeIDX)) {	addMapNodeExToBMUs_Priv(dist,ex);}
+		if(SOM_ExDataType.Training == SOM_ExDataType.getEnumByIndex(_typeIDX)) {	addMapNodeExToBMUs_Priv(dist,ex);}
 	}//addMapNodeExToBMUs 
 	
 	//finalize all calculations for examples using this node as a bmu - this calculates quantities based on totals derived, used for visualizations

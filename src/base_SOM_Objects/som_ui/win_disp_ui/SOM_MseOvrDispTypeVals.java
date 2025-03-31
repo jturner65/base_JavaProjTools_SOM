@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum SOM_MseOvrDispTypeVals {
-	mseOvrMapNodeLocIDX (0), mseOvrUMatDistIDX (1), mseOvrMapNodePopIDX (2),  mseOvrFtrIDX (3), mseOvrClassIDX  (4),  mseOvrCatIDX (5),  mseOvrNoneIDX(6),  mseOvrOtherIDX(7);	
-	private int value; 
+	mseOvrMapNodeLocIDX, mseOvrUMatDistIDX, mseOvrMapNodePopIDX, mseOvrFtrIDX, mseOvrClassIDX, mseOvrCatIDX, mseOvrNoneIDX, mseOvrOtherIDX;
 	private static final String[] 
 			_typeExplanation = new String[] {
 					"Map Node Location and Coordinates",
@@ -24,17 +23,17 @@ public enum SOM_MseOvrDispTypeVals {
 			_typeBrfName = new String[] {"MapNodeLoc","UMatDist","Population","Features","Classes","Categories","None","Other"};
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, SOM_MseOvrDispTypeVals> map = new HashMap<Integer, SOM_MseOvrDispTypeVals>(); 
-		static { for (SOM_MseOvrDispTypeVals enumV : SOM_MseOvrDispTypeVals.values()) { map.put(enumV.value, enumV);}}
-	private SOM_MseOvrDispTypeVals(int _val){value = _val;} 
-	public int getVal(){return value;}
-	public static SOM_MseOvrDispTypeVals getVal(int idx){return map.get(idx);}
+		static { for (SOM_MseOvrDispTypeVals enumV : SOM_MseOvrDispTypeVals.values()) { map.put(enumV.ordinal(), enumV);}}
+	public int getVal(){return ordinal();}
+	public static SOM_MseOvrDispTypeVals getEnumByIndex(int idx){return map.get(idx);}
+	public static SOM_MseOvrDispTypeVals getEnumFromValue(int idx){return map.get(idx);}
 	public static int getNumVals(){return map.size();}						//get # of values in enum
-	public String getName() {return _typeName[value];}
-	public String getBrfName() {return _typeBrfName[value];}
-	public String getExplanation() {return _typeExplanation[value];}
+	public String getName() {return _typeName[ordinal()];}
+	public String getBrfName() {return _typeBrfName[ordinal()];}
+	public String getExplanation() {return _typeExplanation[ordinal()];}
 	public static String getNameByVal(int _val) {return _typeName[_val];}
 	public static String getBrfNameByVal(int _val) {return _typeBrfName[_val];}
 	public static String getExplanationByVal(int _val) {return _typeExplanation[_val];}
 	@Override
-    public String toString() { return ""+value + ":"+_typeExplanation[value]; }	
+    public String toString() { return ""+ordinal() + ":"+_typeExplanation[ordinal()]; }	
 }
