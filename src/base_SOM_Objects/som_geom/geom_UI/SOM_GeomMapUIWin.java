@@ -48,7 +48,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 */
 	@Override
 	protected final void initUIBox(){		
-		float [] menuUIClkCoords = animWin.uiClkCoords;
+		float [] menuUIClkCoords = animWin.getUIClkCoords();
 		msgObj.dispInfoMessage(className, "initUIBox", "Using animWin.uiClkCoords : y == "+ menuUIClkCoords[3] + " | height ==  "+menuUIClkCoords[3]);
 		initUIClickCoords(menuUIClkCoords[0],menuUIClkCoords[3],menuUIClkCoords[2],menuUIClkCoords[3]);			
 	}
@@ -72,7 +72,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * @return total number of privBtnFlags in instancing class (including those not displayed)
 	 */
 	protected final int initAllSOMPrivBtns_Indiv(ArrayList<Object[]> tmpBtnNamesArray) {
-		tmpBtnNamesArray.add(new Object[] {"Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr", mapShowLocClrIDX});          
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr"}, mapShowLocClrIDX));          
 		return _numPrivFlags;
 	}
 	

@@ -275,32 +275,32 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 */
 	protected final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray){	
 		//add an entry for each button, in the order they are wished to be displayed		
-		tmpBtnNamesArray.add(new Object[]{"Building SOM","Build SOM ",buildSOMExe});
-		tmpBtnNamesArray.add(new Object[]{"Reset Dflt UI Vals","Reset Dflt UI Vals",resetMapDefsIDX});
-		tmpBtnNamesArray.add(new Object[]{"Using ChiSq for Ftr Dist", "Not Using ChiSq Distance", mapUseChiSqDistIDX});       
-		tmpBtnNamesArray.add(new Object[]{"Prdct Dist ignores 0-ftrs","Prdct Dist w/all ftrs", mapExclProdZeroFtrIDX});    
-		tmpBtnNamesArray.add(new Object[]{"Showing UMat (Bi-Cubic)", "Showing Ftr Map", mapDrawUMatrixIDX});        
-		tmpBtnNamesArray.add(new Object[]{"Hide Nodes", "Show Nodes", mapDrawAllMapNodesIDX});    
-		tmpBtnNamesArray.add(new Object[]{"Hide Node Lbls", "Show Node Lbls", mapDrawNodeLblIDX});      
-		tmpBtnNamesArray.add(new Object[]{"Hide Nodes (by Pop)", "Show Nodes (by Pop)", mapDrawPopMapNodesIDX});    
-		tmpBtnNamesArray.add(new Object[]{"Hide Nodes w/o mapped Ex","Show Nodes w/o mapped Ex",mapDrawNodesWith0MapExIDX});
-		tmpBtnNamesArray.add(new Object[]{"Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)", mapDrawWtMapNodesIDX});     
-		tmpBtnNamesArray.add(new Object[]{"Hide Node Pop Graph", "Show Node Pop Graph", drawMapNodePopGraphIDX});
-		tmpBtnNamesArray.add(new Object[]{"Hide Train Data", "Show Train Data", mapDrawTrainDatIDX});       
-		tmpBtnNamesArray.add(new Object[]{"Hide Test Data", "Show Test Data", mapDrawTestDatIDX});        
-		tmpBtnNamesArray.add(new Object[]{"Hide Ftr Wt Segments", "Show Ftr Wt Segments", mapDrawFtrWtSegMembersIDX});
-		tmpBtnNamesArray.add(new Object[]{"Hide Clstr (U-Dist)", "Show Clstr (U-Dist)", mapDrawUMatSegMembersIDX}); 
-		tmpBtnNamesArray.add(new Object[]{"Hide Clstr Image", "Show Clstr Image", mapDrawUMatSegImgIDX});  
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Building SOM","Build SOM "},buildSOMExe));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Reset Dflt UI Vals","Reset Dflt UI Vals"},resetMapDefsIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Using ChiSq for Ftr Dist", "Not Using ChiSq Distance"}, mapUseChiSqDistIDX));       
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Prdct Dist ignores 0-ftrs","Prdct Dist w/all ftrs"}, mapExclProdZeroFtrIDX));    
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing UMat (Bi-Cubic)", "Showing Ftr Map"}, mapDrawUMatrixIDX));        
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Nodes", "Show Nodes"}, mapDrawAllMapNodesIDX));    
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Node Lbls", "Show Node Lbls"}, mapDrawNodeLblIDX));      
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Nodes (by Pop)", "Show Nodes (by Pop)"}, mapDrawPopMapNodesIDX));    
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Nodes w/o mapped Ex","Show Nodes w/o mapped Ex"},mapDrawNodesWith0MapExIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)"}, mapDrawWtMapNodesIDX));     
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Node Pop Graph", "Show Node Pop Graph"}, drawMapNodePopGraphIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Train Data", "Show Train Data"}, mapDrawTrainDatIDX));       
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Test Data", "Show Test Data"}, mapDrawTestDatIDX));        
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Ftr Wt Segments", "Show Ftr Wt Segments"}, mapDrawFtrWtSegMembersIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Clstr (U-Dist)", "Show Clstr (U-Dist)"}, mapDrawUMatSegMembersIDX)); 
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hide Clstr Image", "Show Clstr Image"}, mapDrawUMatSegImgIDX));  
 		
 		//these are only enabled if they have been defined to return values from instancing class
 		String[] classBtnTFLabels = getClassBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{classBtnTFLabels[0],classBtnTFLabels[1],mapDrawClassSegmentsIDX});}		
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {classBtnTFLabels[0],classBtnTFLabels[1]},mapDrawClassSegmentsIDX));}		
 		String[] catBtnTFLabels = getCategoryBtnTFLabels();
-		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{catBtnTFLabels[0],catBtnTFLabels[1],mapDrawCategorySegmentsIDX});}				
+		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {catBtnTFLabels[0],catBtnTFLabels[1]},mapDrawCategorySegmentsIDX));}				
 		String[] saveSegmentTFLabels = getSegmentSaveBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{saveSegmentTFLabels[0],saveSegmentTFLabels[1],saveAllSegmentMapsIDX});}		
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {saveSegmentTFLabels[0],saveSegmentTFLabels[1]},saveAllSegmentMapsIDX));}		
 		String[] catClassLockBtnTFLabels = getClassCatLockBtnTFLabels();
-		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(new Object[]{catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1],mapLockClassCatSegmentsIDX});}	
+		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1]},mapLockClassCatSegmentsIDX));}	
 		//add instancing-class specific buttons - returns total # of private flags in instancing class
 		return initAllSOMPrivBtns_Indiv(tmpBtnNamesArray);
 		

@@ -238,28 +238,28 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// add an entry for each button, in the order they are wished to be displayed
 		// true tag, false tag, btn IDX
 
-		tmpBtnNamesArray.add(new Object[]{"Debugging", "Debug", Base_BoolFlags.debugIDX});
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Debugging", "Debug"}, Base_BoolFlags.debugIDX));
 		// UI",drawSOM_MapUIVis});
-		tmpBtnNamesArray.add(new Object[]{"Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs", regenUIObjsIDX});
-		tmpBtnNamesArray.add(new Object[]{"Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects",	showFullSourceObjIDX});
-		tmpBtnNamesArray.add(new Object[]{"Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points", showSamplePntsIDX});
-		tmpBtnNamesArray.add(new Object[]{"Showing Labels", "Show Labels", showUIObjLabelIDX});
-		tmpBtnNamesArray.add(new Object[]{"Showing Sample Labels", "Show Sample Labels", showUIObjSmplsLabelIDX});
-		tmpBtnNamesArray.add(new Object[]{"Showing Loc-based Color", "Showing Random Color", useUIObjLocAsClrIDX});
-		tmpBtnNamesArray.add(new Object[]{"Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs", showFullTrainingObjIDX});
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs"}, regenUIObjsIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects"},	showFullSourceObjIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points"}, showSamplePntsIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing Labels", "Show Labels"}, showUIObjLabelIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing Sample Labels", "Show Sample Labels"}, showUIObjSmplsLabelIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing Loc-based Color", "Showing Random Color"}, useUIObjLocAsClrIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs"}, showFullTrainingObjIDX));
 
-		tmpBtnNamesArray.add(new Object[]{"Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light",	showSelUIObjIDX});
-		// tmpBtnNamesArray.add(new Object[]{"Train From " +geomObjType.getName()+ " Samples",
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light"},	showSelUIObjIDX));
+		// tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Train From " +geomObjType.getName()+ " Samples",
 		// "Train From " +geomObjType.getName()+ " Centers/Bases", useSmplsForTrainIDX});
-		// tmpBtnNamesArray.add(new Object[]{"Save Data", "Save Data",
+		// tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Save Data", "Save Data",
 		// saveUIObjDataIDX});
-		tmpBtnNamesArray.add(new Object[]{"Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs", allTrainExUniqueIDX});
-		tmpBtnNamesArray.add(new Object[]{"Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX});
-		tmpBtnNamesArray.add(new Object[]{"Showing BMU-derived Locs", "Showing Actual Locs", showMapBasedLocsIDX});
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs"}, allTrainExUniqueIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing Map Node Geometry", "Show Map Node Geometry"}, drawMapNodeGeomObjsIDX));
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing BMU-derived Locs", "Showing Actual Locs"}, showMapBasedLocsIDX));
 
 		String[] showWFObjsTFLabels = getShowWireFrameBtnTFLabels();
 		if ((null != showWFObjsTFLabels) && (showWFObjsTFLabels.length == 2)) {
-			tmpBtnNamesArray.add(new Object[]{showWFObjsTFLabels[0], showWFObjsTFLabels[1], showObjByWireFrmIDX});
+			tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {showWFObjsTFLabels[0], showWFObjsTFLabels[1]}, showObjByWireFrmIDX));
 		}
 
 		// add instancing-class specific buttons - returns total # of private flags in
