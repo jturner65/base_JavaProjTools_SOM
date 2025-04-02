@@ -430,17 +430,17 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 * pass the list of values for the feature map select display list box, in idx order
 	 * @param ftrStrVals : list of values to display for each feature
 	 */
-	public final void setUI_FeatureListVals(String[] ftrStrVals) {	setAllUIListValues(uiFtrSelectIDX, ftrStrVals);	}
+	public final void setUI_FeatureListVals(String[] ftrStrVals) {	setAllUIListValues(uiFtrSelectIDX, ftrStrVals, true);	}
 	/**
 	 * pass the list of values for the category list box, in idx order
 	 * @param categoryVals : list of values to display for category select list
 	 */
-	public final void setUI_CategoryListVals(String[] categoryVals) {	if(privFlags.getFlag(_categoryCanBeShownIDX)) {	setAllUIListValues(uiCategorySelectIDX, categoryVals);	}}
+	public final void setUI_CategoryListVals(String[] categoryVals) {	if(privFlags.getFlag(_categoryCanBeShownIDX)) {	setAllUIListValues(uiCategorySelectIDX, categoryVals, true);	}}
 	/**
 	 * pass the list of values for the class list box, in idx order
 	 * @param classVals : list of values to display for class select list
 	 */
-	public final void setUI_ClassListVals(String[] classVals) {		if(privFlags.getFlag(_classCanBeShownIDX)) {		setAllUIListValues(uiClassSelectIDX, classVals);	}}
+	public final void setUI_ClassListVals(String[] classVals) {		if(privFlags.getFlag(_classCanBeShownIDX)) {		setAllUIListValues(uiClassSelectIDX, classVals, true);	}}
 	
 	/**
 	 * Instancing class-specific (application driven) UI objects should be defined
@@ -610,7 +610,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 */
 	public final void setPreBuiltMapArray(String[] _pbltMapArray) {
 		msgObj.dispInfoMessage("SOM_MapUIWin","setPreBuiltMapArray","Attempting to set prebuilt map values list of size : " +_pbltMapArray.length);
-		int curIDX = setAllUIListValues(uiMapPreBuiltDirIDX,_pbltMapArray);
+		int curIDX = setAllUIListValues(uiMapPreBuiltDirIDX,_pbltMapArray, true);
 		getUIDataUpdater().setIntValue(uiMapPreBuiltDirIDX, (int) getUIValue(uiMapPreBuiltDirIDX));
 		mapMgr.setCurPreBuiltMapIDX(curIDX);
 	}//
