@@ -406,7 +406,7 @@ public abstract class SOM_MapManager {
 		//fileIO is used to load and save info from/to local files except for the raw data loading, which has its own handling
 		fileIO = new FileIOManager(msgObj,"SOM_MapManager::"+name);
 		//want # of usable background threads.  Leave 2 for primary process (and potential draw loop)
-		numUsableThreads = Runtime.getRuntime().availableProcessors() - 2;
+		numUsableThreads = win.getNumThreadsAvailable() - 2;
 		//set if this is multi-threaded capable - need more than 1 outside of 2 primary threads (i.e. only perform multithreaded calculations if 4 or more threads are available on host)
 		setFlag(isMTCapableIDX, numUsableThreads>1);
 		//default to have mouse location display on side of screen
