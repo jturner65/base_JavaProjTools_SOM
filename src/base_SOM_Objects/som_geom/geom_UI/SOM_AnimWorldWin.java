@@ -141,13 +141,12 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		 * @param _initSceneFocusVal initial focus target for camera
 		 */
 		
-		GUI_AppWinVals GeomMapUIWinDef = new GUI_AppWinVals(-1, new String[] {"Map UI for " + owner, "Visualize SOM Node location for "+owner},
+		GUI_AppWinVals GeomMapUIWinDef = AppMgr.buildGUI_AppWinVals(-1, "Map UI for " + owner, "Visualize SOM Node location for "+owner,
 				new boolean[] {false, false, false, false},
 				new float[][] {_dimOpen, _dimClosed, _initCamVals},
-				new int [][] {new int[]{20,40,50,200}, new int[]{255,255,255,255},
-					new int[]{180,180,180,255},new int[]{100,100,100,255},
-					new int[]{0,0,0,200},new int[]{255,255,255,255}},				
-				new myPoint(-AppMgr.gridDimX/2.0,-AppMgr.gridDimY/2.0,-AppMgr.gridDimZ/2.0), new myVector(0,0,0));
+				new int [][] {new int[]{20,40,50,200}, ri.getClr(IRenderInterface.gui_White, 255),
+					ri.getClr(IRenderInterface.gui_LightGray, 255),ri.getClr(IRenderInterface.gui_Gray, 255),
+					ri.getClr(IRenderInterface.gui_Black, 200),ri.getClr(IRenderInterface.gui_White, 255)});
 		
 		somUIWin = new SOM_GeomMapUIWin(ri, AppMgr, GeomMapUIWinDef, AppMgr.getArgsMap(), this);	
 		

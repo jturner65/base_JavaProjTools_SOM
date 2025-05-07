@@ -108,7 +108,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		uiNodePopDispThreshIDX		= 19, //only display populated map nodes that are this size or larger (log of population determines size)		
 		uiNodeInSegThreshIDX		= 20, //threshold of u-matrix weight for nodes to belong to same segment
 		
-		uiMseRegionSensIDX			= 21, //senstivity threshold for mouse-over
+		uiMseRegionSensIDX			= 21, //sensitivity threshold for mouse-over
 		uiFtrSelectIDX				= 22, //pick the feature to display, if ftr-idx wt graphs are being displayed
 		uiCategorySelectIDX			= 23, //pick the category to display, if category mapping is available/enabled
 		uiClassSelectIDX			= 24;			//pick the class to display, if class mapping is available/enabled
@@ -258,7 +258,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 * set map manager from instancing app and reset all mapMgr-governed values in window
 	 */
 	public void setMapMgr(SOM_MapManager _mapMgr) {
-		this.msgObj.dispInfoMessage("SOM_MapUIWin", "setMapMgr", "Start setting map manager from " +  mapMgr.getName() + " to " + _mapMgr.getName());		
+		msgObj.dispInfoMessage("SOM_MapUIWin", "setMapMgr", "Start setting map manager from " +  mapMgr.getName() + " to " + _mapMgr.getName());		
 		//set passed map manager as current
 		mapMgr = _mapMgr;
 		//re-init window to use this map manager
@@ -580,7 +580,10 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		
 	}//buildNewSOMMap		
 	
-	//update UI values from passed SOM_MAPDat object's current state
+	/**
+	 * update UI values from passed SOM_MapDat object's current state
+	 * @param mapDat 
+	 */
 	public final void setUIValues(SOM_MapDat mapDat) {
 		HashMap<String, Integer> mapInts = mapDat.getMapInts();
 		HashMap<String, Float> mapFloats = mapDat.getMapFloats();
@@ -630,7 +633,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	@Override
 	public final void updateUIDataVal_Integer(String key, Integer val) {
 		if(!isMapNameOfType(mapDatNames_Ints, key)) {
-			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_Integer","Attempting to set UI object with unknown Key : " +key + " using integer value " + val +". Aborting.",MsgCodes.warning1);	
+			msgObj.dispWarningMessage("SOM_MapUIWin","updateUIDataVal_Integer","Attempting to set UI object with unknown Key : " +key + " using integer value " + val +". Aborting.");	
 			return;}
 		Integer uiObjIDX = getUIidxFromMapKeyString(key);
 		getUIDataUpdater().setIntValue(uiObjIDX, (int) setNewUIValue(uiObjIDX, val));
@@ -648,7 +651,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	@Override
 	public final void updateUIDataVal_Float(String key, Float val) {
 		if(!isMapNameOfType(mapDatNames_Floats, key)) {
-			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_Float","Attempting to set UI object with unknown Key : " +key + " using integer value " + val +". Aborting.",MsgCodes.warning1);	
+			msgObj.dispWarningMessage("SOM_MapUIWin","updateUIDataVal_Float","Attempting to set UI object with unknown Key : " +key + " using integer value " + val +". Aborting.");	
 			return;}
 		Integer uiObjIDX = getUIidxFromMapKeyString(key);
 		getUIDataUpdater().setFloatValue(uiObjIDX, (float)setNewUIValue(uiObjIDX, val));
@@ -661,13 +664,13 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	@Override
 	public final void updateUIDataVal_String(String key, String val) {
 		if(!isMapNameOfType(mapDatNames_Strings, key)) {
-			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_String","Attempting to set UI object with unknown Key : " +key + " using String value " + val +". Aborting.",MsgCodes.warning1);
+			msgObj.dispWarningMessage("SOM_MapUIWin","updateUIDataVal_String","Attempting to set UI object with unknown Key : " +key + " using String value " + val +". Aborting.");
 			return;}
 		Integer uiObjIDX = getUIidxFromMapKeyString(key);
 		int[] retVals = setDispUIListVal(uiObjIDX, val);
 		//if retVals[1] != 0 then not ok
 		if(retVals[1] != 0) {
-			msgObj.dispMessage("SOM_MapUIWin","updateUIDataVal_String","Attempting to set list object : " +key + " to unknown list value " + val +". Aborting.",MsgCodes.warning1);
+			msgObj.dispWarningMessage("SOM_MapUIWin","updateUIDataVal_String","Attempting to set list object : " +key + " to unknown list value " + val +". Aborting.");
 		} else {
 			getUIDataUpdater().setIntValue(uiObjIDX, retVals[0]);
 		}
@@ -863,17 +866,15 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 				settingCategoryFromClass = false;
 			}
 		}		
-	}//setJPGroupIDXFromJp
+	}//setUIWinVals_HandleClass
 	/**
 	 * Called when category display select value is changed in ui
 	 */
 	protected final void setUIWinVals_HandleCategory(boolean settingCategoryFromClass) {
-		//msgObj.dispInfoMessage("SOM WIN","setUIWinVals::uiJPGToDispIDX", "Click : settingJPGFromJp : " + settingJPGFromJp);
 		if(!settingCategoryFromClass) {
 			int curClassIdxVal = (int)getUIValue(uiClassSelectIDX);
 			int classIdxToSet = getClassFromCategory((int)getUIValue(uiCategorySelectIDX), curClassIdxVal);
 			if(curClassIdxVal != classIdxToSet) {
-				//msgObj.dispMessage("SOM WIN","setUIWinVals:uiJPGToDispIDX", "Attempt to modify uiJPToDispIDX : curJPIdxVal : "  +curJPIdxVal + " | jpToSet : " + jpIdxToSet, MsgCodes.info1);
 				settingClassFromCategory = true;
 				setNewUIValue(uiClassSelectIDX, classIdxToSet);	
 				setUIWinVals(uiClassSelectIDX);
@@ -1005,7 +1006,6 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		if(val) {		mapMgr.setCustUIMseDispData(btn);} else {	mapMgr.setCustUIMseDispData(-1);}	
 	}
 
-	
 	//given pixel location relative to upper left corner of map, return map node float - this measures actual distance in map node coords
 	//so rounding to ints give map node tuple coords, while float gives interp between neighbors
 	//protected final float[] getMapNodeLocFromPxlLoc(float mapPxlX, float mapPxlY, float sclVal){	return new float[]{(sclVal* mapPxlX * mapMgr.getNodePerPxlCol()) - .5f, (sclVal* mapPxlY * mapMgr.getNodePerPxlRow()) - .5f};}	
@@ -1018,7 +1018,6 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	protected final boolean checkMouseOvr(int mouseX, int mouseY){	
 		return mapMgr.checkMouseOvr(mouseX, mouseY, (float)getUIValue(uiMseRegionSensIDX));
 	}//chkMouseOvr
-	
 
 	/**
 	 * check mouse over/click in experiment; if btn == -1 then mouse over
@@ -1030,7 +1029,8 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 */
 	public final boolean checkMouseClick(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
 		return mapMgr.checkMouseClick(mouseX, mouseY, mseClckInWorld, mseBtn);
-	};
+	}
+	
 	/**
 	 * check mouse drag/move in experiment; if btn == -1 then mouse over
 	 * @param mouseX
@@ -1044,9 +1044,9 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 */
 	public final boolean checkMouseDragMove(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
 		return mapMgr.checkMouseDragMove(mouseX, mouseY,pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
-	};
+	}
 	
-	public final void checkMouseRelease() {mapMgr.checkMouseRelease();};
+	public final void checkMouseRelease() {mapMgr.checkMouseRelease();}
 	
 	//return strings for directory names and for individual file names that describe the data being saved.  used for screenshots, and potentially other file saving
 	//first index is directory suffix - should have identifying tags based on major/archtypical component of sim run

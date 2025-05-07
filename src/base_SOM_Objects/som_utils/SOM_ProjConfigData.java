@@ -534,7 +534,9 @@ public abstract class SOM_ProjConfigData {
 		setUIValsFromLoad();
 		msgObj.dispMessage("SOM_ProjConfigData","loadSOMMap_Config","Finished loading SOM Exe config data from " + expFileName, MsgCodes.info5);
 	}//loadSOM_Exp
-	//send current map data to map mgr to set ui values
+	/**
+	 * send current map data to map mgr to set ui values
+	 */
 	public void setUIValsFromLoad(){
 		mapMgr.setUIValsFromLoad(SOMExeDat);
 		mapMgr.setCurrentTrainDataFormatFromConfig(mapMgr.getDataFrmtTypeFromName(ftrTypeUsedToTrainStr).getVal());
