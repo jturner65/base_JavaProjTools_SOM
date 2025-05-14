@@ -81,9 +81,7 @@ public abstract class SOM_ProjConfigData {
 	protected final Calendar instancedNow;
 	//os used by project - this is passed from map
 	protected final String OSUsed;
-	//whether current OS supports ansi terminal color settings
-	public static boolean supportsANSITerm = false;
-	
+
 	//file name of project config file - these should not be changed 
 	protected static final String projectConfigFile = "projectConfig.txt";
 	//file name of experimental config for a particular experiment
@@ -162,8 +160,7 @@ public abstract class SOM_ProjConfigData {
 		//set invoking string for map executable - is platform dependent
 		String execStr = SOMExeName_base;
 		if (OSUsed.toLowerCase().contains("windows")) {			execStr += ".exe";			} 
-		supportsANSITerm = (System.console() != null && System.getenv().get("TERM") != null);		
-		msgObj.dispMessage("SOM_ProjConfigData","Constructor","OS this application is running on : "  + OSUsed + " | SOM Exec String : " +  execStr +" | Supports ANSI Terminal colors : " + supportsANSITerm, MsgCodes.info5);		
+		msgObj.dispMessage("SOM_ProjConfigData","Constructor","OS this application is running on : "  + OSUsed + " | SOM Exec String : " +  execStr +" | Supports ANSI Terminal colors : " + msgObj.getSupportsANSITerm(), MsgCodes.info5);		
 		SOM_Map_EXECSTR = execStr;				
 		//----end accumulate and manage OS info ----//		
 

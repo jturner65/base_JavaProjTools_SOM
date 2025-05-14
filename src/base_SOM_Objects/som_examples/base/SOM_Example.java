@@ -962,7 +962,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	}//findBMUFromNodes 
 
 	private final String _toCSVString(TreeMap<Integer, Float> ftrs) {
-		String res = ""+getDenseTrainDataKey()+",";//""+OID+",";
+		String res = ""+getDenseTrainDataKey()+",";
 		int numTrnFtrs = mapMgr.getNumTrainFtrs();
 		for(int i=0;i<numTrnFtrs;++i){
 			Float ftr = ftrs.get(i);			
@@ -981,7 +981,7 @@ public abstract class SOM_Example extends baseDataPtVis{
 	}//toCSVString
 
 	private final String _toLRNString(TreeMap<Integer, Float> ftrs, String sep) {
-		String res = ""+getDenseTrainDataKey()+sep;//""+OID+sep;
+		String res = ""+getDenseTrainDataKey()+sep;
 		int numTrnFtrs = mapMgr.getNumTrainFtrs();
 		for(int i=0;i<numTrnFtrs;++i){
 			Float ftr = ftrs.get(i);			

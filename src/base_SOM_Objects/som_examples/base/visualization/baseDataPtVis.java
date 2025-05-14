@@ -6,7 +6,7 @@ import base_UI_Objects.GUI_AppManager;
 import base_Utils_Objects.io.messaging.MessageObject;
 
 /**
- * This class holds functionality for rendering on the map.
+ * This class holds functionality for rendering on the mari.
  * Since this functionality is fundamentally different than the 
  * necessary functionality for feature calculation/manipulation
  * we have it separate from the base example class
@@ -88,72 +88,72 @@ public abstract class baseDataPtVis{
 
 	/**
 	 * draw this example with a line linking it to its best matching unit
-	 * @param p
+	 * @param ri
 	 * @param _rad
 	 * @param ID
 	 */
-	public final void drawMeLinkedToBMU(IRenderInterface p, float _rad, String ID){
-		p.pushMatState();
+	public final void drawMeLinkedToBMU(IRenderInterface ri, float _rad, String ID){
+		ri.pushMatState();
 		//draw point of radius rad at mapLoc - actual location on map
 		//show(myPointf P, float rad, int det, int[] clrs, String[] txtAra)
 		int[] clrAra = getMapNodeClrs();
-		p.showTextAra(mapLoc, _rad, drawDet, clrAra, new String[] {ID});
+		ri.showTextAra(mapLoc, _rad, drawDet, clrAra, new String[] {ID});
 		//draw line to bmu location
-		p.setColorValStroke(clrAra[1],255);
-		p.setStrokeWt(1.0f);
-		p.drawLine(mapLoc, mapNodeLoc);
-		p.popMatState();		
+		ri.setColorValStroke(clrAra[1],255);
+		ri.setStrokeWt(1.0f);
+		ri.drawLine(mapLoc, mapNodeLoc);
+		ri.popMatState();		
 	}//drawMeLinkedToBMU
 	
 	/**
 	 * 
-	 * @param p
+	 * @param ri
 	 */
-	public void drawMeSmallNoLbl(IRenderInterface p){
-		p.pushMatState();
+	public void drawMeSmallNoLbl(IRenderInterface ri){
+		ri.pushMatState();
 		int[] clrAra = getMapNodeClrs();
-		p.showPtAsSphere(mapLoc, 2, 2, clrAra[0],clrAra[1]); 
-		p.popMatState();		
+		ri.showPtAsSphere(mapLoc, 2, 2, clrAra[0],clrAra[1]); 
+		ri.popMatState();		
 	}	
 		
 	/**
 	 * override drawing in map nodes
-	 * @param p
+	 * @param ri
 	 */
-	public final void drawMeMap(IRenderInterface p){
-		p.pushMatState();	
+	public final void drawMeMap(IRenderInterface ri){
+		ri.pushMatState();	
 		int[] clrAra = getMapNodeClrs();
-		p.showPtAsSphere(mapLoc, getRad(), drawDet, clrAra[0],clrAra[1]);		
-		p.popMatState();		
+		ri.showPtAsSphere(mapLoc, getRad(), drawDet, clrAra[0],clrAra[1]);		
+		ri.popMatState();		
 	}//drawMeMap
 	
 	/**
 	 * override drawing in map nodes
 	 * @param AppMgr
-	 * @param p
+	 * @param ri
 	 * @param clr
 	 */
-	public final void drawMeMapClr(GUI_AppManager AppMgr, IRenderInterface p, int[] clr){
-		p.pushMatState();
+	public final void drawMeMapClr(GUI_AppManager AppMgr, IRenderInterface ri, int[] clr){
+		ri.pushMatState();
 		//draw point of radius rad at mapLoc
 		AppMgr.show_ClrAra(mapLoc, mapDrawRad,drawDet, clr, clr);
-		p.popMatState();		
+		ri.popMatState();		
 	}//drawMeMapClr
 	
 	/**
 	 * 
 	 * @param AppMgr
-	 * @param p
+	 * @param ri
 	 * @param lbl
 	 * @param clr
 	 * @param rad
 	 * @param rank
 	 */
-	public final void drawMeRanked(GUI_AppManager AppMgr, IRenderInterface p, String lbl, int[] clr, float rad, int rank){
-		p.pushMatState();
+	public final void drawMeRanked(GUI_AppManager AppMgr, IRenderInterface ri, String lbl, int[] clr, float rad, int rank){
+		ri.pushMatState();
 		//draw point of radius rad at maploc with label and no background box	
 		AppMgr.showNoBox_ClrAra(mapLoc, rad, drawDet, clr, clr, IRenderInterface.gui_White, lbl);
-		p.popMatState();
+		ri.popMatState();
 	}
 
 }//baseDataPtVis
