@@ -1003,11 +1003,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 * called after the dimensions of the visible window have changed
 	 */
 	@Override
-	protected final void setVisScreenDimsPriv() {
-		// float xStart = rectDim[0] + .5f*(curVisScrDims[0] -
-		// (curVisScrDims[1]-(2*xOff)));
-
-	}
+	protected final void setVisScreenDimsPriv() {}
 
 	@Override
 	protected final boolean hndlMouseMove_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld) {

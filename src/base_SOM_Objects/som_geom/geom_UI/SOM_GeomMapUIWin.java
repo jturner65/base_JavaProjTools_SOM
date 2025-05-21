@@ -85,7 +85,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		if(this.mapMgr != null) {return mapMgr;}
 		//no need to set win here - this is set in SOM Win UI Base class
 		//this is just a place holder - windows will set proper map manager when this window is selected to be active
-		return ((SOM_AnimWorldWin)AppMgr.getCurrentWindow()).getMapMgr();
+		return ((SOM_AnimWorldWin)AppMgr.getCurFocusDispWindow()).getMapMgr();
 	}
 
 	/**

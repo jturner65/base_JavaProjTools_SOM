@@ -19,8 +19,10 @@ public enum SOM_FtrDataType {
 			_typeBrfName = new String[] {"unNormFtrs","perFtrNorm","perExNorm"};
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, SOM_FtrDataType> map = new HashMap<Integer, SOM_FtrDataType>(); 
-		static { for (SOM_FtrDataType enumV : SOM_FtrDataType.values()) { map.put(enumV.ordinal(), enumV);}}
-	public int getVal(){return ordinal();}
+	static { for (SOM_FtrDataType enumV : SOM_FtrDataType.values()) { map.put(enumV.ordinal(), enumV);}}
+	
+	public int getVal() {return ordinal();}
+	public int getOrdinal() {return ordinal();}
 	public static SOM_FtrDataType getEnumByIndex(int idx){return map.get(idx);}
 	public static SOM_FtrDataType getEnumFromValue(int idx){return map.get(idx);}
 	public static int getNumVals(){return map.size();}						//get # of values in enum

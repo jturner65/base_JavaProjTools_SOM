@@ -24,7 +24,7 @@ public enum SOM_MseOvrDispTypeVals {
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, SOM_MseOvrDispTypeVals> map = new HashMap<Integer, SOM_MseOvrDispTypeVals>(); 
 		static { for (SOM_MseOvrDispTypeVals enumV : SOM_MseOvrDispTypeVals.values()) { map.put(enumV.ordinal(), enumV);}}
-	public int getVal(){return ordinal();}
+	public int getOrdinal() {return ordinal();}
 	public static SOM_MseOvrDispTypeVals getEnumByIndex(int idx){return map.get(idx);}
 	public static SOM_MseOvrDispTypeVals getEnumFromValue(int idx){return map.get(idx);}
 	public static int getNumVals(){return map.size();}						//get # of values in enum
