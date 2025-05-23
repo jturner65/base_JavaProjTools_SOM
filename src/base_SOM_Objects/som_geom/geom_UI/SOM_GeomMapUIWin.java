@@ -42,16 +42,18 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		animWin = _animWin;
 		super.initThisWin(false);
 	}
-
+	
 	/**
-	 * set up child class button rectangles - override this so that we 
+	 * Get the click coordinates formed by the parent
+	 * @return
 	 */
 	@Override
-	protected final void initUIBox(){		
+	protected final float[] getParentWindowUIClkCoords() {
 		float [] menuUIClkCoords = animWin.getUIClkCoords();
 		msgObj.dispInfoMessage(className, "initUIBox", "Using animWin.uiClkCoords : y == "+ menuUIClkCoords[3] + " | height ==  "+menuUIClkCoords[3]);
-		initUIClickCoords(menuUIClkCoords[0],menuUIClkCoords[3],menuUIClkCoords[2],menuUIClkCoords[3]);			
+		return new float[] {menuUIClkCoords[0],menuUIClkCoords[3],menuUIClkCoords[2],menuUIClkCoords[3]};
 	}
+	
 	/**
 	 * Initialize any UI control flags appropriate for specific instanced SOM mapUI window
 	 */
