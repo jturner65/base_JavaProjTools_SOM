@@ -174,6 +174,8 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// build map associated with this geometric experiment
 		// perform in this window since SOM window is subordinate to this one
 		mapMgr = buildGeom_SOMMapManager();
+		//set offset to use for custom menu objects
+		custMenuOffset = 0.0f;
 		// instance-specific init
 		initMe_Indiv();
 		// build default objects in screen
