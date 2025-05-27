@@ -100,7 +100,6 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		//moved from mapMgr ctor, to remove dependence on papplet in that object
 		//set offset to use for custom menu objects
 		custMenuOffset = 0.0f;
-		//pa.setAllMenuBtnNames(menuBtnNames);	
 		mapMgr.initMapAras(1, 1);
 	}
 

@@ -43,7 +43,7 @@ import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.SOM_MapDat;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_Render_Interface.IRenderInterface;
-import base_UI_Objects.my_procApplet;
+import base_UI_Objects.renderer.ProcessingRenderer;
 //import base_UI_Objects.IRenderInterface;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_Utils_Objects.io.file.FileIOManager;
@@ -841,7 +841,7 @@ public abstract class SOM_MapManager {
 		//mseOvrData = null;	
 	}
 	
-	//private final void reInitMapCubicSegments() {	if (win != null) {	mapUMatrixCubicSegmentsImg = win.pa.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, win.pa.ARGB);}}//ARGB to treat like overlay
+	//private final void reInitMapCubicSegments() {	if (win != null) {	mapUMatrixCubicSegmentsImg = win.ri.createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, win.ri.ARGB);}}//ARGB to treat like overlay
 	public final void initMapAras(int numFtrVals, int num2ndryMaps) {
 		if (win != null) {	
 			msgObj.dispMessage("SOM_MapManager::"+name,"initMapAras","Start Initializing per-feature map display to hold : "+ numFtrVals +" primary feature and " +num2ndryMaps + " secondary feature map images.", MsgCodes.info1);
@@ -850,11 +850,11 @@ public abstract class SOM_MapManager {
 			//int w = (int) (SOM_mapDims[0]/mapScaleVal), h = (int) (SOM_mapDims[1]/mapScaleVal);
 			int w = (int) (mapDims[0]/mapScaleVal), h = (int) (mapDims[1]/mapScaleVal);
 			mapPerFtrWtImgs = new PImage[numFtrVals];
-			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = ((my_procApplet)Base_DispWindow.ri).createImage(w, h, format);	}	
+			for(int i=0;i<mapPerFtrWtImgs.length;++i) {			mapPerFtrWtImgs[i] = ((ProcessingRenderer)Base_DispWindow.ri).createImage(w, h, format);	}	
 			
-			mapCubicUMatrixImg = ((my_procApplet)Base_DispWindow.ri).createImage(w, h, format);			
+			mapCubicUMatrixImg = ((ProcessingRenderer)Base_DispWindow.ri).createImage(w, h, format);			
 			//reInit MapCubicSegments 
-			mapUMatrixCubicSegmentsImg = ((my_procApplet)Base_DispWindow.ri).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
+			mapUMatrixCubicSegmentsImg = ((ProcessingRenderer)Base_DispWindow.ri).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
 			//instancing-window specific initializations
 			initMapArasIndiv(w,h, format,num2ndryMaps);
 		}
@@ -922,7 +922,7 @@ public abstract class SOM_MapManager {
 		if(win!=null) {
 			msgObj.dispInfoMessage("SOM_MapManager::"+name, "setMapSegmentImgClrs_UMatrix", "Start building mapUMatrixCubicSegmentsImg for UMatrix Display.");
 			//reinitialize map array
-			mapUMatrixCubicSegmentsImg = ((my_procApplet)Base_DispWindow.ri).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
+			mapUMatrixCubicSegmentsImg = ((ProcessingRenderer)Base_DispWindow.ri).createImage(mapCubicUMatrixImg.width,mapCubicUMatrixImg.height, PConstants.ARGB);
 			mapUMatrixCubicSegmentsImg.loadPixels();
 			//float[] c;	
 			//single threaded exec
@@ -978,7 +978,7 @@ public abstract class SOM_MapManager {
 				xVals[1] += numXLastPart;
 				mapImgBuilders.add(new SOM_FtrMapVisImgBldr(this,curMapTrainFtrType, mapPerFtrWtImgs, xVals, yVals,map_ftrsMin,map_ftrsDiffs, mapScaleVal));
 				invokeSOMFtrDispBuild(mapImgBuilders);
-				//try {mapImgFtrs = pa.th_exec.invokeAll(mapImgBuilders);for(Future<Boolean> f: mapImgFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }					
+				//try {mapImgFtrs = ri.th_exec.invokeAll(mapImgBuilders);for(Future<Boolean> f: mapImgFtrs) { f.get(); }} catch (Exception e) { e.printStackTrace(); }					
 			} else {
 				msgObj.dispMessage("SOM_MapManager::"+name, "setMapImgClrs", "Building Feature Map Vis Images in a Single thread.", MsgCodes.info5);
 				//single threaded exec
@@ -1465,7 +1465,7 @@ public abstract class SOM_MapManager {
 				Integer largestCount = tmpMapNodesByPopForType.firstKey();		
 				mapNodePopDispThreshVals[i]=largestCount*mapNodePopDispThreshPct;
 
-				mapNodePopGraph[i] = ((my_procApplet)Base_DispWindow.ri).createImage(largestCount, numMapNodes, PConstants.ARGB);
+				mapNodePopGraph[i] = ((ProcessingRenderer)Base_DispWindow.ri).createImage(largestCount, numMapNodes, PConstants.ARGB);
 				mapNodePopGraph[i].loadPixels();
 				int row = 0, pxlIDX = 0;
 				for(Integer count : tmpMapNodesByPopForType.keySet()) {
@@ -2166,9 +2166,9 @@ public abstract class SOM_MapManager {
 	
 	/**
 	 * draw map rectangle and map nodes
-	 * @param pa
+	 * @param ri
 	 */
-	public final void drawSOMMapData(IRenderInterface pa) {
+	public final void drawSOMMapData(IRenderInterface ri) {
 		PImage tmpImg;
 		int curImgNum;
 		if(win.getPrivFlag(SOM_MapUIWin.mapDrawUMatrixIDX)) {				
@@ -2178,142 +2178,142 @@ public abstract class SOM_MapManager {
 			tmpImg = mapPerFtrWtImgs[curFtrMapImgIDX];		
 			curImgNum = curFtrMapImgIDX;
 		}
-		pa.pushMatState();
-			pa.disableLights();
-			pa.scale(mapScaleVal);
+		ri.pushMatState();
+			ri.disableLights();
+			ri.scale(mapScaleVal);
 			//doing this in separate matrix stack frame because map is built small and scaled up
-			((my_procApplet)Base_DispWindow.ri).image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.getPrivFlag(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.setPrivFlag(SOM_MapUIWin.saveLocClrImgIDX,false);}			
-			if(win.getPrivFlag(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {((my_procApplet)Base_DispWindow.ri).image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
-			pa.enableLights();
-		pa.popMatState(); 
-		pa.pushMatState();
-			pa.disableLights();
+			((ProcessingRenderer)Base_DispWindow.ri).image(tmpImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal); if(win.getPrivFlag(SOM_MapUIWin.saveLocClrImgIDX)){tmpImg.save(getSOMLocClrImgForFtrFName(curImgNum));  win.setPrivFlag(SOM_MapUIWin.saveLocClrImgIDX,false);}			
+			if(win.getPrivFlag(SOM_MapUIWin.mapDrawUMatSegImgIDX)) {((ProcessingRenderer)Base_DispWindow.ri).image(mapUMatrixCubicSegmentsImg,SOM_mapLoc[0]/mapScaleVal,SOM_mapLoc[1]/mapScaleVal);}
+			ri.enableLights();
+		ri.popMatState(); 
+		ri.pushMatState();
+			ri.disableLights();
 			boolean drawLbl = win.getPrivFlag(SOM_MapUIWin.mapDrawNodeLblIDX);
 			boolean draw0PopNodes = win.getPrivFlag(SOM_MapUIWin.mapDrawNodesWith0MapExIDX);
-			pa.translate(SOM_mapLoc[0],SOM_mapLoc[1],0);	
-			if(win.getPrivFlag(SOM_MapUIWin.mapDrawTrainDatIDX)){			drawTrainData(pa);}	
-			if(win.getPrivFlag(SOM_MapUIWin.mapDrawTestDatIDX)) {			drawTestData(pa);}
-			if(win.getPrivFlag(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {	if(drawLbl) {drawPopMapNodes(pa, draw0PopNodes, mapNodeDispType.getVal());} else {drawPopMapNodesNoLbl(pa, draw0PopNodes, mapNodeDispType.getVal());}}
+			ri.translate(SOM_mapLoc[0],SOM_mapLoc[1],0);	
+			if(win.getPrivFlag(SOM_MapUIWin.mapDrawTrainDatIDX)){			drawTrainData(ri);}	
+			if(win.getPrivFlag(SOM_MapUIWin.mapDrawTestDatIDX)) {			drawTestData(ri);}
+			if(win.getPrivFlag(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {	if(drawLbl) {drawPopMapNodes(ri, draw0PopNodes, mapNodeDispType.getVal());} else {drawPopMapNodesNoLbl(ri, draw0PopNodes, mapNodeDispType.getVal());}}
 			else {numMapNodeByPopNowShown = 0;}
 		
 			if (curImgNum > -1) {
-				if(win.getPrivFlag(SOM_MapUIWin.mapDrawWtMapNodesIDX)){			drawNodesWithWt(pa, mapNodeWtDispThresh, curFtrMapImgIDX);} 
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawWtMapNodesIDX)){			drawNodesWithWt(ri, mapNodeWtDispThresh, curFtrMapImgIDX);} 
 				//display ftr-wt, class and category images, if enabled
-				if(win.getPrivFlag(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawFtrWtSegments(pa, mapNodeWtDispThresh, curFtrMapImgIDX);}
-				if(win.getPrivFlag(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawClassSegments(pa,curClassLabel);	}		
-				if(win.getPrivFlag(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawCategorySegments(pa,curCategoryLabel);	}				
-				drawPerFtrMap_Indiv(pa);
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawFtrWtSegments(ri, mapNodeWtDispThresh, curFtrMapImgIDX);}
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawClassSegments(ri,curClassLabel);	}		
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawCategorySegments(ri,curCategoryLabel);	}				
+				drawPerFtrMap_Indiv(ri);
 			} else {			
-				if(win.getPrivFlag(SOM_MapUIWin.mapDrawUMatSegMembersIDX)) {		drawUMatrixSegments(pa);}
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawUMatSegMembersIDX)) {		drawUMatrixSegments(ri);}
 				
-				if(win.getPrivFlag(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawAllFtrWtSegments(pa, mapNodeWtDispThresh);}	//draw all segments - will overlap here, might look like garbage		
-				if(win.getPrivFlag(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawAllClassSegments(pa);}
-				if(win.getPrivFlag(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawAllCategorySegments(pa);}
-				drawSegmentsUMatrixDispIndiv(pa);
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawFtrWtSegMembersIDX)) {		drawAllFtrWtSegments(ri, mapNodeWtDispThresh);}	//draw all segments - will overlap here, might look like garbage		
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawClassSegmentsIDX)) {	 	drawAllClassSegments(ri);}
+				if(win.getPrivFlag(SOM_MapUIWin.mapDrawCategorySegmentsIDX)) { 	drawAllCategorySegments(ri);}
+				drawSegmentsUMatrixDispIndiv(ri);
 			}
 			//if draw all map nodes
-			if(win.getPrivFlag(SOM_MapUIWin.mapDrawAllMapNodesIDX)){	if(drawLbl) {drawAllNodesWithLbl(pa);} else {drawAllNodesNoLbl(pa);} }
+			if(win.getPrivFlag(SOM_MapUIWin.mapDrawAllMapNodesIDX)){	if(drawLbl) {drawAllNodesWithLbl(ri);} else {drawAllNodesNoLbl(ri);} }
 			//draw nodes that are selected
-			if(SelectedMapNodes.size() > 0) {drawNodesIfSelected(pa);}
+			if(SelectedMapNodes.size() > 0) {drawNodesIfSelected(ri);}
 			//instance-specific stuff to draw on map, after nodes are drawn
-			drawMapRectangle_Indiv(pa, curImgNum);
+			drawMapRectangle_Indiv(ri, curImgNum);
 			//if selected, draw graph describing population of each map node
-			if(win.getPrivFlag(SOM_MapUIWin.drawMapNodePopGraphIDX)) {drawMapNodePopGraph(pa, mapNodeDispType.getVal());}
-			pa.enableLights();
-		pa.popMatState();	
+			if(win.getPrivFlag(SOM_MapUIWin.drawMapNodePopGraphIDX)) {drawMapNodePopGraph(ri, mapNodeDispType.getVal());}
+			ri.enableLights();
+		ri.popMatState();	
 		
 	}//drawMapRectangle
 	
-	protected final void drawMapNodePopGraph(IRenderInterface pa, int typIDX) {
-		pa.pushMatState();
-		pa.translate(mapDims[0],0.0f,0.0f);
-		pa.scale(200.0f/(1.0f*mapNodePopGraph[typIDX].width),mapDims[1]/(1.0f*mapNodePopGraph[typIDX].height));
-		((my_procApplet)Base_DispWindow.ri).image(mapNodePopGraph[typIDX], 0.0f, 0.0f);
+	protected final void drawMapNodePopGraph(IRenderInterface ri, int typIDX) {
+		ri.pushMatState();
+		ri.translate(mapDims[0],0.0f,0.0f);
+		ri.scale(200.0f/(1.0f*mapNodePopGraph[typIDX].width),mapDims[1]/(1.0f*mapNodePopGraph[typIDX].height));
+		((ProcessingRenderer)Base_DispWindow.ri).image(mapNodePopGraph[typIDX], 0.0f, 0.0f);
 		
-		pa.popMatState();
+		ri.popMatState();
 	}//drawMapNodePopGraph
 	
 	
-	protected abstract void drawMapRectangle_Indiv(IRenderInterface pa, int curImgNum);
+	protected abstract void drawMapRectangle_Indiv(IRenderInterface ri, int curImgNum);
 	/**
 	 * draw instance-specific per-ftr map data display
 	 */
-	protected abstract void drawPerFtrMap_Indiv(IRenderInterface pa);
+	protected abstract void drawPerFtrMap_Indiv(IRenderInterface ri);
 	/**
 	 * Instancing class-specific segments and other data to render during UMatrix display
 	 */
-	protected abstract void drawSegmentsUMatrixDispIndiv(IRenderInterface pa);
+	protected abstract void drawSegmentsUMatrixDispIndiv(IRenderInterface ri);
 
 		
 	private static int dispTrainDataFrame = 0, numDispTrainDataFrames = 20;
 	//if connected to UI, draw data - only called from window
-	public final void drawTrainData(IRenderInterface pa) {
-		pa.pushMatState();
-		if (trainData.length < numDispTrainDataFrames) {	for(int i=0;i<trainData.length;++i){		trainData[i].drawMeMap(pa);	}	} 
+	public final void drawTrainData(IRenderInterface ri) {
+		ri.pushMatState();
+		if (trainData.length < numDispTrainDataFrames) {	for(int i=0;i<trainData.length;++i){		trainData[i].drawMeMap(ri);	}	} 
 		else {
-			for(int i=dispTrainDataFrame;i<trainData.length-numDispTrainDataFrames;i+=numDispTrainDataFrames){		trainData[i].drawMeMap(pa);	}
-			for(int i=(trainData.length-numDispTrainDataFrames);i<trainData.length;++i){		trainData[i].drawMeMap(pa);	}				//always draw these (small count < numDispDataFrames
+			for(int i=dispTrainDataFrame;i<trainData.length-numDispTrainDataFrames;i+=numDispTrainDataFrames){		trainData[i].drawMeMap(ri);	}
+			for(int i=(trainData.length-numDispTrainDataFrames);i<trainData.length;++i){		trainData[i].drawMeMap(ri);	}				//always draw these (small count < numDispDataFrames
 			dispTrainDataFrame = (dispTrainDataFrame + 1) % numDispTrainDataFrames;
 		}
-		pa.popMatState();
+		ri.popMatState();
 	}//drawTrainData
 	private static int dispTestDataFrame = 0, numDispTestDataFrames = 20;
 	//if connected to UI, draw data - only called from window
-	public final void drawTestData(IRenderInterface pa) {
-		pa.pushMatState();
-		if (testData.length < numDispTestDataFrames) {	for(int i=0;i<testData.length;++i){		testData[i].drawMeMap(pa);	}	} 
+	public final void drawTestData(IRenderInterface ri) {
+		ri.pushMatState();
+		if (testData.length < numDispTestDataFrames) {	for(int i=0;i<testData.length;++i){		testData[i].drawMeMap(ri);	}	} 
 		else {
-			for(int i=dispTestDataFrame;i<testData.length-numDispTestDataFrames;i+=numDispTestDataFrames){		testData[i].drawMeMap(pa);	}
-			for(int i=(testData.length-numDispTestDataFrames);i<testData.length;++i){		testData[i].drawMeMap(pa);	}				//always draw these (small count < numDispDataFrames
+			for(int i=dispTestDataFrame;i<testData.length-numDispTestDataFrames;i+=numDispTestDataFrames){		testData[i].drawMeMap(ri);	}
+			for(int i=(testData.length-numDispTestDataFrames);i<testData.length;++i){		testData[i].drawMeMap(ri);	}				//always draw these (small count < numDispDataFrames
 			dispTestDataFrame = (dispTestDataFrame + 1) % numDispTestDataFrames;
 		}
-		pa.popMatState();
+		ri.popMatState();
 	}//drawTrainData
 	private static int dispValidationDataFrame = 0, numDispValidationDataFrames = 100;
-	public final void drawValidationData(IRenderInterface pa) {
-		pa.pushMatState();
-		if (validationData.length < numDispValidationDataFrames) {	for(int i=0;i<validationData.length;++i){		validationData[i].drawMeMap(pa);	}	} 
+	public final void drawValidationData(IRenderInterface ri) {
+		ri.pushMatState();
+		if (validationData.length < numDispValidationDataFrames) {	for(int i=0;i<validationData.length;++i){		validationData[i].drawMeMap(ri);	}	} 
 		else {
-			for(int i=dispValidationDataFrame;i<validationData.length-numDispValidationDataFrames;i+=numDispValidationDataFrames){		validationData[i].drawMeMap(pa);	}
-			for(int i=(validationData.length-numDispValidationDataFrames);i<validationData.length;++i){		validationData[i].drawMeMap(pa);	}				//always draw these (small count < numDispDataFrames
+			for(int i=dispValidationDataFrame;i<validationData.length-numDispValidationDataFrames;i+=numDispValidationDataFrames){		validationData[i].drawMeMap(ri);	}
+			for(int i=(validationData.length-numDispValidationDataFrames);i<validationData.length;++i){		validationData[i].drawMeMap(ri);	}				//always draw these (small count < numDispDataFrames
 			dispValidationDataFrame = (dispValidationDataFrame + 1) % numDispValidationDataFrames;
 		}
-		pa.popMatState();		
+		ri.popMatState();		
 	}//drawValidationData
 	
-	public final void drawNodesIfSelected(IRenderInterface pa) {
-		pa.pushMatState();
-		for(SOM_MapNode node : SelectedMapNodes.values()){	node.drawMeSelected(pa);	}		
-		pa.popMatState();
+	public final void drawNodesIfSelected(IRenderInterface ri) {
+		ri.pushMatState();
+		for(SOM_MapNode node : SelectedMapNodes.values()){	node.drawMeSelected(ri);	}		
+		ri.popMatState();
 	}
 	
 	/**
 	 * draw boxes around each node representing umtrx values derived in SOM code - deprecated, now drawing image
-	 * @param pa
+	 * @param ri
 	 */
-	public final void drawUMatrixVals(IRenderInterface pa) {
-		pa.pushMatState();
-		for(SOM_MapNode node : MapNodes.values()){	node.drawMeUMatDist(pa);	}		
-		pa.popMatState();
+	public final void drawUMatrixVals(IRenderInterface ri) {
+		ri.pushMatState();
+		for(SOM_MapNode node : MapNodes.values()){	node.drawMeUMatDist(ri);	}		
+		ri.popMatState();
 	}//drawUMatrix
 	/**
 	 * draw boxes around each node representing UMatrix-distance-based segments these nodes belong to
-	 * @param pa
+	 * @param ri
 	 */
-	public final void drawUMatrixSegments(IRenderInterface pa) {
-		pa.pushMatState();
-		for(SOM_MapNode node : MapNodes.values()){	node.drawMeUMatSegClr(pa);	}		
-		pa.popMatState();
+	public final void drawUMatrixSegments(IRenderInterface ri) {
+		ri.pushMatState();
+		for(SOM_MapNode node : MapNodes.values()){	node.drawMeUMatSegClr(ri);	}		
+		ri.popMatState();
 	}//drawUMatrix
 	
 	/**
 	 * draw boxes around each node representing ftrwt-based segments that nodes belong to, so long as their ftr values are higher than threshold amount
-	 * @param pa
+	 * @param ri
 	 * @param valThresh
 	 * @param curFtrIdx
 	 */
-	public final void drawFtrWtSegments(IRenderInterface pa, float valThresh, int curFtrIdx) { 
-		pa.pushMatState();
+	public final void drawFtrWtSegments(IRenderInterface ri, float valThresh, int curFtrIdx) { 
+		ri.pushMatState();
 		TreeMap<Float,ArrayList<SOM_MapNode>> map = PerFtrHiWtMapNodes[curFtrIdx];
 		//map holds map nodes keyed by wt of nodes that actually have curFtrIdx presence
 		SortedMap<Float,ArrayList<SOM_MapNode>> headMap = map.headMap(valThresh);
@@ -2325,19 +2325,19 @@ public abstract class SOM_MapManager {
 				float wt = (key-minVal)/diffVal;
 				ArrayList<SOM_MapNode> ara = headMap.get(key);
 				//System.out.println("Min Val :  " + minVal + " | Diff Val : " + diffVal + " WT : " + wt);
-				for (SOM_MapNode node : ara) {		node.drawMeFtrWtSegClr(pa, curFtrIdx, wt);}
+				for (SOM_MapNode node : ara) {		node.drawMeFtrWtSegClr(ri, curFtrIdx, wt);}
 			}	
 		}
-		pa.popMatState();
+		ri.popMatState();
 	}//drawFtrWtSegments
 	
 	/**
 	 * draw boxes around every node representing ftrwt-based segments that node belongs to, with color strength proportional to ftr val and different colors for each segment
-	 * @param pa
+	 * @param ri
 	 * @param valThresh
 	 */
-	public final void drawAllFtrWtSegments(IRenderInterface pa, float valThresh) {		
-		for(int curFtrIdx=0;curFtrIdx<PerFtrHiWtMapNodes.length;++curFtrIdx) {		drawFtrWtSegments(pa, valThresh, curFtrIdx);	}		
+	public final void drawAllFtrWtSegments(IRenderInterface ri, float valThresh) {		
+		for(int curFtrIdx=0;curFtrIdx<PerFtrHiWtMapNodes.length;++curFtrIdx) {		drawFtrWtSegments(ri, valThresh, curFtrIdx);	}		
 	}//drawFtrWtSegments
 
 	
@@ -2346,87 +2346,87 @@ public abstract class SOM_MapManager {
 	 * belongs to, with color strength proportional to probablity of class within that node and 
 	 * different colors for each segment
 	 * pass class -label- not class index
-	 * @param pa
+	 * @param ri
 	 * @param classLabel - label corresponding to class to be displayed
 	 */
-	public final void drawClassSegments(IRenderInterface pa, int classLabel) {
+	public final void drawClassSegments(IRenderInterface ri, int classLabel) {
 		Collection<SOM_MapNode> mapNodesWithClasses = MapNodesWithMappedClasses.get(classLabel);
 		if(null==mapNodesWithClasses) {		return;}
-		pa.pushMatState();
-		for (SOM_MapNode node : mapNodesWithClasses) {		node.drawMeClassClr(pa, classLabel);}		
-		pa.popMatState();
+		ri.pushMatState();
+		for (SOM_MapNode node : mapNodesWithClasses) {		node.drawMeClassClr(ri, classLabel);}		
+		ri.popMatState();
 	}//drawClassSegments	
 	
-	public final void drawAllClassSegments(IRenderInterface pa) {	for(Integer key : Class_Segments.keySet()) {	drawClassSegments(pa,key);}	}
+	public final void drawAllClassSegments(IRenderInterface ri) {	for(Integer key : Class_Segments.keySet()) {	drawClassSegments(ri,key);}	}
 
 	/**
 	 * draw filled boxes around each node representing category-based segments 
 	 * that node belongs to, with color strength proportional to probablity 
 	 * and different colors for each segment
 	 * pass category -label- not category index
-	 * @param pa
+	 * @param ri
 	 * @param categoryLabel - label corresponding to category to be displayed
 	 */
-	public final void drawCategorySegments(IRenderInterface pa, int categoryLabel) {
+	public final void drawCategorySegments(IRenderInterface ri, int categoryLabel) {
 		Collection<SOM_MapNode> mapNodes = MapNodesWithMappedCategories.get(categoryLabel);
 		if(null==mapNodes) {return;}
-		pa.pushMatState();
-		for (SOM_MapNode node : mapNodes) {		node.drawMeCategorySegClr(pa, categoryLabel);}				
-		pa.popMatState();
+		ri.pushMatState();
+		for (SOM_MapNode node : mapNodes) {		node.drawMeCategorySegClr(ri, categoryLabel);}				
+		ri.popMatState();
 	}//drawCategorySegments
-	public final void drawAllCategorySegments(IRenderInterface pa) {	for(Integer key : Category_Segments.keySet()) {	drawCategorySegments(pa,key);}	}
+	public final void drawAllCategorySegments(IRenderInterface ri) {	for(Integer key : Category_Segments.keySet()) {	drawCategorySegments(ri,key);}	}
 		
-	public void drawAllNodesWithLbl (IRenderInterface pa) {//, int[] dpFillClr, int[] dpStkClr) {
-		pa.pushMatState();
-		//pa.setFill(dpFillClr);pa.setStroke(dpStkClr);
-		for(SOM_MapNode node : MapNodes.values()){	node.drawMeSmall(pa);	}
-		pa.popMatState();
+	public void drawAllNodesWithLbl (IRenderInterface ri) {//, int[] dpFillClr, int[] dpStkClr) {
+		ri.pushMatState();
+		//ri.setFill(dpFillClr);ri.setStroke(dpStkClr);
+		for(SOM_MapNode node : MapNodes.values()){	node.drawMeSmall(ri);	}
+		ri.popMatState();
 	} 
 	
-	public void drawAllNodesNoLbl(IRenderInterface pa) {//, int[] dpFillClr, int[] dpStkClr) {
-		pa.pushMatState();
-		//pa.setFill(dpFillClr);pa.setStroke(dpStkClr);
-		for(SOM_MapNode node : MapNodes.values()){	node.drawMeSmallNoLbl(pa);	}
-		pa.popMatState();
+	public void drawAllNodesNoLbl(IRenderInterface ri) {//, int[] dpFillClr, int[] dpStkClr) {
+		ri.pushMatState();
+		//ri.setFill(dpFillClr);ri.setStroke(dpStkClr);
+		for(SOM_MapNode node : MapNodes.values()){	node.drawMeSmallNoLbl(ri);	}
+		ri.popMatState();
 	} 
 	
-	public void drawNodesWithWt(IRenderInterface pa, float valThresh, int curFtrIdx) {//, int[] dpFillClr, int[] dpStkClr) {
-		pa.pushMatState();
-		//pa.setFill(dpFillClr);pa.setStroke(dpStkClr);
+	public void drawNodesWithWt(IRenderInterface ri, float valThresh, int curFtrIdx) {//, int[] dpFillClr, int[] dpStkClr) {
+		ri.pushMatState();
+		//ri.setFill(dpFillClr);ri.setStroke(dpStkClr);
 		TreeMap<Float,ArrayList<SOM_MapNode>> map = PerFtrHiWtMapNodes[curFtrIdx];
 		SortedMap<Float,ArrayList<SOM_MapNode>> headMap = map.headMap(valThresh);
 		for(Float key : headMap.keySet()) {
 			ArrayList<SOM_MapNode> ara = headMap.get(key);
-			for (SOM_MapNode node : ara) {		node.drawMeWithWt(pa, 10.0f*key, new String[] {""+node.OID+" : ",String.format("%.4f",key)});}
+			for (SOM_MapNode node : ara) {		node.drawMeWithWt(ri, 10.0f*key, new String[] {""+node.OID+" : ",String.format("%.4f",key)});}
 		}
-		pa.popMatState();
+		ri.popMatState();
 	}//drawNodesWithWt
 	
-	public void drawPopMapNodes(IRenderInterface pa, boolean draw0PopNodes, int _typeIDX) {
-		pa.pushMatState();
+	public void drawPopMapNodes(IRenderInterface ri, boolean draw0PopNodes, int _typeIDX) {
+		ri.pushMatState();
 		numMapNodeByPopNowShown = 0;
 		if(draw0PopNodes) {			
-			for(SOM_MapNode node : MapNodes.values()){	if(node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) {	node.drawMePopLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
+			for(SOM_MapNode node : MapNodes.values()){	if(node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) {	node.drawMePopLbl(ri, _typeIDX);numMapNodeByPopNowShown++;}	}
 		} else {
-			for(SOM_MapNode node : MapNodes.values()){	if((node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
+			for(SOM_MapNode node : MapNodes.values()){	if((node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopLbl(ri, _typeIDX);numMapNodeByPopNowShown++;}	}
 			
 		}
-		pa.popMatState();		
+		ri.popMatState();		
 	}	
-	public void drawPopMapNodesNoLbl(IRenderInterface pa, boolean draw0PopNodes, int _typeIDX) {
-		pa.pushMatState();
+	public void drawPopMapNodesNoLbl(IRenderInterface ri, boolean draw0PopNodes, int _typeIDX) {
+		ri.pushMatState();
 		numMapNodeByPopNowShown = 0;
 		if(draw0PopNodes) {			
-			for(SOM_MapNode node : MapNodes.values()){	if(node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) {	node.drawMePopNoLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
+			for(SOM_MapNode node : MapNodes.values()){	if(node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) {	node.drawMePopNoLbl(ri, _typeIDX);numMapNodeByPopNowShown++;}	}
 		} else {
-			for(SOM_MapNode node : MapNodes.values()){	if((node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopNoLbl(pa, _typeIDX);numMapNodeByPopNowShown++;}	}
+			for(SOM_MapNode node : MapNodes.values()){	if((node.getBMUMapNodePopulation(_typeIDX) > mapNodePopDispThreshVals[_typeIDX]) && (node.getHasMappedExamples(_typeIDX))) {	node.drawMePopNoLbl(ri, _typeIDX);numMapNodeByPopNowShown++;}	}
 			
 		}
-		pa.popMatState();		
+		ri.popMatState();		
 	}
-	//public final void drawMseOverData(IRenderInterface pa) {	mseOvrData.drawMeLblMap(pa);}
+	//public final void drawMseOverData(IRenderInterface ri) {	mseOvrData.drawMeLblMap(ri);}
 
-	public final void drawMseOverData(IRenderInterface pa) {	mseOverExample.drawMeLblMap(pa);}
+	public final void drawMseOverData(IRenderInterface ri) {	mseOverExample.drawMeLblMap(ri);}
 	
 	//get ftr name/idx/instance-specific value based to save an image of current map
 	public abstract String getSOMLocClrImgForFtrFName(int ftrIDX);
@@ -2435,32 +2435,32 @@ public abstract class SOM_MapManager {
 	protected float sideBarYDisp = 10.0f;
 
 	//draw right sidebar data
-	public void drawResultBar(IRenderInterface pa, float yOff) {
+	public void drawResultBar(IRenderInterface ri, float yOff) {
 		yOff-=4;
 		//float sbrMult = 1.2f, lbrMult = 1.5f;//offsets multiplier for barriers between contextual ui elements
-		pa.pushMatState();
+		ri.pushMatState();
 		//display preloaded maps
-		yOff=drawLoadedPreBuiltMaps(pa,yOff,curPreBuiltMapIDX);
+		yOff=drawLoadedPreBuiltMaps(ri,yOff,curPreBuiltMapIDX);
 		//display # of map nodes currently shown if showing by population
-		yOff=drawNumMapNodesShownByPop(pa, yOff);
+		yOff=drawNumMapNodesShownByPop(ri, yOff);
 		//display mouse-over results in side bar
-		yOff= drawMseRes(pa,yOff);
-		pa.drawSphere(3.0f);
-		yOff = drawResultBarPriv1(pa, yOff);
+		yOff= drawMseRes(ri,yOff);
+		ri.drawSphere(3.0f);
+		yOff = drawResultBarPriv1(ri, yOff);
 		
-		yOff = drawResultBarPriv2(pa, yOff);
+		yOff = drawResultBarPriv2(ri, yOff);
 
-		yOff = drawResultBarPriv3(pa, yOff);
+		yOff = drawResultBarPriv3(ri, yOff);
 
-		pa.popMatState();	
+		ri.popMatState();	
 	}//drawResultBar
 	
-	private final float drawNumMapNodesShownByPop(IRenderInterface pa,float yOff) {
+	private final float drawNumMapNodesShownByPop(IRenderInterface ri,float yOff) {
 		if(win.getPrivFlag(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {
-			pa.translate(10.0f, 0.0f, 0.0f);
+			ri.translate(10.0f, 0.0f, 0.0f);
 			Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
 			yOff += sideBarYDisp;
-			pa.translate(-10.0f,sideBarYDisp, 0.0f);
+			ri.translate(-10.0f,sideBarYDisp, 0.0f);
 			
 		}
 		return yOff;
@@ -2471,33 +2471,33 @@ public abstract class SOM_MapManager {
 	 * @param yOff
 	 * @return
 	 */
-	private final float drawMseRes(IRenderInterface pa,float yOff) {
+	private final float drawMseRes(IRenderInterface ri,float yOff) {
 		if((getFlag(dispMseDataSideBarIDX)) && mseOverExample.canDisplayMseLabel()) {
-			pa.translate(10.0f, 0.0f, 0.0f);
+			ri.translate(10.0f, 0.0f, 0.0f);
 			Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Mouse Values : ");
 			yOff += sideBarYDisp;
-			pa.translate(0.0f,sideBarYDisp, 0.0f);
-			mseOverExample.drawMseLbl_Info(pa, new myPointf(0,0,0));
+			ri.translate(0.0f,sideBarYDisp, 0.0f);
+			mseOverExample.drawMseLbl_Info(ri, new myPointf(0,0,0));
 			float tmpOff = ((int)(mseOverExample.getMseLabelYOffset() / (1.0f*sideBarMseOvrDispOffset)) + 1 )*sideBarMseOvrDispOffset;
 			yOff += tmpOff;
-			pa.translate(-10.0f, tmpOff, 0.0f);
+			ri.translate(-10.0f, tmpOff, 0.0f);
 		}
 		return yOff;
 	}//drawMseRes
 	
-	protected final float drawLoadedPreBuiltMaps(IRenderInterface pa,float yOff, int curDefaultMap) {
+	protected final float drawLoadedPreBuiltMaps(IRenderInterface ri,float yOff, int curDefaultMap) {
 		if(getFlag(dispLdPreBuitMapsIDX)) {	
 			String[][] loadedPreBuiltMapData = projConfigData.getPreBuiltMapInfoAra();		
-			pa.translate(0.0f, 0.0f, 0.0f);
+			ri.translate(0.0f, 0.0f, 0.0f);
 			//float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;	
 			if(loadedPreBuiltMapData.length==0) {				
 				Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
 				yOff += sideBarYDisp;
-				pa.translate(10.0f, sideBarYDisp, 0.0f);
+				ri.translate(10.0f, sideBarYDisp, 0.0f);
 			} else {	
 				Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Pre-build Map Directories specified in config : ");
 				yOff += sideBarYDisp;
-				pa.translate(10.0f, sideBarYDisp, 0.0f);
+				ri.translate(10.0f, sideBarYDisp, 0.0f);
 				
 				for(int i=0;i<loadedPreBuiltMapData.length;++i) {
 					boolean isDefault = i==curDefaultMap;
@@ -2505,45 +2505,45 @@ public abstract class SOM_MapManager {
 					int clrIDX = (isLoaded ? IRenderInterface.gui_Yellow : IRenderInterface.gui_White);
 					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,""+String.format("%02d", i+1)+" | "+loadedPreBuiltMapData[i][0]);
 					yOff += sideBarYDisp;
-					pa.translate(10.0f,sideBarYDisp,0.0f);
+					ri.translate(10.0f,sideBarYDisp,0.0f);
 					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,"Detail : ");
 					if(isDefault) {
-						pa.pushMatState();
-						pa.translate(-10.0f,20.0f,0.0f);
-						pa.setFill(255, 200,200, 255);
-						pa.setStroke(255, 200,200, 255);
-						pa.drawStar2D(myPointf.ZEROPT, 5.0f);
-						pa.popMatState();
+						ri.pushMatState();
+						ri.translate(-10.0f,20.0f,0.0f);
+						ri.setFill(255, 200,200, 255);
+						ri.setStroke(255, 200,200, 255);
+						ri.drawStar2D(myPointf.ZEROPT, 5.0f);
+						ri.popMatState();
 					}
 					yOff += sideBarYDisp;
-					pa.translate(10.0f, sideBarYDisp, 0.0f);
+					ri.translate(10.0f, sideBarYDisp, 0.0f);
 					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][1]);		
 					yOff += sideBarYDisp;
-					pa.translate(0.0f, sideBarYDisp, 0.0f);			
+					ri.translate(0.0f, sideBarYDisp, 0.0f);			
 					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][2]);		
 					yOff += sideBarYDisp;
-					pa.translate(0.0f, sideBarYDisp, 0.0f);			
+					ri.translate(0.0f, sideBarYDisp, 0.0f);			
 					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][3]);		
 					yOff += sideBarYDisp;
-					pa.translate(0.0f, sideBarYDisp, 0.0f);			
+					ri.translate(0.0f, sideBarYDisp, 0.0f);			
 					
-					pa.translate(-10.0f, 0.0f, 0.0f);				
-					yOff = getPreBuiltMapInfoDetail(pa,loadedPreBuiltMapData[i], i, yOff, isLoaded);
+					ri.translate(-10.0f, 0.0f, 0.0f);				
+					yOff = getPreBuiltMapInfoDetail(ri,loadedPreBuiltMapData[i], i, yOff, isLoaded);
 				}
 			}		
-			pa.translate(-10.0f, 0.0f, 0.0f);
+			ri.translate(-10.0f, 0.0f, 0.0f);
 		}
 		return yOff;
 	}//drawLoadedPreBuiltMaps
-	protected abstract float getPreBuiltMapInfoDetail(IRenderInterface pa, String[] str, int i, float yOff, boolean isLoaded);
+	protected abstract float getPreBuiltMapInfoDetail(IRenderInterface ri, String[] str, int i, float yOff, boolean isLoaded);
 	
 	//draw app-specific sidebar data
-	protected abstract float drawResultBarPriv1(IRenderInterface pa, float yOff);
-	protected abstract float drawResultBarPriv2(IRenderInterface pa, float yOff);
-	protected abstract float drawResultBarPriv3(IRenderInterface pa, float yOff);
+	protected abstract float drawResultBarPriv1(IRenderInterface ri, float yOff);
+	protected abstract float drawResultBarPriv2(IRenderInterface ri, float yOff);
+	protected abstract float drawResultBarPriv3(IRenderInterface ri, float yOff);
 
-	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return ((my_procApplet) Base_DispWindow.ri).getRndClrBright();}
-	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return ((my_procApplet) Base_DispWindow.ri).getRndClrBright(alpha);}
+	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return ((ProcessingRenderer) Base_DispWindow.ri).getRndClrBright();}
+	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return ((ProcessingRenderer) Base_DispWindow.ri).getRndClrBright(alpha);}
 
 	//////////////////////////////
 	// getters/setters

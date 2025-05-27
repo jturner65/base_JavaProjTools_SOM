@@ -327,15 +327,15 @@ public abstract class SOM_MseOvrDisplay {
 	 * draw current mouse label data at passed position
 	 * @param p
 	 */
-	public void drawMseLbl_Info(IRenderInterface pa, myPointf drawLoc) {
+	public void drawMseLbl_Info(IRenderInterface ri, myPointf drawLoc) {
 		if(!display) {return;}
-		pa.pushMatState();
-		pa.setFill(dpFillClr, dpFillClr[3]);pa.setStroke(dpStkClr,dpStkClr[3]);
+		ri.pushMatState();
+		ri.setFill(dpFillClr, dpFillClr[3]);ri.setStroke(dpStkClr,dpStkClr[3]);
 		//draw point of radius rad at maploc with label	
 		//p.showBox(mapLoc, rad, 5, clrVal,clrVal, IRenderInterface.gui_LightGreen, mseLabelDat);
 		//(myPointf P, float rad, int det, int[] clrs, String[] txtAra, float[] rectDims)
-		pa.showBoxTextAra(drawLoc, 5, 5, nodeClrs, mseLabelAra, mseLabelDims);
-		pa.popMatState();
+		ri.showBoxTextAra(drawLoc, 5, 5, nodeClrs, mseLabelAra, mseLabelDims);
+		ri.popMatState();
 	}
 	public void setMapLoc(myPointf _pt) {mapLoc.set(_pt);}
 	
