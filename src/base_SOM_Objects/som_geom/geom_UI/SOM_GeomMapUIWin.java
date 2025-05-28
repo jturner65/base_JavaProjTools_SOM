@@ -74,7 +74,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * @return total number of privBtnFlags in instancing class (including those not displayed)
 	 */
 	protected final int initAllSOMPrivBtns_Indiv(ArrayList<Object[]> tmpBtnNamesArray) {
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr"}, mapShowLocClrIDX));          
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr"}, mapShowLocClrIDX));          
 		return _numPrivFlags;
 	}
 	
@@ -262,14 +262,14 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	protected boolean hndlMouseMove_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld){
 		boolean res = false;
-		if(privFlags.getFlag(mapDataLoadedIDX)){ res = checkMouseOvr(mouseX, mouseY);	}
+		if(uiMgr.getPrivFlag(mapDataLoadedIDX)){ res = checkMouseOvr(mouseX, mouseY);	}
 		return res;
 	}	
 	@Override
 	protected boolean hndlMouseClick_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
 		boolean mod = false;	
-		if(privFlags.getFlag(mapDataLoadedIDX)){ 
-			//msgObj.dispInfoMessage(className, "hndlMouseClickIndiv", "In Mouse Click mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | mseBtn : " +mseBtn + " | privFlags.getFlag(mapDataLoadedIDX) : "+privFlags.getFlag(mapDataLoadedIDX));
+		if(uiMgr.getPrivFlag(mapDataLoadedIDX)){ 
+			//msgObj.dispInfoMessage(className, "hndlMouseClickIndiv", "In Mouse Click mx : " +mouseX+ " | my : " + mouseY+" | mseClckInWorld : " + mseClckInWorld.toStrBrf() + " | mseBtn : " +mseBtn + " | uiMgr.getPrivFlag(mapDataLoadedIDX) : "+uiMgr.getPrivFlag(mapDataLoadedIDX));
 			mod = this.checkMouseClick(mouseX, mouseY, mseClckInWorld, mseBtn);
 		}
 //		if(mod) {return mod;}
@@ -279,15 +279,15 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	protected boolean hndlMouseDrag_Indiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
 		boolean mod = false;
-		if(privFlags.getFlag(mapDataLoadedIDX)){ 
-			//msgObj.dispInfoMessage(className, "hndlMouseDragIndiv", "In Mouse Drag mx : " +mouseX+ " | my : " + mouseY+" | pmx : " +pmouseX+ " | pmy : " + pmouseY+" | mouseClickIn3D : " + mouseClickIn3D.toStrBrf()+" | mseDragInWorld : " + mseDragInWorld.toStrBrf()+ " | mseBtn : " +mseBtn + " | privFlags.getFlag(mapDataLoadedIDX) : "+privFlags.getFlag(mapDataLoadedIDX));
+		if(uiMgr.getPrivFlag(mapDataLoadedIDX)){ 
+			//msgObj.dispInfoMessage(className, "hndlMouseDragIndiv", "In Mouse Drag mx : " +mouseX+ " | my : " + mouseY+" | pmx : " +pmouseX+ " | pmy : " + pmouseY+" | mouseClickIn3D : " + mouseClickIn3D.toStrBrf()+" | mseDragInWorld : " + mseDragInWorld.toStrBrf()+ " | mseBtn : " +mseBtn + " | uiMgr.getPrivFlag(mapDataLoadedIDX) : "+uiMgr.getPrivFlag(mapDataLoadedIDX));
 			mod = this.checkMouseDragMove(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
 		}		
 		return mod;
 	}
 	@Override
 	protected void hndlMouseRel_Indiv() {			
-		if(privFlags.getFlag(mapDataLoadedIDX)){ 
+		if(uiMgr.getPrivFlag(mapDataLoadedIDX)){ 
 			//msgObj.dispInfoMessage(className, "hndlMouseRelIndiv", "In Mouse Release");
 			this.checkMouseRelease();
 		}		

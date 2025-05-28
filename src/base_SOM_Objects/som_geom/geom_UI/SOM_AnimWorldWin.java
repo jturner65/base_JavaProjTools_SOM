@@ -239,28 +239,28 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// add an entry for each button, in the order they are wished to be displayed
 		// true tag, false tag, btn IDX
 
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Debugging", "Debug"}, Base_BoolFlags.debugIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Debugging", "Debug"}, Base_BoolFlags.debugIDX));
 		// UI",drawSOM_MapUIVis});
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs"}, regenUIObjsIDX));
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects"},	showFullSourceObjIDX));
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points"}, showSamplePntsIDX));
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing Labels", "Show Labels"}, showUIObjLabelIDX));
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing Sample Labels", "Show Sample Labels"}, showUIObjSmplsLabelIDX));
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing Loc-based Color", "Showing Random Color"}, useUIObjLocAsClrIDX));
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs"}, showFullTrainingObjIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs"}, regenUIObjsIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects"},	showFullSourceObjIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points"}, showSamplePntsIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Showing Labels", "Show Labels"}, showUIObjLabelIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Showing Sample Labels", "Show Sample Labels"}, showUIObjSmplsLabelIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Showing Loc-based Color", "Showing Random Color"}, useUIObjLocAsClrIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs"}, showFullTrainingObjIDX));
 
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light"},	showSelUIObjIDX));
-		// tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Train From " +geomObjType.getName()+ " Samples",
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light"},	showSelUIObjIDX));
+		// tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Train From " +geomObjType.getName()+ " Samples",
 		// "Train From " +geomObjType.getName()+ " Centers/Bases", useSmplsForTrainIDX});
-		// tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Save Data", "Save Data",
+		// tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Save Data", "Save Data",
 		// saveUIObjDataIDX});
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs"}, allTrainExUniqueIDX));
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing Map Node Geometry", "Show Map Node Geometry"}, drawMapNodeGeomObjsIDX));
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Showing BMU-derived Locs", "Showing Actual Locs"}, showMapBasedLocsIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs"}, allTrainExUniqueIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Showing Map Node Geometry", "Show Map Node Geometry"}, drawMapNodeGeomObjsIDX));
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Showing BMU-derived Locs", "Showing Actual Locs"}, showMapBasedLocsIDX));
 
 		String[] showWFObjsTFLabels = getShowWireFrameBtnTFLabels();
 		if ((null != showWFObjsTFLabels) && (showWFObjsTFLabels.length == 2)) {
-			tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {showWFObjsTFLabels[0], showWFObjsTFLabels[1]}, showObjByWireFrmIDX));
+			tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {showWFObjsTFLabels[0], showWFObjsTFLabels[1]}, showObjByWireFrmIDX));
 		}
 
 		// add instancing-class specific buttons - returns total # of private flags in
@@ -408,18 +408,18 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		
 		int minNumObjs = getMinNumObjs(), maxNumObjs = getMaxNumObjs(),	diffNumObjs = (maxNumObjs - minNumObjs > 100 ? 10 : 1);
 		numGeomObjs = minNumObjs;
-		tmpUIObjArray.put(gIDX_NumUIObjs, uiObjInitAra_Int(new double[]{minNumObjs, maxNumObjs, diffNumObjs}, numGeomObjs,"# of " + geomObjType.getName()+ " Objects", new boolean[]{true, true})); // gIDX_NumUIObjs
+		tmpUIObjArray.put(gIDX_NumUIObjs, uiMgr.uiObjInitAra_Int(new double[]{minNumObjs, maxNumObjs, diffNumObjs}, numGeomObjs,"# of " + geomObjType.getName()+ " Objects", new boolean[]{true, true})); // gIDX_NumUIObjs
 		int minNumSmplsPerObj = getMinNumSmplsPerObj(), maxNumSmplsPerObj = getMaxNumSmplsPerObj(),	diffNumSmplsPerObj = (maxNumSmplsPerObj - minNumSmplsPerObj > 100 ? 10 : 1);
 		numSmplPointsPerObj = minNumSmplsPerObj;
-		tmpUIObjArray.put(gIDX_NumUISamplesPerObj, uiObjInitAra_Int(new double[]{minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj}, numSmplPointsPerObj, "# of samples per Object", new boolean[]{true, true})); // gIDX_NumUISamplesPerObj
-		tmpUIObjArray.put(gIDX_FractNumTrainEx, uiObjInitAra_Float(new double[]{0.00001, 1.000, 0.00001}, fractOfBinomialForBaseNumTrainEx,"Fract of Binomial for Train Ex", new boolean[]{true, false})); // gIDX_FractNumTrainEx
+		tmpUIObjArray.put(gIDX_NumUISamplesPerObj, uiMgr.uiObjInitAra_Int(new double[]{minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj}, numSmplPointsPerObj, "# of samples per Object", new boolean[]{true, true})); // gIDX_NumUISamplesPerObj
+		tmpUIObjArray.put(gIDX_FractNumTrainEx, uiMgr.uiObjInitAra_Float(new double[]{0.00001, 1.000, 0.00001}, fractOfBinomialForBaseNumTrainEx,"Fract of Binomial for Train Ex", new boolean[]{true, false})); // gIDX_FractNumTrainEx
 
 		long minNumTrainingExamples = numGeomObjs,
 				maxNumTrainingExamples = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj),
 				diffNumTrainingEx = (maxNumTrainingExamples - minNumTrainingExamples) > 1000 ? 1000 : 10;
 		numTrainingExamples = (int) minNumTrainingExamples;
-		tmpUIObjArray.put(gIDX_NumTrainingEx, uiObjInitAra_Int(new double[]{minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx}, numTrainingExamples,	"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]", new boolean[]{true, false})); // gIDX_NumUISamplesPerObj
-		tmpUIObjArray.put(gIDX_SelDispUIObj, uiObjInitAra_Int(new double[]{0, numGeomObjs-1, 1}, curSelGeomObjIDX,"ID of Object to Select", new boolean[]{true, true})); // gIDX_SelDispUIObj
+		tmpUIObjArray.put(gIDX_NumTrainingEx, uiMgr.uiObjInitAra_Int(new double[]{minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx}, numTrainingExamples,	"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]", new boolean[]{true, false})); // gIDX_NumUISamplesPerObj
+		tmpUIObjArray.put(gIDX_SelDispUIObj, uiMgr.uiObjInitAra_Int(new double[]{0, numGeomObjs-1, 1}, curSelGeomObjIDX,"ID of Object to Select", new boolean[]{true, true})); // gIDX_SelDispUIObj
 
 		// populate instancing application objects
 		setupGUIObjsAras_Indiv(tmpUIObjArray, tmpListObjVals);
@@ -458,26 +458,26 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	private void refreshNumTrainingExampleBounds() {
 		//min # of training examples will at least be # of geometric objects 
 		long newMinVal = numGeomObjs;
-		setNewUIMinVal(gIDX_NumTrainingEx, newMinVal);
+		uiMgr.setNewUIMinVal(gIDX_NumTrainingEx, newMinVal);
 		// binomial coefficient - n (total # of samples across all objects) choose k
 		// (dim of minimal defining set of each object)		
 		long newMaxVal = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj);
-		setNewUIMaxVal(gIDX_NumTrainingEx, newMaxVal);
-		setNewUIDispText(gIDX_NumTrainingEx, true, "Ttl # of Train Ex [" + newMinVal + ", " + newMaxVal + "]");
-		double curNum = getUIValue(gIDX_NumTrainingEx);
+		uiMgr.setNewUIMaxVal(gIDX_NumTrainingEx, newMaxVal);
+		uiMgr.setNewUIDispText(gIDX_NumTrainingEx, true, "Ttl # of Train Ex [" + newMinVal + ", " + newMaxVal + "]");
+		double curNum = uiMgr.getUIValue(gIDX_NumTrainingEx);
 		if (curNum < newMinVal) {
-			setNewUIValue(gIDX_NumTrainingEx,newMinVal);
+			uiMgr.setNewUIValue(gIDX_NumTrainingEx,newMinVal);
 		}
 		if (curNum > newMaxVal) {
-			setNewUIValue(gIDX_NumTrainingEx,newMaxVal);
+			uiMgr.setNewUIValue(gIDX_NumTrainingEx,newMaxVal);
 		}
 	}// refreshNumTrainingExampleBounds
 
 	private void refreshNumTrainingExamples() {
 		long TtlNumExamples = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj);
 		double newVal = fractOfBinomialForBaseNumTrainEx * TtlNumExamples;
-		setNewUIValue(gIDX_NumTrainingEx,newVal);
-		setUIWinVals(gIDX_NumTrainingEx);
+		uiMgr.setNewUIValue(gIDX_NumTrainingEx,newVal);
+		uiMgr.setUIWinVals(gIDX_NumTrainingEx);
 	}
 	
 	/**
@@ -493,7 +493,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		switch(UIidx){	
 			case gIDX_NumUIObjs: {
 				numGeomObjs = ival;
-				setNewUIMaxVal(gIDX_SelDispUIObj,ival - 1);
+				uiMgr.setNewUIMaxVal(gIDX_SelDispUIObj,ival - 1);
 				refreshNumTrainingExampleBounds();
 				rebuildSourceGeomObjs();			
 				break;
@@ -563,10 +563,10 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 */
 	public TreeMap<String, String> getAllUIValsForPreProcSave() {
 		TreeMap<String, String> res = new TreeMap<String, String>();
-		res.put("gIDX_NumUIObjs", String.format("%4d", (int) getUIValue(gIDX_NumUIObjs)));
-		res.put("gIDX_NumUISamplesPerObj", String.format("%4d", (int) getUIValue(gIDX_NumUISamplesPerObj)));
-		res.put("gIDX_FractNumTrainEx", String.format("%.4f", getUIValue(gIDX_FractNumTrainEx)));
-		res.put("gIDX_NumTrainingEx", String.format("%4d", (int) getUIValue(gIDX_NumTrainingEx)));
+		res.put("gIDX_NumUIObjs", String.format("%4d", (int) uiMgr.getUIValue(gIDX_NumUIObjs)));
+		res.put("gIDX_NumUISamplesPerObj", String.format("%4d", (int) uiMgr.getUIValue(gIDX_NumUISamplesPerObj)));
+		res.put("gIDX_FractNumTrainEx", String.format("%.4f", uiMgr.getUIValue(gIDX_FractNumTrainEx)));
+		res.put("gIDX_NumTrainingEx", String.format("%4d", (int) uiMgr.getUIValue(gIDX_NumTrainingEx)));
 
 		getAllUIValsForPreProcSave_Indiv(res);
 		return res;
@@ -584,13 +584,13 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 * set ui values used to build preproc data being loaded
 	 */
 	public void setAllUIValsFromPreProcLoad(TreeMap<String, String> uiVals) {
-		setNewUIValue(gIDX_FractNumTrainEx,Double.parseDouble(uiVals.get("gIDX_FractNumTrainEx")));
-		setNewUIValue(gIDX_NumUIObjs,Integer.parseInt(uiVals.get("gIDX_NumUIObjs")));
-		setNewUIValue(gIDX_NumUISamplesPerObj,Integer.parseInt(uiVals.get("gIDX_NumUISamplesPerObj")));
-		setNewUIValue(gIDX_NumTrainingEx,Integer.parseInt(uiVals.get("gIDX_NumTrainingEx")));
-
+		uiMgr.setNewUIValue(gIDX_FractNumTrainEx,Double.parseDouble(uiVals.get("gIDX_FractNumTrainEx")));
+		uiMgr.setNewUIValue(gIDX_NumUIObjs,Integer.parseInt(uiVals.get("gIDX_NumUIObjs")));
+		uiMgr.setNewUIValue(gIDX_NumUISamplesPerObj,Integer.parseInt(uiVals.get("gIDX_NumUISamplesPerObj")));
+		uiMgr.setNewUIValue(gIDX_NumTrainingEx,Integer.parseInt(uiVals.get("gIDX_NumTrainingEx")));
+		
 		setAllUIValsFromPreProcLoad_Indiv(uiVals);
-		setAllUIWinVals();
+		uiMgr.setAllUIWinVals(); 
 	}
 
 	/**
@@ -624,30 +624,30 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// nested ifthen shenannigans to get rid of if checks in each individual draw
 		drawMeFirst_Indiv();
 		// check if geom objs are built in mapMgr
-		boolean useUIObjLocAsClr = privFlags.getFlag(useUIObjLocAsClrIDX),
-				showUIObjLabel = privFlags.getFlag(showUIObjLabelIDX);
+		boolean useUIObjLocAsClr = uiMgr.getPrivFlag(useUIObjLocAsClrIDX),
+				showUIObjLabel = uiMgr.getPrivFlag(showUIObjLabelIDX);
 		if (mapMgr.getGeomObjsBuilt()) {
-			boolean wantDrawBMUs = privFlags.getFlag(showMapBasedLocsIDX);
-			boolean shouldDrawBMUs = (wantDrawBMUs && privFlags.getFlag(mapBuiltToCurUIObjsIDX));
+			boolean wantDrawBMUs = uiMgr.getPrivFlag(showMapBasedLocsIDX);
+			boolean shouldDrawBMUs = (wantDrawBMUs && uiMgr.getPrivFlag(mapBuiltToCurUIObjsIDX));
 			if (!shouldDrawBMUs && wantDrawBMUs) {
-				privFlags.setFlag(showMapBasedLocsIDX, false);
+				uiMgr.setPrivFlag(showMapBasedLocsIDX, false);
 				wantDrawBMUs = false;
 			}
 			_drawObjs(mapMgr.sourceGeomObjects, mapMgr.sourceGeomObjects.length, curSelGeomObjIDX, animTimeMod, shouldDrawBMUs,
-					privFlags.getFlag(showSamplePntsIDX), privFlags.getFlag(showFullSourceObjIDX),
-					useUIObjLocAsClr, privFlags.getFlag(showSelUIObjIDX), privFlags.getFlag(showObjByWireFrmIDX),
-					showUIObjLabel, privFlags.getFlag(showUIObjSmplsLabelIDX));
+					uiMgr.getPrivFlag(showSamplePntsIDX), uiMgr.getPrivFlag(showFullSourceObjIDX),
+					useUIObjLocAsClr, uiMgr.getPrivFlag(showSelUIObjIDX), uiMgr.getPrivFlag(showObjByWireFrmIDX),
+					showUIObjLabel, uiMgr.getPrivFlag(showUIObjSmplsLabelIDX));
 		}
 		// check if train samples are built in map mgr
-		if ((mapMgr.getTrainDataObjsBuilt()) && (privFlags.getFlag(showFullTrainingObjIDX))) {
+		if ((mapMgr.getTrainDataObjsBuilt()) && (uiMgr.getPrivFlag(showFullTrainingObjIDX))) {
 			_drawObjs(mapMgr.trainDatGeomObjects, mapMgr.getNumTrainingExsToShow(), -1, animTimeMod, false, false, true,
-					useUIObjLocAsClr, false, privFlags.getFlag(showObjByWireFrmIDX),
+					useUIObjLocAsClr, false, uiMgr.getPrivFlag(showObjByWireFrmIDX),
 					showUIObjLabel, false);
 		} else {
-			privFlags.setFlag(showFullTrainingObjIDX, false);
+			uiMgr.setPrivFlag(showFullTrainingObjIDX, false);
 		}
 		// draw geom objects for selected map node objects
-		if (privFlags.getFlag(drawMapNodeGeomObjsIDX)) {
+		if (uiMgr.getPrivFlag(drawMapNodeGeomObjsIDX)) {
 			mapMgr.drawSelectedMapNodeGeomObjs(ri, animTimeMod, showUIObjLabel,	useUIObjLocAsClr);
 		}
 		drawMeLast_Indiv();
@@ -786,7 +786,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	@Override
 	public final void drawCustMenuObjs(float modAmtMillis) {
 		// ((SOM_GeometryMain) pa).drawSOMUIObjs();
-		// if(this.privFlags.getFlag(drawSOM_MapUIVis)) {
+		// if(this.uiMgr.getPrivFlag(drawSOM_MapUIVis)) {
 		if (somUIWin != null) {
 			ri.pushMatState();
 			somUIWin.drawWindowGuiObjs(AppMgr.isDebugMode(), modAmtMillis);					//draw what user-modifiable fields are currently available
@@ -895,7 +895,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 			case 2: {// row 3 of menu side bar buttons
 				switch (btn) {
 					case 0: {// show/hide som Map UI
-						privFlags.setFlag(drawSOM_MapUIVis, !privFlags.getFlag(drawSOM_MapUIVis));
+						uiMgr.setPrivFlag(drawSOM_MapUIVis, !uiMgr.getPrivFlag(drawSOM_MapUIVis));
 						resetButtonState();
 						break;
 					}
@@ -1012,7 +1012,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
 		boolean res = false;
 		// if(res) {return res;}
-		if ((this.somUIWin != null) && (privFlags.getFlag(drawSOM_MapUIVis))) {
+		if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVis))) {
 			res = somUIWin.handleMouseMove(mouseX, mouseY);
 			if (res) {		return true;	}
 		}
@@ -1033,7 +1033,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	// cntl key pressed handles unfocus of spherey
 	@Override
 	protected final boolean hndlMouseClick_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
-		if ((this.somUIWin != null) && (privFlags.getFlag(drawSOM_MapUIVis))) {
+		if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVis))) {
 			boolean res = somUIWin.handleMouseClick(mouseX, mouseY, mseBtn);
 			if (res) {			return true;	}
 		}
@@ -1061,7 +1061,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		if (res) {			return res;		}
 		// handleMouseDrag(int mouseX, int mouseY,int pmouseX, int pmouseY, myVector
 		// mseDragInWorld, int mseBtn)
-		if ((this.somUIWin != null) && (privFlags.getFlag(drawSOM_MapUIVis))) {
+		if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVis))) {
 			res = somUIWin.handleMouseDrag(mouseX, mouseY, pmouseX, pmouseY, mseDragInWorld, mseBtn);
 			if (res) {				return true;			}
 		}
@@ -1085,7 +1085,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
 	@Override
 	protected final void hndlMouseRel_Indiv() {
-		if ((this.somUIWin != null) && (privFlags.getFlag(drawSOM_MapUIVis))) {			somUIWin.handleMouseRelease();		}
+		if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVis))) {			somUIWin.handleMouseRelease();		}
 		hndlMseRelease_Priv();
 	}
 
