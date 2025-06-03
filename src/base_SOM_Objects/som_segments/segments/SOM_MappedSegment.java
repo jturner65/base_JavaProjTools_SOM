@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.tuples.Tuple;
 import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_SOM_Objects.som_managers.SOM_MapManager;
@@ -34,7 +35,7 @@ public abstract class SOM_MappedSegment {
 	//pass initial node of SCC for this segment
 	public SOM_MappedSegment(SOM_MapManager _mapMgr) {
 		mapMgr = _mapMgr; ID = count++;  
-		segClr = mapMgr.getRndClr(150);
+		segClr = MyMathUtils.randomIntClrAra(150);
 		segClrAsInt = ((segClr[3] & 0xff) << 24) + ((segClr[0] & 0xff) << 16)  + ((segClr[1] & 0xff) << 8) + (segClr[2] & 0xff);
 		MapNodes = new ConcurrentSkipListMap<Tuple<Integer,Integer>, SOM_MapNode>();
 		MapNodesByDescValue = new ConcurrentSkipListMap<Float,ArrayList<SOM_MapNode>>(new Comparator<Float>() { @Override public int compare(Float o1, Float o2) {   return o2.compareTo(o1);}});

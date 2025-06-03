@@ -43,9 +43,11 @@ import base_SOM_Objects.som_ui.win_disp_ui.SOM_UIToMapCom;
 import base_SOM_Objects.som_utils.SOM_MapDat;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_Render_Interface.IRenderInterface;
+import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.renderer.ProcessingRenderer;
 //import base_UI_Objects.IRenderInterface;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
+import base_Utils_Objects.appManager.Java_AppManager;
 import base_Utils_Objects.io.file.FileIOManager;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
@@ -65,7 +67,11 @@ public abstract class SOM_MapManager {
 	/**
 	 * owning window - null if console
 	 */
-	public SOM_MapUIWin win;		
+	public SOM_MapUIWin win;
+	/**
+	 * Gui Application Manager - null if console
+	 */
+	public static GUI_AppManager AppMgr;
 	/**
 	 * manage IO in this object
 	 */
@@ -406,7 +412,7 @@ public abstract class SOM_MapManager {
 		//fileIO is used to load and save info from/to local files except for the raw data loading, which has its own handling
 		fileIO = new FileIOManager(msgObj,"SOM_MapManager::"+name);
 		//want # of usable background threads.  Leave 2 for primary process (and potential draw loop)
-		numUsableThreads = SOM_MapUIWin.AppMgr.getNumThreadsAvailable() - 2;
+		numUsableThreads = Java_AppManager.getNumThreadsAvailable() - 2;
 		//set if this is multi-threaded capable - need more than 1 outside of 2 primary threads (i.e. only perform multithreaded calculations if 4 or more threads are available on host)
 		setFlag(isMTCapableIDX, numUsableThreads>1);
 		//default to have mouse location display on side of screen
@@ -439,9 +445,11 @@ public abstract class SOM_MapManager {
 		if(win != null) {			//update dims with window size values
 			setName(win.getName());
 			mapDims = win.getWinUIMapDims();
+			AppMgr = SOM_MapUIWin.AppMgr;
 		} else {
 			setName("No_Win");
 			mapDims = SOM_DefaultMapDims;
+			AppMgr = null;
 		}
 	}//setWinAndWinData
 	/**
@@ -2458,7 +2466,7 @@ public abstract class SOM_MapManager {
 	private final float drawNumMapNodesShownByPop(IRenderInterface ri,float yOff) {
 		if(win.getPrivFlag(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {
 			ri.translate(10.0f, 0.0f, 0.0f);
-			Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
+			AppMgr.showOffsetText(0,IRenderInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
 			yOff += sideBarYDisp;
 			ri.translate(-10.0f,sideBarYDisp, 0.0f);
 			
@@ -2474,7 +2482,7 @@ public abstract class SOM_MapManager {
 	private final float drawMseRes(IRenderInterface ri,float yOff) {
 		if((getFlag(dispMseDataSideBarIDX)) && mseOverExample.canDisplayMseLabel()) {
 			ri.translate(10.0f, 0.0f, 0.0f);
-			Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Mouse Values : ");
+			AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Mouse Values : ");
 			yOff += sideBarYDisp;
 			ri.translate(0.0f,sideBarYDisp, 0.0f);
 			mseOverExample.drawMseLbl_Info(ri, new myPointf(0,0,0));
@@ -2491,11 +2499,11 @@ public abstract class SOM_MapManager {
 			ri.translate(0.0f, 0.0f, 0.0f);
 			//float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;	
 			if(loadedPreBuiltMapData.length==0) {				
-				Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
+				AppMgr.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
 				yOff += sideBarYDisp;
 				ri.translate(10.0f, sideBarYDisp, 0.0f);
 			} else {	
-				Base_DispWindow.AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Pre-build Map Directories specified in config : ");
+				AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Pre-build Map Directories specified in config : ");
 				yOff += sideBarYDisp;
 				ri.translate(10.0f, sideBarYDisp, 0.0f);
 				
@@ -2503,10 +2511,10 @@ public abstract class SOM_MapManager {
 					boolean isDefault = i==curDefaultMap;
 					boolean isLoaded = i==pretrainedMapIDX;
 					int clrIDX = (isLoaded ? IRenderInterface.gui_Yellow : IRenderInterface.gui_White);
-					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,""+String.format("%02d", i+1)+" | "+loadedPreBuiltMapData[i][0]);
+					AppMgr.showOffsetText(0,clrIDX,""+String.format("%02d", i+1)+" | "+loadedPreBuiltMapData[i][0]);
 					yOff += sideBarYDisp;
 					ri.translate(10.0f,sideBarYDisp,0.0f);
-					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,"Detail : ");
+					AppMgr.showOffsetText(0,clrIDX,"Detail : ");
 					if(isDefault) {
 						ri.pushMatState();
 						ri.translate(-10.0f,20.0f,0.0f);
@@ -2517,13 +2525,13 @@ public abstract class SOM_MapManager {
 					}
 					yOff += sideBarYDisp;
 					ri.translate(10.0f, sideBarYDisp, 0.0f);
-					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][1]);		
+					AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][1]);		
 					yOff += sideBarYDisp;
 					ri.translate(0.0f, sideBarYDisp, 0.0f);			
-					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][2]);		
+					AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][2]);		
 					yOff += sideBarYDisp;
 					ri.translate(0.0f, sideBarYDisp, 0.0f);			
-					Base_DispWindow.AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][3]);		
+					AppMgr.showOffsetText(0,clrIDX,loadedPreBuiltMapData[i][3]);		
 					yOff += sideBarYDisp;
 					ri.translate(0.0f, sideBarYDisp, 0.0f);			
 					
@@ -2541,9 +2549,6 @@ public abstract class SOM_MapManager {
 	protected abstract float drawResultBarPriv1(IRenderInterface ri, float yOff);
 	protected abstract float drawResultBarPriv2(IRenderInterface ri, float yOff);
 	protected abstract float drawResultBarPriv3(IRenderInterface ri, float yOff);
-
-	public int[] getRndClr() { 				if (win==null) {return new int[] {255,255,255,255};}return ((ProcessingRenderer) Base_DispWindow.ri).getRndClrBright();}
-	public int[] getRndClr(int alpha) {		if (win==null) {return new int[] {255,255,255,alpha};}return ((ProcessingRenderer) Base_DispWindow.ri).getRndClrBright(alpha);}
 
 	//////////////////////////////
 	// getters/setters
