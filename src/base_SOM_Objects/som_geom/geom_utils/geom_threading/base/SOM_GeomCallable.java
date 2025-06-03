@@ -1,7 +1,6 @@
 package base_SOM_Objects.som_geom.geom_utils.geom_threading.base;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ThreadLocalRandom;
 
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
@@ -75,51 +74,51 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 	
 	protected myPointf getRandPointInBounds_2D() {
 		myPointf x = new myPointf( 
-				(ThreadLocalRandom.current().nextFloat() *worldBounds[1][0])+worldBounds[0][0], 
-				(ThreadLocalRandom.current().nextFloat() *worldBounds[1][1])+worldBounds[0][1],0);
+				( MyMathUtils.randomFloat() *worldBounds[1][0])+worldBounds[0][0], 
+				( MyMathUtils.randomFloat() *worldBounds[1][1])+worldBounds[0][1],0);
 		return x;
 	}
 	
 
 	protected myPointf getRandPointInBounds_3D() {
 		myPointf x = new myPointf( 
-				(ThreadLocalRandom.current().nextFloat() *worldBounds[1][0])+worldBounds[0][0], 
-				(ThreadLocalRandom.current().nextFloat() *worldBounds[1][1])+worldBounds[0][1],
-				(ThreadLocalRandom.current().nextFloat() *worldBounds[1][2])+worldBounds[0][2]);
+				( MyMathUtils.randomFloat() *worldBounds[1][0])+worldBounds[0][0], 
+				( MyMathUtils.randomFloat() *worldBounds[1][1])+worldBounds[0][1],
+				( MyMathUtils.randomFloat() *worldBounds[1][2])+worldBounds[0][2]);
 		return x;
 	}
 	
 	protected myPointf getRandPointInBounds_3D(float bnd) {
 		float tbnd = 2.0f*bnd;
 		myPointf x = new myPointf( 
-				(ThreadLocalRandom.current().nextFloat() *(worldBounds[1][0]-tbnd))+worldBounds[0][0]+bnd, 
-				(ThreadLocalRandom.current().nextFloat() *(worldBounds[1][1]-tbnd))+worldBounds[0][1]+bnd,
-				(ThreadLocalRandom.current().nextFloat() *(worldBounds[1][2]-tbnd))+worldBounds[0][2]+bnd);
+				( MyMathUtils.randomFloat() *(worldBounds[1][0]-tbnd))+worldBounds[0][0]+bnd, 
+				( MyMathUtils.randomFloat() *(worldBounds[1][1]-tbnd))+worldBounds[0][1]+bnd,
+				( MyMathUtils.randomFloat() *(worldBounds[1][2]-tbnd))+worldBounds[0][2]+bnd);
 		return x;
 	}
 	
 	protected myPoint getRandPointInBounds_2D_Double() {
 		myPoint x = new myPoint( 
-				(ThreadLocalRandom.current().nextDouble() *worldBounds[1][0])+worldBounds[0][0], 
-				(ThreadLocalRandom.current().nextDouble() *worldBounds[1][1])+worldBounds[0][1],0);
+				( MyMathUtils.randomDouble() *worldBounds[1][0])+worldBounds[0][0], 
+				( MyMathUtils.randomDouble() *worldBounds[1][1])+worldBounds[0][1],0);
 		return x;
 	}
 	
 
 	protected myPoint getRandPointInBounds_3D_Double() {
 		myPoint x = new myPoint( 
-				(ThreadLocalRandom.current().nextDouble() *worldBounds[1][0])+worldBounds[0][0], 
-				(ThreadLocalRandom.current().nextDouble() *worldBounds[1][1])+worldBounds[0][1],
-				(ThreadLocalRandom.current().nextDouble() *worldBounds[1][2])+worldBounds[0][2]);
+				( MyMathUtils.randomDouble() *worldBounds[1][0])+worldBounds[0][0], 
+				( MyMathUtils.randomDouble() *worldBounds[1][1])+worldBounds[0][1],
+				( MyMathUtils.randomDouble() *worldBounds[1][2])+worldBounds[0][2]);
 		return x;
 	}
 	
 	protected myPoint getRandPointInBounds_3D_Double(double bnd) {
 		double tbnd = 2.0*bnd;
 		myPoint x = new myPoint( 
-				(ThreadLocalRandom.current().nextDouble() *(worldBounds[1][0]-tbnd))+worldBounds[0][0]+bnd, 
-				(ThreadLocalRandom.current().nextDouble() *(worldBounds[1][1]-tbnd))+worldBounds[0][1]+bnd,
-				(ThreadLocalRandom.current().nextDouble() *(worldBounds[1][2]-tbnd))+worldBounds[0][2]+bnd);
+				( MyMathUtils.randomDouble() *(worldBounds[1][0]-tbnd))+worldBounds[0][0]+bnd, 
+				( MyMathUtils.randomDouble() *(worldBounds[1][1]-tbnd))+worldBounds[0][1]+bnd,
+				( MyMathUtils.randomDouble() *(worldBounds[1][2]-tbnd))+worldBounds[0][2]+bnd);
 		return x;
 	}
 	
@@ -175,45 +174,45 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 	 */
 	protected myVectorf getRandNormal_3D() {
 		myVectorf x = new myVectorf( 
-				(ThreadLocalRandom.current().nextFloat() *2.0f)-1.0f, 
-				(ThreadLocalRandom.current().nextFloat() *2.0f)-1.0f,
-				(ThreadLocalRandom.current().nextFloat() *2.0f)-1.0f);		
+				( MyMathUtils.randomFloat() *2.0f)-1.0f, 
+				( MyMathUtils.randomFloat() *2.0f)-1.0f,
+				( MyMathUtils.randomFloat() *2.0f)-1.0f);		
 		return x._normalized();
 	}
 	
 	protected myVector getRandNormal_3D_Double() {
 		myVector x = new myVector( 
-				(ThreadLocalRandom.current().nextDouble() *2.0f)-1.0f, 
-				(ThreadLocalRandom.current().nextDouble() *2.0f)-1.0f,
-				(ThreadLocalRandom.current().nextDouble() *2.0f)-1.0f);		
+				( MyMathUtils.randomDouble() *2.0f)-1.0f, 
+				( MyMathUtils.randomDouble() *2.0f)-1.0f,
+				( MyMathUtils.randomDouble() *2.0f)-1.0f);		
 		return x._normalized();
 	}
 	
-	/**
-	 * get uniformly random position on sphere surface with passed radius and center
-	 * @param rad
-	 * @param ctr
-	 * @return
-	 */
-	protected final myPointf getRandPosOnSphere(double rad, myPointf ctr){
-		myPointf pos = new myPointf();
-		double 	cosTheta = ThreadLocalRandom.current().nextDouble(-1,1), sinTheta =  Math.sin(Math.acos(cosTheta)),
-				phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI_F);
-		pos.set(sinTheta * Math.cos(phi), sinTheta * Math.sin(phi),cosTheta);
-		pos._mult((float) rad);
-		pos._add(ctr);
-		return pos;
-	}//getRandPosOnSphere
-	
-	protected final myPoint getRandPosOnSphere_Double(double rad, myPoint ctr){
-		myPoint pos = new myPoint();
-		double 	cosTheta = ThreadLocalRandom.current().nextDouble(-1,1), sinTheta =  Math.sin(Math.acos(cosTheta)),
-				phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI_F);
-		pos.set(sinTheta * Math.cos(phi), sinTheta * Math.sin(phi),cosTheta);
-		pos._mult((float) rad);
-		pos._add(ctr);
-		return pos;
-	}//getRandPosOnSphere
+//	/**
+//	 * get uniformly random position on sphere surface with passed radius and center
+//	 * @param rad
+//	 * @param ctr
+//	 * @return
+//	 */
+//	protected final myPointf getRandPosOnSphere(double rad, myPointf ctr){
+//		myPointf pos = new myPointf();
+//		double 	cosTheta = ThreadLocalRandom.current().nextDouble(-1,1), sinTheta =  Math.sin(Math.acos(cosTheta)),
+//				phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI_F);
+//		pos.set(sinTheta * Math.cos(phi), sinTheta * Math.sin(phi),cosTheta);
+//		pos._mult((float) rad);
+//		pos._add(ctr);
+//		return pos;
+//	}//getRandPosOnSphere
+//	
+//	protected final myPoint getRandPosOnSphere_Double(double rad, myPoint ctr){
+//		myPoint pos = new myPoint();
+//		double 	cosTheta = ThreadLocalRandom.current().nextDouble(-1,1), sinTheta =  Math.sin(Math.acos(cosTheta)),
+//				phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI_F);
+//		pos.set(sinTheta * Math.cos(phi), sinTheta * Math.sin(phi),cosTheta);
+//		pos._mult((float) rad);
+//		pos._add(ctr);
+//		return pos;
+//	}//getRandPosOnSphere
 	
 	/**
 	 * return 4 points that describe a sphere uniquely - no trio of points can be colinear, and the 4 points cannot be co planar
@@ -222,8 +221,8 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 	 * @param ctr center of desired sphere
 	 */	
 	protected final myPointf[] getRandSpherePoints(float rad, myPointf ctr){
-		myPointf a = getRandPosOnSphere(rad, ctr),b;
-		do { b = getRandPosOnSphere(rad, ctr);} while (a.equals(b));
+		myPointf a = MyMathUtils.getRandPosOnSphere(rad, ctr),b;
+		do { b = MyMathUtils.getRandPosOnSphere(rad, ctr);} while (a.equals(b));
 		myPointf c,d;
 		myVectorf ab = new myVectorf(a,b), ac = myVectorf.ZEROVEC, ad;
 		ab._normalize();
@@ -231,7 +230,7 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 		boolean eqFail = false, dotProdFail = false;
 		do {
 			++iter;
-			c = getRandPosOnSphere(rad, ctr);
+			c = MyMathUtils.getRandPosOnSphere(rad, ctr);
 			eqFail = (a.equals(c)) || (b.equals(c));
 			if(eqFail) {continue;}
 			ac = new myVectorf(a,c);
@@ -246,7 +245,7 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 		eqFail = false; dotProdFail = false;
 		do {
 			++iter;
-			d = getRandPosOnSphere(rad, ctr);
+			d = MyMathUtils.getRandPosOnSphere(rad, ctr);
 			eqFail = a.equals(d) || b.equals(d) || c.equals(d);
 			if(eqFail) {continue;}
 			ad = new myVectorf(a,d);
@@ -263,8 +262,8 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 	}
 	
 	protected final myPoint[] getRandSpherePoints_Double(double rad, myPoint ctr){
-		myPoint a = getRandPosOnSphere_Double(rad, ctr), b;
-		do{b= getRandPosOnSphere_Double(rad, ctr);} while (a.equals(b));
+		myPoint a = MyMathUtils.getRandPosOnSphereDouble(rad, ctr), b;
+		do{b= MyMathUtils.getRandPosOnSphereDouble(rad, ctr);} while (a.equals(b));
 		myPoint c,d;
 		myVector ab = new myVector(a,b), ac = myVector.ZEROVEC, ad;
 		ab._normalize();
@@ -272,7 +271,7 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 		boolean eqFail = false, dotProdFail = false;
 		do {
 			++iter;
-			c = getRandPosOnSphere_Double(rad, ctr);
+			c = MyMathUtils.getRandPosOnSphereDouble(rad, ctr);
 			eqFail = (a.equals(c)) || (b.equals(c));
 			if(eqFail) {continue;}
 			ac = new myVector(a,c);
@@ -287,7 +286,7 @@ public abstract class SOM_GeomCallable implements Callable<Boolean> {
 		eqFail = false; dotProdFail = false;
 		do {
 			++iter;
-			d = getRandPosOnSphere_Double(rad, ctr);
+			d = MyMathUtils.getRandPosOnSphereDouble(rad, ctr);
 			eqFail = a.equals(d) || b.equals(d) || c.equals(d);
 			if(eqFail) {continue;}
 			ad = new myVector(a,d);

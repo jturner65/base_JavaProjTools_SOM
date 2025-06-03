@@ -3,7 +3,6 @@ package base_SOM_Objects.som_geom.geom_examples;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
@@ -106,10 +105,9 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	/**
 	 * build a single list of sorted, unique idxs in allSamples that satisfy object creation constraints
 	 * @param allSamples list of all object samples available
-	 * @param rnd the current thread's rng engine
 	 * @return sorted list of idxs
 	 */
-	protected abstract Integer[] genUniqueObjIDXs(SOM_GeomSamplePointf[] allSamples, ThreadLocalRandom rnd);
+	protected abstract Integer[] genUniqueObjIDXs(SOM_GeomSamplePointf[] allSamples);
 	
 	/**
 	 * build ttlNumTrainEx x <# objs for object type> 2 d array of unique, appropriate idxs for training data
@@ -117,11 +115,10 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	 * @return
 	 */	
 	protected final SOM_GeomTrainingExUniqueID[] buildUniqueIDXsForObjType(SOM_GeomSamplePointf[] allSamples, int ttlNumTrainEx) {
-		ThreadLocalRandom rnd = ThreadLocalRandom.current();
 		HashMap<SOM_GeomTrainingExUniqueID, Integer> res = new HashMap<SOM_GeomTrainingExUniqueID, Integer>();
 		SOM_GeomTrainingExUniqueID ex;
 		while (res.size() < ttlNumTrainEx) {
-			ex = new SOM_GeomTrainingExUniqueID(genUniqueObjIDXs(allSamples, rnd));	
+			ex = new SOM_GeomTrainingExUniqueID(genUniqueObjIDXs(allSamples));	
 			res.put(ex, 2);	
 		}		
 		return res.keySet().toArray(new SOM_GeomTrainingExUniqueID[0]);

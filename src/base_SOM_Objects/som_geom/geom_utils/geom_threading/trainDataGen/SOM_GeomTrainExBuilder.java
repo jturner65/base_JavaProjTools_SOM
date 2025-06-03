@@ -1,8 +1,8 @@
 package base_SOM_Objects.som_geom.geom_utils.geom_threading.trainDataGen;
 
 import java.util.HashSet;
-import java.util.concurrent.ThreadLocalRandom;
 
+import base_Math_Objects.MyMathUtils;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomExampleManager;
@@ -52,10 +52,9 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	}
 
 	private void buildTrainExData() {
-		ThreadLocalRandom rnd = ThreadLocalRandom.current();
 		SOM_GeomSamplePointf[] exAra = new SOM_GeomSamplePointf[numExPerObj];
 		for(int i=0;i<numExToBuildThisThread;++i) {
-			exAra = genPtsForObj(rnd);
+			exAra = genPtsForObj();
 			SOM_GeomObj obj = _buildSingleObjectFromSamples(SOM_ExDataType.Training,exAra, i); incrProgress(i,"Building Training Data");
 			exMgr.addExampleToMap(obj);		
 		}	
@@ -80,11 +79,11 @@ public abstract class SOM_GeomTrainExBuilder extends SOM_GeomCallable {
 	 * for lines just need 2 points; planes need 3 non-colinear points; spheres need 4 non-coplanar points, no 3 of which are colinear
 	 * @return
 	 */
-	protected abstract SOM_GeomSamplePointf[] genPtsForObj(ThreadLocalRandom rnd);
+	protected abstract SOM_GeomSamplePointf[] genPtsForObj();
 	
-	protected Integer[] genUniqueIDXs(int numToGen,  ThreadLocalRandom rnd){
+	protected Integer[] genUniqueIDXs(int numToGen){
 		HashSet<Integer> idxs = new HashSet<Integer>();
-		while(idxs.size() < numToGen) {	idxs.add(rnd.nextInt(0,allExamples.length));}		
+		while(idxs.size() < numToGen) {	idxs.add(MyMathUtils.randomInt(0,allExamples.length));}		
 		return idxs.toArray(new Integer[0]);
 	}
 	//for(int i=0;i<res.length;++i) {	res[i]=allExamples[rnd.nextInt(0,allExamples.length)];}

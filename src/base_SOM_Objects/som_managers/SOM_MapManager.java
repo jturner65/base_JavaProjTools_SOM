@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadLocalRandom;
 
+import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_Math_Objects.vectorObjs.floats.myPointf;
@@ -1976,10 +1976,9 @@ public abstract class SOM_MapManager {
 	protected int[] shuffleAraIDXs(int len) {
 		int[] res = new int[len];
 		for(int i=0;i<len;++i) {res[i]=i;}
-		ThreadLocalRandom tr = ThreadLocalRandom.current();
 		int swap = 0;
 		for(int i=(len-1);i>0;--i){
-			int j = tr.nextInt(i + 1);//find random lower idx somewhere below current position, and swap current with this idx
+			int j = MyMathUtils.randomInt(i + 1);//find random lower idx somewhere below current position, and swap current with this idx
 			swap = res[i];
 			res[i]=res[j];			
 			res[j]=swap;			
@@ -1989,9 +1988,8 @@ public abstract class SOM_MapManager {
 	//performs Durstenfeld  shuffle, leaves 0->stIdx alone - for testing/training data
 	protected String[] shuffleStrList(String[] _list, String type, int stIdx){
 		String tmp = "";
-		ThreadLocalRandom tr = ThreadLocalRandom.current();
 		for(int i=(_list.length-1);i>stIdx;--i){
-			int j = tr.nextInt(i + 1-stIdx)+stIdx;//find random lower idx somewhere below current position but greater than stIdx, and swap current with this idx
+			int j = MyMathUtils.randomInt(i + 1-stIdx)+stIdx;//find random lower idx somewhere below current position but greater than stIdx, and swap current with this idx
 			tmp = _list[i];
 			_list[i] = _list[j];
 			_list[j] = tmp;

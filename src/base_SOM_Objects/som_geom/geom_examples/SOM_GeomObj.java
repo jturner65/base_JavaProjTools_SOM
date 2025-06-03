@@ -3,7 +3,6 @@ package base_SOM_Objects.som_geom.geom_examples;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 import base_Render_Interface.IRenderInterface;
 import base_Math_Objects.MyMathUtils;
@@ -222,10 +221,8 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		categoryIDs = new HashSet<Integer>();		
 
 		labelClrAra = getGeomFlag(is3dIDX)? new int[] {0,0,0,255} : new int[] {255,255,255,255};
-		rndClrAra = getRandClr();		
+		rndClrAra = MyMathUtils.randomIntClrAra();	
 	}//_ctorInit	
-	
-
 	
 	/**
 	 * initialize object's ID
@@ -369,23 +366,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		basisVecs[2]._normalize();		
 		return basisVecs;
 	}
-	
-	/**
-	 * get a random location of a point on the surface of a sphere centered at ctr and with radius rad
-	 * @param rad
-	 * @param ctr
-	 * @return
-	 */
-	protected final myPointf getRandPosOnSphere(double rad, myPointf ctr){
-		myPointf pos = new myPointf();
-		double 	cosTheta = ThreadLocalRandom.current().nextDouble(-1,1), sinTheta = Math.sin(Math.acos(cosTheta)),
-				phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI_F);
-		pos.set(sinTheta * Math.cos(phi), sinTheta * Math.sin(phi),cosTheta);
-		pos._mult((float) rad);
-		pos._add(ctr);
-		return pos;
-	}//getRandPosOnSphere
-	
+		
 	/**
 	 * return 4 points that describe a sphere uniquely - no trio of points can be collinear, and the 4 points cannot be co planar
 	 * get 3 non-colinear points, find 4th by finding normal of plane 3 points describe
@@ -393,8 +374,8 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	 * @param ctr center of desired sphere
 	 */	
 	protected final myPointf[] getRandSpherePoints(float rad, myPointf ctr){
-		myPointf a = getRandPosOnSphere(rad, ctr),b;
-		do { b = getRandPosOnSphere(rad, ctr);} while (a.equals(b));
+		myPointf a = MyMathUtils.getRandPosOnSphere(rad, ctr),b;
+		do { b = MyMathUtils.getRandPosOnSphere(rad, ctr);} while (a.equals(b));
 		myPointf c,d;
 		myVectorf ab = new myVectorf(a,b), ac = myVectorf.ZEROVEC, ad;
 		ab._normalize();
@@ -402,7 +383,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		boolean eqFail = false, dotProdFail = false;
 		do {
 			++iter;
-			c = getRandPosOnSphere(rad, ctr);
+			c = MyMathUtils.getRandPosOnSphere(rad, ctr);
 			eqFail = (a.equals(c)) || (b.equals(c));
 			if(eqFail) {continue;}
 			ac = new myVectorf(a,c);
@@ -417,7 +398,7 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 		eqFail = false; dotProdFail = false;
 		do {
 			++iter;
-			d = getRandPosOnSphere(rad, ctr);
+			d = MyMathUtils.getRandPosOnSphere(rad, ctr);
 			eqFail = a.equals(d) || b.equals(d) || c.equals(d);
 			if(eqFail) {continue;}
 			ad = new myVectorf(a,d);
@@ -566,16 +547,6 @@ public abstract class SOM_GeomObj extends SOM_Example  {
 	public final int[] getClrFromWorldLoc_3D(myPointf pt,float[][] _worldBounds) {		
 		return new int[]{(int)(255*getBoundedClrVal(pt.x, 0, _worldBounds)),(int)(255*getBoundedClrVal(pt.y, 1, _worldBounds)),(int)(255*getBoundedClrVal(pt.z, 2, _worldBounds)),255};
 	}
-	
-	/**
-	 * build a random color
-	 * @return
-	 */
-	protected final int[] getRandClr() {
-		int r = ThreadLocalRandom.current().nextInt(rndBnd)+lBnd, g = ThreadLocalRandom.current().nextInt(rndBnd)+lBnd, b =ThreadLocalRandom.current().nextInt(rndBnd)+lBnd;
-		return new int[] {r,g,b};
-	}
-	
 
 	/**
 	 * draw entire object this class represents, using location as color or using randomly assigned color

@@ -1,8 +1,8 @@
 package base_SOM_Objects.som_geom.geom_examples;
 
 import java.util.TreeMap;
-import java.util.concurrent.ThreadLocalRandom;
 
+import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Math_Objects.vectorObjs.floats.myVectorf;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
@@ -221,7 +221,7 @@ public abstract class SOM_GeomLineObj extends SOM_GeomObj {
 	 */
 	@Override
 	public final myPointf getRandPointOnObj() {
-		float t = ((float) ThreadLocalRandom.current().nextFloat() *worldTBounds[1][0])+worldTBounds[0][0];
+		float t = (MyMathUtils.randomFloat() *worldTBounds[1][0])+worldTBounds[0][0];
 		return getPointOnLine(t);
 	}
 
