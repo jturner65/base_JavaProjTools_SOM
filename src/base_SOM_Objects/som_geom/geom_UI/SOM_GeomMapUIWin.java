@@ -1,6 +1,5 @@
 package base_SOM_Objects.som_geom.geom_UI;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 
@@ -73,8 +72,9 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * 			the 3rd element is integer flag idx 
 	 * @return total number of privBtnFlags in instancing class (including those not displayed)
 	 */
-	protected final int initAllSOMPrivBtns_Indiv(ArrayList<Object[]> tmpBtnNamesArray) {
-		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr"}, mapShowLocClrIDX));          
+	protected final int initAllSOMPrivBtns_Indiv(TreeMap<Integer, Object[]> tmpBtnNamesArray) {
+		int idx=0;
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr"}, mapShowLocClrIDX));          
 		return _numPrivFlags;
 	}
 	
