@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeMap;
 
+import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Render_Interface.IRenderInterface;
 import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
-import base_Math_Objects.vectorObjs.floats.myPointf;
 
 
 //this class will hold a structure to aggregate and process the examples of a particular type that consider the owning node a BMU

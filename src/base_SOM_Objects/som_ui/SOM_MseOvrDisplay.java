@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.TreeMap;
 
-import base_Render_Interface.IRenderInterface;
 import base_Math_Objects.vectorObjs.floats.myPointf;
+import base_Render_Interface.IRenderInterface;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
