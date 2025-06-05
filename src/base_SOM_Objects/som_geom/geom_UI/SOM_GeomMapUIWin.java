@@ -61,20 +61,12 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 		//disable right-side menu since the main animation window will handle showing/hiding that.
 		dispFlags.setHasRtSideMenu(false);
 	}
-
+	
 	/**
-	 * Instancing class-specific (application driven) UI buttons to display are built 
-	 * in this function.  Add an entry to tmpBtnNamesArray for each button, in the order 
-	 * they are to be displayed
-	 * @param tmpBtnNamesArray array list of Object arrays, where in each object array : 
-	 * 			the first element is the true string label, 
-	 * 			the 2nd elem is false string array, and 
-	 * 			the 3rd element is integer flag idx 
-	 * @return total number of privBtnFlags in instancing class (including those not displayed)
+	 * Retrieve the total number of defined privFlags booleans (application-specific state bools and interactive buttons)
 	 */
-	protected final int initAllSOMPrivBtns_Indiv(TreeMap<Integer, Object[]> tmpBtnNamesArray) {
-		int idx=0;
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr"}, mapShowLocClrIDX));          
+	@Override
+	public int getTotalNumOfPrivBools() {
 		return _numPrivFlags;
 	}
 	
@@ -104,8 +96,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	}
 
 	@Override
-	protected void setInitValsForPrivFlags_Indiv() {		
-	}
+	protected void setInitValsForPrivFlags_Indiv() {}
 
 	/**
 	 * Instance class determines the true and false labels the class-category locking should use
@@ -114,12 +105,14 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 */
 	@Override
 	protected String[] getClassCatLockBtnTFLabels() {return new String[] {"Cat Changes with Class","Lock Cat; Class only in Cat"};}
+	
 	/**
 	 * Instance class determines the true and false labels the class buttons use - if empty then no classes used
 	 * @return array holding true(idx0) and false(idx1) labels for buttons to control display of class-based segment
 	 */
 	@Override
 	protected final String[] getClassBtnTFLabels() {	return new String[] {"Hide Classes ","Show Classes "};}
+	
 	/**
 	 * Instance class determines the true and false labels the category buttons use - if empty then no categories used
 	 * @return array holding true(idx0) and false(idx1) labels for buttons to control display of category-based segment
@@ -134,18 +127,32 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	protected final String[] getSegmentSaveBtnTFLabels() {return new String[] {"Saving Cls, Cat, Ftr seg BMUs", "Save Cls, Cat, Ftr seg BMUs" };}
 	/**
-	 * Instancing class-specific (application driven) UI objects should be defined
-	 * in this function.  Add an entry to tmpBtnNamesArray for each button, in the order 
-	 * they are to be displayed
-	 * @param tmpUIObjArray map keyed by uiIDX of object, value is list of Object arrays, where in each object array : 
-	 * 			the first element double array of min/max/mod values
-	 * 			the 2nd element is starting value
-	 * 			the 3rd elem is label for object
-	 * 			the 4th element is boolean array of {treat as int, has list values, value is sent to owning window}
-	 * @param tmpListObjVals treemap keyed by object IDX and value is list of strings of values for all UI list select objects
+	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
+	 * @param tmpUIObjArray : map of object data, keyed by UI object idx, with array values being :                    
+	 *           the first element double array of min/max/mod values                                                   
+	 *           the 2nd element is starting value                                                                      
+	 *           the 3rd elem is label for object                                                                       
+	 *           the 4th element is object type (GUIObj_Type enum)
+	 *           the 5th element is boolean array of : (unspecified values default to false)
+	 *           	idx 0: value is sent to owning window,  
+	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
+	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
+	 *           the 6th element is a boolean array of format values :(unspecified values default to false)
+	 *           	idx 0: whether multi-line(stacked) or not                                                  
+	 *              idx 1: if true, build prefix ornament                                                      
+	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
+	 * @param tmpListObjVals : map of string arrays, keyed by UI object idx, with array values being each element in the list
+	 * @param tmpBtnNamesArray : map of Object arrays to be built containing all button definitions, keyed by sequential value == objId
+	 * 				the first element is true label
+	 * 				the second element is false label
+	 * 				the third element is integer flag idx 
 	 */
 	@Override
-	protected final void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals) {}
+	protected final void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals, int firstBtnIDX, TreeMap<Integer, Object[]> tmpBtnNamesArray) {
+		int idx=firstBtnIDX;
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr"}, mapShowLocClrIDX)); 
+	}
+	
 	@Override
 	protected final void setVisScreenDimsPriv_Indiv() {}
 	

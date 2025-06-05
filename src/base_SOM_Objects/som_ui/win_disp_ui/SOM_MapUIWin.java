@@ -268,56 +268,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	}
 	
 	protected abstract void initMe_Indiv();	
-	
-	@Override
-	/**
-	 * initialize all private-flag based UI buttons here - called by base class before initMe
-	 */
-	protected final int initAllUIButtons(TreeMap<Integer, Object[]> tmpBtnNamesArray){	
-		//add an entry for each button, in the order they are wished to be displayed
-		int idx=0;
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Building SOM","Build SOM "},buildSOMExe));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Reset Dflt UI Vals","Reset Dflt UI Vals"},resetMapDefsIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Using ChiSq for Ftr Dist", "Not Using ChiSq Distance"}, mapUseChiSqDistIDX));       
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Prdct Dist ignores 0-ftrs","Prdct Dist w/all ftrs"}, mapExclProdZeroFtrIDX));    
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing UMat (Bi-Cubic)", "Showing Ftr Map"}, mapDrawUMatrixIDX));        
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Nodes", "Show Nodes"}, mapDrawAllMapNodesIDX));    
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Node Lbls", "Show Node Lbls"}, mapDrawNodeLblIDX));      
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Nodes (by Pop)", "Show Nodes (by Pop)"}, mapDrawPopMapNodesIDX));    
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Nodes w/o mapped Ex","Show Nodes w/o mapped Ex"},mapDrawNodesWith0MapExIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)"}, mapDrawWtMapNodesIDX));     
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Node Pop Graph", "Show Node Pop Graph"}, drawMapNodePopGraphIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Train Data", "Show Train Data"}, mapDrawTrainDatIDX));       
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Test Data", "Show Test Data"}, mapDrawTestDatIDX));        
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Ftr Wt Segments", "Show Ftr Wt Segments"}, mapDrawFtrWtSegMembersIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Clstr (U-Dist)", "Show Clstr (U-Dist)"}, mapDrawUMatSegMembersIDX)); 
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Clstr Image", "Show Clstr Image"}, mapDrawUMatSegImgIDX));  
-		
-		//these are only enabled if they have been defined to return values from instancing class
-		String[] classBtnTFLabels = getClassBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {classBtnTFLabels[0],classBtnTFLabels[1]},mapDrawClassSegmentsIDX));}		
-		String[] catBtnTFLabels = getCategoryBtnTFLabels();
-		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {catBtnTFLabels[0],catBtnTFLabels[1]},mapDrawCategorySegmentsIDX));}				
-		String[] saveSegmentTFLabels = getSegmentSaveBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {saveSegmentTFLabels[0],saveSegmentTFLabels[1]},saveAllSegmentMapsIDX));}		
-		String[] catClassLockBtnTFLabels = getClassCatLockBtnTFLabels();
-		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1]},mapLockClassCatSegmentsIDX));}	
-		//add instancing-class specific buttons - returns total # of private flags in instancing class
-		return initAllSOMPrivBtns_Indiv(tmpBtnNamesArray);
-		
-	}//initAllPrivBtns
 
-	/**
-	 * Instancing class-specific (application driven) UI buttons to display are built 
-	 * in this function.  Add an entry to tmpBtnNamesArray for each button, in the order 
-	 * they are to be displayed
-	 * @param tmpBtnNamesArray array list of Object arrays, where in each object array : 
-	 * 			the first element is the true string label, 
-	 * 			the 2nd elem is false string array, and 
-	 * 			the 3rd element is integer flag idx 
-	 * @return total number of privBtnFlags in instancing class (including those not displayed)
-	 */
-	protected abstract int initAllSOMPrivBtns_Indiv(TreeMap<Integer, Object[]> tmpBtnNamesArray);
 	//these are used by instancing class to determine the names of the class and category data values used.  if these are empty then that means these features are not used
 	/**
 	 * Instance class determines the true and false labels the class buttons use - if empty then no classes used
@@ -354,13 +305,21 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 *           the 3rd elem is label for object                                                                       
 	 *           the 4th element is object type (GUIObj_Type enum)
 	 *           the 5th element is boolean array of : (unspecified values default to false)
-	 *           	{value is sent to owning window, 
-	 *           	value is sent on any modifications (while being modified, not just on release), 
-	 *           	changes to value must be explicitly sent to consumer (are not automatically sent)}    
-	 * @param tmpListObjVals : map of list object possible selection values
+	 *           	idx 0: value is sent to owning window,  
+	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
+	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
+	 *           the 6th element is a boolean array of format values :(unspecified values default to false)
+	 *           	idx 0: whether multi-line(stacked) or not                                                  
+	 *              idx 1: if true, build prefix ornament                                                      
+	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
+	 * @param tmpListObjVals : map of string arrays, keyed by UI object idx, with array values being each element in the list
+	 * @param tmpBtnNamesArray : map of Object arrays to be built containing all button definitions, keyed by sequential value == objId
+	 * 				the first element is true label
+	 * 				the second element is false label
+	 * 				the third element is integer flag idx 
 	 */
 	@Override
-	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals){		
+	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals, TreeMap<Integer, Object[]> tmpBtnNamesArray){		
 		//keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects
 		
 		String[] listOfTypes = SOM_FtrDataType.getListOfTypes();
@@ -415,9 +374,37 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 			tmpUIObjArray.put(uiClassSelectIDX, uiMgr.uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiClassSelectIDX).length-1,1.0}, 0.0, classUIDesc));			//uiMapPreBuiltDirIDX
 		} else {			_classExistsAndIsShown = false;		}
 		
-		//populate instancing application objects
-		setupGUIObjsAras_Indiv(tmpUIObjArray,tmpListObjVals);
+		//add an entry for each button, in the order they are wished to be displayed
+		//TODO add these to main tmpUIObjArray instead
+		int idx=0;
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Building SOM","Build SOM "},buildSOMExe));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Reset Dflt UI Vals","Reset Dflt UI Vals"},resetMapDefsIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Using ChiSq for Ftr Dist", "Not Using ChiSq Distance"}, mapUseChiSqDistIDX));       
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Prdct Dist ignores 0-ftrs","Prdct Dist w/all ftrs"}, mapExclProdZeroFtrIDX));    
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing UMat (Bi-Cubic)", "Showing Ftr Map"}, mapDrawUMatrixIDX));        
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Nodes", "Show Nodes"}, mapDrawAllMapNodesIDX));    
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Node Lbls", "Show Node Lbls"}, mapDrawNodeLblIDX));      
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Nodes (by Pop)", "Show Nodes (by Pop)"}, mapDrawPopMapNodesIDX));    
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Nodes w/o mapped Ex","Show Nodes w/o mapped Ex"},mapDrawNodesWith0MapExIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)"}, mapDrawWtMapNodesIDX));     
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Node Pop Graph", "Show Node Pop Graph"}, drawMapNodePopGraphIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Train Data", "Show Train Data"}, mapDrawTrainDatIDX));       
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Test Data", "Show Test Data"}, mapDrawTestDatIDX));        
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Ftr Wt Segments", "Show Ftr Wt Segments"}, mapDrawFtrWtSegMembersIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Clstr (U-Dist)", "Show Clstr (U-Dist)"}, mapDrawUMatSegMembersIDX)); 
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Clstr Image", "Show Clstr Image"}, mapDrawUMatSegImgIDX));  
 		
+		//these are only enabled if they have been defined to return values from instancing class
+		String[] classBtnTFLabels = getClassBtnTFLabels();
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {classBtnTFLabels[0],classBtnTFLabels[1]},mapDrawClassSegmentsIDX));}		
+		String[] catBtnTFLabels = getCategoryBtnTFLabels();
+		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {catBtnTFLabels[0],catBtnTFLabels[1]},mapDrawCategorySegmentsIDX));}				
+		String[] saveSegmentTFLabels = getSegmentSaveBtnTFLabels();
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {saveSegmentTFLabels[0],saveSegmentTFLabels[1]},saveAllSegmentMapsIDX));}		
+		String[] catClassLockBtnTFLabels = getClassCatLockBtnTFLabels();
+		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1]},mapLockClassCatSegmentsIDX));}	
+		//populate instancing application objects, including instancing-class specific buttons
+		setupGUIObjsAras_Indiv(tmpUIObjArray,tmpListObjVals, tmpBtnNamesArray.size(), tmpBtnNamesArray);		
 	}//setupGUIObjsAras
 	/**
 	 * instancing class description for category display UI object - if null or length==0 then not shown/used
@@ -442,20 +429,31 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 * @param classVals : list of values to display for class select list
 	 */
 	public final void setUI_ClassListVals(String[] classVals) {		if(uiMgr.getPrivFlag(_classCanBeShownIDX)) {		uiMgr.setAllUIListValues(uiClassSelectIDX, classVals, true);	}}
-	
+
 	/**
-	 * Instancing class-specific (application driven) UI objects should be defined
-	 * in this function.  Add an entry to tmpBtnNamesArray for each button, in the order 
-	 * they are to be displayed
-	 * @param tmpUIObjArray map keyed by uiIDX of object, value is list of Object arrays, where in each object array : 
-	 * 			the first element double array of min/max/mod values
-	 * 			the 2nd element is starting value
-	 * 			the 3rd elem is label for object
-	 * 			the 4th element is boolean array of {treat as int, has list values, value is sent to owning window}
-	 * @param tmpListObjVals treemap keyed by object IDX and value is list of strings of values for all UI list select objects
+	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
+	 * @param tmpUIObjArray : map of object data, keyed by UI object idx, with array values being :                    
+	 *           the first element double array of min/max/mod values                                                   
+	 *           the 2nd element is starting value                                                                      
+	 *           the 3rd elem is label for object                                                                       
+	 *           the 4th element is object type (GUIObj_Type enum)
+	 *           the 5th element is boolean array of : (unspecified values default to false)
+	 *           	idx 0: value is sent to owning window,  
+	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
+	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
+	 *           the 6th element is a boolean array of format values :(unspecified values default to false)
+	 *           	idx 0: whether multi-line(stacked) or not                                                  
+	 *              idx 1: if true, build prefix ornament                                                      
+	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
+	 * @param tmpListObjVals : map of string arrays, keyed by UI object idx, with array values being each element in the list
+	 * @param firstBtnIDX : first index to place button objects in @tmpBtnNamesArray 
+	 * @param tmpBtnNamesArray : map of Object arrays to be built containing all button definitions, keyed by sequential value == objId
+	 * 				the first element is true label
+	 * 				the second element is false label
+	 * 				the third element is integer flag idx 
 	 */
-	protected abstract void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals);
-		
+	protected abstract void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals, int firstBtnIDX, TreeMap<Integer, Object[]> tmpBtnNamesArray);
+
 	/**
 	 * set window-specific variables that are based on current visible screen dimensions
 	 */
