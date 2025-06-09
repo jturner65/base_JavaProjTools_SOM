@@ -6,7 +6,7 @@ import java.util.Map;
 public enum SOM_MseOvrDispTypeVals {
 	mseOvrMapNodeLocIDX, mseOvrUMatDistIDX, mseOvrMapNodePopIDX, mseOvrFtrIDX, mseOvrClassIDX, mseOvrCatIDX, mseOvrNoneIDX, mseOvrOtherIDX;
 	private static final String[] 
-			_typeExplanation = new String[] {
+			_typeExplanation = new String[]{
 					"Map Node Location and Coordinates",
 					"UMatrix Distance for Map Node",
 					"Population of examples mapped to Map Node",
@@ -17,10 +17,10 @@ public enum SOM_MseOvrDispTypeVals {
 					"Custom Info Display"
 					};
 	private static final String[] 
-			_typeName = new String[] {"mseOvrMapNodeLocIDX","mseOvrUMatDistIDX","mseOvrMapNodePopIDX","mseOvrFtrIDX","mseOvrClassIDX","mseOvrCatIDX","mseOvrNoneIDX","mseOvrOtherIDX"};
+			_typeName = new String[]{"mseOvrMapNodeLocIDX","mseOvrUMatDistIDX","mseOvrMapNodePopIDX","mseOvrFtrIDX","mseOvrClassIDX","mseOvrCatIDX","mseOvrNoneIDX","mseOvrOtherIDX"};
 	//used for file names
 	private static final String[] 
-			_typeBrfName = new String[] {"MapNodeLoc","UMatDist","Population","Features","Classes","Categories","None","Other"};
+			_typeBrfName = new String[]{"MapNodeLoc","UMatDist","Population","Features","Classes","Categories","None","Other"};
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, SOM_MseOvrDispTypeVals> map = new HashMap<Integer, SOM_MseOvrDispTypeVals>(); 
 		static { for (SOM_MseOvrDispTypeVals enumV : SOM_MseOvrDispTypeVals.values()) { map.put(enumV.ordinal(), enumV);}}

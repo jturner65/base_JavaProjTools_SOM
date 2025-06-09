@@ -324,17 +324,17 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		
 		String[] listOfTypes = SOM_FtrDataType.getListOfTypes();
 		String[] bmuMapTypes = SOM_MapManager.getNodeBMUMapTypes();
-		tmpListObjVals.put(uiMapShapeIDX, new String[] {"rectangular","hexagonal"});
-		tmpListObjVals.put(uiMapBndsIDX, new String[] {"planar","toroid"});
-		tmpListObjVals.put(uiMapKTypIDX, new String[] {"Dense CPU", "Dense GPU", "Sparse CPU"});		
+		tmpListObjVals.put(uiMapShapeIDX, new String[]{"rectangular","hexagonal"});
+		tmpListObjVals.put(uiMapBndsIDX, new String[]{"planar","toroid"});
+		tmpListObjVals.put(uiMapKTypIDX, new String[]{"Dense CPU", "Dense GPU", "Sparse CPU"});		
 		tmpListObjVals.put(uiMapNHdFuncIDX, new String[]{"gaussian","bubble"});		
 		tmpListObjVals.put(uiMapRadCoolIDX, new String[]{"linear","exponential"});
 		tmpListObjVals.put(uiMapLrnCoolIDX, new String[]{"linear","exponential"});		
 		tmpListObjVals.put(uiTrainDataNormIDX, listOfTypes);
 		tmpListObjVals.put(uiBMU_DispDataFrmtIDX, listOfTypes);		
-		tmpListObjVals.put(uiMapPreBuiltDirIDX, new String[] {"None"});
+		tmpListObjVals.put(uiMapPreBuiltDirIDX, new String[]{"None"});
 		tmpListObjVals.put(uiMapNodeBMUTypeToDispIDX, bmuMapTypes);
-		tmpListObjVals.put(uiFtrSelectIDX, new String[] {"None"});		
+		tmpListObjVals.put(uiFtrSelectIDX, new String[]{"None"});		
 			
 		tmpUIObjArray.put(uiTrainDataNormIDX, uiMgr.uiObjInitAra_List(new double[]{0.0, listOfTypes.length-1, 1.0}, SOM_FtrDataType.FTR_NORM.getVal(), "Data Normalizing"));   				//uiTrainDataFrmtIDX                                                                        
 		tmpUIObjArray.put(uiBMU_DispDataFrmtIDX, uiMgr.uiObjInitAra_List(new double[]{0.0, listOfTypes.length-1, 1.0}, SOM_FtrDataType.UNNORMALIZED.getVal(), "Map Node Ftr Disp Frmt"));  	//uiBMU_DispDataFrmtIDX                                                                         
@@ -363,46 +363,46 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		String catUIDesc = getCategoryUIObjLabel();
 		if((null!=catUIDesc) && (catUIDesc.length()>0)) {
 			_catExistsAndIsShown = true;
-			tmpListObjVals.put(uiCategorySelectIDX, new String[] {"None"});	
+			tmpListObjVals.put(uiCategorySelectIDX, new String[]{"None"});	
 			tmpUIObjArray.put(uiCategorySelectIDX, uiMgr.uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiCategorySelectIDX).length-1,1.0}, 0.0, catUIDesc));			//uiMapPreBuiltDirIDX
 		} else {			_catExistsAndIsShown = false;		}
 		
 		String classUIDesc = getClassUIObjLabel();
 		if((null!=classUIDesc) && (classUIDesc.length()>0)) {
 			_classExistsAndIsShown = true;
-			tmpListObjVals.put(uiClassSelectIDX, new String[] {"None"});	
+			tmpListObjVals.put(uiClassSelectIDX, new String[]{"None"});	
 			tmpUIObjArray.put(uiClassSelectIDX, uiMgr.uiObjInitAra_List(new double[]{0.0, tmpListObjVals.get(uiClassSelectIDX).length-1,1.0}, 0.0, classUIDesc));			//uiMapPreBuiltDirIDX
 		} else {			_classExistsAndIsShown = false;		}
 		
 		//add an entry for each button, in the order they are wished to be displayed
 		//TODO add these to main tmpUIObjArray instead
 		int idx=0;
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Building SOM","Build SOM "},buildSOMExe));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Reset Dflt UI Vals","Reset Dflt UI Vals"},resetMapDefsIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Using ChiSq for Ftr Dist", "Not Using ChiSq Distance"}, mapUseChiSqDistIDX));       
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Prdct Dist ignores 0-ftrs","Prdct Dist w/all ftrs"}, mapExclProdZeroFtrIDX));    
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing UMat (Bi-Cubic)", "Showing Ftr Map"}, mapDrawUMatrixIDX));        
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Nodes", "Show Nodes"}, mapDrawAllMapNodesIDX));    
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Node Lbls", "Show Node Lbls"}, mapDrawNodeLblIDX));      
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Nodes (by Pop)", "Show Nodes (by Pop)"}, mapDrawPopMapNodesIDX));    
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Nodes w/o mapped Ex","Show Nodes w/o mapped Ex"},mapDrawNodesWith0MapExIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)"}, mapDrawWtMapNodesIDX));     
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Node Pop Graph", "Show Node Pop Graph"}, drawMapNodePopGraphIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Train Data", "Show Train Data"}, mapDrawTrainDatIDX));       
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Test Data", "Show Test Data"}, mapDrawTestDatIDX));        
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Ftr Wt Segments", "Show Ftr Wt Segments"}, mapDrawFtrWtSegMembersIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Clstr (U-Dist)", "Show Clstr (U-Dist)"}, mapDrawUMatSegMembersIDX)); 
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hide Clstr Image", "Show Clstr Image"}, mapDrawUMatSegImgIDX));  
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Building SOM","Build SOM "},buildSOMExe));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Reset Dflt UI Vals","Reset Dflt UI Vals"},resetMapDefsIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Using ChiSq for Ftr Dist", "Not Using ChiSq Distance"}, mapUseChiSqDistIDX));       
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Prdct Dist ignores 0-ftrs","Prdct Dist w/all ftrs"}, mapExclProdZeroFtrIDX));    
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing UMat (Bi-Cubic)", "Showing Ftr Map"}, mapDrawUMatrixIDX));        
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Nodes", "Show Nodes"}, mapDrawAllMapNodesIDX));    
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Node Lbls", "Show Node Lbls"}, mapDrawNodeLblIDX));      
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Nodes (by Pop)", "Show Nodes (by Pop)"}, mapDrawPopMapNodesIDX));    
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Nodes w/o mapped Ex","Show Nodes w/o mapped Ex"},mapDrawNodesWith0MapExIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)"}, mapDrawWtMapNodesIDX));     
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Node Pop Graph", "Show Node Pop Graph"}, drawMapNodePopGraphIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Train Data", "Show Train Data"}, mapDrawTrainDatIDX));       
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Test Data", "Show Test Data"}, mapDrawTestDatIDX));        
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Ftr Wt Segments", "Show Ftr Wt Segments"}, mapDrawFtrWtSegMembersIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Clstr (U-Dist)", "Show Clstr (U-Dist)"}, mapDrawUMatSegMembersIDX)); 
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hide Clstr Image", "Show Clstr Image"}, mapDrawUMatSegImgIDX));  
 		
 		//these are only enabled if they have been defined to return values from instancing class
 		String[] classBtnTFLabels = getClassBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {classBtnTFLabels[0],classBtnTFLabels[1]},mapDrawClassSegmentsIDX));}		
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{classBtnTFLabels[0],classBtnTFLabels[1]},mapDrawClassSegmentsIDX));}		
 		String[] catBtnTFLabels = getCategoryBtnTFLabels();
-		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {catBtnTFLabels[0],catBtnTFLabels[1]},mapDrawCategorySegmentsIDX));}				
+		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{catBtnTFLabels[0],catBtnTFLabels[1]},mapDrawCategorySegmentsIDX));}				
 		String[] saveSegmentTFLabels = getSegmentSaveBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {saveSegmentTFLabels[0],saveSegmentTFLabels[1]},saveAllSegmentMapsIDX));}		
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{saveSegmentTFLabels[0],saveSegmentTFLabels[1]},saveAllSegmentMapsIDX));}		
 		String[] catClassLockBtnTFLabels = getClassCatLockBtnTFLabels();
-		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1]},mapLockClassCatSegmentsIDX));}	
+		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1]},mapLockClassCatSegmentsIDX));}	
 		//populate instancing application objects, including instancing-class specific buttons
 		setupGUIObjsAras_Indiv(tmpUIObjArray,tmpListObjVals, tmpBtnNamesArray.size(), tmpBtnNamesArray);		
 	}//setupGUIObjsAras

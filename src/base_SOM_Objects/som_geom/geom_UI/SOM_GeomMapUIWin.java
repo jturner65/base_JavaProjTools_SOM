@@ -104,28 +104,28 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 * category should be locked to allow selection through within-category classes
 	 */
 	@Override
-	protected String[] getClassCatLockBtnTFLabels() {return new String[] {"Cat Changes with Class","Lock Cat; Class only in Cat"};}
+	protected String[] getClassCatLockBtnTFLabels() {return new String[]{"Cat Changes with Class","Lock Cat; Class only in Cat"};}
 	
 	/**
 	 * Instance class determines the true and false labels the class buttons use - if empty then no classes used
 	 * @return array holding true(idx0) and false(idx1) labels for buttons to control display of class-based segment
 	 */
 	@Override
-	protected final String[] getClassBtnTFLabels() {	return new String[] {"Hide Classes ","Show Classes "};}
+	protected final String[] getClassBtnTFLabels() {	return new String[]{"Hide Classes ","Show Classes "};}
 	
 	/**
 	 * Instance class determines the true and false labels the category buttons use - if empty then no categories used
 	 * @return array holding true(idx0) and false(idx1) labels for buttons to control display of category-based segment
 	 */
 	@Override
-	protected final String[] getCategoryBtnTFLabels() {	return new String[] {"Hide Categories", "Show Categories"};}	
+	protected final String[] getCategoryBtnTFLabels() {	return new String[]{"Hide Categories", "Show Categories"};}	
 	
 	/**
 	 * This will return instance class-based true and false labels for save segment data.  if empty then no segment saving possible
 	 * @return array holding true(idx0) and false(idx1) labels for buttons to control saving of segment data
 	 */
 	@Override
-	protected final String[] getSegmentSaveBtnTFLabels() {return new String[] {"Saving Cls, Cat, Ftr seg BMUs", "Save Cls, Cat, Ftr seg BMUs" };}
+	protected final String[] getSegmentSaveBtnTFLabels() {return new String[]{"Saving Cls, Cat, Ftr seg BMUs", "Save Cls, Cat, Ftr seg BMUs" };}
 	/**
 	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
 	 * @param tmpUIObjArray : map of object data, keyed by UI object idx, with array values being :                    
@@ -150,7 +150,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	@Override
 	protected final void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals, int firstBtnIDX, TreeMap<Integer, Object[]> tmpBtnNamesArray) {
 		int idx=firstBtnIDX;
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr"}, mapShowLocClrIDX)); 
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr"}, mapShowLocClrIDX)); 
 	}
 	
 	@Override

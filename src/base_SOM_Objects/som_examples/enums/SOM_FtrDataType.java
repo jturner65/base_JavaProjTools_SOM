@@ -11,12 +11,12 @@ import java.util.Map;
 public enum SOM_FtrDataType {
 	UNNORMALIZED, FTR_NORM, EXMPL_NORM;
 	private static final String[] 
-			_typeExplanation = new String[] {"Unnormalized","Feature (0->1 per ftr across all training data)","Example (vector mag==1)"};
+			_typeExplanation = new String[]{"Unnormalized","Feature (0->1 per ftr across all training data)","Example (vector mag==1)"};
 	private static final String[] 
-			_typeName = new String[] {"Unnormalized","Feature (0->1 per ftr)","Example (vector mag==1)"};
+			_typeName = new String[]{"Unnormalized","Feature (0->1 per ftr)","Example (vector mag==1)"};
 	//used for file names
 	private static final String[] 
-			_typeBrfName = new String[] {"unNormFtrs","perFtrNorm","perExNorm"};
+			_typeBrfName = new String[]{"unNormFtrs","perFtrNorm","perExNorm"};
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, SOM_FtrDataType> map = new HashMap<Integer, SOM_FtrDataType>(); 
 	static { for (SOM_FtrDataType enumV : SOM_FtrDataType.values()) { map.put(enumV.ordinal(), enumV);}}

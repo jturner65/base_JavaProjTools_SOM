@@ -306,7 +306,7 @@ public abstract class SOM_ExampleManager {
 			}			
 			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","Finished partitioning " + exampleMap.size()+ " "+exampleName+" records into " + nameCounter + " "+exampleName+" record files, each holding up to " + preProcDatPartSz + " records and saving to files.", MsgCodes.info1);
 			//save the data in a format file
-			String[] data = new String[] {"Number of file partitions for " + saveDestFNamePrefixAra[1] +" data : "+ nameCounter + "\n"};
+			String[] data = new String[]{"Number of file partitions for " + saveDestFNamePrefixAra[1] +" data : "+ nameCounter + "\n"};
 			fileIO.saveStrings(saveDestFNamePrefixAra[0]+"_format.csv", data);		
 			msgObj.dispMessage("SOM_ExampleManager::"+exampleName,"saveAllExampleMapData","Finished saving all "+exampleName+" map data", MsgCodes.info5);
 			return true;
@@ -498,7 +498,7 @@ public abstract class SOM_ExampleManager {
 	 * @param dataDesc string describing type of data
 	 */
 	protected final void saveDateAndTimeOfDataCreation(String fileName, String dataDesc) {
-		String[] stringsToWrite = new String[] {""+dataDesc + " creation date/time,"+dateAndTimeOfDataCreation};
+		String[] stringsToWrite = new String[]{""+dataDesc + " creation date/time,"+dateAndTimeOfDataCreation};
 		fileIO.saveStrings(fileName, stringsToWrite);	
 	}//
 		

@@ -56,7 +56,7 @@ public class SOM_MapNodeBMUExamples{
 		dispClrs = node.getMapAltClrs();
 		sqDistToCopyNode = 0.0;
 		copyNode = node;
-		visLabel = new String[] {""+node.OID+" : ", ""+numMappedEx};
+		visLabel = new String[]{""+node.OID+" : ", ""+numMappedEx};
 	}//init
 	
 	//set this example to be a copy of passed example
@@ -99,7 +99,7 @@ public class SOM_MapNodeBMUExamples{
 		numMappedEx = numEx;		
 		logExSize = (float) Math.log(numMappedEx + 1)*1.5f;	
 		nodeSphrDet = (int)( Math.log(logExSize+1)+2);
-		visLabel = new String[] {""+node.OID+" : ", ""+numMappedEx};
+		visLabel = new String[]{""+node.OID+" : ", ""+numMappedEx};
 		dispClrs = hasExamples ? node.getMapNodeClrs() : node.getMapAltClrs();
 		if(!hasExamples && (dataType==SOM_ExDataType.Training)) {
 			node.mapMgr.getMsgObj().dispInfoMessage("SOMMapNodeBMUExamples", "finalize", "Finalize for " +dataType.getName() + " non-example map node in SOMMapNodeBMUExamples with "+numMappedEx+" copied ex | dispClrs : ["+dispClrs[0]+","+dispClrs[1]+","+dispClrs[2]+"] | node addr : " + node.mapNodeCoord +" | copied node addr : "+copyNode.mapNodeCoord+" | dist to copy node : " + sqDistToCopyNode+".");

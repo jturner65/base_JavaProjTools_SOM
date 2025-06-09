@@ -2403,7 +2403,7 @@ public abstract class SOM_MapManager {
 		SortedMap<Float,ArrayList<SOM_MapNode>> headMap = map.headMap(valThresh);
 		for(Float key : headMap.keySet()) {
 			ArrayList<SOM_MapNode> ara = headMap.get(key);
-			for (SOM_MapNode node : ara) {		node.drawMeWithWt(ri, 10.0f*key, new String[] {""+node.OID+" : ",String.format("%.4f",key)});}
+			for (SOM_MapNode node : ara) {		node.drawMeWithWt(ri, 10.0f*key, new String[]{""+node.OID+" : ",String.format("%.4f",key)});}
 		}
 		ri.popMatState();
 	}//drawNodesWithWt

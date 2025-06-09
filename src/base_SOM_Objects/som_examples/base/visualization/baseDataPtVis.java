@@ -97,7 +97,7 @@ public abstract class baseDataPtVis{
 		//draw point of radius rad at mapLoc - actual location on map
 		//show(myPointf P, float rad, int det, int[] clrs, String[] txtAra)
 		int[] clrAra = getMapNodeClrs();
-		ri.showTextAra(mapLoc, _rad, drawDet, clrAra, new String[] {ID});
+		ri.showTextAra(mapLoc, _rad, drawDet, clrAra, new String[]{ID});
 		//draw line to bmu location
 		ri.setColorValStroke(clrAra[1],255);
 		ri.setStrokeWt(1.0f);

@@ -8,14 +8,14 @@ package base_SOM_Objects.som_ui.win_disp_ui;
  */
 public interface ISOM_UIWinMapDat {
 	//arrays holding mapDat names and ui obj indexes of som map ui values
-	final String[] mapDatNames = new String[] {
+	final String[] mapDatNames = new String[]{
 		"mapCols","mapRows","mapEpochs","mapKType","mapStRad","mapEndRad","mapStLrnRate","mapEndLrnRate",
 		"mapGridShape","mapBounds","mapRadCool","mapNHood", "mapLearnCool"			
 	};
 
-	final String[] mapDatNames_Ints = new String[] {"mapCols","mapRows","mapEpochs","mapKType","mapStRad","mapEndRad"};
-	final String[] mapDatNames_Floats = new String[] {"mapStLrnRate","mapEndLrnRate"};
-	final String[] mapDatNames_Strings = new String[] {"mapGridShape","mapBounds","mapRadCool","mapNHood", "mapLearnCool"};	
+	final String[] mapDatNames_Ints = new String[]{"mapCols","mapRows","mapEpochs","mapKType","mapStRad","mapEndRad"};
+	final String[] mapDatNames_Floats = new String[]{"mapStLrnRate","mapEndLrnRate"};
+	final String[] mapDatNames_Strings = new String[]{"mapGridShape","mapBounds","mapRadCool","mapNHood", "mapLearnCool"};	
 	
 	/**
 	 * this method will determine if the passed map data key exists in the passed map data name string

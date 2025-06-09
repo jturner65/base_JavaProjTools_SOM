@@ -68,7 +68,7 @@ public class SOM_MapDat{
 	/**
 	 * types of data kernel (config) supported by somoclu-based som executable - describes data format and whether computed via strictly cpu computation or using cuda
 	 */
-	private static final String[] kernelTypes = new String[] {"Dense CPU","Dense GPU","Sparse CPU"};
+	private static final String[] kernelTypes = new String[]{"Dense CPU","Dense GPU","Sparse CPU"};
 
 	/**
 	 * Build a construct to hold logistical information about som executable. This is not ready to be used until given data

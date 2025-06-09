@@ -707,7 +707,7 @@ public abstract class SOM_ProjConfigData {
 		val = now.get(Calendar.MINUTE);			res = String.format("%02d", val);	 		resWithYear += res;		resWithoutYear += res;		
 		if(toSecond){val = now.get(Calendar.SECOND);res = token + String.format("%02d", val) + token;	 resWithYear += res;		resWithoutYear += res;}
 		
-		return new String[] {resWithYear,resWithoutYear};
+		return new String[]{resWithYear,resWithoutYear};
 	}//getDateTimeString
 			
 	/**
@@ -940,7 +940,7 @@ public abstract class SOM_ProjConfigData {
 		//build subdir based on date, if doesn't exist
 		String destDir = getDirNameAndBuild(rootDestDir, subDir, true);
 		String destForFName = destDir + _desSuffix;				
-		return new String[] {destForFName, _desSuffix, rootDestDir};
+		return new String[]{destForFName, _desSuffix, rootDestDir};
 	}//_buildDataCSVFNames	
 	
 	//this will return whether the passed subdir exists under the passed base directory

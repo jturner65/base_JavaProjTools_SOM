@@ -383,28 +383,28 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		// true tag, false tag, btn IDX
 		// TODO put these objects in tmpUIObjArray
 		int idx=0;
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Debugging", "Debug"}, Base_BoolFlags.debugIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Debugging", "Debug"}, Base_BoolFlags.debugIDX));
 		// UI",drawSOM_MapUIVis});
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs"}, regenUIObjsIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects"},	showFullSourceObjIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points"}, showSamplePntsIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing Labels", "Show Labels"}, showUIObjLabelIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing Sample Labels", "Show Sample Labels"}, showUIObjSmplsLabelIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing Loc-based Color", "Showing Random Color"}, useUIObjLocAsClrIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs"}, showFullTrainingObjIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs"}, regenUIObjsIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects"},	showFullSourceObjIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points"}, showSamplePntsIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing Labels", "Show Labels"}, showUIObjLabelIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing Sample Labels", "Show Sample Labels"}, showUIObjSmplsLabelIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing Loc-based Color", "Showing Random Color"}, useUIObjLocAsClrIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs"}, showFullTrainingObjIDX));
 
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light"},	showSelUIObjIDX));
-		// tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Train From " +geomObjType.getName()+ " Samples",
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light"},	showSelUIObjIDX));
+		// tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Train From " +geomObjType.getName()+ " Samples",
 		// "Train From " +geomObjType.getName()+ " Centers/Bases", useSmplsForTrainIDX});
-		// tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Save Data", "Save Data",
+		// tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Save Data", "Save Data",
 		// saveUIObjDataIDX});
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs"}, allTrainExUniqueIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing Map Node Geometry", "Show Map Node Geometry"}, drawMapNodeGeomObjsIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Showing BMU-derived Locs", "Showing Actual Locs"}, showMapBasedLocsIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs"}, allTrainExUniqueIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing Map Node Geometry", "Show Map Node Geometry"}, drawMapNodeGeomObjsIDX));
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing BMU-derived Locs", "Showing Actual Locs"}, showMapBasedLocsIDX));
 
 		String[] showWFObjsTFLabels = getShowWireFrameBtnTFLabels();
 		if ((null != showWFObjsTFLabels) && (showWFObjsTFLabels.length == 2)) {
-			tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {showWFObjsTFLabels[0], showWFObjsTFLabels[1]}, showObjByWireFrmIDX));
+			tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{showWFObjsTFLabels[0], showWFObjsTFLabels[1]}, showObjByWireFrmIDX));
 		}
 		// populate instancing application objects including instancing-class specific buttons
 		setupGUIObjsAras_Indiv(tmpUIObjArray, tmpListObjVals, tmpBtnNamesArray.size(), tmpBtnNamesArray);

@@ -725,7 +725,7 @@ public abstract class SOM_MapNode extends SOM_Example{
 	public void drawMePopNoLbl(IRenderInterface ri, int _typeIDX) {		BMUExampleNodes[_typeIDX].drawMapNodeNoLabel(ri);	}	
 	public void drawMeSmall(IRenderInterface ri){
 		ri.pushMatState();
-		ri.showTextAra(mapLoc, 2, 2, getMapNodeClrs(), new String[] {this.OID}); 
+		ri.showTextAra(mapLoc, 2, 2, getMapNodeClrs(), new String[]{this.OID}); 
 		ri.popMatState();		
 	}		
 	public void drawMeWithWt(IRenderInterface ri, float wt, String[] disp){
