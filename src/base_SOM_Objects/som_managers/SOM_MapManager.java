@@ -2064,7 +2064,7 @@ public abstract class SOM_MapManager {
 	 * @param locPt
 	 */
 	public final void setMouseOverDataText(float x, float y, float sensitivity, myPointf locPt){//, boolean useScFtrs){
-		//float sensitivity = (float) guiObjs_Numeric[uiMseRegionSensIDX].getVal();
+		//float sensitivity = (float) guiObjs_Numeric[gIDX_MseRegionSensIDX].getVal();
 		
 		SOM_MapNode nearestNode = getMapNodeByCoords(new Tuple<Integer,Integer> ((int)(x+.5f), (int)(y+.5f)));
 		switch(uiMseDispData) {

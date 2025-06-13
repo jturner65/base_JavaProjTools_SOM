@@ -18,8 +18,9 @@ import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.base.GUI_AppWinVals;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
 import base_UI_Objects.windowUI.uiData.UIDataUpdater;
+import base_UI_Objects.windowUI.uiObjs.base.GUIObj_Params;
 import base_Utils_Objects.io.messaging.MsgCodes;
-import base_Utils_Objects.tools.flags.Base_BoolFlags;
+
 /**
  * this class will instance a combined window to hold an animation world and a
  * map display window overlay
@@ -27,7 +28,6 @@ import base_Utils_Objects.tools.flags.Base_BoolFlags;
  * @author john
  *
  */
-
 public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	/**
 	 * map manager corresponding to this animation world
@@ -342,72 +342,80 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	
 	/**
 	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
-	 * @param tmpUIObjArray : map of object data, keyed by UI object idx, with array values being :                    
-	 *           the first element double array of min/max/mod values                                                   
-	 *           the 2nd element is starting value                                                                      
-	 *           the 3rd elem is label for object                                                                       
-	 *           the 4th element is object type (GUIObj_Type enum)
-	 *           the 5th element is boolean array of : (unspecified values default to false)
+	 * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
+	 * 			- The object IDX                   
+	 *          - A double array of min/max/mod values                                                   
+	 *          - The starting value                                                                      
+	 *          - The label for object                                                                       
+	 *          - The object type (GUIObj_Type enum)
+	 *          - A boolean array of behavior configuration values : (unspecified values default to false)
 	 *           	idx 0: value is sent to owning window,  
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
-	 *           the 6th element is a boolean array of format values :(unspecified values default to false)
+	 *          - A boolean array of renderer format values :(unspecified values default to false)
 	 *           	idx 0: whether multi-line(stacked) or not                                                  
 	 *              idx 1: if true, build prefix ornament                                                      
 	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
-	 * @param tmpListObjVals : map of string arrays, keyed by UI object idx, with array values being each element in the list
-	 * @param tmpBtnNamesArray : map of Object arrays to be built containing all button definitions, keyed by sequential value == objId
-	 * 				the first element is true label
-	 * 				the second element is false label
-	 * 				the third element is integer flag idx 
 	 */
 	@Override
-	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals, TreeMap<Integer,Object[]> tmpBtnNamesArray) {
+	protected final void setupGUIObjsAras(TreeMap<String, GUIObj_Params> tmpUIObjMap){
 		
 		int minNumObjs = getMinNumObjs(), maxNumObjs = getMaxNumObjs(),	diffNumObjs = (maxNumObjs - minNumObjs > 100 ? 10 : 1);
 		numGeomObjs = minNumObjs;
-		tmpUIObjArray.put(gIDX_NumUIObjs, uiMgr.uiObjInitAra_Int(new double[]{minNumObjs, maxNumObjs, diffNumObjs}, numGeomObjs,"# of " + geomObjType.getName()+ " Objects", new boolean[]{true, true})); // gIDX_NumUIObjs
+		tmpUIObjMap.put("gIDX_NumUIObjs", uiMgr.uiObjInitAra_Int(gIDX_NumUIObjs, new double[]{minNumObjs, maxNumObjs, diffNumObjs}, numGeomObjs,"# of " + geomObjType.getName()+ " Objects", new boolean[]{true, true})); // gIDX_NumUIObjs
 		int minNumSmplsPerObj = getMinNumSmplsPerObj(), maxNumSmplsPerObj = getMaxNumSmplsPerObj(),	diffNumSmplsPerObj = (maxNumSmplsPerObj - minNumSmplsPerObj > 100 ? 10 : 1);
 		numSmplPointsPerObj = minNumSmplsPerObj;
-		tmpUIObjArray.put(gIDX_NumUISamplesPerObj, uiMgr.uiObjInitAra_Int(new double[]{minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj}, numSmplPointsPerObj, "# of samples per Object", new boolean[]{true, true})); // gIDX_NumUISamplesPerObj
-		tmpUIObjArray.put(gIDX_FractNumTrainEx, uiMgr.uiObjInitAra_Float(new double[]{0.00001, 1.000, 0.00001}, fractOfBinomialForBaseNumTrainEx,"Fract of Binomial for Train Ex", new boolean[]{true, false})); // gIDX_FractNumTrainEx
+		tmpUIObjMap.put("gIDX_NumUISamplesPerObj", uiMgr.uiObjInitAra_Int(gIDX_NumUISamplesPerObj, new double[]{minNumSmplsPerObj, maxNumSmplsPerObj, diffNumSmplsPerObj}, numSmplPointsPerObj, "# of samples per Object", new boolean[]{true, true})); // gIDX_NumUISamplesPerObj
+		tmpUIObjMap.put("gIDX_FractNumTrainEx", uiMgr.uiObjInitAra_Float(gIDX_FractNumTrainEx, new double[]{0.00001, 1.000, 0.00001}, fractOfBinomialForBaseNumTrainEx,"Fract of Binomial for Train Ex", new boolean[]{true, false})); // gIDX_FractNumTrainEx
 
 		long minNumTrainingExamples = numGeomObjs,
 				maxNumTrainingExamples = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj),
 				diffNumTrainingEx = (maxNumTrainingExamples - minNumTrainingExamples) > 1000 ? 1000 : 10;
 		numTrainingExamples = (int) minNumTrainingExamples;
-		tmpUIObjArray.put(gIDX_NumTrainingEx, uiMgr.uiObjInitAra_Int(new double[]{minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx}, numTrainingExamples,	"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]", new boolean[]{true, false})); // gIDX_NumUISamplesPerObj
-		tmpUIObjArray.put(gIDX_SelDispUIObj, uiMgr.uiObjInitAra_Int(new double[]{0, numGeomObjs-1, 1}, curSelGeomObjIDX,"ID of Object to Select", new boolean[]{true, true})); // gIDX_SelDispUIObj
-
+		tmpUIObjMap.put("gIDX_NumTrainingEx", uiMgr.uiObjInitAra_Int(gIDX_NumTrainingEx, new double[]{minNumTrainingExamples, maxNumTrainingExamples, diffNumTrainingEx}, numTrainingExamples,	"Ttl # of Train Ex [" + minNumTrainingExamples + ", " + maxNumTrainingExamples + "]", new boolean[]{true, false})); // gIDX_NumUISamplesPerObj
+		tmpUIObjMap.put("gIDX_SelDispUIObj", uiMgr.uiObjInitAra_Int(gIDX_SelDispUIObj, new double[]{0, numGeomObjs-1, 1}, curSelGeomObjIDX,"ID of Object to Select", new boolean[]{true, true})); // gIDX_SelDispUIObj
+		setupGUIObjsAras_Indiv(tmpUIObjMap);
+	}//setupGUIObjsAras
+	
+	/**
+	 * Build UI button objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
+	 * @param firstIdx : the first index to use in the map/as the objIdx
+	 * @param tmpUIBtnObjMap : map of GUIObj_Params to be built containing all button definitions, keyed by sequential value == objId
+	 * 				the first element is true label
+	 * 				the second element is false label
+	 * 				the third element is integer flag idx 
+	 */
+	@Override
+	protected final void setupGUIBtnAras(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBtnObjMap) {	
 		// add an entry for each button, in the order they are wished to be displayed
 		// true tag, false tag, btn IDX
-		// TODO put these objects in tmpUIObjArray
-		int idx=0;
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Debugging", "Debug"}, Base_BoolFlags.debugIDX));
+		int idx=firstIdx;
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.buildDebugButton(idx++,"Debugging", "Enable Debug"));
 		// UI",drawSOM_MapUIVis});
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs"}, regenUIObjsIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects"},	showFullSourceObjIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points"}, showSamplePntsIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing Labels", "Show Labels"}, showUIObjLabelIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing Sample Labels", "Show Sample Labels"}, showUIObjSmplsLabelIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing Loc-based Color", "Showing Random Color"}, useUIObjLocAsClrIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs"}, showFullTrainingObjIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs", regenUIObjsIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects",	showFullSourceObjIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points", showSamplePntsIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Showing Labels", "Show Labels", showUIObjLabelIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Showing Sample Labels", "Show Sample Labels", showUIObjSmplsLabelIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Showing Loc-based Color", "Showing Random Color", useUIObjLocAsClrIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs", showFullTrainingObjIDX));
 
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light"},	showSelUIObjIDX));
-		// tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Train From " +geomObjType.getName()+ " Samples",
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light", showSelUIObjIDX));
+		// tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Train From " +geomObjType.getName()+ " Samples",
 		// "Train From " +geomObjType.getName()+ " Centers/Bases", useSmplsForTrainIDX});
-		// tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Save Data", "Save Data",
+		// tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Save Data", "Save Data",
 		// saveUIObjDataIDX});
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs"}, allTrainExUniqueIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing Map Node Geometry", "Show Map Node Geometry"}, drawMapNodeGeomObjsIDX));
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Showing BMU-derived Locs", "Showing Actual Locs"}, showMapBasedLocsIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs", allTrainExUniqueIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Showing BMU-derived Locs", "Showing Actual Locs", showMapBasedLocsIDX));
 
 		String[] showWFObjsTFLabels = getShowWireFrameBtnTFLabels();
 		if ((null != showWFObjsTFLabels) && (showWFObjsTFLabels.length == 2)) {
-			tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{showWFObjsTFLabels[0], showWFObjsTFLabels[1]}, showObjByWireFrmIDX));
+			tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, showWFObjsTFLabels[0], showWFObjsTFLabels[1], showObjByWireFrmIDX));
 		}
 		// populate instancing application objects including instancing-class specific buttons
-		setupGUIObjsAras_Indiv(tmpUIObjArray, tmpListObjVals, tmpBtnNamesArray.size(), tmpBtnNamesArray);
+		//NEED TO CHnge this - implementation might have UI objects that clobber the buttons
+		setupGUIBtnAras_Indiv(tmpUIBtnObjMap);
 		
 	}//setupGUIObjsAras
 
@@ -422,30 +430,35 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	protected abstract int getMinNumSmplsPerObj();
 	protected abstract int getMaxNumSmplsPerObj();
 	protected abstract int getModNumSmplsPerObj();
-
 	/**
 	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
-	 * @param tmpUIObjArray : map of object data, keyed by UI object idx, with array values being :                    
-	 *           the first element double array of min/max/mod values                                                   
-	 *           the 2nd element is starting value                                                                      
-	 *           the 3rd elem is label for object                                                                       
-	 *           the 4th element is object type (GUIObj_Type enum)
-	 *           the 5th element is boolean array of : (unspecified values default to false)
+	 * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
+	 * 			- The object IDX                   
+	 *          - A double array of min/max/mod values                                                   
+	 *          - The starting value                                                                      
+	 *          - The label for object                                                                       
+	 *          - The object type (GUIObj_Type enum)
+	 *          - A boolean array of behavior configuration values : (unspecified values default to false)
 	 *           	idx 0: value is sent to owning window,  
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
-	 *           the 6th element is a boolean array of format values :(unspecified values default to false)
+	 *          - A boolean array of renderer format values :(unspecified values default to false)
 	 *           	idx 0: whether multi-line(stacked) or not                                                  
 	 *              idx 1: if true, build prefix ornament                                                      
 	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
-	 * @param tmpListObjVals : map of string arrays, keyed by UI object idx, with array values being each element in the list
-	 * @param firstBtnIDX : first index to place button objects in @tmpBtnNamesArray 
-	 * @param tmpBtnNamesArray : map of Object arrays to be built containing all button definitions, keyed by sequential value == objId
-	 * 				the first element is true label
-	 * 				the second element is false label
-	 * 				the third element is integer flag idx 
 	 */
-	protected abstract void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals, int firstBtnIDX, TreeMap<Integer, Object[]> tmpBtnNamesArray);
+	protected abstract void setupGUIObjsAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIObjMap);
+
+	/**
+	 * Build all UI buttons to be shown in left side bar menu for this window. This is for instancing windows to add to button region
+	 * USE tmpUIBtnObjMap.size() for start idx
+	 * @param tmpUIBtnObjMap : map of GUIObj_Params to be built containing all button definitions, keyed by sequential value == objId
+	 * 				the first element is the object index
+	 * 				the second element is true label
+	 * 				the third element is false label
+	 * 				the final element is integer flag idx 
+	 */
+	protected abstract void setupGUIBtnAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIBtnObjMap);
 
 	/**
 	 * update # of max training examples based on updated number of desired objects
