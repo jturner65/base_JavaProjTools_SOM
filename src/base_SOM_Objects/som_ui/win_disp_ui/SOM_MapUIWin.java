@@ -372,32 +372,32 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		//add an entry for each button, in the order they are wished to be displayed
 		//TODO add these to main tmpUIObjMap instead
 		int idx=firstIdx;
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Building SOM","Build SOM ",buildSOMExe));
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Reset Dflt UI Vals","Reset Dflt UI Vals",resetMapDefsIDX));
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Using ChiSq for Ftr Dist", "Not Using ChiSq Distance", mapUseChiSqDistIDX));       
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Prdct Dist ignores 0-ftrs","Prdct Dist w/all ftrs", mapExclProdZeroFtrIDX));    
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Showing UMat (Bi-Cubic)", "Showing Ftr Map", mapDrawUMatrixIDX));        
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Nodes", "Show Nodes", mapDrawAllMapNodesIDX));    
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Node Lbls", "Show Node Lbls", mapDrawNodeLblIDX));      
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Nodes (by Pop)", "Show Nodes (by Pop)", mapDrawPopMapNodesIDX));    
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Nodes w/o mapped Ex","Show Nodes w/o mapped Ex",mapDrawNodesWith0MapExIDX));
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)", mapDrawWtMapNodesIDX));     
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Node Pop Graph", "Show Node Pop Graph", drawMapNodePopGraphIDX));
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Train Data", "Show Train Data", mapDrawTrainDatIDX));       
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Test Data", "Show Test Data", mapDrawTestDatIDX));        
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Ftr Wt Segments", "Show Ftr Wt Segments", mapDrawFtrWtSegMembersIDX));
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Clstr (U-Dist)", "Show Clstr (U-Dist)", mapDrawUMatSegMembersIDX)); 
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Hide Clstr Image", "Show Clstr Image", mapDrawUMatSegImgIDX));  
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Building SOM","Build SOM ",buildSOMExe));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Reset Dflt UI Vals","Reset Dflt UI Vals",resetMapDefsIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Using ChiSq for Ftr Dist", "Not Using ChiSq Distance", mapUseChiSqDistIDX));       
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Prdct Dist ignores 0-ftrs","Prdct Dist w/all ftrs", mapExclProdZeroFtrIDX));    
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing UMat (Bi-Cubic)", "Showing Ftr Map", mapDrawUMatrixIDX));        
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Nodes", "Show Nodes", mapDrawAllMapNodesIDX));    
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Node Lbls", "Show Node Lbls", mapDrawNodeLblIDX));      
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Nodes (by Pop)", "Show Nodes (by Pop)", mapDrawPopMapNodesIDX));    
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Nodes w/o mapped Ex","Show Nodes w/o mapped Ex",mapDrawNodesWith0MapExIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)", mapDrawWtMapNodesIDX));     
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Node Pop Graph", "Show Node Pop Graph", drawMapNodePopGraphIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Train Data", "Show Train Data", mapDrawTrainDatIDX));       
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Test Data", "Show Test Data", mapDrawTestDatIDX));        
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Ftr Wt Segments", "Show Ftr Wt Segments", mapDrawFtrWtSegMembersIDX));
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Clstr (U-Dist)", "Show Clstr (U-Dist)", mapDrawUMatSegMembersIDX)); 
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Clstr Image", "Show Clstr Image", mapDrawUMatSegImgIDX));  
 		
 		//these are only enabled if they have been defined to return values from instancing class
 		String[] classBtnTFLabels = getClassBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, classBtnTFLabels[0],classBtnTFLabels[1],mapDrawClassSegmentsIDX));}		
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, classBtnTFLabels[0],classBtnTFLabels[1],mapDrawClassSegmentsIDX));}		
 		String[] catBtnTFLabels = getCategoryBtnTFLabels();
-		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, catBtnTFLabels[0],catBtnTFLabels[1],mapDrawCategorySegmentsIDX));}				
+		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, catBtnTFLabels[0],catBtnTFLabels[1],mapDrawCategorySegmentsIDX));}				
 		String[] saveSegmentTFLabels = getSegmentSaveBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, saveSegmentTFLabels[0],saveSegmentTFLabels[1],saveAllSegmentMapsIDX));}		
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, saveSegmentTFLabels[0],saveSegmentTFLabels[1],saveAllSegmentMapsIDX));}		
 		String[] catClassLockBtnTFLabels = getClassCatLockBtnTFLabels();
-		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1],mapLockClassCatSegmentsIDX));}	
+		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1],mapLockClassCatSegmentsIDX));}	
 		//populate instancing application objects, including instancing-class specific buttons
 		setupGUIBtnAras_Indiv(tmpUIBtnObjMap);		
 	}//setupGUIBtnAras

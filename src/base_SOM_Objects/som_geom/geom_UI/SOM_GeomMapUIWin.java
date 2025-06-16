@@ -159,7 +159,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
 	 */
 	protected final void setupGUIBtnAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIBtnObjMap) {
 		int idx=tmpUIBtnObjMap.size();
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr", mapShowLocClrIDX)); 
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing Feature[0:2] Clr","Not Showing Feature[0:2] Clr", mapShowLocClrIDX)); 
 	}
 
 	@Override
