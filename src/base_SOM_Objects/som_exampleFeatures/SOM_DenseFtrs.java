@@ -105,7 +105,7 @@ public class SOM_DenseFtrs extends SOM_Features {
 	@Override
 	public final float[] _getFtrsFromMap(int _type) {
 		float[] ftrs = new float[ftrMaps[_type].length];
-		System.arraycopy(ftrMaps[_type].length, 0, ftrs, 0, ftrs.length);
+		System.arraycopy(ftrMaps[_type], 0, ftrs, 0, ftrs.length);
 		return ftrs;
 	}
 	/**
