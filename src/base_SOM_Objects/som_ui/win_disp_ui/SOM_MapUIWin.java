@@ -36,9 +36,9 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	//idxs of boolean values/flags
 	public static final int 
 		//idx 0 is debug in privFlags structure
-		buildSOMExe 				= 1, //command to initiate SOM-building
+		buildSOMExe 					= 1, //command to initiate SOM-building
 		resetMapDefsIDX				= 2, //reset default UI values for map
-		mapDataLoadedIDX			= 3, //whether map has been loaded or not	
+		mapDataLoadedIDX				= 3, //whether map has been loaded or not	
 		mapUseChiSqDistIDX			= 4, //whether to use chi-squared (weighted by variance) distance for features or regular euclidean dist
 		mapExclProdZeroFtrIDX		= 5, //whether or not distances between two datapoints assume that absent features in source data point should be zero or ignored when comparing to map node ftrs
 
@@ -47,15 +47,15 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		mapDrawTestDatIDX 			= 7, //draw testing examples - data held out and not used to train the map 
 		mapDrawNodeLblIDX			= 8, //draw labels for nodes
 		mapDrawNodesWith0MapExIDX	= 9, //draw nodes that have no mapped examples
-		mapDrawWtMapNodesIDX		= 10, //draw map nodes with non-0 (present) ftr vals for currently selected ftr
+		mapDrawWtMapNodesIDX			= 10, //draw map nodes with non-0 (present) ftr vals for currently selected ftr
 		mapDrawPopMapNodesIDX	   	= 11, //draw map nodes that are bmus for training examples, with size logarithmically proportional to pop size
 		mapDrawAllMapNodesIDX		= 12, //draw all map nodes, even empty
 		drawMapNodePopGraphIDX		= 13, //draw graph next to SOM Map display showing map node population curve, with x axis being proportional to population, and y axis holding each node
 		
 		//UMatrix 		
 		mapDrawUMatrixIDX			= 14, //draw visualization of u matrix - distance between nodes
-		mapDrawUMatSegImgIDX		= 15, //draw the image of the interpolated segments based on UMatrix Distance
-		mapDrawUMatSegMembersIDX	= 16, //draw umatrix-based segments around regions of maps - visualizes clusters with different colors
+		mapDrawUMatSegImgIDX			= 15, //draw the image of the interpolated segments based on UMatrix Distance
+		mapDrawUMatSegMembersIDX		= 16, //draw umatrix-based segments around regions of maps - visualizes clusters with different colors
 		
 		//ftr and ftr-dist-based
 		mapDrawDistImageIDX			= 17, //draw umatrix-like rendering based on sq dist between adjacent node vectors
@@ -66,12 +66,12 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 		mapDrawCategorySegmentsIDX	= 20, //show category (collection of classes) segments
 		_categoryCanBeShownIDX		= 21, //whether category values are used and can be shown on UI/interracted with
 		_classCanBeShownIDX			= 22, //whether class values are used and can be shown on UI/interracted with
-		mapLockClassCatSegmentsIDX  = 23, //lock category to cycle through classes
+		mapLockClassCatSegmentsIDX  	= 23, //lock category to cycle through classes
 		
-		showSelRegionIDX			= 24, //highlight a specific region of the map, i.e. all nodes above a certain threshold for a chosen ftr
+		showSelRegionIDX				= 24, //highlight a specific region of the map, i.e. all nodes above a certain threshold for a chosen ftr
 		//train/test data management
 		somTrainDataLoadedIDX		= 25, //whether data used to build map has been loaded yet
-		saveLocClrImgIDX			= 26, //
+		saveLocClrImgIDX				= 26, //
 		//save segment mappings
 		saveAllSegmentMapsIDX		= 27;			//this will save all the segment mappings that have been defined
 	
@@ -85,34 +85,34 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	
 	//	//GUI Objects	
 	public final static int 
-		gIDX_TrainDataNormIDX		 = 0, //normalization that feature data should have: unnormalized, norm per feature across all data, normalize each example
-		gIDX_BMU_DispDataFrmtIDX	 = 1, //format of vectors to use when comparing examples to nodes on map
-		gIDX_TrainDatPartIDX		 = 2, //partition % of training data out of total data (rest is testing)
+		gIDX_TrainDataNormIDX		= 0, //normalization that feature data should have: unnormalized, norm per feature across all data, normalize each example
+		gIDX_BMU_DispDataFrmtIDX	 	= 1, //format of vectors to use when comparing examples to nodes on map
+		gIDX_TrainDatPartIDX		 	= 2, //partition % of training data out of total data (rest is testing)
 		                             
-		gIDX_MapRowsIDX 			 = 3,            //map rows
-		gIDX_MapColsIDX				 = 4, //map cols
-		gIDX_MapEpochsIDX			 = 5, //# of training epochs
-		gIDX_MapShapeIDX			 = 6, //hexagonal or rectangular
-		gIDX_MapBndsIDX				 = 7, //planar or torroidal bounds
-		gIDX_MapKTypIDX				 = 8, //0 : dense cpu, 1 : dense gpu, 2 : sparse cpu.  dense needs appropriate lrn file format
-		gIDX_MapNHdFuncIDX			 = 9, //neighborhood : 0 : gaussian, 1 : bubble
-		gIDX_MapRadCoolIDX			 = 10, //radius cooling 0 : linear, 1 : exponential
-		gIDX_MapLrnCoolIDX			 = 11, //learning rate cooling 0 : linear 1 : exponential
-		gIDX_MapLrnStIDX			 = 12, //start learning rate
-		gIDX_MapLrnEndIDX			 = 13, //end learning rate
-		gIDX_MapRadStIDX			 = 14, //start radius
-		gIDX_MapRadEndIDX			 = 15, //end radius
-		gIDX_MapPreBuiltDirIDX		 = 16, //list of prebuilt maps as defined in config - this specifies which prebuilt map to use
+		gIDX_MapRowsIDX 			 	= 3,            //map rows
+		gIDX_MapColsIDX				= 4, //map cols
+		gIDX_MapEpochsIDX			= 5, //# of training epochs
+		gIDX_MapShapeIDX			 	= 6, //hexagonal or rectangular
+		gIDX_MapBndsIDX				= 7, //planar or torroidal bounds
+		gIDX_MapKTypIDX				= 8, //0 : dense cpu, 1 : dense gpu, 2 : sparse cpu.  dense needs appropriate lrn file format
+		gIDX_MapNHdFuncIDX			= 9, //neighborhood : 0 : gaussian, 1 : bubble
+		gIDX_MapRadCoolIDX			= 10, //radius cooling 0 : linear, 1 : exponential
+		gIDX_MapLrnCoolIDX			= 11, //learning rate cooling 0 : linear 1 : exponential
+		gIDX_MapLrnStIDX			 	= 12, //start learning rate
+		gIDX_MapLrnEndIDX			= 13, //end learning rate
+		gIDX_MapRadStIDX			 	= 14, //start radius
+		gIDX_MapRadEndIDX			= 15, //end radius
+		gIDX_MapPreBuiltDirIDX		= 16, //list of prebuilt maps as defined in config - this specifies which prebuilt map to use
 		gIDX_MapNodeBMUTypeToDispIDX = 17, //type of examples mapping to a particular node to display in visualization
 		                             
-		gIDX_NodeWtDispThreshIDX 	 = 18, //threshold for display of map nodes on individual weight maps
-		gIDX_NodePopDispThreshIDX	 = 19, //only display populated map nodes that are this size or larger (log of population determines size)		
-		gIDX_NodeInSegThreshIDX		 = 20, //threshold of u-matrix weight for nodes to belong to same segment
+		gIDX_NodeWtDispThreshIDX 	= 18, //threshold for display of map nodes on individual weight maps
+		gIDX_NodePopDispThreshIDX	= 19, //only display populated map nodes that are this size or larger (log of population determines size)		
+		gIDX_NodeInSegThreshIDX		= 20, //threshold of u-matrix weight for nodes to belong to same segment
 		                             
-		gIDX_MseRegionSensIDX		 = 21, //sensitivity threshold for mouse-over
-		gIDX_FtrSelectIDX			 = 22, //pick the feature to display, if ftr-idx wt graphs are being displayed
-		gIDX_CategorySelectIDX		 = 23, //pick the category to display, if category mapping is available/enabled
-		gIDX_ClassSelectIDX			 = 24;			//pick the class to display, if class mapping is available/enabled
+		gIDX_MseRegionSensIDX		= 21, //sensitivity threshold for mouse-over
+		gIDX_FtrSelectIDX			= 22, //pick the feature to display, if ftr-idx wt graphs are being displayed
+		gIDX_CategorySelectIDX		= 23, //pick the category to display, if category mapping is available/enabled
+		gIDX_ClassSelectIDX			= 24;			//pick the class to display, if class mapping is available/enabled
 	
 	public static final int numSOMBaseGUIObjs = 25;
 	//
@@ -299,7 +299,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	private boolean _classExistsAndIsShown = false;
 
 	/**
-	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
+	 * Build all UI objects to be shown in left side bar menu for this window. This is the first child class function called by initThisWin
 	 * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
 	 * 			- The object IDX                   
 	 *          - A double array of min/max/mod values                                                   
@@ -310,10 +310,13 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 *           	idx 0: value is sent to owning window,  
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
-	 *          - A boolean array of renderer format values :(unspecified values default to false)
-	 *           	idx 0: whether multi-line(stacked) or not                                                  
-	 *              idx 1: if true, build prefix ornament                                                      
-	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
+	 *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
+	 * 				idx 0 : Should be multiline
+	 * 				idx 1 : One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
+	 * 				idx 2 : Text should be centered (default is false)
+	 * 				idx 3 : Object should be rendered with outline (default for btns is true, for non-buttons is false)
+	 * 				idx 4 : Should have ornament
+	 * 				idx 5 : Ornament color should match label color 
 	 */
 	@Override
 	protected final void setupGUIObjsAras(TreeMap<String, GUIObj_Params> tmpUIObjMap){		//keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects			
@@ -370,40 +373,39 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 */
 	protected final void setupGUIBoolSwitchAras(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap) {		
 		//add an entry for each button, in the order they are wished to be displayed
-		//TODO add these to main tmpUIObjMap instead
 		int idx=firstIdx;
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Building SOM","Build SOM ",buildSOMExe));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Reset Dflt UI Vals","Reset Dflt UI Vals",resetMapDefsIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Using ChiSq for Ftr Dist", "Not Using ChiSq Distance", mapUseChiSqDistIDX));       
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Prdct Dist ignores 0-ftrs","Prdct Dist w/all ftrs", mapExclProdZeroFtrIDX));    
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing UMat (Bi-Cubic)", "Showing Ftr Map", mapDrawUMatrixIDX));        
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Nodes", "Show Nodes", mapDrawAllMapNodesIDX));    
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Node Lbls", "Show Node Lbls", mapDrawNodeLblIDX));      
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Nodes (by Pop)", "Show Nodes (by Pop)", mapDrawPopMapNodesIDX));    
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Nodes w/o mapped Ex","Show Nodes w/o mapped Ex",mapDrawNodesWith0MapExIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)", mapDrawWtMapNodesIDX));     
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Node Pop Graph", "Show Node Pop Graph", drawMapNodePopGraphIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Train Data", "Show Train Data", mapDrawTrainDatIDX));       
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Test Data", "Show Test Data", mapDrawTestDatIDX));        
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Ftr Wt Segments", "Show Ftr Wt Segments", mapDrawFtrWtSegMembersIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Clstr (U-Dist)", "Show Clstr (U-Dist)", mapDrawUMatSegMembersIDX)); 
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hide Clstr Image", "Show Clstr Image", mapDrawUMatSegImgIDX));  
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Building SOM","Build SOM ",buildSOMExe));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Reset Dflt UI Vals","Reset Dflt UI Vals",resetMapDefsIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Using ChiSq for Ftr Dist", "Not Using ChiSq Distance", mapUseChiSqDistIDX));       
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Prdct Dist ignores 0-ftrs","Prdct Dist w/all ftrs", mapExclProdZeroFtrIDX));    
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing UMat (Bi-Cubic)", "Showing Ftr Map", mapDrawUMatrixIDX));        
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Nodes", "Show Nodes", mapDrawAllMapNodesIDX));    
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Node Lbls", "Show Node Lbls", mapDrawNodeLblIDX));      
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Nodes (by Pop)", "Show Nodes (by Pop)", mapDrawPopMapNodesIDX));    
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Nodes w/o mapped Ex","Show Nodes w/o mapped Ex",mapDrawNodesWith0MapExIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Hot Ftr Nodes (by Wt)", "Show Hot Ftr Nodes (by Wt)", mapDrawWtMapNodesIDX));     
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Node Pop Graph", "Show Node Pop Graph", drawMapNodePopGraphIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Train Data", "Show Train Data", mapDrawTrainDatIDX));       
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Test Data", "Show Test Data", mapDrawTestDatIDX));        
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Ftr Wt Segments", "Show Ftr Wt Segments", mapDrawFtrWtSegMembersIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Clstr (U-Dist)", "Show Clstr (U-Dist)", mapDrawUMatSegMembersIDX)); 
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hide Clstr Image", "Show Clstr Image", mapDrawUMatSegImgIDX));  
 		
 		//these are only enabled if they have been defined to return values from instancing class
 		String[] classBtnTFLabels = getClassBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, classBtnTFLabels[0],classBtnTFLabels[1],mapDrawClassSegmentsIDX));}		
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, classBtnTFLabels[0],classBtnTFLabels[1],mapDrawClassSegmentsIDX));}		
 		String[] catBtnTFLabels = getCategoryBtnTFLabels();
-		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, catBtnTFLabels[0],catBtnTFLabels[1],mapDrawCategorySegmentsIDX));}				
+		if((null != catBtnTFLabels) && (catBtnTFLabels.length == 2)) {tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, catBtnTFLabels[0],catBtnTFLabels[1],mapDrawCategorySegmentsIDX));}				
 		String[] saveSegmentTFLabels = getSegmentSaveBtnTFLabels();
-		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, saveSegmentTFLabels[0],saveSegmentTFLabels[1],saveAllSegmentMapsIDX));}		
+		if((null != classBtnTFLabels) && (classBtnTFLabels.length == 2)) {tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, saveSegmentTFLabels[0],saveSegmentTFLabels[1],saveAllSegmentMapsIDX));}		
 		String[] catClassLockBtnTFLabels = getClassCatLockBtnTFLabels();
-		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1],mapLockClassCatSegmentsIDX));}	
+		if((null != catClassLockBtnTFLabels) && (catClassLockBtnTFLabels.length == 2)) {tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, catClassLockBtnTFLabels[0],catClassLockBtnTFLabels[1],mapLockClassCatSegmentsIDX));}	
 		//populate instancing application objects, including instancing-class specific buttons
-		setupGUIBoolSwitchAras_Indiv(tmpUIBoolSwitchObjMap);		
+		setupGUIBoolSwitchAras_Indiv(idx, tmpUIBoolSwitchObjMap);		
 	}//setupGUIBoolSwitchAras
 
 	/**
-	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
+	 * Build all UI objects to be shown in left side bar menu for this window. This is the first child class function called by initThisWin
 	 * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
 	 * 			- The object IDX                   
 	 *          - A double array of min/max/mod values                                                   
@@ -414,23 +416,26 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 *           	idx 0: value is sent to owning window,  
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
-	 *          - A boolean array of renderer format values :(unspecified values default to false)
-	 *           	idx 0: whether multi-line(stacked) or not                                                  
-	 *              idx 1: if true, build prefix ornament                                                      
-	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
+	 *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
+	 * 				idx 0 : Should be multiline
+	 * 				idx 1 : One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
+	 * 				idx 2 : Text should be centered (default is false)
+	 * 				idx 3 : Object should be rendered with outline (default for btns is true, for non-buttons is false)
+	 * 				idx 4 : Should have ornament
+	 * 				idx 5 : Ornament color should match label color 
 	 */
 	protected abstract void setupGUIObjsAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIObjMap);
 
 	/**
 	 * Build all UI buttons to be shown in left side bar menu for this window. This is for instancing windows to add to button region
-	 * USE tmpUIBoolSwitchObjMap.size() for start idx
+	 * @param firstIdx : the first index to use in the map/as the objIdx
 	 * @param tmpUIBoolSwitchObjMap : map of GUIObj_Params to be built containing all flag-backed boolean switch definitions, keyed by sequential value == objId
 	 * 				the first element is the object index
 	 * 				the second element is true label
 	 * 				the third element is false label
 	 * 				the final element is integer flag idx 
 	 */
-	protected abstract void setupGUIBoolSwitchAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
+	protected abstract void setupGUIBoolSwitchAras_Indiv(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
 	
 	/**
 	 * instancing class description for category display UI object - if null or length==0 then not shown/used

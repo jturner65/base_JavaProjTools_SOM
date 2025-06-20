@@ -341,7 +341,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	protected abstract void handleSOMAnimFlags_Indiv(int idx, boolean val);
 	
 	/**
-	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
+	 * Build all UI objects to be shown in left side bar menu for this window. This is the first child class function called by initThisWin
 	 * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
 	 * 			- The object IDX                   
 	 *          - A double array of min/max/mod values                                                   
@@ -352,10 +352,13 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 *           	idx 0: value is sent to owning window,  
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
-	 *          - A boolean array of renderer format values :(unspecified values default to false)
-	 *           	idx 0: whether multi-line(stacked) or not                                                  
-	 *              idx 1: if true, build prefix ornament                                                      
-	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
+	 *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
+	 * 				idx 0 : Should be multiline
+	 * 				idx 1 : One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
+	 * 				idx 2 : Text should be centered (default is false)
+	 * 				idx 3 : Object should be rendered with outline (default for btns is true, for non-buttons is false)
+	 * 				idx 4 : Should have ornament
+	 * 				idx 5 : Ornament color should match label color 
 	 */
 	@Override
 	protected final void setupGUIObjsAras(TreeMap<String, GUIObj_Params> tmpUIObjMap){
@@ -392,30 +395,29 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 		int idx=firstIdx;
 		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.buildDebugButton(idx++,"Debugging", "Enable Debug"));
 		// UI",drawSOM_MapUIVis});
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs", regenUIObjsIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects",	showFullSourceObjIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points", showSamplePntsIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing Labels", "Show Labels", showUIObjLabelIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing Sample Labels", "Show Sample Labels", showUIObjSmplsLabelIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing Loc-based Color", "Showing Random Color", useUIObjLocAsClrIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs", showFullTrainingObjIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs", regenUIObjsIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects",	showFullSourceObjIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points", showSamplePntsIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing Labels", "Show Labels", showUIObjLabelIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing Sample Labels", "Show Sample Labels", showUIObjSmplsLabelIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing Loc-based Color", "Showing Random Color", useUIObjLocAsClrIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing " + geomObjType.getName()+ " Training Exs",	"Show " + geomObjType.getName()+ " Training Exs", showFullTrainingObjIDX));
 
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light", showSelUIObjIDX));
-		// tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Train From " +geomObjType.getName()+ " Samples",
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light", showSelUIObjIDX));
+		// tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Train From " +geomObjType.getName()+ " Samples",
 		// "Train From " +geomObjType.getName()+ " Centers/Bases", useSmplsForTrainIDX});
-		// tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Save Data", "Save Data",
+		// tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Save Data", "Save Data",
 		// saveUIObjDataIDX});
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs", allTrainExUniqueIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX));
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Showing BMU-derived Locs", "Showing Actual Locs", showMapBasedLocsIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Gen Unique " + geomObjType.getName()+ " Train Exs",	"Allow dupe " + geomObjType.getName()+ " Train Exs", allTrainExUniqueIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX));
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing BMU-derived Locs", "Showing Actual Locs", showMapBasedLocsIDX));
 
 		String[] showWFObjsTFLabels = getShowWireFrameBtnTFLabels();
 		if ((null != showWFObjsTFLabels) && (showWFObjsTFLabels.length == 2)) {
-			tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, showWFObjsTFLabels[0], showWFObjsTFLabels[1], showObjByWireFrmIDX));
+			tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, showWFObjsTFLabels[0], showWFObjsTFLabels[1], showObjByWireFrmIDX));
 		}
 		// populate instancing application objects including instancing-class specific buttons
-		//NEED TO CHnge this - implementation might have UI objects that clobber the buttons
-		setupGUIBoolSwitchAras_Indiv(tmpUIBoolSwitchObjMap);
+		setupGUIBoolSwitchAras_Indiv(idx, tmpUIBoolSwitchObjMap);
 		
 	}//setupGUIObjsAras
 
@@ -431,7 +433,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	protected abstract int getMaxNumSmplsPerObj();
 	protected abstract int getModNumSmplsPerObj();
 	/**
-	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
+	 * Build all UI objects to be shown in left side bar menu for this window. This is the first child class function called by initThisWin
 	 * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
 	 * 			- The object IDX                   
 	 *          - A double array of min/max/mod values                                                   
@@ -442,23 +444,26 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 *           	idx 0: value is sent to owning window,  
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
-	 *          - A boolean array of renderer format values :(unspecified values default to false)
-	 *           	idx 0: whether multi-line(stacked) or not                                                  
-	 *              idx 1: if true, build prefix ornament                                                      
-	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
+	 *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
+	 * 				idx 0 : Should be multiline
+	 * 				idx 1 : One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
+	 * 				idx 2 : Text should be centered (default is false)
+	 * 				idx 3 : Object should be rendered with outline (default for btns is true, for non-buttons is false)
+	 * 				idx 4 : Should have ornament
+	 * 				idx 5 : Ornament color should match label color 
 	 */
 	protected abstract void setupGUIObjsAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIObjMap);
 
 	/**
 	 * Build all UI buttons to be shown in left side bar menu for this window. This is for instancing windows to add to button region
-	 * USE tmpUIBoolSwitchObjMap.size() for start idx
+	 * @param firstIdx : the first index to use in the map/as the objIdx
 	 * @param tmpUIBoolSwitchObjMap : map of GUIObj_Params to be built containing all flag-backed boolean switch definitions, keyed by sequential value == objId
 	 * 				the first element is the object index
 	 * 				the second element is true label
 	 * 				the third element is false label
 	 * 				the final element is integer flag idx 
 	 */
-	protected abstract void setupGUIBoolSwitchAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
+	protected abstract void setupGUIBoolSwitchAras_Indiv(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
 
 	/**
 	 * update # of max training examples based on updated number of desired objects
