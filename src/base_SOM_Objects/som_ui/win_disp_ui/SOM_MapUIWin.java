@@ -924,11 +924,6 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 * @return appropriate category idx for current class 
 	 */
 	protected abstract int getClassFromCategory(int _catIDX, int _curClassIDX) ;
-//	/**
-//	 * For instance-class specific ui values
-//	 * @param UIidx
-//	 */
-//	protected abstract void setUIWinVals_Indiv(int UIidx);
 	
 	/**
 	 * return class label from index - will be instance specific

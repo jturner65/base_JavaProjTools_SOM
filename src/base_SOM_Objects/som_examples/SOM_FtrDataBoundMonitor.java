@@ -1,5 +1,7 @@
 package base_SOM_Objects.som_examples;
 
+import java.util.Arrays;
+
 /**
  * this class will manage a single data bound multi-dim array, consisting of 
  * ftr arrays for min, max, diff, count, etc.
@@ -45,7 +47,7 @@ public abstract class SOM_FtrDataBoundMonitor {
 		bndsAra = new Float[numExampleTypeObjs][][];
 		for (int i=0;i<bndsAra.length;++i) {
 			bndsAra[i] = new Float[numBndTypes][];
-			for (int j=0;j<bndsAra[i].length;++j) {	bndsAra[i][j]=fastCopyAra(numElems, initBnd[j]);	}	
+			for (int j=0;j<numBndTypes;++j) {	bndsAra[i][j]=fastCopyAra(numElems, initBnd[j]);	}	
 		}
 	}//ctor
 	
@@ -76,19 +78,19 @@ public abstract class SOM_FtrDataBoundMonitor {
 		if (val < bndsAra[ttlOfAllCalcIDX][minBndIDX][destIDX]) {bndsAra[ttlOfAllCalcIDX][minBndIDX][destIDX]=val;bndsAra[ttlOfAllCalcIDX][diffBndIDX][destIDX] = bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]-bndsAra[ttlOfAllCalcIDX][minBndIDX][destIDX]; }
 		if (val > bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]) {bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]=val;bndsAra[ttlOfAllCalcIDX][diffBndIDX][destIDX] = bndsAra[ttlOfAllCalcIDX][maxBndIDX][destIDX]-bndsAra[ttlOfAllCalcIDX][minBndIDX][destIDX];}
 	}
-
+	protected Float[] getCopyOf(Float[] fAra) {return Arrays.copyOf(fAra, fAra.length);}
 	//get mins/diffs for ftr vals per ftr jp and for all vals per all jps
-	public final Float[] getMinBndsAra() {return bndsAra[ttlOfAllCalcIDX][minBndIDX];}
-	public final Float[] getMaxBndsAra() {return bndsAra[ttlOfAllCalcIDX][maxBndIDX];}
-	public final Float[] getDiffBndsAra() {return bndsAra[ttlOfAllCalcIDX][diffBndIDX];}
+	public final Float[] getMinBndsAra() {return getCopyOf(bndsAra[ttlOfAllCalcIDX][minBndIDX]);}
+	public final Float[] getMaxBndsAra() {return getCopyOf(bndsAra[ttlOfAllCalcIDX][maxBndIDX]);}
+	public final Float[] getDiffBndsAra() {return getCopyOf(bndsAra[ttlOfAllCalcIDX][diffBndIDX]);}
 	//aggregate all counts
-	public final Float[] getCountBndsAra() {	return bndsAra[ttlOfAllCalcIDX][countBndIDX];}
+	public final Float[] getCountBndsAra() {	return getCopyOf(bndsAra[ttlOfAllCalcIDX][countBndIDX]);}
 	
 	//individual type of data getters/setters
-	public final Float[] getMinBndsAra(int typeIDX) {return bndsAra[typeIDX][minBndIDX];}
-	public final Float[] getMaxBndsAra(int typeIDX) {return bndsAra[typeIDX][maxBndIDX];}
-	public final Float[] getDiffBndsAra(int typeIDX) {return bndsAra[typeIDX][diffBndIDX];}
-	public final Float[] getCountBndsAra(int typeIDX) {return bndsAra[typeIDX][countBndIDX];}
+	public final Float[] getMinBndsAra(int typeIDX) {return getCopyOf(bndsAra[typeIDX][minBndIDX]);}
+	public final Float[] getMaxBndsAra(int typeIDX) {return getCopyOf(bndsAra[typeIDX][maxBndIDX]);}
+	public final Float[] getDiffBndsAra(int typeIDX) {return getCopyOf(bndsAra[typeIDX][diffBndIDX]);}
+	public final Float[] getCountBndsAra(int typeIDX) {return getCopyOf(bndsAra[typeIDX][countBndIDX]);}
 	
 	//increment count of training examples with jp data represented by destIDX, and total calc value seen
 	public final void incrBnds(int typeIDX, int destIDX) {

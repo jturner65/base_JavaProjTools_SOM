@@ -1,6 +1,7 @@
 package base_SOM_Objects.som_geom.geom_examples;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeMap;
 
@@ -222,7 +223,7 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	protected SOM_Example[] getExToSave() {
 		if(!isExampleArrayBuilt()) {		buildExampleArray();	}	
 		msgObj.dispInfoMessage("Geom_SOMExampleManager::"+exampleName,"getExToSave","Size of exToSaveBMUs : " + SOMexampleArray.length);
-		return SOMexampleArray;
+		return Arrays.copyOf(SOMexampleArray,SOMexampleArray.length) ;
 	}
 
 

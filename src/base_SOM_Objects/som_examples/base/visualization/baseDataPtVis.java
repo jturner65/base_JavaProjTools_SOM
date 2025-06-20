@@ -1,5 +1,7 @@
 package base_SOM_Objects.som_examples.base.visualization;
 
+import java.util.Arrays;
+
 import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Render_Interface.IRenderInterface;
 import base_UI_Objects.GUI_AppManager;
@@ -75,9 +77,9 @@ public abstract class baseDataPtVis{
 	}
 	public float getRad(){return mapDrawRad;}
 
-	public int[] getMapAltClrs() {	return mapAltClrs;}
+	public int[] getMapAltClrs() {	return Arrays.copyOf(mapAltClrs, mapAltClrs.length);}
 	public void setMapAltClrs(int[] mapAltClrs) {	this.mapAltClrs = mapAltClrs;}
-	public int[] getMapNodeClrs() {	return mapNodeClrs;}
+	public int[] getMapNodeClrs() {	return Arrays.copyOf(mapNodeClrs, mapNodeClrs.length);}
 	public void setMapNodeClrs(int[] mapNodeClrs) {	this.mapNodeClrs = mapNodeClrs;}
 	
 	/**
