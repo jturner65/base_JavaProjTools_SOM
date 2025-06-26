@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -398,7 +399,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
 			//load geometry data
 		if(!geomSrcToTrainExDataManager.isDataPreProcced() || forceLoad) {			
 				//first need to load UI info about preprocced data (settings used to generate data)
-			TreeMap<String,String> uiToBuildGeom = geomSrcToTrainExDataManager.loadGeomObjsUIVals(subDir);
+			LinkedHashMap<String,String> uiToBuildGeom = geomSrcToTrainExDataManager.loadGeomObjsUIVals(subDir);
 			if((null != uiToBuildGeom) && (uiToBuildGeom.size()!=0)) {		//loaded successfully
 				dispWin.setAllUIValsFromPreProcLoad(uiToBuildGeom);
 			} else {

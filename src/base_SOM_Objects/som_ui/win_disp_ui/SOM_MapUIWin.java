@@ -4,7 +4,7 @@ package base_SOM_Objects.som_ui.win_disp_ui;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
@@ -117,8 +117,8 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	public static final int numSOMBaseGUIObjs = 25;
 	//
 	//match descriptor string to index and index to string, to facilitate access
-	public TreeMap<String, Integer> mapDatDescrToUIIdx;
-	public TreeMap<Integer,String> mapUIIdxToMapDatDescr;
+	public LinkedHashMap<String, Integer> mapDatDescrToUIIdx;
+	public LinkedHashMap<Integer,String> mapUIIdxToMapDatDescr;
 	//array of gui object idxs corresponding positionally with map dat names specified above
 	public static final int[] mapObjUIIdxs = new int[] {
 		gIDX_MapColsIDX, gIDX_MapRowsIDX, gIDX_MapEpochsIDX, gIDX_MapKTypIDX,gIDX_MapRadStIDX, gIDX_MapRadEndIDX,gIDX_MapLrnStIDX,gIDX_MapLrnEndIDX,
@@ -148,8 +148,8 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	//set convenience maps to more easily access UI objects related to map data/args
 	private void initAndSetSOMDatUIMaps() {
 		//build map descriptor index to mapdat descriptor string map. 
-		mapDatDescrToUIIdx = new TreeMap<String, Integer>();
-		mapUIIdxToMapDatDescr = new TreeMap<Integer,String> ();
+		mapDatDescrToUIIdx = new LinkedHashMap<String, Integer>();
+		mapUIIdxToMapDatDescr = new LinkedHashMap<Integer,String> ();
 		//mapDatNames mapObjUIIdxs
 		for(int i=0;i<mapDatNames.length;++i) {
 			String mapDatName = mapDatNames[i];
@@ -311,15 +311,16 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
 	 *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
-	 * 				idx 0 : Should be multiline
-	 * 				idx 1 : One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
-	 * 				idx 2 : Text should be centered (default is false)
-	 * 				idx 3 : Object should be rendered with outline (default for btns is true, for non-buttons is false)
-	 * 				idx 4 : Should have ornament
-	 * 				idx 5 : Ornament color should match label color 
+	 * 				- Should be multiline
+	 * 				- One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
+	 * 				- Force this object to be on a new row/line (For side-by-side layouts)
+	 * 				- Text should be centered (default is false)
+	 * 				- Object should be rendered with outline (default for btns is true, for non-buttons is false)
+	 * 				- Should have ornament
+	 * 				- Ornament color should match label color 
 	 */
 	@Override
-	protected final void setupGUIObjsAras(TreeMap<String, GUIObj_Params> tmpUIObjMap){		//keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects			
+	protected final void setupGUIObjsAras(LinkedHashMap<String, GUIObj_Params> tmpUIObjMap){		//keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects			
 		//keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects
 		String[] listOfTypes = SOM_FtrDataType.getListOfTypes();
 		String[] bmuMapTypes = SOM_MapManager.getNodeBMUMapTypes();	
@@ -371,7 +372,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 * 				the third element is false label
 	 * 				the final element is integer flag idx 
 	 */
-	protected final void setupGUIBoolSwitchAras(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap) {		
+	protected final void setupGUIBoolSwitchAras(int firstIdx, LinkedHashMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap) {		
 		//add an entry for each button, in the order they are wished to be displayed
 		int idx=firstIdx;
 		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Building SOM","Build SOM ",buildSOMExe));
@@ -417,14 +418,15 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
 	 *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
-	 * 				idx 0 : Should be multiline
-	 * 				idx 1 : One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
-	 * 				idx 2 : Text should be centered (default is false)
-	 * 				idx 3 : Object should be rendered with outline (default for btns is true, for non-buttons is false)
-	 * 				idx 4 : Should have ornament
-	 * 				idx 5 : Ornament color should match label color 
+	 * 				- Should be multiline
+	 * 				- One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
+	 * 				- Force this object to be on a new row/line (For side-by-side layouts)
+	 * 				- Text should be centered (default is false)
+	 * 				- Object should be rendered with outline (default for btns is true, for non-buttons is false)
+	 * 				- Should have ornament
+	 * 				- Ornament color should match label color 
 	 */
-	protected abstract void setupGUIObjsAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIObjMap);
+	protected abstract void setupGUIObjsAras_Indiv(LinkedHashMap<String, GUIObj_Params> tmpUIObjMap);
 
 	/**
 	 * Build all UI buttons to be shown in left side bar menu for this window. This is for instancing windows to add to button region
@@ -435,7 +437,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
 	 * 				the third element is false label
 	 * 				the final element is integer flag idx 
 	 */
-	protected abstract void setupGUIBoolSwitchAras_Indiv(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
+	protected abstract void setupGUIBoolSwitchAras_Indiv(int firstIdx, LinkedHashMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
 	
 	/**
 	 * instancing class description for category display UI object - if null or length==0 then not shown/used

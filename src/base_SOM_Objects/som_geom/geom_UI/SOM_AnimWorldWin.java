@@ -2,7 +2,7 @@ package base_SOM_Objects.som_geom.geom_UI;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
@@ -353,15 +353,16 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
 	 *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
-	 * 				idx 0 : Should be multiline
-	 * 				idx 1 : One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
-	 * 				idx 2 : Text should be centered (default is false)
-	 * 				idx 3 : Object should be rendered with outline (default for btns is true, for non-buttons is false)
-	 * 				idx 4 : Should have ornament
-	 * 				idx 5 : Ornament color should match label color 
+	 * 				- Should be multiline
+	 * 				- One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
+	 * 				- Force this object to be on a new row/line (For side-by-side layouts)
+	 * 				- Text should be centered (default is false)
+	 * 				- Object should be rendered with outline (default for btns is true, for non-buttons is false)
+	 * 				- Should have ornament
+	 * 				- Ornament color should match label color 
 	 */
 	@Override
-	protected final void setupGUIObjsAras(TreeMap<String, GUIObj_Params> tmpUIObjMap){
+	protected final void setupGUIObjsAras(LinkedHashMap<String, GUIObj_Params> tmpUIObjMap){
 		
 		int minNumObjs = getMinNumObjs(), maxNumObjs = getMaxNumObjs(),	diffNumObjs = (maxNumObjs - minNumObjs > 100 ? 10 : 1);
 		numGeomObjs = minNumObjs;
@@ -389,7 +390,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 * 				the third element is integer flag idx 
 	 */
 	@Override
-	protected final void setupGUIBoolSwitchAras(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap) {	
+	protected final void setupGUIBoolSwitchAras(int firstIdx, LinkedHashMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap) {	
 		// add an entry for each button, in the order they are wished to be displayed
 		// true tag, false tag, btn IDX
 		int idx=firstIdx;
@@ -445,14 +446,15 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
 	 *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
-	 * 				idx 0 : Should be multiline
-	 * 				idx 1 : One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
-	 * 				idx 2 : Text should be centered (default is false)
-	 * 				idx 3 : Object should be rendered with outline (default for btns is true, for non-buttons is false)
-	 * 				idx 4 : Should have ornament
-	 * 				idx 5 : Ornament color should match label color 
+	 * 				- Should be multiline
+	 * 				- One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
+	 * 				- Force this object to be on a new row/line (For side-by-side layouts)
+	 * 				- Text should be centered (default is false)
+	 * 				- Object should be rendered with outline (default for btns is true, for non-buttons is false)
+	 * 				- Should have ornament
+	 * 				- Ornament color should match label color 
 	 */
-	protected abstract void setupGUIObjsAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIObjMap);
+	protected abstract void setupGUIObjsAras_Indiv(LinkedHashMap<String, GUIObj_Params> tmpUIObjMap);
 
 	/**
 	 * Build all UI buttons to be shown in left side bar menu for this window. This is for instancing windows to add to button region
@@ -463,7 +465,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 * 				the third element is false label
 	 * 				the final element is integer flag idx 
 	 */
-	protected abstract void setupGUIBoolSwitchAras_Indiv(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
+	protected abstract void setupGUIBoolSwitchAras_Indiv(int firstIdx, LinkedHashMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
 
 	/**
 	 * update # of max training examples based on updated number of desired objects
@@ -575,8 +577,8 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 * 
 	 * @return map holding current ui values, augmented by possible instance-specific values
 	 */
-	public TreeMap<String, String> getAllUIValsForPreProcSave() {
-		TreeMap<String, String> res = new TreeMap<String, String>();
+	public LinkedHashMap<String, String> getAllUIValsForPreProcSave() {
+		LinkedHashMap<String, String> res = new LinkedHashMap<String, String>();
 		res.put("gIDX_NumUIObjs", String.format("%4d", (int) uiMgr.getUIValue(gIDX_NumUIObjs)));
 		res.put("gIDX_NumUISamplesPerObj", String.format("%4d", (int) uiMgr.getUIValue(gIDX_NumUISamplesPerObj)));
 		res.put("gIDX_FractNumTrainEx", String.format("%.4f", uiMgr.getUIValue(gIDX_FractNumTrainEx)));
@@ -592,12 +594,12 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	 * 
 	 * @return instance-specific map holding current ui values
 	 */
-	protected abstract void getAllUIValsForPreProcSave_Indiv(TreeMap<String, String> vals);
+	protected abstract void getAllUIValsForPreProcSave_Indiv(LinkedHashMap<String, String> vals);
 
 	/**
 	 * set ui values used to build preproc data being loaded
 	 */
-	public void setAllUIValsFromPreProcLoad(TreeMap<String, String> uiVals) {
+	public void setAllUIValsFromPreProcLoad(LinkedHashMap<String, String> uiVals) {
 		uiMgr.setNewUIValue(gIDX_FractNumTrainEx,Double.parseDouble(uiVals.get("gIDX_FractNumTrainEx")));
 		uiMgr.setNewUIValue(gIDX_NumUIObjs,Integer.parseInt(uiVals.get("gIDX_NumUIObjs")));
 		uiMgr.setNewUIValue(gIDX_NumUISamplesPerObj,Integer.parseInt(uiVals.get("gIDX_NumUISamplesPerObj")));
@@ -610,7 +612,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	/**
 	 * set ui instance-specific values used to build preproc data being loaded
 	 */
-	protected abstract void setAllUIValsFromPreProcLoad_Indiv(TreeMap<String, String> uiVals);
+	protected abstract void setAllUIValsFromPreProcLoad_Indiv(LinkedHashMap<String, String> uiVals);
 
 /////////////////////////////
 	// drawing routines
@@ -719,8 +721,8 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 			} else {
 				if (showObjs) {		_drawObjs_UseBMUs(objs, numToDraw, useLocClr, showWireFrame, showLabel);}
 				if (showSmpls) {
-					if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrLoc_BMU(ri);	}} // loc color
-					else {				for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrRnd_BMU(ri);	}} // rand color
+					if (useLocClr) {   for (int i = 0; i < numToDraw; ++i) {   objs[i].drawMeSmpls_ClrLoc_BMU(ri);	}} // loc color
+					else {             for (int i = 0; i < numToDraw; ++i) {   objs[i].drawMeSmpls_ClrRnd_BMU(ri);	}} // rand color
 				}
 			}
 		} else {
@@ -753,9 +755,9 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 			} else {
 				if (showObjs) {				_drawObjs_UseActual(objs, numToDraw, animTimeMod, useLocClr, showSmpls, showWireFrame, showLabel);}
 				if (showSmpls) {
-					if (useLocClr) {		for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrLoc(ri);	}} // loc color
-					else {					for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMeSmpls_ClrRnd(ri);	}} // rand color
-					if (showSmplsLabel) {	for (int i = 0; i < numToDraw; ++i) {					objs[i].drawMySmplsLabel(ri, this);}}
+					if (useLocClr) {       for (int i = 0; i < numToDraw; ++i) {   objs[i].drawMeSmpls_ClrLoc(ri);	}} // loc color
+					else {                 for (int i = 0; i < numToDraw; ++i) {   objs[i].drawMeSmpls_ClrRnd(ri);	}} // rand color
+					if (showSmplsLabel) {  for (int i = 0; i < numToDraw; ++i) {   objs[i].drawMySmplsLabel(ri, this);}}
 				}
 			}
 		}
@@ -764,24 +766,24 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 	private void _drawObjs_UseActual(SOM_GeomObj[] objs, int numToDraw, float animTimeMod, boolean useLocClr, boolean showSmpls,
 			boolean showWireFrame, boolean showLabel) {
 		if (showWireFrame) { // draw objects with wire frames
-			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF(ri);}} // loc color
-			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF(ri);}} // rand color
+			if (useLocClr) {     for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF(ri);}} // loc color
+			else {               for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF(ri);}} // rand color
 		} else {
-			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc(ri);}} // loc color
-			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd(ri);}} // rand color
+			if (useLocClr) {     for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc(ri);}} // loc color
+			else {               for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd(ri);}} // rand color
 		}
-		if (showLabel) {		for (int i = 0; i < numToDraw; ++i) {		objs[i].drawMyLabel(ri, this);}}
+		if (showLabel) {         for (int i = 0; i < numToDraw; ++i) {    objs[i].drawMyLabel(ri, this);}}
 	}// _drawObjs_UseActual
 
 	private void _drawObjs_UseBMUs(SOM_GeomObj[] objs, int numToDraw, boolean useLocClr, boolean showWireFrame, boolean showLabel) {
 		if (showWireFrame) { // draw objects with wire frames
-			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF_BMU(ri);}} // loc color
-			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF_BMU(ri);}} // rand color
+			if (useLocClr) {     for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_WF_BMU(ri);}} // loc color
+			else {               for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_WF_BMU(ri);}} // rand color
 		} else {
-			if (useLocClr) {	for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_BMU(ri);}} // loc color
-			else {				for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_BMU(ri);}} // rand color
+			if (useLocClr) {     for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrLoc_BMU(ri);}} // loc color
+			else {               for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMeClrRnd_BMU(ri);}} // rand color
 		}
-		if (showLabel) {		for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMyLabel_BMU(ri, this);}}
+		if (showLabel) {         for (int i = 0; i < numToDraw; ++i) {	objs[i].drawMyLabel_BMU(ri, this);}}
 	}// _drawObjs_UseBMUs
 
 	/**

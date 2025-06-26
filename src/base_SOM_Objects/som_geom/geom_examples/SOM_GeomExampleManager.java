@@ -3,7 +3,7 @@ package base_SOM_Objects.som_geom.geom_examples;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 
 import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
@@ -182,7 +182,7 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 	 * save and load the UI values used to build the preprocessed anim data for this project
 	 * @param uiVals
 	 */	
-	public final boolean saveGeomObjsUIVals(TreeMap<String,String> uiVals) {
+	public final boolean saveGeomObjsUIVals(LinkedHashMap<String,String> uiVals) {
 		msgObj.dispMessage("SOM_GeomExampleManager::"+exampleName,"saveGeomObjsUIVals","Saving UI Values used to synthesize geometric data.", MsgCodes.info5);
 		String[] saveGeomUIDestFNamePrefixAra = projConfigData.buildPreProccedDataCSVFNames_Save(exampleName+"GeomSrcData_UIVals");
 		ArrayList<String> csvResTmp = new ArrayList<String>();		
@@ -194,12 +194,12 @@ public abstract class SOM_GeomExampleManager extends SOM_ExampleManager {
 		return success;
 	}
 	
-	public final TreeMap<String,String> loadGeomObjsUIVals(String subDir) {
+	public final LinkedHashMap<String,String> loadGeomObjsUIVals(String subDir) {
 		msgObj.dispMessage("SOM_GeomExampleManager::"+exampleName,"loadGeomObjsUIVals","Loading UI Values used to synthesize geometric data from : " +subDir, MsgCodes.info5);				
 		String[] loadGeomUISrcFNamePrefixAra = projConfigData.buildPreProccedDataCSVFNames_Load(subDir, exampleName+ "GeomSrcData_UIVals");
 		String uiGeomConfigFileName = loadGeomUISrcFNamePrefixAra[0]+".csv";
 		String[] csvLoadRes = fileIO.loadFileIntoStringAra(uiGeomConfigFileName, "Geom Object UI Values file loaded.", "Geom Object UI Values file Failed to load");
-		TreeMap<String,String> res = new TreeMap<String,String>();
+		LinkedHashMap<String,String> res = new LinkedHashMap<String,String>();
 		if(csvLoadRes.length == 0) {
 			msgObj.dispMessage("SOM_GeomExampleManager::"+exampleName,"loadGeomObjsUIVals","Failed to load UI Values used to synthesize geometric data from : "+ subDir, MsgCodes.info5);
 			return res;
