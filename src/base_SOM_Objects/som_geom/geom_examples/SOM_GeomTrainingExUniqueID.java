@@ -10,41 +10,41 @@ import base_Math_Objects.MyHashCodeUtils;
  *
  */
 public class SOM_GeomTrainingExUniqueID {
-	/**
-	 * idxs used to build this object - EXPECTED TO BE SORTED!
-	 */
-	public final Integer[] idxs;
-	/**
-	 * precomputed hash code
-	 */
-	public int hashCode = 0;
+    /**
+     * idxs used to build this object - EXPECTED TO BE SORTED!
+     */
+    public final Integer[] idxs;
+    /**
+     * precomputed hash code
+     */
+    public int hashCode = 0;
 
-	public SOM_GeomTrainingExUniqueID(Integer[] _idxs) {
-		idxs = _idxs;
-		hashCode = hashCode();
-	}
+    public SOM_GeomTrainingExUniqueID(Integer[] _idxs) {
+        idxs = _idxs;
+        hashCode = hashCode();
+    }
 
-	@Override
-	public int hashCode() {
-		
-		if(hashCode == 0) {
-			int result = MyHashCodeUtils.SEED;
-			for(int i=0;i<idxs.length;++i) {	result = MyHashCodeUtils.hash(result, (long)idxs[i]);	}
-			hashCode =  result;
-		} 
-		return hashCode;
-	}
+    @Override
+    public int hashCode() {
+        
+        if(hashCode == 0) {
+            int result = MyHashCodeUtils.SEED;
+            for(int i=0;i<idxs.length;++i) {    result = MyHashCodeUtils.hash(result, (long)idxs[i]);    }
+            hashCode =  result;
+        } 
+        return hashCode;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {return true;}
-		if (obj == null) {return false;}
-		if (!(obj instanceof SOM_GeomTrainingExUniqueID)) {return false;}
-		SOM_GeomTrainingExUniqueID other = (SOM_GeomTrainingExUniqueID) obj;
-		if(other.idxs.length != this.idxs.length) {return false;}
-		for(int i=0;i<idxs.length;++i) {if(other.idxs[i] != this.idxs[i]) {return false;}}
-		return true;
-	}
-	
-	
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {return true;}
+        if (obj == null) {return false;}
+        if (!(obj instanceof SOM_GeomTrainingExUniqueID)) {return false;}
+        SOM_GeomTrainingExUniqueID other = (SOM_GeomTrainingExUniqueID) obj;
+        if(other.idxs.length != this.idxs.length) {return false;}
+        for(int i=0;i<idxs.length;++i) {if(other.idxs[i] != this.idxs[i]) {return false;}}
+        return true;
+    }
+    
+    
 }//SOM_GeomTrainingExUniqueID
