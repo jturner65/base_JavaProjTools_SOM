@@ -101,52 +101,14 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     }
     
     /**
-     * Individual SOM map window for each anim world.
-     * @param ownerWin
-     * @param fIdx
-     * @return
+     * This function implements the instantiation of a child window owned by this window, if such exists.
+     * The implementation should be similar to how the main windows are implemented in GUI_AppManager::initAllDispWindows.
+     * If no child window exists, this implementation of this function can be empty
+     * 
+     * @param GUI_AppWinVals the window control values for the child window.
      */
-    public final void buildAndSetSOM_MapDispUIWin(int fIdx) {
-        float[] _dimOpen = AppMgr.getDefaultPopUpWinDimOpen();
-        float[] _dimClosed  =  AppMgr.getDefaultPopUpWinDimClosed();
-        //Keep popup window full width whether shown or hidden
-        _dimClosed[2] = _dimOpen[2];
-        //keep hidden window
-        float[] _initCamVals = AppMgr.getInitCameraValues();
-        String owner = this.getName();
-        //(int _winIDX, float[] _dimOpen, float[] _dimClosed, boolean[] _dispFlags, int[] _fill, int[] _strk, int[] _trajFill, int[] _trajStrk)
-
-        
-        /**
-         * Creates a struct holding a display window's necessary initialization values
-         * @param _winIdx the window's idx
-         * @param _strVals an array holding the window title(idx 0) and the window description(idx 1)
-         * @param _flags an array holding boolean values for idxs : 
-         *         0 : dispWinIs3d, 
-         *         1 : canDrawInWin; 
-         *         2 : canShow3dbox (only supported for 3D); 
-         *         3 : canMoveView
-         * @param _floatVals an array holding float arrays for 
-         *                 rectDimOpen(idx 0),
-         *                 rectDimClosed(idx 1),
-         *                 initCameraVals(idx 2)
-         * @param _intVals and array holding int arrays for
-         *                 winFillClr (idx 0),
-         *                 winStrkClr (idx 1),
-         *                 winTrajFillClr(idx 2),
-         *                 winTrajStrkClr(idx 3),
-         *                 rtSideFillClr(idx 4),
-         *                 rtSideStrkClr(idx 5)
-         * @param _sceneCenterVal center of scene, for drawing objects
-         * @param _initSceneFocusVal initial focus target for camera
-         */
-        
-        GUI_AppWinVals GeomMapUIWinDef = AppMgr.buildGUI_AppWinVals(-1, "Map UI for " + owner, "Visualize SOM Node location for "+owner,
-                new boolean[] {false, false, false, false},
-                new float[][] {_dimOpen, _dimClosed, _initCamVals},
-                new int [][] {new int[]{20,40,50,200}, ri.getClr(IRenderInterface.gui_White, 255),
-                    ri.getClr(IRenderInterface.gui_LightGray, 255),ri.getClr(IRenderInterface.gui_Gray, 255),
-                    ri.getClr(IRenderInterface.gui_Black, 200),ri.getClr(IRenderInterface.gui_White, 255)});
+    @Override
+    protected final void buildAndSetChildWindow_Indiv(GUI_AppWinVals GeomMapUIWinDef) {
         
         somUIWin = new SOM_GeomMapUIWin(ri, AppMgr, GeomMapUIWinDef, AppMgr.getArgsMap(), this);    
         

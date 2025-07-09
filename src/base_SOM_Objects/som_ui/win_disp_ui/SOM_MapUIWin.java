@@ -181,8 +181,18 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
         //initUIBox();                //set up ui click region to be in sidebar menu below menu's entries    
         mapMgr = buildMapMgr();
         initAfterMapMgrSet(new boolean[] {true,true});
-    }//initMe()    
+    }//initMe() 
     
+    /**
+     * This function implements the instantiation of a child window owned by this window, if such exists.
+     * The implementation should be similar to how the main windows are implemented in GUI_AppManager::initAllDispWindows.
+     * If no child window exists, this implementation of this function can be empty
+     * 
+     * The SOM Map window should probably never have a child window, since it will, itself, usually be a child window
+     * @param GUI_AppWinVals the window control values for the child window.
+     */
+    @Override
+    protected final void buildAndSetChildWindow_Indiv(GUI_AppWinVals _appVals) {}     
     /**
      * Initialize any UI control flags appropriate for all SOM mapUI window applications
      */
