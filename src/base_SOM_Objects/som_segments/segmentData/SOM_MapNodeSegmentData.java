@@ -1,6 +1,6 @@
 package base_SOM_Objects.som_segments.segmentData;
 
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
 
@@ -43,13 +43,13 @@ public class SOM_MapNodeSegmentData {
     public int getSegClrAsInt() {return segClrAsInt;}
     
     //draw owning node's contribution to this segment - alpha is built off map node's value
-    public void drawMe(IRenderInterface p) {    drawMe(p,segClr[3]);}
-    public void drawMe(IRenderInterface p, int _alpha) {
-        p.pushMatState();
-        p.setFill(segClr, _alpha);
-        p.noStroke();
-        p.drawRect(dispBoxDims);        
-        p.popMatState();
+    public void drawMe(IGraphicsAppInterface ri) {    drawMe(ri,segClr[3]);}
+    public void drawMe(IGraphicsAppInterface ri, int _alpha) {
+        ri.pushMatState();
+        ri.setFill(segClr, _alpha);
+        ri.setNoStroke();
+        ri.drawRect(dispBoxDims);        
+        ri.popMatState();
     }//drawMeClrRect
     
 }//class SOM_MapNodeSegmentData

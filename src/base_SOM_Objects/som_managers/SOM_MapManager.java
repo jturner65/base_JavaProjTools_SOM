@@ -22,7 +22,7 @@ import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Math_Objects.vectorObjs.tuples.Tuple;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
@@ -45,7 +45,6 @@ import base_SOM_Objects.som_utils.SOM_MapDat;
 import base_SOM_Objects.som_utils.SOM_ProjConfigData;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.renderer.ProcessingRenderer;
-//import base_UI_Objects.IRenderInterface;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_Utils_Objects.appManager.Java_AppManager;
 import base_Utils_Objects.io.file.FileIOManager;
@@ -202,7 +201,7 @@ public abstract class SOM_MapManager {
     protected SOM_Example[] trainData;
     protected SOM_Example[] testData;    
     /**
-     * validationData are example records failing to meet the training criteria or otherwise desired to be mapped against SOM these were not used to train the map    
+     * validationData are example records the training criteria or otherwise desired to be mapped against the trained SOM - these were not used to train the map    
      */
     protected SOM_Example[] validationData;        
     /**
@@ -878,8 +877,14 @@ public abstract class SOM_MapManager {
         } else {msgObj.dispMessage("SOM_MapManager::"+name,"initMapFtrVisAras","Display window doesn't exist, can't build map visualization image arrays; ignoring.", MsgCodes.warning2);}
     }//initMapAras
 
-    //given pixel location relative to upper left corner of map, return map node float - this measures actual distance in map node coords
-    //so rounding to ints give map node tuple coords, while float gives interp between neighbors
+    /**
+     * Given a pixel location relative to the upper left corner of a SOM map, this returns map node float coordinate.
+     * This measures actual distance in map node coords, so rounding to ints gives map node tuple coords, while float remainder gives interp between neighbors
+     * @param mapPxlX pixel x location
+     * @param mapPxlY pixel y location
+     * @param sclVal scaling amount to account for a map with more or less nodes taking up the same amount of screen space
+     * @return map node x,y coordinate, with integral part being node and float part being interplation amount toward next node
+     */
     protected final float[] getMapNodeLocFromPxlLoc(float mapPxlX, float mapPxlY, float sclVal){    return new float[]{(sclVal* mapPxlX * nodeXPerPxl) - .5f, (sclVal* mapPxlY * nodeYPerPxl) - .5f};}    
     
     //val is 0.0f->256.0f
@@ -909,7 +914,9 @@ public abstract class SOM_MapManager {
 //        return clrVal;
 //    }//getDataClrFromFtrVec
     
-    //set colors of image of umatrix map
+    /**
+     * set colors of image of umatrix map
+     */
     public final void setMapUMatImgClrs() {
         mapCubicUMatrixImg.loadPixels();
         //float[] c;    
@@ -925,7 +932,9 @@ public abstract class SOM_MapManager {
         }
         mapCubicUMatrixImg.updatePixels();    
     }//setMapUMatImgClrs
-    //set colors of image of umatrix map
+    /**
+     * set colors of image of umatrix map
+     */
     public final void setMapSegmentImgClrs_UMatrix() {
         if(win!=null) {
             msgObj.dispInfoMessage("SOM_MapManager::"+name, "setMapSegmentImgClrs_UMatrix", "Start building mapUMatrixCubicSegmentsImg for UMatrix Display.");
@@ -947,7 +956,9 @@ public abstract class SOM_MapManager {
         }
     }//setMapUMatImgClrs
     
-    //sets colors of background image of map -- partition pxls for each thread
+   /**
+    * sets colors of background image of map -- partition pxls for each thread
+    */
     public final void setMapImgClrs(){ //mapRndClrImg
         if (win != null) {
             msgObj.dispMessage("SOM_MapManager::"+name, "setMapImgClrs", "Start building all vis imgs for SOM Map Results Display.", MsgCodes.info5);
@@ -1015,12 +1026,20 @@ public abstract class SOM_MapManager {
     }//setMapImgClrs
     
     protected abstract int _getNumSecondaryMaps();
-    //only appropriate if using UI
+    /**
+     * only appropriate if using UI
+     * @param val
+     */
     public void setSaveLocClrImg(boolean val) {if (win != null) { win.setPrivFlag(SOM_MapUIWin.saveLocClrImgIDX,val);}}
-    //whether or not distances between two datapoints assume that absent features in smaller-length datapoints are 0, or to ignore the values in the larger datapoints
+    /**
+     * whether or not distances between two datapoints assume that absent features in smaller-length datapoints are 0, or to ignore the values in the larger datapoints
+     * @param val
+     */
     public abstract void setMapExclZeroFtrs(boolean val);
 
-    //take existing map and use U-Matrix-distances to determine segment membership.Large distances > thresh (around .7) mean nodes are on a boundary
+    /**
+     * take existing map and use U-Matrix-distances to determine segment membership.Large distances > thresh (around .7) mean nodes are on a boundary
+     */
     public final void buildUMatrixSegmentsOnMap() {//need to find closest
         if (nodeInSegUMatrixDistThresh == mapMadeWithUMatrixSegThresh) {return;}
         if ((MapNodes == null) || (MapNodes.size() == 0)) {return;}
@@ -1041,7 +1060,9 @@ public abstract class SOM_MapManager {
         msgObj.dispMessage("SOM_MapManager::"+name,"buildSegmentsOnMap","Finished building UMatrix Distance-based cluster map", MsgCodes.info5);            
     }//buildUMatrixSegmentsOnMap()
     
-    //build feature-based segments on map - will overlap
+    /**
+     * build feature-based segments on map - will overlap
+     */
     public final void buildFtrWtSegmentsOnMap() {
         if (nodeInSegFtrWtDistThresh == mapMadeWithFtrWtSegThresh) {return;}        
         if ((MapNodes == null) || (MapNodes.size() == 0)) {return;}
@@ -1282,12 +1303,22 @@ public abstract class SOM_MapManager {
      */
     protected abstract void setProductBMUs();
     
-    //once map is built, find bmus on map for each test data example
+    /**
+     * once map is built, find bmus on map for each test data example
+     */
     protected final void setTestBMUs() {    _setExamplesBMUs(testData, "Testing", SOM_ExDataType.Testing,testDataMappedIDX);    }//setTestBMUs    
-    //once map is built, find bmus on map for each validation data example
+    /**
+     * once map is built, find bmus on map for each validation data example
+     */
     protected final void setValidationDataBMUs() {_setExamplesBMUs(validationData, "Validation", SOM_ExDataType.Validation,validateDataMappedIDX);}//setValidationDataBMUs
     
-    //set examples - either test data or validation data
+    /**
+     * Map examples to their BMUs - either test data or validation data
+     * @param exData
+     * @param dataTypName
+     * @param dataType
+     * @param _rdyToSaveFlagIDX
+     */
     protected void _setExamplesBMUs(SOM_Example[] exData, String dataTypName, SOM_ExDataType dataType, int _rdyToSaveFlagIDX) {
         msgObj.dispMessage("SOM_MapManager::"+name,"_setExamplesBMUs","Start Mapping " +exData.length + " "+dataTypName+" data to best matching units.", MsgCodes.info5);
         if(exData.length > 0) {        
@@ -1298,8 +1329,13 @@ public abstract class SOM_MapManager {
         msgObj.dispMessage("SOM_MapManager::"+name,"_setExamplesBMUs","Finished Mapping " +exData.length + " "+dataTypName+" data to best matching units.", MsgCodes.info5);
     }//_setExamplesBMUs
     
-    //call 1 time for any particular type of data - all _exs should have their bmu's set by now
-    //this will set the bmu lists for each map node to include the mapped examples
+    /**
+     * call 1 time for any particular type of data - all _exs should have their bmu's set by now. 
+     * This will set the bmu lists for each map node to include the mapped examples
+     * @param _exs
+     * @param _dataType
+     * @param isMT
+     */
     public synchronized void _completeBMUProcessing(SOM_Example[] _exs, SOM_ExDataType _dataType, boolean isMT) {
         msgObj.dispMessage("SOM_MapManager::"+name,"_completeBMUProcessing","Start completion of " +_exs.length + " "+_dataType.getName()+" data bmu mappings - assign to BMU's example collection and finalize.", MsgCodes.info5);
         int dataTypeVal = _dataType.getVal();
@@ -1494,8 +1530,6 @@ public abstract class SOM_MapManager {
         } else {            msgObj.dispMessage("SOM_MapManager::"+name,"buildMapNodePopGraphImage","No UI To display Map Node Population Graph, so Aborting.", MsgCodes.info5);            }
     }//buildMapNodePopGraphImage
     
-    
-    
 //    private PShape buildMapNodePopGraphAsPShape(TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>> MapNodesByPopulation) {
 //        PShape grph = Base_DispWindow.ri.createShape();
 //        grph.beginShape(PConstants.LINES);
@@ -1510,7 +1544,6 @@ public abstract class SOM_MapManager {
 //        grph.endShape();
 //        return grph;
 //    }
-
     
     /**
      * finalize the bmu processing - move som nodes that have been mapped to out of the list of nodes that have not been mapped to, copy the closest mapped som node to any som nodes without mappings, finalize all som nodes
@@ -1545,14 +1578,14 @@ public abstract class SOM_MapManager {
         msgObj.dispMessage(callingClass,callingMethod, "Mapping "+_datType+" examples to BMUs not yet complete so no mappings are being saved - please try again later", MsgCodes.warning4);        
     }
     
-    public void clearBMUNodesWithExs(SOM_ExDataType _type) {                            nodesWithEx.get(_type).clear();}
-    public void clearBMUNodesWithNoExs(SOM_ExDataType _type) {                            nodesWithNoEx.get(_type).clear();}
-    public void addExToNodesWithExs(SOM_MapNode node, SOM_ExDataType _type) {            nodesWithEx.get(_type).add(node);}    
-    public void addExToNodesWithNoExs(SOM_MapNode node, SOM_ExDataType _type) {            nodesWithNoEx.get(_type).add(node);}    
-    public int getNumNodesWithBMUExs(SOM_ExDataType _type) {return nodesWithEx.get(_type).size();}
-    public int getNumNodesWithNoBMUExs(SOM_ExDataType _type) {return nodesWithNoEx.get(_type).size();}
-    public HashSet<SOM_MapNode> getNodesWithExOfType(SOM_ExDataType _type){return nodesWithEx.get(_type);}
-    public HashSet<SOM_MapNode> getNodesWithNoExOfType(SOM_ExDataType _type){return nodesWithNoEx.get(_type);}
+    public void clearBMUNodesWithExs(SOM_ExDataType _type) {                        nodesWithEx.get(_type).clear();}
+    public void clearBMUNodesWithNoExs(SOM_ExDataType _type) {                      nodesWithNoEx.get(_type).clear();}
+    public void addExToNodesWithExs(SOM_MapNode node, SOM_ExDataType _type) {       nodesWithEx.get(_type).add(node);}    
+    public void addExToNodesWithNoExs(SOM_MapNode node, SOM_ExDataType _type) {     nodesWithNoEx.get(_type).add(node);}    
+    public int getNumNodesWithBMUExs(SOM_ExDataType _type) {                        return nodesWithEx.get(_type).size();}
+    public int getNumNodesWithNoBMUExs(SOM_ExDataType _type) {                      return nodesWithNoEx.get(_type).size();}
+    public HashSet<SOM_MapNode> getNodesWithExOfType(SOM_ExDataType _type){         return nodesWithEx.get(_type);}
+    public HashSet<SOM_MapNode> getNodesWithNoExOfType(SOM_ExDataType _type){       return nodesWithNoEx.get(_type);}
     
     //called when som wts are first loaded
     @SuppressWarnings("unchecked")
@@ -1567,7 +1600,6 @@ public abstract class SOM_MapManager {
             MapNodesByPopulation[i] = new TreeMap<Integer, ArrayList<Tuple<Integer,Integer>>>(new Comparator<Integer>() { @Override public int compare(Integer o1, Integer o2) {   return o2.compareTo(o1);}});
             mapNodePopDispThreshVals[i]=0;
         }
-        
         
         //this will hold all map nodes keyed by the ftr idx where they have non-zero weight
         MapNodesByFtrIDX = new TreeMap<Integer, HashSet<SOM_MapNode>>();
@@ -1710,8 +1742,7 @@ public abstract class SOM_MapManager {
      * @param key : key descriptor of value
      * @param val
      */
-    public void updateMapDatFromUI_String(String key, String val) {    projConfigData.updateMapDat_String(key,val, true, false);    }//updateMapDatFromUI_String
-    
+    public void updateMapDatFromUI_String(String key, String val) {    projConfigData.updateMapDat_String(key,val, true, false);    }//updateMapDatFromUI_String    
     
     /**
      * update UI from map data change (called from projConfig only
@@ -1822,14 +1853,21 @@ public abstract class SOM_MapManager {
     
     
     ///////////////////////////////////////
-    // ftr interp routines    
-    //return interpolated feature vector on map at location given by x,y, where x,y is float location of map using mapnodes as integral locations
-    //only uses training features here
+    // ftr interp routines 
+    
+    /**
+     * Retrieves interpolated feature vector on map at location given by x,y, where x,y is float location of map using mapnodes as integral locations. only uses training features here
+     * @param c coordinates for shift ([row, column])
+     * @param _ftrType
+     * @param rowMult
+     * @param colMult
+     * @return
+     */
     public TreeMap<Integer, Float> getInterpFtrs(float[] c, SOM_FtrDataType _ftrType, float rowMult, float colMult){
         float xColShift = (c[0]+mapNodeCols), 
                 yRowShift = (c[1]+mapNodeRows), 
-                xInterp = (xColShift) %1, 
-                yInterp = (yRowShift) %1;
+                xInterp = (xColShift) %1, // fractional x between adjacent nodes
+                yInterp = (yRowShift) %1; // fractional y between adjacent nodes
         int xInt = (int) Math.floor(xColShift)%mapNodeCols, yInt = (int) Math.floor(yRowShift)%mapNodeRows, xIntp1 = (xInt+1)%mapNodeCols, yIntp1 = (yInt+1)%mapNodeRows;        //assume torroidal map        
         //always compare standardized feature data in test/train data to standardized feature data in map
         TreeMap<Integer, Float> LowXLowYFtrs = MapNodes.get(new Tuple<Integer, Integer>(xInt,yInt)).getCurrentFtrMap(_ftrType), LowXHiYFtrs= MapNodes.get(new Tuple<Integer, Integer>(xInt,yIntp1)).getCurrentFtrMap(_ftrType),
@@ -2174,7 +2212,7 @@ public abstract class SOM_MapManager {
      * draw map rectangle and map nodes
      * @param ri
      */
-    public final void drawSOMMapData(IRenderInterface ri) {
+    public final void drawSOMMapData(IGraphicsAppInterface ri) {
         PImage tmpImg;
         int curImgNum;
         if(win.getPrivFlag(SOM_MapUIWin.mapDrawUMatrixIDX)) {                
@@ -2230,7 +2268,7 @@ public abstract class SOM_MapManager {
         
     }//drawMapRectangle
     
-    protected final void drawMapNodePopGraph(IRenderInterface ri, int typIDX) {
+    protected final void drawMapNodePopGraph(IGraphicsAppInterface ri, int typIDX) {
         ri.pushMatState();
         ri.translate(mapDims[0],0.0f,0.0f);
         ri.scale(200.0f/(1.0f*mapNodePopGraph[typIDX].width),mapDims[1]/(1.0f*mapNodePopGraph[typIDX].height));
@@ -2240,20 +2278,20 @@ public abstract class SOM_MapManager {
     }//drawMapNodePopGraph
     
     
-    protected abstract void drawMapRectangle_Indiv(IRenderInterface ri, int curImgNum);
+    protected abstract void drawMapRectangle_Indiv(IGraphicsAppInterface ri, int curImgNum);
     /**
      * draw instance-specific per-ftr map data display
      */
-    protected abstract void drawPerFtrMap_Indiv(IRenderInterface ri);
+    protected abstract void drawPerFtrMap_Indiv(IGraphicsAppInterface ri);
     /**
      * Instancing class-specific segments and other data to render during UMatrix display
      */
-    protected abstract void drawSegmentsUMatrixDispIndiv(IRenderInterface ri);
+    protected abstract void drawSegmentsUMatrixDispIndiv(IGraphicsAppInterface ri);
 
         
     private static int dispTrainDataFrame = 0, numDispTrainDataFrames = 20;
     //if connected to UI, draw data - only called from window
-    public final void drawTrainData(IRenderInterface ri) {
+    public final void drawTrainData(IGraphicsAppInterface ri) {
         ri.pushMatState();
         if (trainData.length < numDispTrainDataFrames) {    for(int i=0;i<trainData.length;++i){        trainData[i].drawMeMap(ri);    }    } 
         else {
@@ -2265,7 +2303,7 @@ public abstract class SOM_MapManager {
     }//drawTrainData
     private static int dispTestDataFrame = 0, numDispTestDataFrames = 20;
     //if connected to UI, draw data - only called from window
-    public final void drawTestData(IRenderInterface ri) {
+    public final void drawTestData(IGraphicsAppInterface ri) {
         ri.pushMatState();
         if (testData.length < numDispTestDataFrames) {    for(int i=0;i<testData.length;++i){        testData[i].drawMeMap(ri);    }    } 
         else {
@@ -2276,7 +2314,7 @@ public abstract class SOM_MapManager {
         ri.popMatState();
     }//drawTrainData
     private static int dispValidationDataFrame = 0, numDispValidationDataFrames = 100;
-    public final void drawValidationData(IRenderInterface ri) {
+    public final void drawValidationData(IGraphicsAppInterface ri) {
         ri.pushMatState();
         if (validationData.length < numDispValidationDataFrames) {    for(int i=0;i<validationData.length;++i){        validationData[i].drawMeMap(ri);    }    } 
         else {
@@ -2287,7 +2325,7 @@ public abstract class SOM_MapManager {
         ri.popMatState();        
     }//drawValidationData
     
-    public final void drawNodesIfSelected(IRenderInterface ri) {
+    public final void drawNodesIfSelected(IGraphicsAppInterface ri) {
         ri.pushMatState();
         for(SOM_MapNode node : SelectedMapNodes.values()){    node.drawMeSelected(ri);    }        
         ri.popMatState();
@@ -2297,7 +2335,7 @@ public abstract class SOM_MapManager {
      * draw boxes around each node representing umtrx values derived in SOM code - deprecated, now drawing image
      * @param ri
      */
-    public final void drawUMatrixVals(IRenderInterface ri) {
+    public final void drawUMatrixVals(IGraphicsAppInterface ri) {
         ri.pushMatState();
         for(SOM_MapNode node : MapNodes.values()){    node.drawMeUMatDist(ri);    }        
         ri.popMatState();
@@ -2306,7 +2344,7 @@ public abstract class SOM_MapManager {
      * draw boxes around each node representing UMatrix-distance-based segments these nodes belong to
      * @param ri
      */
-    public final void drawUMatrixSegments(IRenderInterface ri) {
+    public final void drawUMatrixSegments(IGraphicsAppInterface ri) {
         ri.pushMatState();
         for(SOM_MapNode node : MapNodes.values()){    node.drawMeUMatSegClr(ri);    }        
         ri.popMatState();
@@ -2318,7 +2356,7 @@ public abstract class SOM_MapManager {
      * @param valThresh
      * @param curFtrIdx
      */
-    public final void drawFtrWtSegments(IRenderInterface ri, float valThresh, int curFtrIdx) { 
+    public final void drawFtrWtSegments(IGraphicsAppInterface ri, float valThresh, int curFtrIdx) { 
         ri.pushMatState();
         TreeMap<Float,ArrayList<SOM_MapNode>> map = PerFtrHiWtMapNodes[curFtrIdx];
         //map holds map nodes keyed by wt of nodes that actually have curFtrIdx presence
@@ -2342,7 +2380,7 @@ public abstract class SOM_MapManager {
      * @param ri
      * @param valThresh
      */
-    public final void drawAllFtrWtSegments(IRenderInterface ri, float valThresh) {        
+    public final void drawAllFtrWtSegments(IGraphicsAppInterface ri, float valThresh) {        
         for(int curFtrIdx=0;curFtrIdx<PerFtrHiWtMapNodes.length;++curFtrIdx) {        drawFtrWtSegments(ri, valThresh, curFtrIdx);    }        
     }//drawFtrWtSegments
 
@@ -2355,7 +2393,7 @@ public abstract class SOM_MapManager {
      * @param ri
      * @param classLabel - label corresponding to class to be displayed
      */
-    public final void drawClassSegments(IRenderInterface ri, int classLabel) {
+    public final void drawClassSegments(IGraphicsAppInterface ri, int classLabel) {
         Collection<SOM_MapNode> mapNodesWithClasses = MapNodesWithMappedClasses.get(classLabel);
         if(null==mapNodesWithClasses) {        return;}
         ri.pushMatState();
@@ -2363,7 +2401,7 @@ public abstract class SOM_MapManager {
         ri.popMatState();
     }//drawClassSegments    
     
-    public final void drawAllClassSegments(IRenderInterface ri) {    for(Integer key : Class_Segments.keySet()) {    drawClassSegments(ri,key);}    }
+    public final void drawAllClassSegments(IGraphicsAppInterface ri) {    for(Integer key : Class_Segments.keySet()) {    drawClassSegments(ri,key);}    }
 
     /**
      * draw filled boxes around each node representing category-based segments 
@@ -2373,30 +2411,30 @@ public abstract class SOM_MapManager {
      * @param ri
      * @param categoryLabel - label corresponding to category to be displayed
      */
-    public final void drawCategorySegments(IRenderInterface ri, int categoryLabel) {
+    public final void drawCategorySegments(IGraphicsAppInterface ri, int categoryLabel) {
         Collection<SOM_MapNode> mapNodes = MapNodesWithMappedCategories.get(categoryLabel);
         if(null==mapNodes) {return;}
         ri.pushMatState();
         for (SOM_MapNode node : mapNodes) {        node.drawMeCategorySegClr(ri, categoryLabel);}                
         ri.popMatState();
     }//drawCategorySegments
-    public final void drawAllCategorySegments(IRenderInterface ri) {    for(Integer key : Category_Segments.keySet()) {    drawCategorySegments(ri,key);}    }
+    public final void drawAllCategorySegments(IGraphicsAppInterface ri) {    for(Integer key : Category_Segments.keySet()) {    drawCategorySegments(ri,key);}    }
         
-    public void drawAllNodesWithLbl (IRenderInterface ri) {//, int[] dpFillClr, int[] dpStkClr) {
+    public void drawAllNodesWithLbl (IGraphicsAppInterface ri) {//, int[] dpFillClr, int[] dpStkClr) {
         ri.pushMatState();
         //ri.setFill(dpFillClr);ri.setStroke(dpStkClr);
         for(SOM_MapNode node : MapNodes.values()){    node.drawMeSmall(ri);    }
         ri.popMatState();
     } 
     
-    public void drawAllNodesNoLbl(IRenderInterface ri) {//, int[] dpFillClr, int[] dpStkClr) {
+    public void drawAllNodesNoLbl(IGraphicsAppInterface ri) {//, int[] dpFillClr, int[] dpStkClr) {
         ri.pushMatState();
         //ri.setFill(dpFillClr);ri.setStroke(dpStkClr);
         for(SOM_MapNode node : MapNodes.values()){    node.drawMeSmallNoLbl(ri);    }
         ri.popMatState();
     } 
     
-    public void drawNodesWithWt(IRenderInterface ri, float valThresh, int curFtrIdx) {//, int[] dpFillClr, int[] dpStkClr) {
+    public void drawNodesWithWt(IGraphicsAppInterface ri, float valThresh, int curFtrIdx) {//, int[] dpFillClr, int[] dpStkClr) {
         ri.pushMatState();
         //ri.setFill(dpFillClr);ri.setStroke(dpStkClr);
         TreeMap<Float,ArrayList<SOM_MapNode>> map = PerFtrHiWtMapNodes[curFtrIdx];
@@ -2408,7 +2446,7 @@ public abstract class SOM_MapManager {
         ri.popMatState();
     }//drawNodesWithWt
     
-    public void drawPopMapNodes(IRenderInterface ri, boolean draw0PopNodes, int _typeIDX) {
+    public void drawPopMapNodes(IGraphicsAppInterface ri, boolean draw0PopNodes, int _typeIDX) {
         ri.pushMatState();
         numMapNodeByPopNowShown = 0;
         if(draw0PopNodes) {            
@@ -2419,7 +2457,7 @@ public abstract class SOM_MapManager {
         }
         ri.popMatState();        
     }    
-    public void drawPopMapNodesNoLbl(IRenderInterface ri, boolean draw0PopNodes, int _typeIDX) {
+    public void drawPopMapNodesNoLbl(IGraphicsAppInterface ri, boolean draw0PopNodes, int _typeIDX) {
         ri.pushMatState();
         numMapNodeByPopNowShown = 0;
         if(draw0PopNodes) {            
@@ -2430,9 +2468,9 @@ public abstract class SOM_MapManager {
         }
         ri.popMatState();        
     }
-    //public final void drawMseOverData(IRenderInterface ri) {    mseOvrData.drawMeLblMap(ri);}
+    //public final void drawMseOverData(IGraphicsAppInterface ri) {    mseOvrData.drawMeLblMap(ri);}
 
-    public final void drawMseOverData(IRenderInterface ri) {    mseOverExample.drawMeLblMap(ri);}
+    public final void drawMseOverData(IGraphicsAppInterface ri) {    mseOverExample.drawMeLblMap(ri);}
     
     //get ftr name/idx/instance-specific value based to save an image of current map
     public abstract String getSOMLocClrImgForFtrFName(int ftrIDX);
@@ -2441,7 +2479,7 @@ public abstract class SOM_MapManager {
     protected float sideBarYDisp = 10.0f;
 
     //draw right sidebar data
-    public void drawResultBar(IRenderInterface ri, float yOff) {
+    public void drawResultBar(IGraphicsAppInterface ri, float yOff) {
         yOff-=4;
         //float sbrMult = 1.2f, lbrMult = 1.5f;//offsets multiplier for barriers between contextual ui elements
         ri.pushMatState();
@@ -2461,10 +2499,10 @@ public abstract class SOM_MapManager {
         ri.popMatState();    
     }//drawResultBar
     
-    private final float drawNumMapNodesShownByPop(IRenderInterface ri,float yOff) {
+    private final float drawNumMapNodesShownByPop(IGraphicsAppInterface ri,float yOff) {
         if(win.getPrivFlag(SOM_MapUIWin.mapDrawPopMapNodesIDX)) {
             ri.translate(10.0f, 0.0f, 0.0f);
-            AppMgr.showOffsetText(0,IRenderInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
+            AppMgr.showOffsetText(0,IGraphicsAppInterface.gui_White,"# of Map Nodes Shown : " + numMapNodeByPopNowShown);
             yOff += sideBarYDisp;
             ri.translate(-10.0f,sideBarYDisp, 0.0f);
             
@@ -2477,10 +2515,10 @@ public abstract class SOM_MapManager {
      * @param yOff
      * @return
      */
-    private final float drawMseRes(IRenderInterface ri,float yOff) {
+    private final float drawMseRes(IGraphicsAppInterface ri,float yOff) {
         if((getFlag(dispMseDataSideBarIDX)) && mseOverExample.canDisplayMseLabel()) {
             ri.translate(10.0f, 0.0f, 0.0f);
-            AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Mouse Values : ");
+            AppMgr.showOffsetText(0,IGraphicsAppInterface.gui_White,"Mouse Values : ");
             yOff += sideBarYDisp;
             ri.translate(0.0f,sideBarYDisp, 0.0f);
             mseOverExample.drawMseLbl_Info(ri, new myPointf(0,0,0));
@@ -2491,24 +2529,24 @@ public abstract class SOM_MapManager {
         return yOff;
     }//drawMseRes
     
-    protected final float drawLoadedPreBuiltMaps(IRenderInterface ri,float yOff, int curDefaultMap) {
+    protected final float drawLoadedPreBuiltMaps(IGraphicsAppInterface ri,float yOff, int curDefaultMap) {
         if(getFlag(dispLdPreBuitMapsIDX)) {    
             String[][] loadedPreBuiltMapData = projConfigData.getPreBuiltMapInfoAra();        
             ri.translate(0.0f, 0.0f, 0.0f);
             //float stYOff = yOff, tmpOff = sideBarMseOvrDispOffset;    
             if(loadedPreBuiltMapData.length==0) {                
-                AppMgr.showOffsetText(0,IRenderInterface.gui_White,"No Pre-build Map Directories specified.");
+                AppMgr.showOffsetText(0,IGraphicsAppInterface.gui_White,"No Pre-build Map Directories specified.");
                 yOff += sideBarYDisp;
                 ri.translate(10.0f, sideBarYDisp, 0.0f);
             } else {    
-                AppMgr.showOffsetText(0,IRenderInterface.gui_White,"Pre-build Map Directories specified in config : ");
+                AppMgr.showOffsetText(0,IGraphicsAppInterface.gui_White,"Pre-build Map Directories specified in config : ");
                 yOff += sideBarYDisp;
                 ri.translate(10.0f, sideBarYDisp, 0.0f);
                 
                 for(int i=0;i<loadedPreBuiltMapData.length;++i) {
                     boolean isDefault = i==curDefaultMap;
                     boolean isLoaded = i==pretrainedMapIDX;
-                    int clrIDX = (isLoaded ? IRenderInterface.gui_Yellow : IRenderInterface.gui_White);
+                    int clrIDX = (isLoaded ? IGraphicsAppInterface.gui_Yellow : IGraphicsAppInterface.gui_White);
                     AppMgr.showOffsetText(0,clrIDX,""+String.format("%02d", i+1)+" | "+loadedPreBuiltMapData[i][0]);
                     yOff += sideBarYDisp;
                     ri.translate(10.0f,sideBarYDisp,0.0f);
@@ -2541,12 +2579,12 @@ public abstract class SOM_MapManager {
         }
         return yOff;
     }//drawLoadedPreBuiltMaps
-    protected abstract float getPreBuiltMapInfoDetail(IRenderInterface ri, String[] str, int i, float yOff, boolean isLoaded);
+    protected abstract float getPreBuiltMapInfoDetail(IGraphicsAppInterface ri, String[] str, int i, float yOff, boolean isLoaded);
     
     //draw app-specific sidebar data
-    protected abstract float drawResultBarPriv1(IRenderInterface ri, float yOff);
-    protected abstract float drawResultBarPriv2(IRenderInterface ri, float yOff);
-    protected abstract float drawResultBarPriv3(IRenderInterface ri, float yOff);
+    protected abstract float drawResultBarPriv1(IGraphicsAppInterface ri, float yOff);
+    protected abstract float drawResultBarPriv2(IGraphicsAppInterface ri, float yOff);
+    protected abstract float drawResultBarPriv3(IGraphicsAppInterface ri, float yOff);
 
     //////////////////////////////
     // getters/setters
@@ -2793,18 +2831,18 @@ public abstract class SOM_MapManager {
     public int[] getClrFillStrkTxtAra(SOM_ExDataType _type) {
         if (win==null) {return new int[] {0,0,0};}                                                            //if null then not going to be displaying anything
         switch(_type) {
-            case Training : {        return new int[] {IRenderInterface.gui_Cyan,IRenderInterface.gui_Cyan,IRenderInterface.gui_Blue};}            //corresponds to training example
-            case Testing : {        return new int[] {IRenderInterface.gui_Magenta,IRenderInterface.gui_Magenta,IRenderInterface.gui_Red};}        //corresponds to testing/held-out example
-            case Validation : {     return new int[] {IRenderInterface.gui_Magenta,IRenderInterface.gui_Magenta,IRenderInterface.gui_Red};}        //corresponds to examples to be mapped
-            case Product : {        return new int[] {IRenderInterface.gui_Yellow,IRenderInterface.gui_Yellow,IRenderInterface.gui_White};}        //corresponds to product example
-            case MapNode : {        return new int[] {IRenderInterface.gui_Green,IRenderInterface.gui_Green,IRenderInterface.gui_Cyan};}            //corresponds to map node example
-            case MouseOver : {        return new int[] {IRenderInterface.gui_White,IRenderInterface.gui_White,IRenderInterface.gui_Black};}        //corresponds to mouse example
+            case Training : {        return new int[] {IGraphicsAppInterface.gui_Cyan,IGraphicsAppInterface.gui_Cyan,IGraphicsAppInterface.gui_Blue};}            //corresponds to training example
+            case Testing : {        return new int[] {IGraphicsAppInterface.gui_Magenta,IGraphicsAppInterface.gui_Magenta,IGraphicsAppInterface.gui_Red};}        //corresponds to testing/held-out example
+            case Validation : {     return new int[] {IGraphicsAppInterface.gui_Magenta,IGraphicsAppInterface.gui_Magenta,IGraphicsAppInterface.gui_Red};}        //corresponds to examples to be mapped
+            case Product : {        return new int[] {IGraphicsAppInterface.gui_Yellow,IGraphicsAppInterface.gui_Yellow,IGraphicsAppInterface.gui_White};}        //corresponds to product example
+            case MapNode : {        return new int[] {IGraphicsAppInterface.gui_Green,IGraphicsAppInterface.gui_Green,IGraphicsAppInterface.gui_Cyan};}            //corresponds to map node example
+            case MouseOver : {        return new int[] {IGraphicsAppInterface.gui_White,IGraphicsAppInterface.gui_White,IGraphicsAppInterface.gui_Black};}        //corresponds to mouse example
         }
-        return new int[] {IRenderInterface.gui_White,IRenderInterface.gui_White,IRenderInterface.gui_White};
+        return new int[] {IGraphicsAppInterface.gui_White,IGraphicsAppInterface.gui_White,IGraphicsAppInterface.gui_White};
     }//getClrVal
     public int[] getAltClrFillStrkTxtAra() {
         if (win==null) {return new int[] {0,0,0};}        
-        return new int[] {IRenderInterface.gui_Red,IRenderInterface.gui_Red,IRenderInterface.gui_White};
+        return new int[] {IGraphicsAppInterface.gui_Red,IGraphicsAppInterface.gui_Red,IGraphicsAppInterface.gui_White};
     }
     
     

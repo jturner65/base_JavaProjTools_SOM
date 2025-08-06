@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_SOM_Objects.som_geom.geom_utils.SOMGeomUIDataUpdater;
@@ -56,27 +56,26 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
     public static final int 
         //idx 0 is debug in privFlags structure
-        showFullSourceObjIDX    = 1,                //show/hide full source object(sources of sample points)
-        showSamplePntsIDX         = 2,                //show/hide sample points
+        showFullSourceObjIDX        = 1,                //show/hide full source object(sources of sample points)
+        showSamplePntsIDX           = 2,                //show/hide sample points
         
-        showFullTrainingObjIDX    = 3,                //show/hide training data full objects        
+        showFullTrainingObjIDX      = 3,                //show/hide training data full objects        
         
-        showUIObjLabelIDX        = 4,                //display the ui obj's ID as a text tag
-        showUIObjSmplsLabelIDX    = 5,                //display the ui object's samples' IDs as a text tag
+        showUIObjLabelIDX           = 4,                //display the ui obj's ID as a text tag
+        showUIObjSmplsLabelIDX      = 5,                //display the ui object's samples' IDs as a text tag
         
-        showObjByWireFrmIDX        = 6,                //show object as wireframe, or as filled-in
+        showObjByWireFrmIDX         = 6,                //show object as wireframe, or as filled-in
         
-        showSelUIObjIDX            = 7,                //highlight the ui obj with the selected idx
-        showMapBasedLocsIDX     = 8,                //show map-derived locations (bmu) of training data instead of actual locations (or along with?)
+        showSelUIObjIDX             = 7,                //highlight the ui obj with the selected idx
+        showMapBasedLocsIDX         = 8,                //show map-derived locations (bmu) of training data instead of actual locations (or along with?)
         
-        useUIObjLocAsClrIDX        = 9,                //use location derived color, or random color; should use ui obj's location as both its and its samples' color
-        allTrainExUniqueIDX     = 10,                 //all training examples should be unique, if requested # can be supported, otherwise duplicate examples allowed
-        //useSmplsForTrainIDX     = 10,                //use surface samples, or ui obj centers, for training data
-        uiObjBMUsSetIDX            = 11,                //ui object's bmus have been set
-        mapBuiltToCurUIObjsIDX     = 12,                //the current ui obj configuration has an underlying map built to it
-        regenUIObjsIDX             = 13,                //regenerate ui objs with current specs
-        drawMapNodeGeomObjsIDX    = 14,                //whether or not to draw the selected map nodes' geometric representations
-        drawSOM_MapUIVis        = 15;
+        useUIObjLocAsClrIDX         = 9,                //use location derived color, or random color; should use ui obj's location as both its and its samples' color
+        allTrainExUniqueIDX         = 10,                 //all training examples should be unique, if requested # can be supported, otherwise duplicate examples allowed
+        uiObjBMUsSetIDX             = 11,                //ui object's bmus have been set
+        mapBuiltToCurUIObjsIDX      = 12,                //the current ui obj configuration has an underlying map built to it
+        regenUIObjsIDX              = 13,                //regenerate ui objs with current specs
+        drawMapNodeGeomObjsIDX      = 14,                //whether or not to draw the selected map nodes' geometric representations
+        drawSOM_MapUIVisIDX         = 15;
 
     protected static final int numBaseAnimWinPrivFlags = 16;
 
@@ -94,7 +93,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     protected float[] SOMMapDims = new float[]{834.8f, 834.8f};
 
 
-    public SOM_AnimWorldWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx, SOM_GeomObjTypes _type) {
+    public SOM_AnimWorldWin(IGraphicsAppInterface _p, GUI_AppManager _AppMgr, int _winIdx, SOM_GeomObjTypes _type) {
         super(_p, _AppMgr, _winIdx);
         initAndSetAnimWorldVals();
         geomObjType = _type;
@@ -104,6 +103,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
      * This function implements the instantiation of a child window owned by this window, if such exists.
      * The implementation should be similar to how the main windows are implemented in GUI_AppManager::initAllDispWindows.
      * If no child window exists, this implementation of this function can be empty
+     * If a child window is instantiated, it MUST have its init called (childWin.initThisWin(false))
      * 
      * @param GUI_AppWinVals the window control values for the child window.
      */
@@ -111,7 +111,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     protected final void buildAndSetChildWindow_Indiv(GUI_AppWinVals GeomMapUIWinDef) {
         
         somUIWin = new SOM_GeomMapUIWin(ri, AppMgr, GeomMapUIWinDef, AppMgr.getArgsMap(), this);    
-        
+        somUIWin.initThisWin(false);
         somUIWin.setUI_FeatureListVals(setUI_GeomObjFeatureListVals());
         somUIWin.setMapMgr(mapMgr);
         msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "setGeomMapUIWin", "Setting somUIWin in " + winInitVals.winName + " to be  : "
@@ -253,42 +253,28 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     @Override
     public void handlePrivFlags_Indiv(int idx, boolean val, boolean oldVal){
         switch (idx) {// special actions for each flag
-        case showSamplePntsIDX: {        break;        } // show/hide object's sample points
-        case showFullSourceObjIDX: {    break;        } // show/hide full object
-        case showFullTrainingObjIDX: {    break;        }
-        // case saveUIObjDataIDX : {
-        // if(val){saveGeomObjInfo();addPrivSwitchToClear(saveUIObjDataIDX);}break;} //save
-        // all object data
-        case showUIObjLabelIDX: {        break;        } // show labels for objects
-        case showUIObjSmplsLabelIDX: {    break;        }
-        case useUIObjLocAsClrIDX: {
-            msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "setPrivFlags :: useUIObjLocAsClrIDX", "Val :  " + val);
-            break;
-        } // color of objects is location or is random
-        case showSelUIObjIDX: {            break;        }
-        // case useSmplsForTrainIDX : { break;} //use surface samples for train and
-        // centers for test, or vice versa
-        case allTrainExUniqueIDX: {
-            if (mapMgr != null) {    mapMgr.setTrainExShouldBeUnqiue(val);}
-            break;
-        }
-        case showMapBasedLocsIDX: {        break;        }
-        case uiObjBMUsSetIDX: {            break;        }
-        case mapBuiltToCurUIObjsIDX: {    break;        } // whether map has been built and loaded for current config of spheres
-        case regenUIObjsIDX: {
-            if (val) {
-                rebuildSourceGeomObjs();
-                addPrivSwitchToClear(regenUIObjsIDX);
-            }
-            break;
-        } // remake all objects, turn off flag
-        case showObjByWireFrmIDX: {        break;        }
-        case drawMapNodeGeomObjsIDX: {    break;        }
-        case drawSOM_MapUIVis: {
-            this.setSOM_MapUIWinState(val);
-            break;
-        }
-        default: {            handleSOMAnimFlags_Indiv(idx, val);}
+            case showSamplePntsIDX          : { break; } // show/hide object's sample points
+            case showFullSourceObjIDX       : { break; } // show/hide full object
+            case showFullTrainingObjIDX     : { break; }
+            case showUIObjLabelIDX          : { break; } // show labels for objects
+            case showUIObjSmplsLabelIDX     : { break; } // display the ui object's samples' IDs as a text tag
+            case useUIObjLocAsClrIDX        : {
+                    msgObj.dispInfoMessage(className+"(SOM_AnimWorldWin)", "setPrivFlags :: useUIObjLocAsClrIDX", "Val :  " + val); 
+                break; } // color of objects is location or is random
+            case showSelUIObjIDX            : { break; }
+            case allTrainExUniqueIDX        : {
+                    if (mapMgr != null) {    mapMgr.setTrainExShouldBeUnqiue(val);} 
+                break; }
+            case showMapBasedLocsIDX        : { break; }
+            case uiObjBMUsSetIDX            : { break; }
+            case mapBuiltToCurUIObjsIDX     : { break; } // whether map has been built and loaded for current config of spheres
+            case regenUIObjsIDX             : {
+                    if (val) { rebuildSourceGeomObjs();  addPrivSwitchToClear(regenUIObjsIDX);} 
+                break; } // remake all objects, turn off flag
+            case showObjByWireFrmIDX        : { break; }
+            case drawMapNodeGeomObjsIDX     : { break; }
+            case drawSOM_MapUIVisIDX        : { this.setSOM_MapUIWinState(val); break; }
+            default                         : { handleSOMAnimFlags_Indiv(idx, val);}
         }
     }// setPrivFlags
 
@@ -359,7 +345,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
         // true tag, false tag, btn IDX
         int idx=firstIdx;
         tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.buildDebugButton(idx++,"Debugging", "Enable Debug"));
-        // UI",drawSOM_MapUIVis});
+        // UI",drawSOM_MapUIVisIDX});
         tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Regenerating " + geomObjType.getName()+ " Objs","Regenerate " + geomObjType.getName()+ " Objs", regenUIObjsIDX));
         tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing " + geomObjType.getName()+ " Objects", "Show " + geomObjType.getName()+ " Objects",    showFullSourceObjIDX));
         tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing " + geomObjType.getName()+ " Sample Points","Show " + geomObjType.getName()+ " Sample Points", showSamplePntsIDX));
@@ -369,10 +355,6 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
         tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing " + geomObjType.getName()+ " Training Exs",    "Show " + geomObjType.getName()+ " Training Exs", showFullTrainingObjIDX));
 
         tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Hi-Light Sel " + geomObjType.getName()+ " ", "Enable " + geomObjType.getName()+ " Hi-Light", showSelUIObjIDX));
-        // tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Train From " +geomObjType.getName()+ " Samples",
-        // "Train From " +geomObjType.getName()+ " Centers/Bases", useSmplsForTrainIDX});
-        // tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Save Data", "Save Data",
-        // saveUIObjDataIDX});
         tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Gen Unique " + geomObjType.getName()+ " Train Exs",    "Allow dupe " + geomObjType.getName()+ " Train Exs", allTrainExUniqueIDX));
         tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing Map Node Geometry", "Show Map Node Geometry", drawMapNodeGeomObjsIDX));
         tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Showing BMU-derived Locs", "Showing Actual Locs", showMapBasedLocsIDX));
@@ -476,29 +458,29 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
                 uiMgr.setNewUIMaxVal(gIDX_SelDispUIObj,ival - 1);
                 refreshNumTrainingExampleBounds();
                 rebuildSourceGeomObjs();            
-                break;
+               break;
             }
             case gIDX_NumUISamplesPerObj: {
                 numSmplPointsPerObj = ival;
                 refreshNumTrainingExampleBounds();
                 regenBaseGeomObjSamples();
-                break;
+               break;
             }        
             case gIDX_NumTrainingEx: {
                 numTrainingExamples = ival;        
                 setMapMgrGeomObjVals();
-                break;
+               break;
             }
             case gIDX_SelDispUIObj: {                
                 curSelGeomObjIDX = MyMathUtils.min(ival, numGeomObjs - 1);
-                break;
+               break;
             }            
             default : {
                 boolean found = setUI_IntValsCustom_Indiv( UIidx,  ival,  oldVal);
                 if (!found) {
                     msgObj.dispWarningMessage(className, "setUI_IntValsCustom", "No int-defined gui object mapped to idx :"+UIidx);
                 }
-                break;}
+               break;}
         }            
     }//setUI_IntValsCustom
     
@@ -519,13 +501,13 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
                 // training examples
                 fractOfBinomialForBaseNumTrainEx = val;
                 refreshNumTrainingExamples();
-                break;}
+               break;}
             default : {
                 boolean found = setUI_FloatValsCustom_Indiv( UIidx, val, oldVal);
                 if (!found) {
                     msgObj.dispWarningMessage(className, "setUI_FloatValsCustom", "No float-defined gui object mapped to idx :"+UIidx);
                 }
-                break;}
+               break;}
         }    
     }//setUI_FloatValsCustom
     
@@ -766,7 +748,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     @Override
     public final void drawCustMenuObjs(float modAmtMillis) {
         // ((SOM_GeometryMain) pa).drawSOMUIObjs();
-        // if(this.uiMgr.getPrivFlag(drawSOM_MapUIVis)) {
+        // if(this.uiMgr.getPrivFlag(drawSOM_MapUIVisIDX)) {
         if (somUIWin != null) {
             ri.pushMatState();
             somUIWin.drawWindowGuiObjs(AppMgr.isDebugMode(), modAmtMillis);                    //draw what user-modifiable fields are currently available
@@ -822,24 +804,24 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
                     case 0: {
                         mapMgr.loadPreProcTrainData(mapMgr.projConfigData.getPreProcDataDesiredSubDirName(), true);
                         resetButtonState();
-                        break;
+                       break;
                     }
                     case 1: {
                         mapMgr.saveAllPreProcExamples();
                         resetButtonState();
-                        break;
+                       break;
                     }
                     case 2: {
                         resetButtonState();
-                        break;
+                       break;
                     }
                     default: {
                         msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "Unknown Functions 1 btn : " + btn,
                                 MsgCodes.warning2);
-                        break;
+                       break;
                     }
                 }
-                break;
+               break;
             } // row 1 of menu side bar buttons
     
             case 1: {// row 2 of menu side bar buttons
@@ -847,60 +829,60 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
                     case 0: {//calc optimal # of training examples
                         mapMgr.calcOptNumObjsForDesiredProb(5, .95f);
                         resetButtonState();
-                        break;
+                       break;
                     }
                     case 1: {//generate training data
                         mapMgr.generateTrainingData();
                         resetButtonState();
-                        break;
+                       break;
                     }
                     case 2: {//save current training data to disk, for use by SOM
                         mapMgr.saveCurrentTrainData();
                         resetButtonState();
-                        break;
+                       break;
                     }
                     case 3: {
                         resetButtonState();
-                        break;
+                       break;
                     }
                     default: {
                         msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "Unknown Functions 2 btn : " + btn,
                                 MsgCodes.warning2);
                         resetButtonState();
-                        break;
+                       break;
                     }
                 }
-                break;
+               break;
             } // row 2 of menu side bar buttons
             case 2: {// row 3 of menu side bar buttons
                 switch (btn) {
                     case 0: {// show/hide som Map UI
-                        uiMgr.setPrivFlag(drawSOM_MapUIVis, !uiMgr.getPrivFlag(drawSOM_MapUIVis));
+                        uiMgr.setPrivFlag(drawSOM_MapUIVisIDX, !uiMgr.getPrivFlag(drawSOM_MapUIVisIDX));
                         resetButtonState();
-                        break;
+                       break;
                     }
                     case 1: {
                         mapMgr.loadSOMConfig();// pass fraction of data to use for training
                         resetButtonState();
-                        break;
+                       break;
                     }
                     case 2: {// currently does not display map
                         mapMgr.loadTrainDataMapConfigAndBuildMap(false);
                         resetButtonState();
-                        break;
+                       break;
                     }                    
                     case 3: {
                         resetButtonState();
-                        break;
+                       break;
                     }
                     default: {
                         msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "Unknown Functions 3 btn : " + btn,
                                 MsgCodes.warning2);
                         resetButtonState();
-                        break;
+                       break;
                     }
                 }
-                break;
+               break;
             } // row 3 of menu side bar buttons
             case 3: {// row 3 of menu side bar buttons
                 switch (btn) {
@@ -910,19 +892,19 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
                     case 3: {// load all training data, default map config, and build map
                         mapMgr.loadPretrainedExistingMap(btn, true);// runs in thread, button state reset there
                         resetButtonState();
-                        break;
+                       break;
                     }
                     default: {
                         msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "launchMenuBtnHndlr", "Unknown Functions 4 btn : " + btn, MsgCodes.warning2);
                         resetButtonState();
-                        break;
+                       break;
                     }
                 }
-                break;
+               break;
             } // row 3 of menu side bar buttons
             default : {
                 msgObj.dispWarningMessage(className+"(SOM_AnimWorldWin)","launchMenuBtnHndlr","Clicked Unknown Btn row : " + funcRow +" | Btn : " + btn);
-                break;
+               break;
             }
         }
     }
@@ -934,23 +916,23 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     protected final void handleSideMenuDebugSelEnable(int btn) {
         switch (btn) {
             case 0: {
-                break;
+               break;
             }
             case 1: {
-                break;
+               break;
             }
             case 2: {
-                break;
+               break;
             }
             case 3: {
-                break;
+               break;
             }
             case 4: {
-                break;
+               break;
             }
             default: {
                 msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSelEnable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
-                break;
+               break;
             }
         }
     }
@@ -959,24 +941,24 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     protected final void handleSideMenuDebugSelDisable(int btn) {
         switch (btn) {
         case 0: {
-            break;
+           break;
         }
         case 1: {
-            break;
+           break;
         }
         case 2: {
-            break;
+           break;
         }
         case 3: {
-            break;
+           break;
         }
         case 4: {
-            break;
+           break;
         }
         default: {
             msgObj.dispMessage(className+"(SOM_AnimWorldWin)", "handleSideMenuDebugSelDisable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
             resetButtonState();
-            break;
+           break;
         }
         }
     }
@@ -992,7 +974,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
         boolean res = false;
         // if(res) {return res;}
-        if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVis))) {
+        if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVisIDX))) {
             res = somUIWin.handleMouseMove(mouseX, mouseY);
             if (res) {        return true;    }
         }
@@ -1013,7 +995,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     // cntl key pressed handles unfocus of spherey
     @Override
     protected final boolean hndlMouseClick_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
-        if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVis))) {
+        if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVisIDX))) {
             boolean res = somUIWin.handleMouseClick(mouseX, mouseY, mseBtn);
             if (res) {            return true;    }
         }
@@ -1041,7 +1023,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
         if (res) {            return res;        }
         // handleMouseDrag(int mouseX, int mouseY,int pmouseX, int pmouseY, myVector
         // mseDragInWorld, int mseBtn)
-        if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVis))) {
+        if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVisIDX))) {
             res = somUIWin.handleMouseDrag(mouseX, mouseY, pmouseX, pmouseY, mseDragInWorld, mseBtn);
             if (res) {                return true;            }
         }
@@ -1065,7 +1047,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
     @Override
     protected final void hndlMouseRel_Indiv() {
-        if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVis))) {            somUIWin.handleMouseRelease();        }
+        if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVisIDX))) {            somUIWin.handleMouseRelease();        }
         hndlMseRelease_Priv();
     }
 

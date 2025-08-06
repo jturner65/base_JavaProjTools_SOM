@@ -1,7 +1,7 @@
 package base_SOM_Objects.som_geom.geom_utils.geom_objs;
 
 import base_Math_Objects.vectorObjs.floats.myPointf;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_geom.geom_UI.SOM_AnimWorldWin;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
 import base_UI_Objects.renderer.ProcessingRenderer;
@@ -58,7 +58,7 @@ public class SOM_GeomObjSamples {
      * @param _pa
      * @param _csvStr
      */
-    public final void buildSampleSetAndPShapesFromCSVStr(IRenderInterface _pa, String _csvStr) {
+    public final void buildSampleSetAndPShapesFromCSVStr(IGraphicsAppInterface _pa, String _csvStr) {
         String[] tmpDatAra = _csvStr.split("ST_"+samplPtTag);
         String[] onlySamplesAra = tmpDatAra[1].trim().split("END_"+samplPtTag);
         String[] samplePtAra = onlySamplesAra[0].trim().split(samplPtTag);
@@ -80,7 +80,7 @@ public class SOM_GeomObjSamples {
      * build pshape to hold samples, to speed up rendering
      * @param _numSmplPts
      */
-    public final void buildSampleSetAndPShapes(IRenderInterface ri, int _numSmplPts) {
+    public final void buildSampleSetAndPShapes(IGraphicsAppInterface ri, int _numSmplPts) {
         objSamplePts = buildSamplesOfThisObject(0,_numSmplPts);
         buildSamplePShapeObjs(ri);        
     }//buildSampleSet
@@ -106,7 +106,7 @@ public class SOM_GeomObjSamples {
         }        
         return tmpSmplAra;
     }
-    private void buildSamplePShapeObjs(IRenderInterface ri) {
+    private void buildSamplePShapeObjs(IGraphicsAppInterface ri) {
         //update colors - these will be set in owner by here
         locClrAra = new int[ownr.locClrAra.length];
         System.arraycopy(ownr.locClrAra, 0, locClrAra, 0, ownr.locClrAra.length);
@@ -119,7 +119,7 @@ public class SOM_GeomObjSamples {
 
     }
     
-    private PShape buildSampleCloud(IRenderInterface ri, int[] clrs) {
+    private PShape buildSampleCloud(IGraphicsAppInterface ri, int[] clrs) {
         PShape poly = ((ProcessingRenderer)ri).createShape(); 
         poly.beginShape(PConstants.POINTS);
         poly.fill(clrs[0],clrs[1],clrs[2],255);
@@ -162,21 +162,21 @@ public class SOM_GeomObjSamples {
      * draw this object's samples, using the random color
      * @param ri
      */
-    public final void drawMeSmpls_ClrRnd(IRenderInterface ri){        ((ProcessingRenderer)ri).shape(sampleObjPShapes[SOM_GeomObjDrawType.rndClr.getVal()]);}//
+    public final void drawMeSmpls_ClrRnd(IGraphicsAppInterface ri){        ((ProcessingRenderer)ri).shape(sampleObjPShapes[SOM_GeomObjDrawType.rndClr.getVal()]);}//
     
     /**
      * draw this object's samples, using the location-based color
      * @param ri
      */
-    public final void drawMeSmpls_ClrLoc(IRenderInterface ri){        ((ProcessingRenderer)ri).shape(sampleObjPShapes[SOM_GeomObjDrawType.locClr.getVal()]);}//        
+    public final void drawMeSmpls_ClrLoc(IGraphicsAppInterface ri){        ((ProcessingRenderer)ri).shape(sampleObjPShapes[SOM_GeomObjDrawType.locClr.getVal()]);}//        
     
-    public final void drawMeSmplsSelected(IRenderInterface ri) {    ((ProcessingRenderer)ri).shape(sampleObjPShapes[2]);}
+    public final void drawMeSmplsSelected(IGraphicsAppInterface ri) {    ((ProcessingRenderer)ri).shape(sampleObjPShapes[2]);}
     
     /**
      * draw this object's samples, using the random color
      * @param ri
      */
-    public final void drawMySmplsLabel_2D(IRenderInterface ri){
+    public final void drawMySmplsLabel_2D(IGraphicsAppInterface ri){
         ri.pushMatState();
         ri.setFill(labelClrAra,255); 
         ri.setStroke(labelClrAra,255);
@@ -194,7 +194,7 @@ public class SOM_GeomObjSamples {
      * draw this object's samples, using the random color
      * @param ri
      */
-    public final void drawMySmplsLabel_3D(IRenderInterface ri,SOM_AnimWorldWin animWin){
+    public final void drawMySmplsLabel_3D(IGraphicsAppInterface ri,SOM_AnimWorldWin animWin){
         ri.pushMatState();
         ri.setFill(labelClrAra,255); 
         ri.setStroke(labelClrAra,255);

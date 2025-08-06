@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import base_Math_Objects.vectorObjs.tuples.Tuple;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
@@ -721,32 +721,32 @@ public abstract class SOM_MapNode extends SOM_Example{
     // UI Interaction and draw routines
 
     public float getPopNodeSize(int _typeIDX) {return BMUExampleNodes[_typeIDX].getPopNodeSize();}
-    public void drawMePopLbl(IRenderInterface ri, int _typeIDX) {        BMUExampleNodes[_typeIDX].drawMapNodeWithLabel(ri);    }    
-    public void drawMePopNoLbl(IRenderInterface ri, int _typeIDX) {        BMUExampleNodes[_typeIDX].drawMapNodeNoLabel(ri);    }    
-    public void drawMeSmall(IRenderInterface ri){
+    public void drawMePopLbl(IGraphicsAppInterface ri, int _typeIDX) {        BMUExampleNodes[_typeIDX].drawMapNodeWithLabel(ri);    }    
+    public void drawMePopNoLbl(IGraphicsAppInterface ri, int _typeIDX) {        BMUExampleNodes[_typeIDX].drawMapNodeNoLabel(ri);    }    
+    public void drawMeSmall(IGraphicsAppInterface ri){
         ri.pushMatState();
         ri.showTextAra(mapLoc, 2, 2, getMapNodeClrs(), new String[]{this.OID}); 
         ri.popMatState();        
     }        
-    public void drawMeWithWt(IRenderInterface ri, float wt, String[] disp){
+    public void drawMeWithWt(IGraphicsAppInterface ri, float wt, String[] disp){
         ri.pushMatState();    
         ri.showTextAra(mapLoc, wt, (int)wt+1, getMapNodeClrs(),  disp); 
         ri.popMatState();        
     }//drawMeWithWt
 
     //draw segment contribution
-    public final void drawMeUMatSegClr(IRenderInterface ri){uMatrixSegData.drawMe(ri);}
+    public final void drawMeUMatSegClr(IGraphicsAppInterface ri){uMatrixSegData.drawMe(ri);}
     
     //draw ftr weight segment contribution - use per-ftr norm ftr as alpha
-    public final void drawMeFtrWtSegClr(IRenderInterface ri, Integer idx, float wt) {
+    public final void drawMeFtrWtSegClr(IGraphicsAppInterface ri, Integer idx, float wt) {
         SOM_MapNodeSegmentData ftrWtMgrAtIdx = ftrWtSegData.get(idx);
         if(null==ftrWtMgrAtIdx) {return;}            //does not have weight at this feature index
         ftrWtMgrAtIdx.drawMe(ri,(int) (255*wt));
     }//drawMeFtrWtSegClr
     
-    public final void drawMeSelected(IRenderInterface ri) {
+    public final void drawMeSelected(IGraphicsAppInterface ri) {
         ri.pushMatState();
-        ri.noFill();
+        ri.setNoFill();
         ri.setStroke(255,255,0, 255);
         ri.setStrokeWt(3.0f);
         ri.drawRect(dispBoxDims);        
@@ -754,19 +754,19 @@ public abstract class SOM_MapNode extends SOM_Example{
     }
     
     //draw class pop segment contribution 
-    public final void drawMeClassClr(IRenderInterface ri, Integer cls) {classSegManager.drawMeSegClr(ri,  cls);    }//drawMeFtrWtSegClr
+    public final void drawMeClassClr(IGraphicsAppInterface ri, Integer cls) {classSegManager.drawMeSegClr(ri,  cls);    }//drawMeFtrWtSegClr
     
     //draw category segment contribution - collection of classes
-    public final void drawMeCategorySegClr(IRenderInterface ri, Integer category) { categorySegManager.drawMeSegClr(ri, category);}//drawMeFtrWtSegClr
+    public final void drawMeCategorySegClr(IGraphicsAppInterface ri, Integer category) { categorySegManager.drawMeSegClr(ri, category);}//drawMeFtrWtSegClr
     
     //draw a box around this node of uMatD color
-    public void drawMeUMatDist(IRenderInterface ri){drawMeClrRect(ri,uMatClr, 255);}
-    public void drawMeProdBoxClr(IRenderInterface ri, int[] clr) {drawMeClrRect(ri,clr, clr[3]);}
+    public void drawMeUMatDist(IGraphicsAppInterface ri){drawMeClrRect(ri,uMatClr, 255);}
+    public void drawMeProdBoxClr(IGraphicsAppInterface ri, int[] clr) {drawMeClrRect(ri,clr, clr[3]);}
     //clr is 3 vals
-    private void drawMeClrRect(IRenderInterface ri, int[] fclr, int alpha) {
+    private void drawMeClrRect(IGraphicsAppInterface ri, int[] fclr, int alpha) {
         ri.pushMatState();
         ri.setFill(fclr, alpha);
-        ri.noStroke();
+        ri.setNoStroke();
         ri.drawRect(dispBoxDims);        
         ri.popMatState();    
     }//drawMeClrRect

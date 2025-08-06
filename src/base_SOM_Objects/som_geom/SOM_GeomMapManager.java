@@ -12,7 +12,7 @@ import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_Math_Objects.vectorObjs.floats.myPointf;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
 import base_SOM_Objects.som_geom.geom_UI.SOM_AnimWorldWin;
@@ -711,10 +711,10 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
     }
 
     @Override
-    protected void drawSegmentsUMatrixDispIndiv(IRenderInterface pa) {            
+    protected void drawSegmentsUMatrixDispIndiv(IGraphicsAppInterface pa) {            
     }
     
-    public final void drawSelectedMapNodeGeomObjs(IRenderInterface pa, float animTimeMod, boolean showLabels, boolean useLocAsClr) {
+    public final void drawSelectedMapNodeGeomObjs(IGraphicsAppInterface pa, float animTimeMod, boolean showLabels, boolean useLocAsClr) {
         if((SelectedMapNodes!= null) && (SelectedMapNodes.size() > 0)) {
             if(useLocAsClr) {
                 for(SOM_MapNode node : SelectedMapNodes.values()) {    ((SOM_GeomMapNode) node).getVisObj().drawMeSelected_ClrLoc(pa, animTimeMod, false);}
@@ -726,31 +726,31 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
     }
     
     @Override
-    protected void drawMapRectangle_Indiv(IRenderInterface pa, int curImgNum) {    
+    protected void drawMapRectangle_Indiv(IGraphicsAppInterface pa, int curImgNum) {    
         drawMseOverData(pa);            
     }
 
     @Override
-    protected void drawPerFtrMap_Indiv(IRenderInterface pa) {        
+    protected void drawPerFtrMap_Indiv(IGraphicsAppInterface pa) {        
     }
 
     @Override
-    protected final float getPreBuiltMapInfoDetail(IRenderInterface pa, String[] str, int i, float yOff, boolean isLoaded) {
+    protected final float getPreBuiltMapInfoDetail(IGraphicsAppInterface pa, String[] str, int i, float yOff, boolean isLoaded) {
         return yOff;
     }
     
     @Override
-    protected final float drawResultBarPriv1(IRenderInterface pa, float yOff) {
+    protected final float drawResultBarPriv1(IGraphicsAppInterface pa, float yOff) {
         return yOff;
     }
 
     @Override
-    protected final float drawResultBarPriv2(IRenderInterface pa, float yOff) {
+    protected final float drawResultBarPriv2(IGraphicsAppInterface pa, float yOff) {
         return yOff;
     }
 
     @Override
-    protected final float drawResultBarPriv3(IRenderInterface pa, float yOff) {
+    protected final float drawResultBarPriv3(IGraphicsAppInterface pa, float yOff) {
         return yOff;
     }
     

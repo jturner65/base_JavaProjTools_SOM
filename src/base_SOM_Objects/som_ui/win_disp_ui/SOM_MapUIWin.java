@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
 import base_SOM_Objects.som_managers.SOM_MapManager;
@@ -140,7 +140,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
      * @param rdClosed
      * @param _winTxt
      */    
-    public SOM_MapUIWin(IRenderInterface _p, GUI_AppManager _AppMgr, GUI_AppWinVals _winInitVals) {
+    public SOM_MapUIWin(IGraphicsAppInterface _p, GUI_AppManager _AppMgr, GUI_AppWinVals _winInitVals) {
         super(_p, _AppMgr,_winInitVals);
         initAndSetSOMDatUIMaps();
     }//ctor
@@ -187,6 +187,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
      * This function implements the instantiation of a child window owned by this window, if such exists.
      * The implementation should be similar to how the main windows are implemented in GUI_AppManager::initAllDispWindows.
      * If no child window exists, this implementation of this function can be empty
+     * If a child window is instantiated, it MUST have its init called (childWin.initThisWin(false))
      * 
      * The SOM Map window should probably never have a child window, since it will, itself, usually be a child window
      * @param GUI_AppWinVals the window control values for the child window.

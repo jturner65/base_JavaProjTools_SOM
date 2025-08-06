@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.TreeMap;
 
 import base_Math_Objects.vectorObjs.floats.myPointf;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
@@ -322,17 +322,17 @@ public abstract class SOM_MseOvrDisplay {
      * draw current mouse label data at current position
      * @param p
      */    
-    public void drawMeLblMap(IRenderInterface pa){drawMseLbl_Info(pa,mapLoc);}
+    public void drawMeLblMap(IGraphicsAppInterface pa){drawMseLbl_Info(pa,mapLoc);}
     /**
      * draw current mouse label data at passed position
      * @param p
      */
-    public void drawMseLbl_Info(IRenderInterface ri, myPointf drawLoc) {
+    public void drawMseLbl_Info(IGraphicsAppInterface ri, myPointf drawLoc) {
         if(!display) {return;}
         ri.pushMatState();
         ri.setFill(dpFillClr, dpFillClr[3]);ri.setStroke(dpStkClr,dpStkClr[3]);
         //draw point of radius rad at maploc with label    
-        //p.showBox(mapLoc, rad, 5, clrVal,clrVal, IRenderInterface.gui_LightGreen, mseLabelDat);
+        //p.showBox(mapLoc, rad, 5, clrVal,clrVal, IGraphicsAppInterface.gui_LightGreen, mseLabelDat);
         //(myPointf P, float rad, int det, int[] clrs, String[] txtAra, float[] rectDims)
         ri.showBoxTextAra(drawLoc, 5, 5, nodeClrs, mseLabelAra, mseLabelDims);
         ri.popMatState();

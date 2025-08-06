@@ -3,7 +3,7 @@ package base_SOM_Objects.som_examples.base.visualization;
 import java.util.Arrays;
 
 import base_Math_Objects.vectorObjs.floats.myPointf;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_UI_Objects.GUI_AppManager;
 import base_Utils_Objects.io.messaging.MessageObject;
 
@@ -94,7 +94,7 @@ public abstract class baseDataPtVis{
      * @param _rad
      * @param ID
      */
-    public final void drawMeLinkedToBMU(IRenderInterface ri, float _rad, String ID){
+    public final void drawMeLinkedToBMU(IGraphicsAppInterface ri, float _rad, String ID){
         ri.pushMatState();
         //draw point of radius rad at mapLoc - actual location on map
         //show(myPointf P, float rad, int det, int[] clrs, String[] txtAra)
@@ -111,7 +111,7 @@ public abstract class baseDataPtVis{
      * 
      * @param ri
      */
-    public void drawMeSmallNoLbl(IRenderInterface ri){
+    public void drawMeSmallNoLbl(IGraphicsAppInterface ri){
         ri.pushMatState();
         int[] clrAra = getMapNodeClrs();
         ri.showPtAsSphere(mapLoc, 2, 2, clrAra[0],clrAra[1]); 
@@ -122,7 +122,7 @@ public abstract class baseDataPtVis{
      * override drawing in map nodes
      * @param ri
      */
-    public final void drawMeMap(IRenderInterface ri){
+    public final void drawMeMap(IGraphicsAppInterface ri){
         ri.pushMatState();    
         int[] clrAra = getMapNodeClrs();
         ri.showPtAsSphere(mapLoc, getRad(), drawDet, clrAra[0],clrAra[1]);        
@@ -135,7 +135,7 @@ public abstract class baseDataPtVis{
      * @param ri
      * @param clr
      */
-    public final void drawMeMapClr(GUI_AppManager AppMgr, IRenderInterface ri, int[] clr){
+    public final void drawMeMapClr(GUI_AppManager AppMgr, IGraphicsAppInterface ri, int[] clr){
         ri.pushMatState();
         //draw point of radius rad at mapLoc
         AppMgr.show_ClrAra(mapLoc, mapDrawRad,drawDet, clr, clr);
@@ -151,10 +151,10 @@ public abstract class baseDataPtVis{
      * @param rad
      * @param rank
      */
-    public final void drawMeRanked(GUI_AppManager AppMgr, IRenderInterface ri, String lbl, int[] clr, float rad, int rank){
+    public final void drawMeRanked(GUI_AppManager AppMgr, IGraphicsAppInterface ri, String lbl, int[] clr, float rad, int rank){
         ri.pushMatState();
         //draw point of radius rad at maploc with label and no background box    
-        AppMgr.showNoBox_ClrAra(mapLoc, rad, drawDet, clr, clr, IRenderInterface.gui_White, lbl);
+        AppMgr.showNoBox_ClrAra(mapLoc, rad, drawDet, clr, clr, IGraphicsAppInterface.gui_White, lbl);
         ri.popMatState();
     }
 

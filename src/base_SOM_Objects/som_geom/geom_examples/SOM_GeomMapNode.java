@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import base_Math_Objects.vectorObjs.tuples.Tuple;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
 import base_SOM_Objects.som_managers.SOM_MapManager;
@@ -133,9 +133,9 @@ public abstract class SOM_GeomMapNode extends SOM_MapNode {
     //////////
     // overriding base class
     @Override
-    public final void drawMePopLbl(IRenderInterface p, int _typeIDX) {        BMUExampleNodes[_typeIDX].drawMapNodeWithLabel_Clr(p, visObj.locClrAra);    }    
+    public final void drawMePopLbl(IGraphicsAppInterface p, int _typeIDX) {        BMUExampleNodes[_typeIDX].drawMapNodeWithLabel_Clr(p, visObj.locClrAra);    }    
     @Override
-    public final void drawMePopNoLbl(IRenderInterface p, int _typeIDX) {        BMUExampleNodes[_typeIDX].drawMapNodeNoLabel_Clr(p, visObj.locClrAra);    }    
+    public final void drawMePopNoLbl(IGraphicsAppInterface p, int _typeIDX) {        BMUExampleNodes[_typeIDX].drawMapNodeNoLabel_Clr(p, visObj.locClrAra);    }    
 
     
     

@@ -10,6 +10,9 @@ import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomSamplePointf;
 
+/**
+ * Specialization of SOM_GeomObj for line objects
+ */
 public abstract class SOM_GeomLineObj extends SOM_GeomObj {
     /**
      * # of source points used to build object

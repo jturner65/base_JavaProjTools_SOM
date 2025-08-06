@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeMap;
 
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
 import base_SOM_Objects.som_segments.segmentData.SOM_MapNodeSegmentData;
 import base_SOM_Objects.som_segments.segments.SOM_MappedSegment;
@@ -118,7 +118,7 @@ public abstract class SOM_MapNodeSegMgr {
     
     
     //draw class pop segment contribution 
-    public void drawMeSegClr(IRenderInterface p, Integer cls) {
+    public void drawMeSegClr(IGraphicsAppInterface p, Integer cls) {
         SOM_MapNodeSegmentData classMgrAtIdx = segData.get(cls);
         if(null==classMgrAtIdx) {
             System.out.println("drawMeSegClr : Error seg is null!");

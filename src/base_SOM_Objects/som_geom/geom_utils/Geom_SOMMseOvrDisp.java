@@ -3,7 +3,7 @@ package base_SOM_Objects.som_geom.geom_utils;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
 import base_SOM_Objects.som_ui.SOM_MseOvrDisplay;
@@ -16,7 +16,7 @@ public class Geom_SOMMseOvrDisp extends SOM_MseOvrDisplay {
 
     @Override
     protected int[] setNodeColors() {            
-        return new int[] {IRenderInterface.gui_Black,IRenderInterface.gui_White,IRenderInterface.gui_Black};
+        return new int[] {IGraphicsAppInterface.gui_Black,IGraphicsAppInterface.gui_White,IGraphicsAppInterface.gui_Black};
     }
     @Override
     protected String getFtrDispTitleString(int count) {return "Ftrs :  count : "+count;}

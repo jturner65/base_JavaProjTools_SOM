@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.TreeMap;
 
 import base_Math_Objects.vectorObjs.floats.myPointf;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_examples.base.SOM_Example;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_mapnodes.base.SOM_MapNode;
@@ -126,28 +126,28 @@ public class SOM_MapNodeBMUExamples{
     
     /////////////////////
     // drawing routines for owning node
-    public void drawMapNodeWithLabel(IRenderInterface p) {
+    public void drawMapNodeWithLabel(IGraphicsAppInterface p) {
         p.pushMatState();    
             p.showTextAra(node.mapLoc, logExSize, nodeSphrDet, dispClrs,  visLabel);         
         p.popMatState();        
     }
 
-    public void drawMapNodeNoLabel(IRenderInterface p) {
+    public void drawMapNodeNoLabel(IGraphicsAppInterface p) {
         p.pushMatState();    
             p.showPtAsSphere(node.mapLoc, logExSize, nodeSphrDet, dispClrs[0], dispClrs[1]);         
         p.popMatState();        
     }
-    public void drawMapNodeWithLabel_Clr(IRenderInterface p, int[] _dispClrs) {
+    public void drawMapNodeWithLabel_Clr(IGraphicsAppInterface p, int[] _dispClrs) {
         p.pushMatState();        
             p.translate(node.mapLoc.x,node.mapLoc.y,node.mapLoc.z);     
             p.setFill(_dispClrs,255); p.setStroke(_dispClrs,255);        
             p.drawSphere(myPointf.ZEROPT, logExSize, nodeSphrDet);
 
-            p.showTextAra(1.2f * logExSize,IRenderInterface.gui_Cyan, visLabel);        
+            p.showTextAra(1.2f * logExSize,IGraphicsAppInterface.gui_Cyan, visLabel);        
         p.popMatState();        
     }
 
-    public void drawMapNodeNoLabel_Clr(IRenderInterface p, int[] _dispClrs) {
+    public void drawMapNodeNoLabel_Clr(IGraphicsAppInterface p, int[] _dispClrs) {
         p.pushMatState();                         
             p.setFill(_dispClrs,255); p.setStroke(_dispClrs,255);    
             p.drawSphere(node.mapLoc, logExSize, nodeSphrDet);
