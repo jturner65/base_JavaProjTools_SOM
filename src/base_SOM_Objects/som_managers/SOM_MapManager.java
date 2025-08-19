@@ -990,7 +990,7 @@ public abstract class SOM_MapManager {
                 //each thread builds columns of every map
                 for (int i=0; i<numPartitions-1;++i) {    
                     xVals[1] += numXPerPart;
-                    mapImgBuilders.add(new SOM_FtrMapVisImgBldr(this,curMapTrainFtrType,  mapPerFtrWtImgs, xVals, yVals,map_ftrsMin,map_ftrsDiffs, mapScaleVal));
+                    mapImgBuilders.add(new SOM_FtrMapVisImgBldr(this,curMapTrainFtrType, mapPerFtrWtImgs, xVals, yVals,map_ftrsMin,map_ftrsDiffs, mapScaleVal));
                     xVals[0] = xVals[1];                
                 }
                 //last one
@@ -1654,7 +1654,7 @@ public abstract class SOM_MapManager {
     
     
     //returns sq distance between two map locations (using actual map distance, not feature similarity) - needs to handle wrapping if map built torroidally
-    private float getSqMapDist_flat(SOM_MapNode a, SOM_MapNode b){        return (a.mapLoc._SqrDist(b.mapLoc));    }//    
+    private float getSqMapDist_flat(SOM_MapNode a, SOM_MapNode b){        return (a.mapLoc.sqrDist(b.mapLoc));    }//    
     //returns sq distance between two map locations - needs to handle wrapping if map built torroidally
     private float getSqMapDist_torr(SOM_MapNode a, SOM_MapNode b){
         float 
@@ -2479,7 +2479,7 @@ public abstract class SOM_MapManager {
     protected float sideBarYDisp = 10.0f;
 
     //draw right sidebar data
-    public void drawResultBar(IGraphicsAppInterface ri, float yOff) {
+    public void drawResultBar(IGraphicsAppInterface ri, float yOff, boolean isGlblAppDebug) {
         yOff-=4;
         //float sbrMult = 1.2f, lbrMult = 1.5f;//offsets multiplier for barriers between contextual ui elements
         ri.pushMatState();

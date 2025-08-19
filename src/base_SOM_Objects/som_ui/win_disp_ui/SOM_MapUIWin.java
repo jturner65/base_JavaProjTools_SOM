@@ -16,6 +16,7 @@ import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_SOM_Objects.som_ui.uiData.SOMWinUIDataUpdater;
 import base_SOM_Objects.som_utils.SOM_MapDat;
 import base_UI_Objects.GUI_AppManager;
+import base_UI_Objects.baseApp.GUI_AppUIFlags;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.base.GUI_AppWinVals;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
@@ -36,44 +37,137 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
     //idxs of boolean values/flags
     public static final int 
         //idx 0 is debug in privFlags structure
-        buildSOMExe                     = 1, //command to initiate SOM-building
-        resetMapDefsIDX                = 2, //reset default UI values for map
-        mapDataLoadedIDX                = 3, //whether map has been loaded or not    
-        mapUseChiSqDistIDX            = 4, //whether to use chi-squared (weighted by variance) distance for features or regular euclidean dist
-        mapExclProdZeroFtrIDX        = 5, //whether or not distances between two datapoints assume that absent features in source data point should be zero or ignored when comparing to map node ftrs
+        /**
+         * command to initiate SOM-building
+         */
+        buildSOMExe                 = 1,
+        /**
+         * reset default UI values for map
+         */
+        resetMapDefsIDX             = 2,
+        /**
+         * Whether map has been loaded or not
+         */
+        mapDataLoadedIDX            = 3,
+        /**
+         * Whether to use chi-squared (weighted by variance)
+         * Distance for features or regular Euclidean dist
+         */
+        mapUseChiSqDistIDX          = 4,
+        /**
+         * Whether or not distances between two datapoints assume
+         * that absent features in source data point should be zero 
+         * or ignored when comparing to map node ftrs
+         */
+        mapExclProdZeroFtrIDX       = 5,
 
         //display/interaction
-        mapDrawTrainDatIDX            = 6, //draw training examples
-        mapDrawTestDatIDX             = 7, //draw testing examples - data held out and not used to train the map 
-        mapDrawNodeLblIDX            = 8, //draw labels for nodes
-        mapDrawNodesWith0MapExIDX    = 9, //draw nodes that have no mapped examples
-        mapDrawWtMapNodesIDX            = 10, //draw map nodes with non-0 (present) ftr vals for currently selected ftr
-        mapDrawPopMapNodesIDX           = 11, //draw map nodes that are bmus for training examples, with size logarithmically proportional to pop size
-        mapDrawAllMapNodesIDX        = 12, //draw all map nodes, even empty
-        drawMapNodePopGraphIDX        = 13, //draw graph next to SOM Map display showing map node population curve, with x axis being proportional to population, and y axis holding each node
+        /**
+         * Draw training examples
+         */
+        mapDrawTrainDatIDX          = 6,
+        /**
+         * Draw testing examples - data held out and not used to
+         * train the map
+         */
+        mapDrawTestDatIDX           = 7,
+        /**
+         * Draw labels for nodes
+         */
+        mapDrawNodeLblIDX           = 8,
+        /**
+         * Draw nodes that have no mapped examples
+         */
+        mapDrawNodesWith0MapExIDX   = 9,
+        /**
+         * Draw map nodes with non-0 (present) ftr vals for 
+         * currently selected ftr
+         */
+        mapDrawWtMapNodesIDX        = 10,
+        /**
+         * Draw map nodes that are bmus for training examples, with
+         * size logarithmically proportional to pop size
+         */
+        mapDrawPopMapNodesIDX       = 11,
+        /**
+         * Draw all map nodes, even empty
+         */
+        mapDrawAllMapNodesIDX       = 12,
+        /**
+         * Draw graph next to SOM Map display showing map node population
+         * curve, with x axis being proportional to population, and y axis
+         * holding each node
+         */
+        drawMapNodePopGraphIDX      = 13,
         
         //UMatrix         
-        mapDrawUMatrixIDX            = 14, //draw visualization of u matrix - distance between nodes
-        mapDrawUMatSegImgIDX            = 15, //draw the image of the interpolated segments based on UMatrix Distance
-        mapDrawUMatSegMembersIDX        = 16, //draw umatrix-based segments around regions of maps - visualizes clusters with different colors
+        /**
+         * Draw visualization of u matrix - distance between nodes
+         */
+        mapDrawUMatrixIDX           = 14,
+        /**
+         * Draw the image of the interpolated segments based on
+         * UMatrix Distance
+         */
+        mapDrawUMatSegImgIDX        = 15,
+        /**
+         * Draw umatrix-based segments around regions of maps - visualizes
+         * clusters with different colors
+         */
+        mapDrawUMatSegMembersIDX    = 16,
         
         //ftr and ftr-dist-based
-        mapDrawDistImageIDX            = 17, //draw umatrix-like rendering based on sq dist between adjacent node vectors
-        mapDrawFtrWtSegMembersIDX    = 18, //draw ftr-wt-based segments around regions of map - display only segment built from currently display ftr on ftr map
+        /**
+         * Draw umatrix-like rendering based on sq dist between adjacent node vectors
+         */
+        mapDrawDistImageIDX         = 17, 
+        /**
+         * Draw ftr-wt-based segments around regions of map - display only
+         * segment built from currently display ftr on ftr map
+         */
+        mapDrawFtrWtSegMembersIDX   = 18, 
         
         //class and category-based segments
-        mapDrawClassSegmentsIDX        = 19, //show class segments
-        mapDrawCategorySegmentsIDX    = 20, //show category (collection of classes) segments
-        _categoryCanBeShownIDX        = 21, //whether category values are used and can be shown on UI/interracted with
-        _classCanBeShownIDX            = 22, //whether class values are used and can be shown on UI/interracted with
-        mapLockClassCatSegmentsIDX      = 23, //lock category to cycle through classes
+        /**
+         * Show class segments
+         */
+        mapDrawClassSegmentsIDX     = 19, 
+        /**
+         * Show category (collection of classes) segments
+         */
+        mapDrawCategorySegmentsIDX  = 20,
+        /**
+         * Whether category values are used and can be shown on UI/interracted with
+         */
+        _categoryCanBeShownIDX      = 21,
+        /**
+         * Whether class values are used and can be shown on UI/interracted with
+         */
+        _classCanBeShownIDX         = 22,
+        /**
+         * Lock category to cycle through classes
+         */
+        mapLockClassCatSegmentsIDX  = 23,
         
-        showSelRegionIDX                = 24, //highlight a specific region of the map, i.e. all nodes above a certain threshold for a chosen ftr
+        /**
+         * Highlight a specific region of the map, i.e. all nodes above a certain threshold for a chosen ftr
+         */
+        showSelRegionIDX            = 24,
+
         //train/test data management
-        somTrainDataLoadedIDX        = 25, //whether data used to build map has been loaded yet
-        saveLocClrImgIDX                = 26, //
+        /**
+         * Whether data used to build map has been loaded yet
+         */
+        somTrainDataLoadedIDX       = 25,
+        /**
+         * Whether to save an image of the map layout
+         */
+        saveLocClrImgIDX            = 26,
         //save segment mappings
-        saveAllSegmentMapsIDX        = 27;            //this will save all the segment mappings that have been defined
+        /**
+         * This will save all the segment mappings that have been defined
+         */
+        saveAllSegmentMapsIDX       = 27;
     
     public static final int numSOMBasePrivFlags = 28;
     //instancing class will determine numPrivFlags based on how many more flags are added
@@ -84,35 +178,117 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
     //private int numPrivFlags;
     
     //    //GUI Objects    
-    public final static int 
-        gIDX_TrainDataNormIDX        = 0, //normalization that feature data should have: unnormalized, norm per feature across all data, normalize each example
-        gIDX_BMU_DispDataFrmtIDX         = 1, //format of vectors to use when comparing examples to nodes on map
-        gIDX_TrainDatPartIDX             = 2, //partition % of training data out of total data (rest is testing)
-                                     
-        gIDX_MapRowsIDX                  = 3,            //map rows
-        gIDX_MapColsIDX                = 4, //map cols
-        gIDX_MapEpochsIDX            = 5, //# of training epochs
-        gIDX_MapShapeIDX                 = 6, //hexagonal or rectangular
-        gIDX_MapBndsIDX                = 7, //planar or torroidal bounds
-        gIDX_MapKTypIDX                = 8, //0 : dense cpu, 1 : dense gpu, 2 : sparse cpu.  dense needs appropriate lrn file format
-        gIDX_MapNHdFuncIDX            = 9, //neighborhood : 0 : gaussian, 1 : bubble
-        gIDX_MapRadCoolIDX            = 10, //radius cooling 0 : linear, 1 : exponential
-        gIDX_MapLrnCoolIDX            = 11, //learning rate cooling 0 : linear 1 : exponential
-        gIDX_MapLrnStIDX                 = 12, //start learning rate
-        gIDX_MapLrnEndIDX            = 13, //end learning rate
-        gIDX_MapRadStIDX                 = 14, //start radius
-        gIDX_MapRadEndIDX            = 15, //end radius
-        gIDX_MapPreBuiltDirIDX        = 16, //list of prebuilt maps as defined in config - this specifies which prebuilt map to use
-        gIDX_MapNodeBMUTypeToDispIDX = 17, //type of examples mapping to a particular node to display in visualization
-                                     
-        gIDX_NodeWtDispThreshIDX     = 18, //threshold for display of map nodes on individual weight maps
-        gIDX_NodePopDispThreshIDX    = 19, //only display populated map nodes that are this size or larger (log of population determines size)        
-        gIDX_NodeInSegThreshIDX        = 20, //threshold of u-matrix weight for nodes to belong to same segment
-                                     
-        gIDX_MseRegionSensIDX        = 21, //sensitivity threshold for mouse-over
-        gIDX_FtrSelectIDX            = 22, //pick the feature to display, if ftr-idx wt graphs are being displayed
-        gIDX_CategorySelectIDX        = 23, //pick the category to display, if category mapping is available/enabled
-        gIDX_ClassSelectIDX            = 24;            //pick the class to display, if class mapping is available/enabled
+    public final static int
+        /**
+         * Normalization that feature data should have: 
+         *  unnormalized, 
+         *  norm per feature across all data, 
+         *  normalize each example
+         */
+        gIDX_TrainDataNormIDX           = 0, 
+        /**
+         * Format of vectors to use when comparing examples to nodes on map
+         */
+        gIDX_BMU_DispDataFrmtIDX        = 1,
+        /**
+         * Partition % of training data out of total data (rest is testing)
+         */
+        gIDX_TrainDatPartIDX            = 2,
+        /**
+         * Map Rows
+         */
+        gIDX_MapRowsIDX                 = 3,
+        /**
+         * Map Cols
+         */
+        gIDX_MapColsIDX                 = 4,
+        /**
+         * # of Training Epochs
+         */
+        gIDX_MapEpochsIDX               = 5,
+        /**
+         * Shape of map - rectangular (4 neighbors per node)
+         * or hexagonal (6 neighbors per node)
+         */
+        gIDX_MapShapeIDX                = 6,
+        /**
+         * Planar or torroidal bounds
+         */
+        gIDX_MapBndsIDX                 = 7,
+        /**
+         * 0 : dense cpu, 1 : dense gpu, 2 : sparse cpu.  dense needs appropriate lrn file format
+         */
+        gIDX_MapKTypIDX                 = 8,
+        /**
+         * Neighborhood function
+         *  0 : gaussian, 1 : bubble
+         */
+        gIDX_MapNHdFuncIDX              = 9,
+        /**
+         * Radius cooling
+         * 0 : linear, 1 : exponential
+         */
+        gIDX_MapRadCoolIDX              = 10,
+        /**
+         * Learning rate cooling : 
+         * 0 : linear, 1 : exponential
+         */
+        gIDX_MapLrnCoolIDX              = 11,
+        /**
+         * Start learning rate
+         */
+        gIDX_MapLrnStIDX                = 12,
+        /**
+         * End learning rate
+         */
+        gIDX_MapLrnEndIDX               = 13,
+        /**
+         * Start radius
+         */
+        gIDX_MapRadStIDX                = 14,
+        /**
+         * End radius
+         */
+        gIDX_MapRadEndIDX               = 15,
+        /**
+         * List of prebuilt maps as defined in config
+         * This specifies which prebuilt map to use
+         */
+        gIDX_MapPreBuiltDirIDX          = 16,
+        /**
+         * Type of examples mapping to a particular node to display
+         * in visualization
+         */
+        gIDX_MapNodeBMUTypeToDispIDX    = 17,
+        /**
+         * Threshold for display of map nodes on individual weight maps                         
+         */
+        gIDX_NodeWtDispThreshIDX        = 18,
+        /**
+         * Only display populated map nodes that are this 
+         * size or larger (log of population determines size) 
+         */
+        gIDX_NodePopDispThreshIDX       = 19,
+        /**
+         * Threshold of u-matrix weight for nodes to belong to same segment
+         */
+        gIDX_NodeInSegThreshIDX         = 20,
+        /**
+         * Sensitivity threshold for mouse-over
+         */                                     
+        gIDX_MseRegionSensIDX           = 21,
+        /**
+         * Pick the feature to display, if ftr-idx wt graphs are being displayed
+         */
+        gIDX_FtrSelectIDX               = 22,
+        /**
+         * Pick the category to display, if category mapping is available/enabled
+         */
+        gIDX_CategorySelectIDX          = 23,
+        /**
+         * Pick the class to display, if class mapping is available/enabled
+         */
+        gIDX_ClassSelectIDX             = 24;
     
     public static final int numSOMBaseGUIObjs = 25;
     //
@@ -126,7 +302,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
     };    
     
     /**
-     * default scale factor for size of SOM Map
+     * Default scale factor for size of SOM Map
      */
     private float SOMDimScaleFact = .95f;
     /**
@@ -195,19 +371,23 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
     @Override
     protected final void buildAndSetChildWindow_Indiv(GUI_AppWinVals _appVals) {}     
     /**
-     * Initialize any UI control flags appropriate for all SOM mapUI window applications
+     * Initialize any UI control flags appropriate for window application
+     * @param appUIFlags Snapshot of the initial flags structure for the application. 
+     * Will not reflect future changes, so should not be retained
      */
     @Override
-    protected final void initDispFlags() {
+    protected final void initDispFlags(GUI_AppUIFlags appUIFlags) {
         
         // capable of using right side menu
-        //dispFlags.setHasRtSideMenu(true);
-        initDispFlags_Indiv();
+        //dispFlags.setHasRtSideInfoDisp(true);
+        initDispFlags_Indiv(appUIFlags);
     }
     /**
      * Initialize any UI control flags appropriate for specific instanced SOM mapUI window
+     * @param appUIFlags Snapshot of the initial flags structure for the application. 
+     * Will not reflect future changes, so should not be retained
      */
-    protected abstract void initDispFlags_Indiv();
+    protected abstract void initDispFlags_Indiv(GUI_AppUIFlags appUIFlags);
     
     /**
      * initialize the map manager this window uses after it is built or set
@@ -242,8 +422,14 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
     }
     
     @Override
-    protected int[] getFlagIDXsToInitToTrue() {        return null;}
-
+    protected int[] getFlagIDXsToInitToTrue() {        return getFlagIDXsToInitToTrue_Indiv(new int[0]);}
+    
+    /**
+     * Implementation-specific flags to initialize to true
+     * @param flagIDXs
+     * @return
+     */
+    protected abstract int[] getFlagIDXsToInitToTrue_Indiv(int[] flagIDXs);
     /**
      * This function would provide an instance of the override class for base_UpdateFromUIData, which would
      * be used to communicate changes in UI settings directly to the value consumers.
@@ -462,17 +648,17 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
      * pass the list of values for the feature map select display list box, in idx order
      * @param ftrStrVals : list of values to display for each feature
      */
-    public final void setUI_FeatureListVals(String[] ftrStrVals) {    uiMgr.setAllUIListValues(gIDX_FtrSelectIDX, ftrStrVals, true);    }
+    public final void setUI_FeatureListVals(String[] ftrStrVals) {    uiMgr.forceNewUIAllListValues(gIDX_FtrSelectIDX, ftrStrVals, true);    }
     /**
      * pass the list of values for the category list box, in idx order
      * @param categoryVals : list of values to display for category select list
      */
-    public final void setUI_CategoryListVals(String[] categoryVals) {    if(uiMgr.getPrivFlag(_categoryCanBeShownIDX)) {    uiMgr.setAllUIListValues(gIDX_CategorySelectIDX, categoryVals, true);    }}
+    public final void setUI_CategoryListVals(String[] categoryVals) {    if(uiMgr.getPrivFlag(_categoryCanBeShownIDX)) {    uiMgr.forceNewUIAllListValues(gIDX_CategorySelectIDX, categoryVals, true);    }}
     /**
      * pass the list of values for the class list box, in idx order
      * @param classVals : list of values to display for class select list
      */
-    public final void setUI_ClassListVals(String[] classVals) {        if(uiMgr.getPrivFlag(_classCanBeShownIDX)) {        uiMgr.setAllUIListValues(gIDX_ClassSelectIDX, classVals, true);    }}
+    public final void setUI_ClassListVals(String[] classVals) {        if(uiMgr.getPrivFlag(_classCanBeShownIDX)) {        uiMgr.forceNewUIAllListValues(gIDX_ClassSelectIDX, classVals, true);    }}
 
     /**
      * set window-specific variables that are based on current visible screen dimensions
@@ -515,14 +701,14 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
             case mapExclProdZeroFtrIDX        : {//whether or not distances between two datapoints assume that absent features in smaller-length datapoints are 0, or to ignore the values in the larger datapoints
                 mapMgr.setMapExclZeroFtrs(val);
                 break;}                            
-            case mapDrawTrainDatIDX        : {//draw training examples
+            case mapDrawTrainDatIDX        : {//Draw training examples
                 break;}                            
-            case mapDrawTestDatIDX        : {//draw testing examples
+            case mapDrawTestDatIDX        : {//Draw testing examples
                 break;}        
             case mapDrawNodesWith0MapExIDX : {//hide or draw map nodes that have no mapped examples
                 
                 break;}
-            case mapDrawWtMapNodesIDX        : {//draw map nodes
+            case mapDrawWtMapNodesIDX        : {//Draw map nodes
                 if (val) {//turn off other node displays
                     uiMgr.setPrivFlag(mapDrawPopMapNodesIDX, false);
                     uiMgr.setPrivFlag(mapDrawAllMapNodesIDX, false);                    
@@ -534,7 +720,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
                     uiMgr.setPrivFlag(mapDrawAllMapNodesIDX, false);                    
                 }
                 break;}
-            case mapDrawAllMapNodesIDX    : {//draw all map nodes, even empty
+            case mapDrawAllMapNodesIDX    : {//Draw all map nodes, even empty
                 if (val) {//turn off other node displays
                     uiMgr.setPrivFlag(mapDrawPopMapNodesIDX, false);
                     uiMgr.setPrivFlag(mapDrawWtMapNodesIDX, false);                    
@@ -608,21 +794,21 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
         HashMap<String, Float> mapFloats = mapDat.getMapFloats();
         HashMap<String, String> mapStrings = mapDat.getMapStrings();
 
-        uiMgr.setNewUIValue(gIDX_MapColsIDX, mapInts.get("mapCols"));
-        uiMgr.setNewUIValue(gIDX_MapRowsIDX, mapInts.get("mapRows"));
-        uiMgr.setNewUIValue(gIDX_MapEpochsIDX, mapInts.get("mapEpochs"));
-        uiMgr.setNewUIValue(gIDX_MapKTypIDX, mapInts.get("mapKType"));
-        uiMgr.setNewUIValue(gIDX_MapRadStIDX, mapInts.get("mapStRad"));
-        uiMgr.setNewUIValue(gIDX_MapRadEndIDX, mapInts.get("mapEndRad"));
+        uiMgr.forceNewUIValue(gIDX_MapColsIDX, mapInts.get("mapCols"));
+        uiMgr.forceNewUIValue(gIDX_MapRowsIDX, mapInts.get("mapRows"));
+        uiMgr.forceNewUIValue(gIDX_MapEpochsIDX, mapInts.get("mapEpochs"));
+        uiMgr.forceNewUIValue(gIDX_MapKTypIDX, mapInts.get("mapKType"));
+        uiMgr.forceNewUIValue(gIDX_MapRadStIDX, mapInts.get("mapStRad"));
+        uiMgr.forceNewUIValue(gIDX_MapRadEndIDX, mapInts.get("mapEndRad"));
         
-        uiMgr.setNewUIValue(gIDX_MapLrnStIDX, mapFloats.get("mapStLrnRate"));
-        uiMgr.setNewUIValue(gIDX_MapLrnEndIDX, mapFloats.get("mapEndLrnRate"));
+        uiMgr.forceNewUIValue(gIDX_MapLrnStIDX, mapFloats.get("mapStLrnRate"));
+        uiMgr.forceNewUIValue(gIDX_MapLrnEndIDX, mapFloats.get("mapEndLrnRate"));
         
-        uiMgr.setDispUIListVal(gIDX_MapShapeIDX, mapStrings.get("mapGridShape"));    
-        uiMgr.setDispUIListVal(gIDX_MapBndsIDX, mapStrings.get("mapBounds"));    
-        uiMgr.setDispUIListVal(gIDX_MapRadCoolIDX, mapStrings.get("mapRadCool"));    
-        uiMgr.setDispUIListVal(gIDX_MapNHdFuncIDX, mapStrings.get("mapNHood"));    
-        uiMgr.setDispUIListVal(gIDX_MapLrnCoolIDX, mapStrings.get("mapLearnCool"));
+        uiMgr.forceNewUIDispListVal(gIDX_MapShapeIDX, mapStrings.get("mapGridShape"));    
+        uiMgr.forceNewUIDispListVal(gIDX_MapBndsIDX, mapStrings.get("mapBounds"));    
+        uiMgr.forceNewUIDispListVal(gIDX_MapRadCoolIDX, mapStrings.get("mapRadCool"));    
+        uiMgr.forceNewUIDispListVal(gIDX_MapNHdFuncIDX, mapStrings.get("mapNHood"));    
+        uiMgr.forceNewUIDispListVal(gIDX_MapLrnCoolIDX, mapStrings.get("mapLearnCool"));
                 
     }//setUIValues
     
@@ -632,7 +818,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
      */
     public final void setPreBuiltMapArray(String[] _pbltMapArray) {
         msgObj.dispInfoMessage("SOM_MapUIWin","setPreBuiltMapArray","Attempting to set prebuilt map values list of size : " +_pbltMapArray.length);
-        int curIDX = uiMgr.setAllUIListValues(gIDX_MapPreBuiltDirIDX,_pbltMapArray, true);
+        int curIDX = uiMgr.forceNewUIAllListValues(gIDX_MapPreBuiltDirIDX,_pbltMapArray, true);
         getUIDataUpdater().setIntValue(gIDX_MapPreBuiltDirIDX, (int) uiMgr.getUIValue(gIDX_MapPreBuiltDirIDX));
         mapMgr.setCurPreBuiltMapIDX(curIDX);
     }//
@@ -655,21 +841,21 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
             msgObj.dispWarningMessage("SOM_MapUIWin","updateUIDataVal_Integer","Attempting to set UI object with unknown Key : " +key + " using integer value " + val +". Aborting.");    
             return;}
         Integer uiObjIDX = getUIidxFromMapKeyString(key);
-        getUIDataUpdater().setIntValue(uiObjIDX, (int) uiMgr.setNewUIValue(uiObjIDX, val));
+        getUIDataUpdater().setIntValue(uiObjIDX, (int) uiMgr.forceNewUIValue(uiObjIDX, val));
         switch (uiObjIDX) {
             //integer values
-            case gIDX_MapRowsIDX         : {uiMgr.setNewUIValue(gIDX_MapRadStIDX, .5*Math.min(val, uiMgr.getUIValue(gIDX_MapColsIDX)));    break;}
-            case gIDX_MapColsIDX        : {uiMgr.setNewUIValue(gIDX_MapRadStIDX, .5*Math.min(uiMgr.getUIValue(gIDX_MapRowsIDX), val));break;}
+            case gIDX_MapRowsIDX         : {uiMgr.forceNewUIValue(gIDX_MapRadStIDX, .5*Math.min(val, uiMgr.getUIValue(gIDX_MapColsIDX)));    break;}
+            case gIDX_MapColsIDX        : {uiMgr.forceNewUIValue(gIDX_MapRadStIDX, .5*Math.min(uiMgr.getUIValue(gIDX_MapRowsIDX), val));break;}
             case gIDX_MapEpochsIDX        : {break;}
             case gIDX_MapKTypIDX        : {break;}
             case gIDX_MapRadStIDX        : {
                 if(val <= uiMgr.getUIValue(gIDX_MapRadEndIDX)+uiMgr.getModStep(uiObjIDX)) {
-                    getUIDataUpdater().setIntValue(uiObjIDX, (int) uiMgr.setNewUIValue(uiObjIDX, uiMgr.getUIValue(gIDX_MapRadEndIDX)+uiMgr.getModStep(uiObjIDX)));
+                    getUIDataUpdater().setIntValue(uiObjIDX, (int) uiMgr.forceNewUIValue(uiObjIDX, uiMgr.getUIValue(gIDX_MapRadEndIDX)+uiMgr.getModStep(uiObjIDX)));
                 }
                 break;}
             case gIDX_MapRadEndIDX        : {
                 if(val >= uiMgr.getUIValue(gIDX_MapRadStIDX)-uiMgr.getModStep(uiObjIDX)) { 
-                    getUIDataUpdater().setIntValue(uiObjIDX, (int) uiMgr.setNewUIValue(uiObjIDX, uiMgr.getUIValue(gIDX_MapRadStIDX)-uiMgr.getModStep(uiObjIDX)));
+                    getUIDataUpdater().setIntValue(uiObjIDX, (int) uiMgr.forceNewUIValue(uiObjIDX, uiMgr.getUIValue(gIDX_MapRadStIDX)-uiMgr.getModStep(uiObjIDX)));
                 }
                 break;}
         }
@@ -681,16 +867,16 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
             msgObj.dispWarningMessage("SOM_MapUIWin","updateUIDataVal_Float","Attempting to set UI object with unknown Key : " +key + " using integer value " + val +". Aborting.");    
             return;}
         Integer uiObjIDX = getUIidxFromMapKeyString(key);
-        getUIDataUpdater().setFloatValue(uiObjIDX, (float)uiMgr.setNewUIValue(uiObjIDX, val));
+        getUIDataUpdater().setFloatValue(uiObjIDX, (float)uiMgr.forceNewUIValue(uiObjIDX, val));
         switch (uiObjIDX) {
         case gIDX_MapLrnStIDX        : {    
             if(val <= uiMgr.getUIValue(gIDX_MapLrnEndIDX)+uiMgr.getModStep(uiObjIDX)) {
-                getUIDataUpdater().setFloatValue(uiObjIDX, (float) uiMgr.setNewUIValue(uiObjIDX, uiMgr.getUIValue(gIDX_MapLrnEndIDX)+uiMgr.getModStep(uiObjIDX)));
+                getUIDataUpdater().setFloatValue(uiObjIDX, (float) uiMgr.forceNewUIValue(uiObjIDX, uiMgr.getUIValue(gIDX_MapLrnEndIDX)+uiMgr.getModStep(uiObjIDX)));
             }
             break;}
         case gIDX_MapLrnEndIDX        : {    
             if(val >= uiMgr.getUIValue(gIDX_MapLrnStIDX)-uiMgr.getModStep(uiObjIDX)) {    
-                getUIDataUpdater().setFloatValue(uiObjIDX, (float) uiMgr.setNewUIValue(uiObjIDX, uiMgr.getUIValue(gIDX_MapLrnStIDX)-uiMgr.getModStep(uiObjIDX)));
+                getUIDataUpdater().setFloatValue(uiObjIDX, (float) uiMgr.forceNewUIValue(uiObjIDX, uiMgr.getUIValue(gIDX_MapLrnStIDX)-uiMgr.getModStep(uiObjIDX)));
             }
             break;}
         }
@@ -702,7 +888,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
             msgObj.dispWarningMessage("SOM_MapUIWin","updateUIDataVal_String","Attempting to set UI object with unknown Key : " +key + " using String value " + val +". Aborting.");
             return;}
         Integer uiObjIDX = getUIidxFromMapKeyString(key);
-        int[] retVals = uiMgr.setDispUIListVal(uiObjIDX, val);
+        int[] retVals = uiMgr.forceNewUIDispListVal(uiObjIDX, val);
         //if retVals[1] != 0 then not ok
         if(retVals[1] != 0) {
             msgObj.dispWarningMessage("SOM_MapUIWin","updateUIDataVal_String","Attempting to set list object : " +key + " to unknown list value " + val +". Aborting.");
@@ -728,18 +914,18 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
         
         switch(UIidx){
             //integer values
-            case gIDX_MapRowsIDX         : {setMapDataVal_Integer(UIidx,ival);uiMgr.setNewUIValue(gIDX_MapRadStIDX, .5*MyMathUtils.min(ival, (int)uiMgr.getUIValue(gIDX_MapColsIDX)));    break;}    //also set rad start to have a value == to 1/2 the max of rows or columns
-            case gIDX_MapColsIDX        : {setMapDataVal_Integer(UIidx,ival);uiMgr.setNewUIValue(gIDX_MapRadStIDX, .5*MyMathUtils.min((int)uiMgr.getUIValue(gIDX_MapRowsIDX), ival));break;}
+            case gIDX_MapRowsIDX         : {setMapDataVal_Integer(UIidx,ival);uiMgr.forceNewUIValue(gIDX_MapRadStIDX, .5*MyMathUtils.min(ival, (int)uiMgr.getUIValue(gIDX_MapColsIDX)));    break;}    //also set rad start to have a value == to 1/2 the max of rows or columns
+            case gIDX_MapColsIDX        : {setMapDataVal_Integer(UIidx,ival);uiMgr.forceNewUIValue(gIDX_MapRadStIDX, .5*MyMathUtils.min((int)uiMgr.getUIValue(gIDX_MapRowsIDX), ival));break;}
             case gIDX_MapEpochsIDX        : {setMapDataVal_Integer(UIidx,ival);break;}
             case gIDX_MapKTypIDX        : {setMapDataVal_Integer(UIidx,ival);break;}
             case gIDX_MapRadStIDX        : {
                 if(ival <= uiMgr.getUIValue(gIDX_MapRadEndIDX)+uiMgr.getModStep(UIidx)) {
-                    getUIDataUpdater().setIntValue(UIidx, (int) uiMgr.setNewUIValue(UIidx, uiMgr.getUIValue(gIDX_MapRadEndIDX)+uiMgr.getModStep(UIidx)));
+                    getUIDataUpdater().setIntValue(UIidx, (int) uiMgr.forceNewUIValue(UIidx, uiMgr.getUIValue(gIDX_MapRadEndIDX)+uiMgr.getModStep(UIidx)));
                 }
                 setMapDataVal_Integer(UIidx,ival);        break;}
             case gIDX_MapRadEndIDX        : {
                 if(ival >= uiMgr.getUIValue(gIDX_MapRadStIDX)-uiMgr.getModStep(UIidx)) {
-                    getUIDataUpdater().setIntValue(UIidx, (int) uiMgr.setNewUIValue(UIidx, uiMgr.getUIValue(gIDX_MapRadStIDX)-uiMgr.getModStep(UIidx)));
+                    getUIDataUpdater().setIntValue(UIidx, (int) uiMgr.forceNewUIValue(UIidx, uiMgr.getUIValue(gIDX_MapRadStIDX)-uiMgr.getModStep(UIidx)));
                 }
                 setMapDataVal_Integer(UIidx,ival);        break;}
             case gIDX_MapNHdFuncIDX    : {setMapDataVal_String(UIidx,ival); break;}
@@ -809,12 +995,12 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
         switch(UIidx){
             case gIDX_MapLrnStIDX        : {
                 if(val <= uiMgr.getUIValue(gIDX_MapLrnEndIDX)+uiMgr.getModStep(UIidx)) {
-                    getUIDataUpdater().setFloatValue(UIidx, (float) uiMgr.setNewUIValue(UIidx, uiMgr.getUIValue(gIDX_MapLrnEndIDX)+uiMgr.getModStep(UIidx)));
+                    getUIDataUpdater().setFloatValue(UIidx, (float) uiMgr.forceNewUIValue(UIidx, uiMgr.getUIValue(gIDX_MapLrnEndIDX)+uiMgr.getModStep(UIidx)));
                 }            
                 setMapDataVal_Float(UIidx,val);            break;}
             case gIDX_MapLrnEndIDX        : {
                 if(val >= uiMgr.getUIValue(gIDX_MapLrnStIDX)-uiMgr.getModStep(UIidx)) {
-                    getUIDataUpdater().setFloatValue(UIidx, (float) uiMgr.setNewUIValue(UIidx, uiMgr.getUIValue(gIDX_MapLrnStIDX)-uiMgr.getModStep(UIidx)));
+                    getUIDataUpdater().setFloatValue(UIidx, (float) uiMgr.forceNewUIValue(UIidx, uiMgr.getUIValue(gIDX_MapLrnStIDX)-uiMgr.getModStep(UIidx)));
                 }        
                 setMapDataVal_Float(UIidx,val);            break;}
             
@@ -874,7 +1060,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
      * @param _ftrTypeUsedToTrain
      */
     public void setFtrTrainTypeFromConfig(int _ftrTypeUsedToTrain) {
-        int newVal = (int)uiMgr.setNewUIValue(gIDX_TrainDataNormIDX, _ftrTypeUsedToTrain);
+        int newVal = (int)uiMgr.forceNewUIValue(gIDX_TrainDataNormIDX, _ftrTypeUsedToTrain);
         checkAndSetIntVal(gIDX_TrainDataNormIDX, newVal);
     }
     
@@ -902,8 +1088,8 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
             int catIdxToSet = getCategoryFromClass(curCatIdxVal,(int)uiMgr.getUIValue(gIDX_ClassSelectIDX));
             if(curCatIdxVal != catIdxToSet) {
                 settingCategoryFromClass = true;
-                uiMgr.setNewUIValue(gIDX_CategorySelectIDX, catIdxToSet);
-                uiMgr.setUIWinVals(gIDX_CategorySelectIDX);
+                uiMgr.forceNewUIValue(gIDX_CategorySelectIDX, catIdxToSet);
+                uiMgr.updateOwnerWithUIVal(gIDX_CategorySelectIDX);
                 checkAndSetIntVal(gIDX_TrainDataNormIDX,(int)uiMgr.getUIValue(gIDX_CategorySelectIDX));
                 settingCategoryFromClass = false;
             }
@@ -918,8 +1104,8 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
             int classIdxToSet = getClassFromCategory((int)uiMgr.getUIValue(gIDX_CategorySelectIDX), curClassIdxVal);
             if(curClassIdxVal != classIdxToSet) {
                 settingClassFromCategory = true;
-                uiMgr.setNewUIValue(gIDX_ClassSelectIDX, classIdxToSet);    
-                uiMgr.setUIWinVals(gIDX_ClassSelectIDX);
+                uiMgr.forceNewUIValue(gIDX_ClassSelectIDX, classIdxToSet);    
+                uiMgr.updateOwnerWithUIVal(gIDX_ClassSelectIDX);
                 checkAndSetIntVal(gIDX_ClassSelectIDX,(int)uiMgr.getUIValue(gIDX_ClassSelectIDX));
                 settingClassFromCategory = false;
             }
@@ -979,37 +1165,37 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
     // draw routines
     
     @Override
-    //draw 2d constructs over 3d area on screen - draws behind left menu section
+    //Draw 2d constructs over 3d area on screen - draws behind left menu section
     //modAmtMillis is in milliseconds
-    protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
+    protected final void drawRightSideInfoBarPriv(float modAmtMillis, boolean isGlblAppDebug) {
         ri.pushMatState();
         //display current simulation variables - call sim world through sim exec
-        mapMgr.drawResultBar(ri, AppMgr.getTextHeightOffset());
+        mapMgr.drawResultBar(ri, AppMgr.getTextHeightOffset(), isGlblAppDebug);
         ri.popMatState();                    
-    }//drawOnScreenStuff
+    }//DrawOnScreenStuff
     
     
     private boolean doBuildMap = false;
     @Override
-    protected final void drawMe(float animTimeMod) {
+    protected final void drawMe(float animTimeMod, boolean isGlblAppDebug) {
         drawSetDispFlags();
         if(uiMgr.getPrivFlag(mapDataLoadedIDX) != mapMgr.isMapDrawable()){uiMgr.setPrivFlag(mapDataLoadedIDX,mapMgr.isMapDrawable());}
         boolean isMapDataLoaded = uiMgr.getPrivFlag(mapDataLoadedIDX);
-        drawMap(isMapDataLoaded);        
+        drawMap(isMapDataLoaded, isGlblAppDebug);        
         if(doBuildMap){buildNewSOMMap(); doBuildMap = false;} 
         else if(uiMgr.getPrivFlag(buildSOMExe)) {    doBuildMap = true;    }    
     }
     protected abstract void drawSetDispFlags();
     
-    private void drawMap(boolean mapDataLoaded){        
-        //draw map rectangle
+    private void drawMap(boolean mapDataLoaded, boolean isGlblAppDebug){        
+        //Draw map rectangle
         ri.pushMatState();
         //instance-specific drawing
-        drawMap_Indiv();
+        drawMap_Indiv(isGlblAppDebug);
         if(mapDataLoaded){mapMgr.drawSOMMapData(ri);}    
         ri.popMatState();
     }//drawMap()    
-    protected abstract void drawMap_Indiv();
+    protected abstract void drawMap_Indiv(boolean isGlblAppDebug);
     
     public final void drawMseOverData() {    mapMgr.drawMseOverData(ri);}
 
@@ -1028,7 +1214,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
     }
     
     /**
-     * determine how buttons map to mouse over display types
+     * Determine how buttons map to mouse over display types
      * @param btn 
      * @return
      */

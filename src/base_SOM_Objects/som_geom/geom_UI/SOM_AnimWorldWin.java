@@ -14,6 +14,7 @@ import base_SOM_Objects.som_geom.geom_utils.SOMGeomUIDataUpdater;
 import base_SOM_Objects.som_geom.geom_utils.geom_objs.SOM_GeomObjTypes;
 import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_UI_Objects.GUI_AppManager;
+import base_UI_Objects.baseApp.GUI_AppUIFlags;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.base.GUI_AppWinVals;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
@@ -119,17 +120,21 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     }//buildAndSetSOM_MapDispUIWin    
     
     /**
-     * Initialize any UI control flags appropriate for all SOM Animation window applications
+     * Initialize any UI control flags appropriate for window application
+     * @param appUIFlags Snapshot of the initial flags structure for the application. 
+     * Will not reflect future changes, so should not be retained
      */
     @Override
-    protected final void initDispFlags() {
-        initDispFlags_Indiv();
+    protected final void initDispFlags(GUI_AppUIFlags appUIFlags) {
+        initDispFlags_Indiv(appUIFlags);
     }
     
     /**
      * Initialize any UI control flags appropriate for specific instanced SOM Animation window
+     * @param appUIFlags Snapshot of the initial flags structure for the application. 
+     * Will not reflect future changes, so should not be retained
      */
-    protected abstract void initDispFlags_Indiv();
+    protected abstract void initDispFlags_Indiv(GUI_AppUIFlags appUIFlags);
     
     @Override
     protected final void initMe() {
@@ -158,9 +163,11 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
 
     @Override
     protected int[] getFlagIDXsToInitToTrue() {
-        return new int[] {showFullSourceObjIDX,useUIObjLocAsClrIDX, allTrainExUniqueIDX};
+        return getFlagIDXsToInitToTrue_Indiv(new int[] {showFullSourceObjIDX,useUIObjLocAsClrIDX, allTrainExUniqueIDX});
     }
-
+    
+    protected abstract int[] getFlagIDXsToInitToTrue_Indiv(int[] flagIDXs);
+    
     protected abstract String[] setUI_GeomObjFeatureListVals();
 
     /**
@@ -420,26 +427,26 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     private void refreshNumTrainingExampleBounds() {
         //min # of training examples will at least be # of geometric objects 
         long newMinVal = numGeomObjs;
-        uiMgr.setNewUIMinVal(gIDX_NumTrainingEx, newMinVal);
+        uiMgr.forceNewUIMinVal(gIDX_NumTrainingEx, newMinVal);
         // binomial coefficient - n (total # of samples across all objects) choose k
         // (dim of minimal defining set of each object)        
         long newMaxVal = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj);
-        uiMgr.setNewUIMaxVal(gIDX_NumTrainingEx, newMaxVal);
-        uiMgr.setNewUIDispText(gIDX_NumTrainingEx, true, "Ttl # of Train Ex [" + newMinVal + ", " + newMaxVal + "]");
+        uiMgr.forceNewUIMaxVal(gIDX_NumTrainingEx, newMaxVal);
+        uiMgr.forceNewUIDispText(gIDX_NumTrainingEx, true, "Ttl # of Train Ex [" + newMinVal + ", " + newMaxVal + "]");
         double curNum = uiMgr.getUIValue(gIDX_NumTrainingEx);
         if (curNum < newMinVal) {
-            uiMgr.setNewUIValue(gIDX_NumTrainingEx,newMinVal);
+            uiMgr.forceNewUIValue(gIDX_NumTrainingEx,newMinVal);
         }
         if (curNum > newMaxVal) {
-            uiMgr.setNewUIValue(gIDX_NumTrainingEx,newMaxVal);
+            uiMgr.forceNewUIValue(gIDX_NumTrainingEx,newMaxVal);
         }
     }// refreshNumTrainingExampleBounds
 
     private void refreshNumTrainingExamples() {
         long TtlNumExamples = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj);
         double newVal = fractOfBinomialForBaseNumTrainEx * TtlNumExamples;
-        uiMgr.setNewUIValue(gIDX_NumTrainingEx,newVal);
-        uiMgr.setUIWinVals(gIDX_NumTrainingEx);
+        uiMgr.forceNewUIValue(gIDX_NumTrainingEx,newVal);
+        uiMgr.updateOwnerWithUIVal(gIDX_NumTrainingEx);
     }
     
     /**
@@ -455,7 +462,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
         switch(UIidx){    
             case gIDX_NumUIObjs: {
                 numGeomObjs = ival;
-                uiMgr.setNewUIMaxVal(gIDX_SelDispUIObj,ival - 1);
+                uiMgr.forceNewUIMaxVal(gIDX_SelDispUIObj,ival - 1);
                 refreshNumTrainingExampleBounds();
                 rebuildSourceGeomObjs();            
                break;
@@ -545,20 +552,20 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     /**
      * set ui values used to build preproc data being loaded
      */
-    public void setAllUIValsFromPreProcLoad(LinkedHashMap<String, String> uiVals) {
-        uiMgr.setNewUIValue(gIDX_FractNumTrainEx,Double.parseDouble(uiVals.get("gIDX_FractNumTrainEx")));
-        uiMgr.setNewUIValue(gIDX_NumUIObjs,Integer.parseInt(uiVals.get("gIDX_NumUIObjs")));
-        uiMgr.setNewUIValue(gIDX_NumUISamplesPerObj,Integer.parseInt(uiVals.get("gIDX_NumUISamplesPerObj")));
-        uiMgr.setNewUIValue(gIDX_NumTrainingEx,Integer.parseInt(uiVals.get("gIDX_NumTrainingEx")));
+    public void forceNewUIAllValsFromPreProcLoad(LinkedHashMap<String, String> uiVals) {
+        uiMgr.forceNewUIValue(gIDX_FractNumTrainEx,Double.parseDouble(uiVals.get("gIDX_FractNumTrainEx")));
+        uiMgr.forceNewUIValue(gIDX_NumUIObjs,Integer.parseInt(uiVals.get("gIDX_NumUIObjs")));
+        uiMgr.forceNewUIValue(gIDX_NumUISamplesPerObj,Integer.parseInt(uiVals.get("gIDX_NumUISamplesPerObj")));
+        uiMgr.forceNewUIValue(gIDX_NumTrainingEx,Integer.parseInt(uiVals.get("gIDX_NumTrainingEx")));
         
-        setAllUIValsFromPreProcLoad_Indiv(uiVals);
-        uiMgr.setAllUIWinVals(); 
+        forceNewUIAllValsFromPreProcLoad_Indiv(uiVals);
+        uiMgr.updateOwnerWithAllNewUIVals(); 
     }
 
     /**
      * set ui instance-specific values used to build preproc data being loaded
      */
-    protected abstract void setAllUIValsFromPreProcLoad_Indiv(LinkedHashMap<String, String> uiVals);
+    protected abstract void forceNewUIAllValsFromPreProcLoad_Indiv(LinkedHashMap<String, String> uiVals);
 
 /////////////////////////////
     // drawing routines
@@ -573,18 +580,18 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
      * 
      * @param modAmtMillis
      */
-    public void drawSOMWinUI(float modAmtMillis) {
+    public void drawSOMWinUI(float modAmtMillis, boolean isGlblAppDebug) {
         if (null != somUIWin) {
-            somUIWin.draw2D(modAmtMillis);
-            somUIWin.drawHeader(new String[0], false, AppMgr.isDebugMode(), modAmtMillis);
+            somUIWin.draw2D(modAmtMillis, isGlblAppDebug);
+            somUIWin.drawHeader(new String[0], false, isGlblAppDebug, modAmtMillis);
         }
     }
 
     @Override
-    protected final void drawMe(float animTimeMod) {
+    protected final void drawMe(float animTimeMod, boolean isGlblAppDebug) {
         ri.pushMatState();
         // nested ifthen shenannigans to get rid of if checks in each individual draw
-        drawMeFirst_Indiv();
+        drawMeFirst_Indiv(isGlblAppDebug);
         // check if geom objs are built in mapMgr
         boolean useUIObjLocAsClr = uiMgr.getPrivFlag(useUIObjLocAsClrIDX),
                 showUIObjLabel = uiMgr.getPrivFlag(showUIObjLabelIDX);
@@ -610,9 +617,9 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
         }
         // draw geom objects for selected map node objects
         if (uiMgr.getPrivFlag(drawMapNodeGeomObjsIDX)) {
-            mapMgr.drawSelectedMapNodeGeomObjs(ri, animTimeMod, showUIObjLabel,    useUIObjLocAsClr);
+            mapMgr.drawSelectedMapNodeGeomObjs(ri, animTimeMod, showUIObjLabel, useUIObjLocAsClr);
         }
-        drawMeLast_Indiv();
+        drawMeLast_Indiv(isGlblAppDebug);
         ri.popMatState();
 
     }// drawMe
@@ -735,23 +742,23 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     /**
      * instance-specific drawing setup before objects are actually drawn
      */
-    protected abstract void drawMeFirst_Indiv();
+    protected abstract void drawMeFirst_Indiv(boolean isGlblAppDebug);
 
     /**
      * instance-specific drawing after objects are drawn but before info is saved
      */
-    protected abstract void drawMeLast_Indiv();
+    protected abstract void drawMeLast_Indiv(boolean isGlblAppDebug);
 
     /**
      * draw som map window UI Objects
      */
     @Override
-    public final void drawCustMenuObjs(float modAmtMillis) {
+    public final void drawCustMenuObjs(float modAmtMillis, boolean isGlbDebug) {
         // ((SOM_GeometryMain) pa).drawSOMUIObjs();
         // if(this.uiMgr.getPrivFlag(drawSOM_MapUIVisIDX)) {
         if (somUIWin != null) {
             ri.pushMatState();
-            somUIWin.drawWindowGuiObjs(AppMgr.isDebugMode(), modAmtMillis);                    //draw what user-modifiable fields are currently available
+            somUIWin.drawWindowGuiObjs(modAmtMillis, isGlbDebug);                    //draw what user-modifiable fields are currently available
 //            somUIWin.drawGUIObjs(); // draw what user-modifiable fields are currently available
 //            somUIWin.drawClickableBooleans(); // draw what user-modifiable boolean buttons
             ri.popMatState();
@@ -761,12 +768,12 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     @Override
     // draw 2d constructs over 3d area on screen - draws behind left menu section
     // modAmtMillis is in milliseconds
-    protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
+    protected final void drawRightSideInfoBarPriv(float modAmtMillis, boolean isGlblAppDebug) {
         ri.pushMatState();
         //instance-specific
-        float newYOff = drawRightSideInfoBar_Indiv(modAmtMillis, AppMgr.getTextHeightOffset());
+        float newYOff = drawRightSideInfoBar_Indiv(modAmtMillis, AppMgr.getTextHeightOffset(), isGlblAppDebug);
         // display current simulation variables - call sim world through sim exec
-        mapMgr.drawResultBar(ri, newYOff);
+        mapMgr.drawResultBar(ri, newYOff, isGlblAppDebug);
         ri.popMatState();
     }// drawOnScreenStuff
 
@@ -775,7 +782,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
      * 
      * @param modAmtMillis
      */
-    protected abstract float drawRightSideInfoBar_Indiv(float modAmtMillis, float yOff);
+    protected abstract float drawRightSideInfoBar_Indiv(float modAmtMillis, float yOff, boolean isGlblAppDebug);
 
     /////////////////////////////
     // end drawing routines

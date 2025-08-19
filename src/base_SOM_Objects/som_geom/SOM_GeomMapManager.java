@@ -401,7 +401,7 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
                 //first need to load UI info about preprocced data (settings used to generate data)
             LinkedHashMap<String,String> uiToBuildGeom = geomSrcToTrainExDataManager.loadGeomObjsUIVals(subDir);
             if((null != uiToBuildGeom) && (uiToBuildGeom.size()!=0)) {        //loaded successfully
-                dispWin.setAllUIValsFromPreProcLoad(uiToBuildGeom);
+                dispWin.forceNewUIAllValsFromPreProcLoad(uiToBuildGeom);
             } else {
                 getMsgObj().dispWarningMessage(dispClassGeomName,"loadPreProcTrainData","UI Values used to build Geom failed to load - UI may be out of sync with current Geometry objects.");
             }

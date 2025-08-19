@@ -10,6 +10,7 @@ import base_SOM_Objects.som_managers.SOM_MapManager;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MapUIWin;
 import base_SOM_Objects.som_ui.win_disp_ui.SOM_MseOvrDispTypeVals;
 import base_UI_Objects.GUI_AppManager;
+import base_UI_Objects.baseApp.GUI_AppUIFlags;
 import base_UI_Objects.windowUI.base.GUI_AppWinVals;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
 import base_UI_Objects.windowUI.uiObjs.base.GUIObj_Params;
@@ -54,12 +55,14 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
     }
     
     /**
-     * Initialize any UI control flags appropriate for specific instanced SOM mapUI window
+     * Initialize any UI control flags appropriate for specific instanced SOM Animation window
+     * @param appUIFlags Snapshot of the initial flags structure for the application. 
+     * Will not reflect future changes, so should not be retained
      */
     @Override
-    protected final void initDispFlags_Indiv() {
+    protected final void initDispFlags_Indiv(GUI_AppUIFlags appUIFlags) {
         //disable right-side menu since the main animation window will handle showing/hiding that.
-        dispFlags.setHasRtSideMenu(false);
+        dispFlags.setHasRtSideInfoDisp(false);
     }
     
     /**
@@ -91,6 +94,16 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
         //setFlags(showRightSideMenu, true);    
         //moved from mapMgr ctor, to remove dependence on papplet in that object
         mapMgr.initMapAras(1, 1);
+    }
+    
+    /**
+     * Implementation-specific flags to initialize to true
+     * @param flagIDXs
+     * @return
+     */
+    @Override
+    protected final int[] getFlagIDXsToInitToTrue_Indiv(int[] flagIDXs) {
+        return flagIDXs;
     }
 
     @Override
@@ -174,12 +187,12 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
     }    
     
     @Override
-    protected void drawOnScreenStuffPriv(float modAmtMillis) {}
+    protected void drawOnScreenStuffPriv(float modAmtMillis, boolean isGlblAppDebug) {}
     @Override
     //set flags that should be set on each frame - these are set at beginning of frame draw
     protected void drawSetDispFlags() {    }
     @Override
-    protected void drawMap_Indiv() {        }
+    protected void drawMap_Indiv(boolean isGlblAppDebug) {        }
     @Override
     protected boolean setUI_IntValsCustom_Indiv(int UIidx, int ival, int oldVal) {        return false;    }
 
@@ -188,7 +201,7 @@ public class SOM_GeomMapUIWin extends SOM_MapUIWin {
     @Override
     public void initDrwnTraj_Indiv(){}
     @Override
-    public void drawCustMenuObjs(float animTimeMod){}
+    public void drawCustMenuObjs(float animTimeMod, boolean isGlblAppDebug){}
     @Override
     protected boolean simMe(float modAmtSec) {    return true;}
     //set camera to custom location - only used if dispFlag set

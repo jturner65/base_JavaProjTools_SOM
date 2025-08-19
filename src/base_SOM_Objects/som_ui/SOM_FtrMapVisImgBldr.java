@@ -11,11 +11,15 @@ import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
 import processing.core.PImage;
 
-//this will build a single image of the map based on ftr data
+/**
+ * this will build a single image of the map based on ftr data
+ */
 public class SOM_FtrMapVisImgBldr implements Callable<Boolean>{
     private MessageObject msgObj;
     private int mapX, mapY, xSt, xEnd, ySt, yEnd, imgW;
-    //type of features to use to build vis, based on type used to train map (unmodified, stdftrs, normftrs)
+    /**
+     * type of features to use to build vis, based on type used to train map (unmodified, stdftrs, normftrs)
+     */
     private SOM_FtrDataType ftrType;
     private float mapScaleVal, sclMultXPerPxl, sclMultYPerPxl;
     private TreeMap<Tuple<Integer,Integer>, SOM_MapNode> MapNodes;
@@ -118,6 +122,7 @@ public class SOM_FtrMapVisImgBldr implements Callable<Boolean>{
                         float ftrClrRaw = 255.0f *((ftrVal-map_ftrsMin[ftrIDX])/map_ftrsDiffs[ftrIDX]);
                         ftr = Math.round(ftrClrRaw);
                     }
+                    //get hex gray color from ftr color
                     mapLocClrImg[ftrIDX].pixels[pxlIDX] = ((ftr & 0xff) << 16) + ((ftr & 0xff) << 8) + (ftr & 0xff);
 
                 }

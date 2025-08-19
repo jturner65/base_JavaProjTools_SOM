@@ -62,7 +62,7 @@ public class SOM_GeomSamplePointf extends myPointf {
      * @param s : value [0,1] to determine linear interpolation
      * @param B : second point to interpolate from
      */
-    public SOM_GeomSamplePointf(myPointf A, float s, myPointf B, String _name, SOM_GeomObj _obj) {super(A.x+s*(B.x-A.x),A.y+s*(B.y-A.y),A.z+s*(B.z-A.z));  name=_name;ID = idIncr++; obj=_obj;} 
+    public SOM_GeomSamplePointf(myPointf A, float s, myPointf B, String _name, SOM_GeomObj _obj) {super(A, s, B);  name=_name;ID = idIncr++; obj=_obj;} 
     /**
      * constructor from csv string
      * @param _csvStrAra : array of string data in format of toCSVStr output :
