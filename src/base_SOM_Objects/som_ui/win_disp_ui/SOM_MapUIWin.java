@@ -1088,7 +1088,6 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
             if(curCatIdxVal != catIdxToSet) {
                 settingCategoryFromClass = true;
                 uiMgr.forceNewUIValue(gIDX_CategorySelectIDX, catIdxToSet);
-                uiMgr.updateOwnerWithUIVal(gIDX_CategorySelectIDX);
                 checkAndSetIntVal(gIDX_TrainDataNormIDX,(int)uiMgr.getUIValue(gIDX_CategorySelectIDX));
                 settingCategoryFromClass = false;
             }
@@ -1103,8 +1102,7 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
             int classIdxToSet = getClassFromCategory((int)uiMgr.getUIValue(gIDX_CategorySelectIDX), curClassIdxVal);
             if(curClassIdxVal != classIdxToSet) {
                 settingClassFromCategory = true;
-                uiMgr.forceNewUIValue(gIDX_ClassSelectIDX, classIdxToSet);    
-                uiMgr.updateOwnerWithUIVal(gIDX_ClassSelectIDX);
+                uiMgr.forceNewUIValue(gIDX_ClassSelectIDX, classIdxToSet);
                 checkAndSetIntVal(gIDX_ClassSelectIDX,(int)uiMgr.getUIValue(gIDX_ClassSelectIDX));
                 settingClassFromCategory = false;
             }

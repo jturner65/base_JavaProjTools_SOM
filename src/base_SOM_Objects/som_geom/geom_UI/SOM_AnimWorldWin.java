@@ -444,7 +444,6 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
         long TtlNumExamples = getNumTrainingExamples(numGeomObjs, numSmplPointsPerObj);
         double newVal = fractOfBinomialForBaseNumTrainEx * TtlNumExamples;
         uiMgr.forceNewUIValue(gIDX_NumTrainingEx,newVal);
-        uiMgr.updateOwnerWithUIVal(gIDX_NumTrainingEx);
     }
     
     /**
@@ -557,7 +556,6 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
         uiMgr.forceNewUIValue(gIDX_NumTrainingEx,Integer.parseInt(uiVals.get("gIDX_NumTrainingEx")));
         
         forceNewUIAllValsFromPreProcLoad_Indiv(uiVals);
-        uiMgr.updateOwnerWithAllNewUIVals(); 
     }
 
     /**
