@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import base_Math_Objects.MyMathUtils;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_examples.base.SOM_Example;
@@ -624,13 +622,12 @@ public abstract class SOM_GeomMapManager extends SOM_MapManager {
     // mouse functions
     
     @Override
-    protected final boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode,myPoint mseClckInWorld, int btn, boolean _wasSelNotDeSel) {
+    protected final boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode, int btn, boolean _wasSelNotDeSel) {
         return _wasSelNotDeSel;
     }
 
     @Override
-    public final boolean checkMouseDragMove_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D,
-            myVector mseDragInWorld, int mseBtn) {
+    public final boolean checkMouseDragMove_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, int mseBtn) {
         return false;
     }
 

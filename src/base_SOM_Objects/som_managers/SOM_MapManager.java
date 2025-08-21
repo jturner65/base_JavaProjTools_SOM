@@ -19,7 +19,6 @@ import java.util.concurrent.Future;
 
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Math_Objects.vectorObjs.tuples.Tuple;
 import base_Render_Interface.IGraphicsAppInterface;
@@ -2168,11 +2167,10 @@ public abstract class SOM_MapManager {
      * check mouse over/click in experiment; if btn == -1 then mouse over
      * @param mouseX mouse x in world
      * @param mouseY mouse y in world
-     * @param mseClckInWorld
      * @param btn
      * @return
      */
-    public final boolean checkMouseClick(int mouseX, int mouseY, myPoint mseClckInWorld, int btn) {
+    public final boolean checkMouseClick(int mouseX, int mouseY, int btn) {
         float mapMseX = mouseX - SOM_mapLoc[0], mapMseY = mouseY - SOM_mapLoc[1];//, mapLocX = mapX * mapMseX/mapDims[2],mapLocY = mapY * mapMseY/mapDims[3] ;
         if((mapMseX >= 0) && (mapMseY >= 0) && (mapMseX < mapDims[0]) && (mapMseY < mapDims[1])){    //within bounds of map
             float[] mapNLoc=getMapNodeLocFromPxlLoc(mapMseX,mapMseY, 1.0f);
@@ -2182,13 +2180,13 @@ public abstract class SOM_MapManager {
             boolean _wasSelNotDeSel = (oldNode == null);
             if(_wasSelNotDeSel) {    SelectedMapNodes.put(nodeCoords,nearestNode);}
             else {                    SelectedMapNodes.remove(nodeCoords);}
-            return checkMouseClick_Indiv(mouseX, mouseY, mapNLoc[0], mapNLoc[1], nearestNode, mseClckInWorld, btn,_wasSelNotDeSel);
+            return checkMouseClick_Indiv(mouseX, mouseY, mapNLoc[0], mapNLoc[1], nearestNode, btn,_wasSelNotDeSel);
         } else {//clicked in blank space, treat like release
             checkMouseRelease();
             return false;
         }        
     };
-    protected abstract boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode, myPoint mseClckInWorld, int btn, boolean _wasSelNotDeSel);
+    protected abstract boolean checkMouseClick_Indiv(int mouseX, int mouseY, float mapX, float mapY, SOM_MapNode nearestNode, int btn, boolean _wasSelNotDeSel);
     /**
      * check mouse drag/move in experiment; if btn == -1 then mouse over
      * @param mouseX mouse x in world
@@ -2197,11 +2195,11 @@ public abstract class SOM_MapManager {
      * @param btn
      * @return
      */
-    public final boolean checkMouseDragMove(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
+    public final boolean checkMouseDragMove(int mouseX, int mouseY,int pmouseX, int pmouseY, int mseBtn) {
         if(-1==mseBtn) {return false;}        //should be handled by mouse move 
-        return checkMouseDragMove_Indiv( mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
+        return checkMouseDragMove_Indiv(mouseX, mouseY, pmouseX, pmouseY, mseBtn);
     };
-    public abstract boolean checkMouseDragMove_Indiv(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn);
+    public abstract boolean checkMouseDragMove_Indiv(int mouseX, int mouseY,int pmouseX, int pmouseY, int mseBtn);
     
     public final void checkMouseRelease() {
         checkMouseRelease_Indiv();

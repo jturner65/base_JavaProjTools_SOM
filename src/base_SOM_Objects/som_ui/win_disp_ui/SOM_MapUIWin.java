@@ -8,7 +8,6 @@ import java.util.LinkedHashMap;
 
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_examples.enums.SOM_ExDataType;
 import base_SOM_Objects.som_examples.enums.SOM_FtrDataType;
@@ -1250,8 +1249,8 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
      * @param mseBtn
      * @return
      */
-    public final boolean checkMouseClick(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
-        return mapMgr.checkMouseClick(mouseX, mouseY, mseClckInWorld, mseBtn);
+    public final boolean checkMouseClick(int mouseX, int mouseY, int mseBtn) {
+        return mapMgr.checkMouseClick(mouseX, mouseY, mseBtn);
     }
     
     /**
@@ -1265,8 +1264,8 @@ public abstract class SOM_MapUIWin extends Base_DispWindow implements ISOM_UIWin
      * @param mseBtn
      * @return  
      */
-    public final boolean checkMouseDragMove(int mouseX, int mouseY,int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
-        return mapMgr.checkMouseDragMove(mouseX, mouseY,pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
+    public final boolean checkMouseDragMove(int mouseX, int mouseY,int pmouseX, int pmouseY, int mseBtn) {
+        return mapMgr.checkMouseDragMove(mouseX, mouseY,pmouseX, pmouseY, mseBtn);
     }
     
     public final void checkMouseRelease() {mapMgr.checkMouseRelease();}

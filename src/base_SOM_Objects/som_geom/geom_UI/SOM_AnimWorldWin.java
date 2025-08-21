@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import base_Math_Objects.MyMathUtils;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_Render_Interface.IGraphicsAppInterface;
 import base_SOM_Objects.som_geom.SOM_GeomMapManager;
 import base_SOM_Objects.som_geom.geom_examples.SOM_GeomObj;
@@ -977,7 +975,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
     protected final void setVisScreenDimsPriv() {}
 
     @Override
-    protected final boolean hndlMouseMove_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld) {
+    protected final boolean hndlMouseMove_Indiv(int mouseX, int mouseY) {
 
         boolean res = false;
         // if(res) {return res;}
@@ -985,7 +983,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
             res = somUIWin.handleMouseMove(mouseX, mouseY);
             if (res) {        return true;    }
         }
-        return hndlMseMove_Priv(mouseX, mouseY, mseClckInWorld);
+        return hndlMseMove_Priv(mouseX, mouseY);
     }
 
     /**
@@ -996,17 +994,17 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
      * @param mseClckInWorld
      * @return
      */
-    protected abstract boolean hndlMseMove_Priv(int mouseX, int mouseY, myPoint mseClckInWorld);
+    protected abstract boolean hndlMseMove_Priv(int mouseX, int mouseY);
 
     // alt key pressed handles trajectory
     // cntl key pressed handles unfocus of spherey
     @Override
-    protected final boolean hndlMouseClick_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
+    protected final boolean hndlMouseClick_Indiv(int mouseX, int mouseY, int mseBtn) {
         if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVisIDX))) {
             boolean res = somUIWin.handleMouseClick(mouseX, mouseY, mseBtn);
             if (res) {            return true;    }
         }
-        return hndlMseClick_Priv(mouseX, mouseY, mseClckInWorld, mseBtn);
+        return hndlMseClick_Priv(mouseX, mouseY, mseBtn);
     }// hndlMouseClickIndiv
 
     /**
@@ -1017,10 +1015,10 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
      * @param mseClckInWorld
      * @return
      */
-    protected abstract boolean hndlMseClick_Priv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn);
+    protected abstract boolean hndlMseClick_Priv(int mouseX, int mouseY, int mseBtn);
 
     @Override
-    protected final boolean hndlMouseDrag_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
+    protected final boolean hndlMouseDrag_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, int mseBtn) {
         boolean res = false;
         //msgObj.dispInfoMessage(className,"hndlMouseDragIndiv","sphere ui drag in world mouseClickIn3D : " + mouseClickIn3D.toStrBrf() + " mseDragInWorld : " +mseDragInWorld.toStrBrf());
 //        if((privFlags[sphereSelIDX]) && (curSelSphere!="")){//pass drag through to selected sphere
@@ -1031,11 +1029,11 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
         // handleMouseDrag(int mouseX, int mouseY,int pmouseX, int pmouseY, myVector
         // mseDragInWorld, int mseBtn)
         if ((this.somUIWin != null) && (uiMgr.getPrivFlag(drawSOM_MapUIVisIDX))) {
-            res = somUIWin.handleMouseDrag(mouseX, mouseY, pmouseX, pmouseY, mseDragInWorld, mseBtn);
+            res = somUIWin.handleMouseDrag(mouseX, mouseY, pmouseX, pmouseY, mseBtn);
             if (res) {                return true;            }
         }
         
-        return hndlMseDrag_Priv(mouseX, mouseY, pmouseX, pmouseY, mouseClickIn3D, mseDragInWorld, mseBtn);
+        return hndlMseDrag_Priv(mouseX, mouseY, pmouseX, pmouseY, mseBtn);
     }
 
     /**
@@ -1050,7 +1048,7 @@ public abstract class SOM_AnimWorldWin extends Base_DispWindow {
      * @param mseBtn
      * @return
      */
-    protected abstract boolean hndlMseDrag_Priv(int mouseX, int mouseY, int pmouseX, int pmouseY,myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn);
+    protected abstract boolean hndlMseDrag_Priv(int mouseX, int mouseY, int pmouseX, int pmouseY, int mseBtn);
 
     @Override
     protected final void hndlMouseRel_Indiv() {
